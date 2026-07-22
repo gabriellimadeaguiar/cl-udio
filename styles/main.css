@@ -304,3 +304,45 @@ h3.display { font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 600; }
   padding: var(--s-2) var(--s-3);
 }
 .skip:focus { left: var(--s-3); top: var(--s-3); z-index: 10; }
+
+/* ======================= Motion ========================
+   Contido e intencional. Nunca esconde conteúdo sem JS,
+   e desliga por completo em prefers-reduced-motion.
+   ======================================================= */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Reveal on scroll — só ativa quando o JS marca .js-motion */
+  .js-motion .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.7s cubic-bezier(0.2, 0.65, 0.2, 1) var(--d, 0s),
+      transform 0.7s cubic-bezier(0.2, 0.65, 0.2, 1) var(--d, 0s);
+  }
+  .js-motion .reveal.in { opacity: 1; transform: none; }
+
+  /* Hero — sequência orquestrada de entrada, linha a linha */
+  .js-motion .hero__title,
+  .js-motion .hero .lead,
+  .js-motion .hero__meta {
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(0.2, 0.65, 0.2, 1) forwards;
+  }
+  .js-motion .hero__title { animation-delay: 0.05s; }
+  .js-motion .hero .lead  { animation-delay: 0.22s; }
+  .js-motion .hero__meta  { animation-delay: 0.34s; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* Parallax — deslocamento leve aplicado via JS (translate3d) */
+  .js-motion [data-parallax] { will-change: transform; }
+}
+
+/* Segurança: se algo ficou marcado como reveal mas o JS não rodou,
+   ou o usuário pede menos movimento, tudo permanece visível. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1 !important; transform: none !important; }
+}

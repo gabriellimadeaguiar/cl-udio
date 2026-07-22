@@ -312,6 +312,48 @@ h3.display { font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 600; }
 }
 .skip:focus { left: var(--s-3); top: var(--s-3); z-index: 10; }
 
+/* ======================= Motion ========================
+   Contido e intencional. Nunca esconde conteúdo sem JS,
+   e desliga por completo em prefers-reduced-motion.
+   ======================================================= */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Reveal on scroll — só ativa quando o JS marca .js-motion */
+  .js-motion .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.7s cubic-bezier(0.2, 0.65, 0.2, 1) var(--d, 0s),
+      transform 0.7s cubic-bezier(0.2, 0.65, 0.2, 1) var(--d, 0s);
+  }
+  .js-motion .reveal.in { opacity: 1; transform: none; }
+
+  /* Hero — sequência orquestrada de entrada, linha a linha */
+  .js-motion .hero__title,
+  .js-motion .hero .lead,
+  .js-motion .hero__meta {
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(0.2, 0.65, 0.2, 1) forwards;
+  }
+  .js-motion .hero__title { animation-delay: 0.05s; }
+  .js-motion .hero .lead  { animation-delay: 0.22s; }
+  .js-motion .hero__meta  { animation-delay: 0.34s; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* Parallax — deslocamento leve aplicado via JS (translate3d) */
+  .js-motion [data-parallax] { will-change: transform; }
+}
+
+/* Segurança: se algo ficou marcado como reveal mas o JS não rodou,
+   ou o usuário pede menos movimento, tudo permanece visível. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+
 [hidden]{display:none !important;}
 </style>
 <div id="view-home"><a class="skip" href="#work">Pular para os trabalhos</a>
@@ -354,41 +396,41 @@ h3.display { font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 600; }
   <section class="wrap section--tight" id="work" aria-labelledby="work-h">
     <p class="eyebrow" id="work-h">Trabalhos selecionados</p>
     <div class="work">
-      <a class="work__item" href="#case1">
-        <span class="work__num">01</span>
+      <a class="work__item reveal" href="#case1">
+        <span class="work__num" data-parallax="26">01</span>
         <span class="work__body">
           <span class="display work__title">Redesenho do fluxo de checkout</span>
           <span class="work__desc">Reduzimos fricção em uma jornada de pagamento com muitas ramificações. Placeholder da linha de resumo.</span>
           <span class="work__tags"><span>Pesquisa</span><span>Design System</span><span>Fintech</span></span>
         </span>
-        <span class="work__year">2026</span>
+        <span class="work__year" data-parallax="-16">2026</span>
       </a>
-      <a class="work__item" href="#case1">
-        <span class="work__num">02</span>
+      <a class="work__item reveal" href="#case1" style="--d: 0.06s">
+        <span class="work__num" data-parallax="26">02</span>
         <span class="work__body">
           <span class="display work__title">App de gestão para operações B2B</span>
           <span class="work__desc">Do problema de negócio à entrega, incluindo pesquisa com usuários internos. Texto placeholder.</span>
           <span class="work__tags"><span>Descoberta</span><span>UX</span><span>B2B SaaS</span></span>
         </span>
-        <span class="work__year">2025</span>
+        <span class="work__year" data-parallax="-16">2025</span>
       </a>
-      <a class="work__item" href="#case1">
-        <span class="work__num">03</span>
+      <a class="work__item reveal" href="#case1" style="--d: 0.12s">
+        <span class="work__num" data-parallax="26">03</span>
         <span class="work__body">
           <span class="display work__title">Sistema de design multiplataforma</span>
           <span class="work__desc">Tokens, componentes e governança adotados por N squads. Substituir pelo resultado real.</span>
           <span class="work__tags"><span>Design System</span><span>Acessibilidade</span><span>Web · iOS</span></span>
         </span>
-        <span class="work__year">2024</span>
+        <span class="work__year" data-parallax="-16">2024</span>
       </a>
-      <a class="work__item" href="#case1">
-        <span class="work__num">04</span>
+      <a class="work__item reveal" href="#case1" style="--d: 0.18s">
+        <span class="work__num" data-parallax="26">04</span>
         <span class="work__body">
           <span class="display work__title">Onboarding orientado a ativação</span>
           <span class="work__desc">Experimentação e iteração para levar o usuário ao primeiro valor mais rápido. Placeholder.</span>
           <span class="work__tags"><span>Growth</span><span>Experimentos</span><span>Mobile</span></span>
         </span>
-        <span class="work__year">2024</span>
+        <span class="work__year" data-parallax="-16">2024</span>
       </a>
     </div>
   </section>
@@ -398,8 +440,8 @@ h3.display { font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 600; }
   <section class="wrap section" id="about" aria-labelledby="about-h">
     <p class="eyebrow" id="about-h">Sobre</p>
     <div class="about__grid">
-      <h2 class="display">Design é decisão, não decoração.</h2>
-      <div>
+      <h2 class="display reveal">Design é decisão, não decoração.</h2>
+      <div class="reveal" style="--d: 0.1s">
         <p>
           <strong>Este é um parágrafo de placeholder.</strong> Aqui você conta
           quem é, como pensa e o tipo de problema que gosta de resolver. Fale do
@@ -425,8 +467,8 @@ h3.display { font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 600; }
 
   <section class="wrap cta" id="contato" aria-labelledby="cta-h">
     <p class="eyebrow" id="cta-h">Contato</p>
-    <h2 class="display cta__line">Vamos conversar sobre o seu <span class="accent">produto?</span></h2>
-    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+    <h2 class="display cta__line reveal">Vamos conversar sobre o seu <span class="accent">produto?</span></h2>
+    <div class="reveal" style="--d: 0.1s; display:flex; gap:16px; flex-wrap:wrap;">
       <a class="btn" href="mailto:email@placeholder.com">email@placeholder.com</a>
       <a class="btn btn--ghost" href="#contato">LinkedIn</a>
     </div>
@@ -467,12 +509,12 @@ h3.display { font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 600; }
   </section>
 
   <section class="wrap">
-    <div class="frame frame--ink">Imagem de capa · substituir por tela real do produto (aspect ratio nativo)</div>
+    <div class="frame frame--ink" data-parallax="34">Imagem de capa · substituir por tela real do produto (aspect ratio nativo)</div>
   </section>
 
   <section class="wrap case-block">
-    <div class="case-block__grid">
-      <span class="case-block__num">01</span>
+    <div class="case-block__grid reveal">
+      <span class="case-block__num" data-parallax="18">01</span>
       <div>
         <h2 class="display">Contexto e problema de negócio</h2>
         <div class="prose">
@@ -484,8 +526,8 @@ h3.display { font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 600; }
   </section>
 
   <section class="wrap case-block">
-    <div class="case-block__grid">
-      <span class="case-block__num">02</span>
+    <div class="case-block__grid reveal">
+      <span class="case-block__num" data-parallax="18">02</span>
       <div>
         <h2 class="display">Meu papel específico</h2>
         <div class="prose">
@@ -496,8 +538,8 @@ h3.display { font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 600; }
   </section>
 
   <section class="wrap case-block">
-    <div class="case-block__grid">
-      <span class="case-block__num">03</span>
+    <div class="case-block__grid reveal">
+      <span class="case-block__num" data-parallax="18">03</span>
       <div>
         <h2 class="display">Processo, pesquisa e decisões</h2>
         <div class="prose">
@@ -510,8 +552,8 @@ h3.display { font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 600; }
   </section>
 
   <section class="wrap case-block">
-    <div class="case-block__grid">
-      <span class="case-block__num">04</span>
+    <div class="case-block__grid reveal">
+      <span class="case-block__num" data-parallax="18">04</span>
       <div>
         <h2 class="display">A solução final</h2>
         <div class="prose">
@@ -526,8 +568,8 @@ h3.display { font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 600; }
   <hr class="wrap rule" />
 
   <section class="wrap case-block">
-    <div class="case-block__grid">
-      <span class="case-block__num">05</span>
+    <div class="case-block__grid reveal">
+      <span class="case-block__num" data-parallax="18">05</span>
       <div>
         <h2 class="display">Resultado e impacto</h2>
         <div class="prose">
@@ -552,8 +594,8 @@ h3.display { font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 600; }
   </section>
 
   <section class="wrap case-block">
-    <div class="case-block__grid">
-      <span class="case-block__num">06</span>
+    <div class="case-block__grid reveal">
+      <span class="case-block__num" data-parallax="18">06</span>
       <div>
         <h2 class="display">O que eu faria diferente</h2>
         <div class="prose">
@@ -578,13 +620,54 @@ h3.display { font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 600; }
 </div>
 <script>
 (function(){
-  var home=document.getElementById('view-home'), cas=document.getElementById('view-case');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var home = document.getElementById('view-home');
+  var cas  = document.getElementById('view-case');
+
+  function showReveals(root){
+    var els = root.querySelectorAll('.reveal');
+    for (var i=0;i<els.length;i++) els[i].classList.add('in');
+  }
+
+  // Roteador por hash entre as duas views
   function render(){
-    var h=location.hash;
-    if(h.indexOf('#case')===0){ home.hidden=true; cas.hidden=false; window.scrollTo(0,0); }
-    else { cas.hidden=true; home.hidden=false; }
+    var h = location.hash;
+    if (h.indexOf('#case') === 0){ home.hidden = true;  cas.hidden = false; window.scrollTo(0,0); showReveals(cas); }
+    else { cas.hidden = true; home.hidden = false; }
   }
   window.addEventListener('hashchange', render);
   render();
+
+  if (reduce) return; // sem motion; conteúdo já visível
+  document.documentElement.classList.add('js-motion');
+
+  // Reveal on scroll (view visível)
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin:'0px 0px -8% 0px', threshold:0 });
+    home.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  } else {
+    showReveals(home);
+  }
+
+  // Parallax leve
+  var items = Array.prototype.slice.call(document.querySelectorAll('[data-parallax]'));
+  var vh = window.innerHeight, ticking = false;
+  function update(){
+    ticking = false;
+    for (var i=0;i<items.length;i++){
+      var el = items[i];
+      var r = el.getBoundingClientRect();
+      if (!r.height) { continue; }
+      var speed = parseFloat(el.getAttribute('data-parallax')) || 0;
+      var offset = ((r.top + r.height/2) - vh/2) / vh;
+      el.style.transform = 'translate3d(0,' + (-offset*speed).toFixed(1) + 'px,0)';
+    }
+  }
+  function onScroll(){ if(!ticking){ ticking = true; requestAnimationFrame(update); } }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', function(){ vh = window.innerHeight; onScroll(); });
+  update();
 })();
 </script>

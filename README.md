@@ -40,6 +40,22 @@ Elevação só com cor chapada e bordas de 1px. Esquina reta (`--radius: 0`).
 Sem grid de 3 cards com ícone, sem hero centralizado com badge, sem faixa de stats
 solta, sem rótulos em CAIXA ALTA por toda parte.
 
+## Motion (contido e intencional)
+
+O movimento serve à leitura, nunca decora — coerente com o estilo flat e sem
+introduzir gradiente, blur ou glow. Definido em `styles/main.css` (camada
+"Motion") e `scripts/motion.js`:
+
+- **Entrada do hero** — título, lead e meta sobem em cascata curta no load.
+- **Reveal on scroll** — blocos principais sobem sutilmente ao entrar na viewport
+  (`.reveal` + IntersectionObserver).
+- **Parallax editorial** — números-catálogo (01–04) e anos fazem *counter-drift*
+  de poucos px; no case, a capa e os números dos blocos têm deslocamento leve
+  (`data-parallax="…"`, magnitude ~≤20px).
+
+**Guarda-corpos:** tudo desliga em `prefers-reduced-motion: reduce`, e sem
+JS/suporte o conteúdo permanece 100% visível — o motion nunca esconde conteúdo.
+
 ## Como substituir os placeholders
 
 1. **Identidade:** troque `Nome Sobrenome`, o e-mail e o LinkedIn em `index.html`.
