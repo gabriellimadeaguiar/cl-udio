@@ -1,122 +1,137 @@
 {
-  "esquema": 1,
-  "atualizado_em": "2026-07-23T12:41:21.530Z",
+  "esquema": 2,
+  "atualizado_em": "2026-07-23T12:54:18.075Z",
   "taxonomia_versao": 1,
-  "dias": [
-    {
-      "data": "2026-07-18",
-      "status": "ok",
-      "sinais_novos": 4,
-      "por_tema": {
-        "latencia_ping": 1,
-        "cobertura_jogos": 0,
-        "preco_assinatura": 1,
-        "instalacao_setup": 0,
-        "suporte_atendimento": 0,
-        "confiabilidade_app": 0,
-        "confusao_produto": 1,
-        "comparacao_concorrente": 1,
-        "outros": 0
+  "dias": [],
+  "baselines": {
+    "temas": {
+      "latencia_ping": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
       },
-      "sentimento": {
-        "positivo": 1,
-        "neutro": 2,
-        "negativo": 1
+      "cobertura_jogos": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
       },
-      "custo_usd": 0.134,
-      "exemplo": true
+      "preco_assinatura": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
+      },
+      "instalacao_setup": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
+      },
+      "suporte_atendimento": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
+      },
+      "confiabilidade_app": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
+      },
+      "confusao_produto": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
+      },
+      "comparacao_concorrente": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
+      },
+      "outros": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
+      }
     },
-    {
-      "data": "2026-07-19",
-      "status": "ok",
-      "sinais_novos": 2,
-      "por_tema": {
-        "latencia_ping": 1,
-        "cobertura_jogos": 0,
-        "preco_assinatura": 1,
-        "instalacao_setup": 0,
-        "suporte_atendimento": 0,
-        "confiabilidade_app": 0,
-        "confusao_produto": 0,
-        "comparacao_concorrente": 0,
-        "outros": 0
+    "jogos": {},
+    "globais": {
+      "total": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
       },
-      "sentimento": {
-        "positivo": 0,
-        "neutro": 1,
-        "negativo": 1
+      "intencao_churn": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
       },
-      "custo_usd": 0.134,
-      "exemplo": true
+      "perguntas_sem_resposta": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
+      },
+      "confusao_proposta": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
+      },
+      "primeira_aparicao": {
+        "mm7": 0,
+        "mm30": 0,
+        "mm90": 0,
+        "multiplo": 1,
+        "soma7": 0
+      }
     },
-    {
-      "data": "2026-07-20",
-      "status": "ok",
-      "sinais_novos": 5,
-      "por_tema": {
-        "latencia_ping": 1,
-        "cobertura_jogos": 0,
-        "preco_assinatura": 1,
-        "instalacao_setup": 1,
-        "suporte_atendimento": 0,
-        "confiabilidade_app": 0,
-        "confusao_produto": 1,
-        "comparacao_concorrente": 1,
-        "outros": 0
-      },
-      "sentimento": {
-        "positivo": 1,
-        "neutro": 2,
-        "negativo": 2
-      },
-      "custo_usd": 0.134,
-      "exemplo": true
-    },
-    {
-      "data": "2026-07-21",
-      "status": "ok",
-      "sinais_novos": 3,
-      "por_tema": {
-        "latencia_ping": 1,
-        "cobertura_jogos": 0,
-        "preco_assinatura": 1,
-        "instalacao_setup": 0,
-        "suporte_atendimento": 0,
-        "confiabilidade_app": 0,
-        "confusao_produto": 0,
-        "comparacao_concorrente": 1,
-        "outros": 0
-      },
-      "sentimento": {
-        "positivo": 1,
-        "neutro": 1,
-        "negativo": 1
-      },
-      "custo_usd": 0.134,
-      "exemplo": true
-    },
-    {
-      "data": "2026-07-22",
-      "status": "ok",
-      "sinais_novos": 4,
-      "por_tema": {
-        "latencia_ping": 1,
-        "cobertura_jogos": 0,
-        "preco_assinatura": 1,
-        "instalacao_setup": 0,
-        "suporte_atendimento": 0,
-        "confiabilidade_app": 0,
-        "confusao_produto": 1,
-        "comparacao_concorrente": 1,
-        "outros": 0
-      },
-      "sentimento": {
-        "positivo": 1,
-        "neutro": 2,
-        "negativo": 1
-      },
-      "custo_usd": 0.134,
-      "exemplo": true
+    "mm90_por_tema": {
+      "latencia_ping": 0,
+      "cobertura_jogos": 0,
+      "preco_assinatura": 0,
+      "instalacao_setup": 0,
+      "suporte_atendimento": 0,
+      "confiabilidade_app": 0,
+      "confusao_produto": 0,
+      "comparacao_concorrente": 0,
+      "outros": 0
     }
-  ]
+  },
+  "mudou": [
+    {
+      "tipo": "nada",
+      "texto": "Nada relevante mudou nos últimos 7 dias.",
+      "ids": []
+    }
+  ],
+  "alertas": {
+    "taxonomia_outros": {
+      "ativo": false,
+      "outros_pct_30d": 0,
+      "limiar": 15
+    },
+    "confianca_ultima": "media"
+  }
 }

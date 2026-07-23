@@ -1,63 +1,34 @@
-// Deduplicação por URL.
-// Compara os sinais encontrados hoje com dados/vistos.json e devolve só os NOVOS.
-// Uso como módulo: import { deduplicar, atualizarVistos } from "./dedup.mjs".
-// Uso como CLI (diagnóstico): node scripts/dedup.mjs
+// Deduplicação por id (sha1 da URL normalizada) contra dados/vistos.json.
+// Roda ANTES de gastar tokens classificando quando possível, e de novo ao gravar.
 
-import { CAMINHOS, ESQUEMA, lerJson, escreverJson, agoraISO } from "./comum.mjs";
-
-// Normaliza URL para comparação (remove barra final, fragmento, utm_*, minúsculas no host).
-export function normalizarUrl(url) {
-  try {
-    const u = new URL(url);
-    u.hash = "";
-    u.host = u.host.toLowerCase();
-    for (const k of [...u.searchParams.keys()]) {
-      if (/^(utm_|fbclid|gclid|ref)/i.test(k)) u.searchParams.delete(k);
-    }
-    let s = u.toString();
-    if (s.endsWith("/")) s = s.slice(0, -1);
-    return s;
-  } catch {
-    return (url || "").trim();
-  }
-}
+import { CAMINHOS, ESQUEMA, lerJson, escreverJson, agoraISO, idDeUrl } from "./comum.mjs";
 
 export function carregarVistos() {
-  return lerJson(CAMINHOS.vistos, { esquema: ESQUEMA, atualizado_em: null, urls: [] });
+  return lerJson(CAMINHOS.vistos, { esquema: ESQUEMA, atualizado_em: null, ids: [] });
 }
 
-// Retorna { novos, jaVistos } a partir de uma lista de sinais e do conjunto visto.
+// Recebe sinais (cada um já com .id) e devolve { novos, repetidos }.
 export function deduplicar(sinais, vistos = carregarVistos()) {
-  const conjunto = new Set((vistos.urls || []).map(normalizarUrl));
-  const novos = [];
-  const jaVistos = [];
-  const vistosNestaRodada = new Set();
+  const conjunto = new Set(vistos.ids || []);
+  const nestaRodada = new Set();
+  const novos = [], repetidos = [];
   for (const s of sinais) {
-    const chave = normalizarUrl(s.url);
-    if (conjunto.has(chave) || vistosNestaRodada.has(chave)) {
-      jaVistos.push(s);
-    } else {
-      vistosNestaRodada.add(chave);
-      novos.push(s);
-    }
+    const id = s.id || idDeUrl(s.url);
+    if (conjunto.has(id) || nestaRodada.has(id)) repetidos.push(s);
+    else { nestaRodada.add(id); novos.push(s); }
   }
-  return { novos, jaVistos };
+  return { novos, repetidos };
 }
 
-// Grava as novas URLs em vistos.json (mantém histórico completo de URLs processadas).
 export function atualizarVistos(sinaisNovos, vistos = carregarVistos()) {
-  const conjunto = new Set((vistos.urls || []).map(normalizarUrl));
-  for (const s of sinaisNovos) conjunto.add(normalizarUrl(s.url));
-  const atualizado = {
-    esquema: ESQUEMA,
-    atualizado_em: agoraISO(),
-    urls: [...conjunto].sort(),
-  };
-  escreverJson(CAMINHOS.vistos, atualizado);
-  return atualizado;
+  const conjunto = new Set(vistos.ids || []);
+  for (const s of sinaisNovos) conjunto.add(s.id || idDeUrl(s.url));
+  const atual = { esquema: ESQUEMA, atualizado_em: agoraISO(), ids: [...conjunto].sort() };
+  escreverJson(CAMINHOS.vistos, atual);
+  return atual;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const v = carregarVistos();
-  console.log(`vistos.json: ${(v.urls || []).length} URLs já processadas.`);
+  console.log(`vistos.json: ${(v.ids || []).length} ids já processados.`);
 }

@@ -1,42 +1,39 @@
-// Utilidades compartilhadas por coletar.mjs, dedup.mjs e agregar.mjs.
-// Sem dependências além do Node (fs/path). Mantém leitura/escrita de JSON,
-// validação de esquema, cálculo de custo e helpers de data.
+// Utilidades compartilhadas (v2). Sem dependências além do Node.
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 export const RAIZ = resolve(AQUI, "..");
 
 export const CAMINHOS = {
   taxonomia: join(RAIZ, "config", "taxonomia.json"),
+  eventos: join(RAIZ, "config", "eventos.json"),
   dados: join(RAIZ, "dados"),
   snapshots: join(RAIZ, "dados", "snapshots"),
+  rejeitados: join(RAIZ, "dados", "rejeitados"),
   serie: join(RAIZ, "dados", "serie-historica.json"),
+  sinaisRecentes: join(RAIZ, "dados", "sinais-recentes.json"),
   vistos: join(RAIZ, "dados", "vistos.json"),
+  catalogo: join(RAIZ, "dados", "catalogo.json"),
   ultimo: join(RAIZ, "dados", "ultimo.json"),
-  eventos: join(RAIZ, "dados", "eventos.json"),
 };
 
-// Versão do formato dos arquivos de dados. Incrementar só em mudança incompatível.
-export const ESQUEMA = 1;
+export const ESQUEMA = 2;
+export const DIAS_SINAIS_RECENTES = 90; // janela do arquivo signal-level do site
 
-// ---------- Preços (confira em https://claude.com/pricing antes de confiar) ----------
-// Valores por 1 milhão de tokens (USD). Sonnet 5 tem preço promocional até 2026-08-31.
+// ---------- Preços (confira em https://claude.com/pricing) ----------
 export const PRECOS = {
-  "claude-sonnet-5": { entrada: 2.0, saida: 10.0 },
   "claude-opus-4-8": { entrada: 5.0, saida: 25.0 },
+  "claude-sonnet-5": { entrada: 2.0, saida: 10.0 },
   "claude-haiku-4-5": { entrada: 1.0, saida: 5.0 },
 };
-export const PRECO_BUSCA_WEB = 0.01; // USD por busca (US$10 / 1.000)
-
-export function precoModelo(modelo) {
-  return PRECOS[modelo] || PRECOS["claude-sonnet-5"];
-}
+export const PRECO_BUSCA_WEB = 0.01;
 
 export function calcularCusto(modelo, uso) {
-  const p = precoModelo(modelo);
+  const p = PRECOS[modelo] || PRECOS["claude-opus-4-8"];
   const entrada = (uso.tokens_entrada / 1_000_000) * p.entrada;
   const saida = (uso.tokens_saida / 1_000_000) * p.saida;
   const buscas = (uso.buscas || 0) * PRECO_BUSCA_WEB;
@@ -46,76 +43,60 @@ export function calcularCusto(modelo, uso) {
 // ---------- JSON ----------
 export function lerJson(caminho, padrao = null) {
   if (!existsSync(caminho)) return padrao;
-  try {
-    return JSON.parse(readFileSync(caminho, "utf8"));
-  } catch (e) {
-    throw new Error(`JSON inválido em ${caminho}: ${e.message}`);
-  }
+  try { return JSON.parse(readFileSync(caminho, "utf8")); }
+  catch (e) { throw new Error(`JSON inválido em ${caminho}: ${e.message}`); }
 }
-
 export function escreverJson(caminho, obj) {
   mkdirSync(dirname(caminho), { recursive: true });
   writeFileSync(caminho, JSON.stringify(obj, null, 2) + "\n");
 }
-
 export function carregarTaxonomia() {
-  const tax = lerJson(CAMINHOS.taxonomia);
-  if (!tax || !Array.isArray(tax.temas)) {
-    throw new Error("config/taxonomia.json ausente ou malformado");
-  }
-  return tax;
+  const t = lerJson(CAMINHOS.taxonomia);
+  if (!t || !Array.isArray(t.temas)) throw new Error("config/taxonomia.json ausente ou malformado");
+  return t;
 }
 
-// ---------- Data ----------
-export function hojeISO(d = new Date()) {
-  return d.toISOString().slice(0, 10);
-}
-export function agoraISO() {
-  return new Date().toISOString();
-}
+// ---------- Datas / hash ----------
+export function hojeISO(d = new Date()) { return d.toISOString().slice(0, 10); }
+export function agoraISO() { return new Date().toISOString(); }
+export function somarDias(iso, n) { const d = new Date(iso + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+export function diffDias(a, b) { return Math.round((new Date(a + "T00:00:00Z") - new Date(b + "T00:00:00Z")) / 86400000); }
 
-// ---------- Validação de esquema (leve, sem libs) ----------
-export function validarSinal(sinal, idsTemas) {
-  const erros = [];
-  const ehTexto = (v) => typeof v === "string" && v.trim().length > 0;
-  if (!ehTexto(sinal.url) || !/^https?:\/\//i.test(sinal.url)) erros.push("url inválida");
-  if (!ehTexto(sinal.titulo)) erros.push("titulo vazio");
-  if (!ehTexto(sinal.trecho)) erros.push("trecho vazio");
-  if (!idsTemas.includes(sinal.tema)) erros.push(`tema fora da taxonomia: ${sinal.tema}`);
-  if (!["positivo", "neutro", "negativo"].includes(sinal.sentimento))
-    erros.push(`sentimento inválido: ${sinal.sentimento}`);
-  return erros;
+// URL normalizada (dedup) e id estável.
+export function normalizarUrl(url) {
+  try {
+    const u = new URL(url); u.hash = ""; u.host = u.host.toLowerCase();
+    for (const k of [...u.searchParams.keys()]) if (/^(utm_|fbclid|gclid|ref)/i.test(k)) u.searchParams.delete(k);
+    let s = u.toString(); if (s.endsWith("/")) s = s.slice(0, -1); return s;
+  } catch { return (url || "").trim(); }
 }
+export function idDeUrl(url) { return createHash("sha1").update(normalizarUrl(url)).digest("hex"); }
 
-export function validarSnapshot(snap, idsTemas) {
-  const erros = [];
-  if (snap.esquema !== ESQUEMA) erros.push(`esquema esperado ${ESQUEMA}`);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(snap.data || "")) erros.push("data inválida");
-  if (!["ok", "sem-coleta"].includes(snap.status)) erros.push("status inválido");
-  if (!Array.isArray(snap.sinais)) erros.push("sinais deve ser array");
-  else for (const s of snap.sinais) {
-    const e = validarSinal(s, idsTemas);
-    if (e.length) erros.push(`sinal (${s.url || "?"}): ${e.join("; ")}`);
-  }
-  return erros;
-}
-
-// ---------- Agregações ----------
-export function contarPorTema(sinais, idsTemas) {
-  const c = Object.fromEntries(idsTemas.map((id) => [id, 0]));
-  for (const s of sinais) if (c[s.tema] !== undefined) c[s.tema]++;
-  return c;
-}
-
-export function contarSentimento(sinais) {
-  const c = { positivo: 0, neutro: 0, negativo: 0 };
-  for (const s of sinais) if (c[s.sentimento] !== undefined) c[s.sentimento]++;
-  return c;
-}
-
+// ---------- Snapshots ----------
 export function listarSnapshots() {
   if (!existsSync(CAMINHOS.snapshots)) return [];
-  return readdirSync(CAMINHOS.snapshots)
-    .filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
-    .sort();
+  return readdirSync(CAMINHOS.snapshots).filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort();
+}
+
+// ---------- Média móvel ----------
+// serie: array de {data, valor} ordenado por data crescente. Retorna a MM de N dias
+// terminando no último dia presente (conta dias-calendário, não índices).
+export function mediaMovel(pontos, dias, ate) {
+  if (!pontos.length) return 0;
+  const fim = ate || pontos[pontos.length - 1].data;
+  const ini = somarDias(fim, -(dias - 1));
+  const janela = pontos.filter((p) => p.data >= ini && p.data <= fim);
+  if (!janela.length) return 0;
+  const soma = janela.reduce((a, p) => a + p.valor, 0);
+  return soma / dias; // média sobre a janela de N dias (dias sem dado contam como 0)
+}
+
+// Desvio em múltiplo: valor recente ÷ MM90 (guardado contra divisão por ~0).
+export function multiplo(recente, base) {
+  if (base <= 0.0001) return recente > 0 ? Infinity : 1;
+  return recente / base;
+}
+export function fmtMultiplo(m) {
+  if (!isFinite(m)) return "novo";
+  return `${m.toFixed(1)}x`;
 }

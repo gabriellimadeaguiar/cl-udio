@@ -1,20 +1,22 @@
 {
   "versao": 1,
   "atualizado_em": "2026-07-23",
-  "descricao": "Lista FECHADA de temas. Ao evoluir: apenas ADICIONE temas novos e incremente 'versao'. NUNCA renomeie nem remova ids existentes — isso quebra o histórico comparável.",
+  "regras": {
+    "limiar_outros_pct": 15,
+    "janela_outros_dias": 30,
+    "nota": "Lista FECHADA. Só ADICIONE temas (id novo) e incremente 'versao'. NUNCA renomeie nem remova ids — isso quebra o histórico comparável. Se 'outros' passar de limiar_outros_pct% na janela, o painel avisa que a taxonomia precisa de revisão."
+  },
   "temas": [
     { "id": "latencia_ping", "rotulo": "Latência / Ping", "descricao": "ping, jitter, perda de pacote, instabilidade, lag" },
-    { "id": "cobertura_jogos", "rotulo": "Cobertura de jogos", "descricao": "jogo não suportado, pedido de novo título, região" },
+    { "id": "cobertura_jogos", "rotulo": "Cobertura de jogos", "descricao": "jogo não suportado, pedido de novo título, região de servidor" },
     { "id": "preco_assinatura", "rotulo": "Preço / Assinatura", "descricao": "preço, planos, renovação, reembolso, cobrança" },
     { "id": "instalacao_setup", "rotulo": "Instalação / Setup", "descricao": "instalar, configurar, driver, conflito com antivírus" },
     { "id": "suporte_atendimento", "rotulo": "Suporte / Atendimento", "descricao": "tempo de resposta, qualidade do atendimento" },
     { "id": "confiabilidade_app", "rotulo": "Confiabilidade do app", "descricao": "crash, travamento, bug de interface" },
-    { "id": "confusao_produto", "rotulo": "Confusão sobre o produto", "descricao": "é VPN?, é seguro?, é permitido pelo jogo?" },
-    { "id": "comparacao_concorrente", "rotulo": "Comparação com concorrente", "descricao": "comparações com outras soluções" },
-    { "id": "outros", "rotulo": "Outros", "descricao": "tudo que não encaixa — sistema de alerta: se crescer muito, falta um tema novo" }
+    { "id": "confusao_produto", "rotulo": "Confusão sobre o produto", "descricao": "é VPN?, é seguro?, é permitido pelo jogo? (ExitLag NÃO é VPN)" },
+    { "id": "comparacao_concorrente", "rotulo": "Comparação com concorrente", "descricao": "comparações com outras soluções de otimização de rota" },
+    { "id": "outros", "rotulo": "Outros", "descricao": "tudo que não encaixa — alarme: se crescer, falta um tema novo" }
   ],
-  "sentimentos": ["positivo", "neutro", "negativo"],
-  "idiomas": ["pt", "en", "es", "outro"],
   "termos_busca": [
     "ExitLag",
     "ExitLag review",
@@ -22,6 +24,7 @@
     "ExitLag lag",
     "ExitLag vale a pena",
     "ExitLag reembolso",
+    "ExitLag refund",
     "ExitLag opinion",
     "ExitLag vs",
     "ExitLag reddit"
