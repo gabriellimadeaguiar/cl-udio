@@ -1,63 +1,146 @@
-# Portfólio — Product Designer
+# Radar de Feedback — ExitLag
 
-Portfólio estático (HTML + CSS, sem build) com direção de arte flat e minimalista,
-construído para **não** parecer conteúdo gerado por IA. Todo o conteúdo atual é
-**placeholder** — feito para ser substituído.
+Página web hospedada no GitHub que roda uma **busca automática diária** por menções
+públicas à ExitLag e acumula histórico comparável (meta: 1+ ano). O truque central:
+**o próprio repositório Git é o banco de dados** — cada dia vira um JSON versionado.
+Sem servidor, sem banco, sem custo de hospedagem.
+
+```
+GitHub Actions (cron 6h) → scripts/coletar.mjs → API Anthropic (busca web)
+   → dedup por URL → classifica só o novo → grava dados/snapshots/AAAA-MM-DD.json
+   → atualiza dados/serie-historica.json → commit no repo → GitHub Pages republica
+```
+
+---
 
 ## Estrutura
 
 ```
-index.html        Página inicial: hero + índice de trabalhos + sobre + contato
-case-study.html   Template de case study (contexto → papel → processo → solução → resultado)
-styles/main.css   Tokens de marca e todos os estilos
+.github/workflows/
+  coleta-diaria.yml     # cron 6h + botão "Run workflow" (manual)
+  deploy-site.yml       # publica no Pages a cada commit de dado
+config/
+  taxonomia.json        # a lista FECHADA de temas (o coração do histórico)
+scripts/
+  coletar.mjs           # chama a API com busca web, classifica, valida, grava
+  dedup.mjs             # compara com vistos.json (dedup por URL)
+  agregar.mjs           # atualiza a série histórica leve
+  comum.mjs             # utilidades compartilhadas (preços, validação, datas)
+  montar-site.mjs       # monta _site/ para o Pages e para preview local
+  semear-exemplo.mjs    # gera dados de EXEMPLO (rode uma vez; some após 1ª coleta real)
+dados/
+  snapshots/AAAA-MM-DD.json   # um arquivo por dia (sinais completos)
+  serie-historica.json        # agregado leve (números por dia) — o site desenha 1 ano disso
+  vistos.json                 # URLs já processadas
+  ultimo.json                 # atalho para o painel do dia
+  eventos.json                # marcadores de release/incidente (edite à mão)
+site/
+  index.html · app.js · estilo.css   # painel estático (fundo escuro, verde de sinal)
 ```
 
-Para ver localmente, abra `index.html` no navegador (ou sirva a pasta com
-`python3 -m http.server`).
+**Por que `serie-historica.json` separado:** o site não pode baixar 365 snapshots para
+desenhar um gráfico. Esse arquivo guarda só contagem por tema + sentimento + custo por dia;
+fica com poucos KB mesmo depois de um ano. Os snapshots completos só são buscados ao clicar
+num dia específico.
 
-## Direção de arte (não alterar sem intenção)
+---
 
-**Paleta — exatamente 3 cores.** Nunca introduzir uma 4ª cor, gradiente ou tom
-semitransparente novo. Estados derivam por opacidade.
+## Ativação (primeira vez)
 
-| Papel | Token | Hex |
-|---|---|---|
-| Base (neutro quente) | `--color-base` | `#F6F4EF` |
-| Tinta (quase-preto) | `--color-ink` | `#15201B` |
-| Destaque (verde fosco) | `--color-accent` | `#1F6F43` |
+1. **Chave de API** — crie em https://console.anthropic.com e **defina um limite de gasto
+   mensal** (um bug de loop pode multiplicar o custo).
+2. **GitHub Secret** — em `Settings → Secrets and variables → Actions`, crie o secret
+   **`ANTHROPIC_API_KEY`**. (Opcional: uma *variable* `MODELO` para trocar o modelo.)
+3. **GitHub Pages** — `Settings → Pages → Source = GitHub Actions`.
+4. **Agendamento** — o GitHub só dispara o `cron` a partir do **branch padrão** do repo.
+   Enquanto isso, use **Actions → Coleta diária → Run workflow** (manual). Para automatizar,
+   faça deste branch o padrão (ou faça merge para o padrão).
+5. **Primeira coleta manual** — rode o workflow e **leia o resultado inteiro à mão**:
+   confirme que as fontes existem e que as citações batem com os links. Essa é a única
+   verificação real contra fonte inventada. Faça isso antes de confiar na automação.
 
-O verde marca **um único** ponto de atenção por tela — nunca fundo de seção,
-nunca gradiente, nunca glow.
+### Rodar localmente
 
-**Tipografia deliberada:** Bricolage Grotesque (display) + IBM Plex Sans (corpo).
-Escolha consciente — evita o default de IA (Inter/Geist). Hierarquia por escala e
-peso, não por cor.
+```bash
+npm install
+export ANTHROPIC_API_KEY=...      # sua chave
+node scripts/coletar.mjs          # faz uma coleta real (custa ~US$0,25)
 
-**Flat de verdade:** sem gradiente, sem glassmorphism/blur, sem sombra colorida.
-Elevação só com cor chapada e bordas de 1px. Esquina reta (`--radius: 0`).
+# preview do site sem coletar (usa os dados atuais do repo):
+node scripts/montar-site.mjs
+python3 -m http.server -d _site 8000   # abra http://localhost:8000
+```
 
-**Layout de assinatura:** índice editorial vertical e assimétrico de case studies.
-Sem grid de 3 cards com ícone, sem hero centralizado com badge, sem faixa de stats
-solta, sem rótulos em CAIXA ALTA por toda parte.
+Sem chave de API, você ainda vê o site com os **dados de exemplo**
+(`node scripts/semear-exemplo.mjs` recria os exemplos, se precisar).
 
-## Como substituir os placeholders
+---
 
-1. **Identidade:** troque `Nome Sobrenome`, o e-mail e o LinkedIn em `index.html`.
-2. **Hero:** reescreva o título e a `.lead` com sua proposta de valor real.
-3. **Trabalhos:** cada `.work__item` em `index.html` é um projeto — atualize título,
-   descrição, tags e ano; aponte o `href` para o case correspondente.
-4. **Case studies:** duplique `case-study.html` por projeto. Substitua os blocos
-   `.frame` por **telas reais** do produto (nunca stock/ilustração genérica).
-5. **Números de impacto:** só mantenha os que forem reais, sempre com contexto.
+## As três decisões que sustentam a arquitetura
 
-## Checklist antes de publicar
+- **A — Privacidade do site.** Repo privado **não** deixa o Pages privado. Opções: (A1)
+  repo privado + Pages público por link; (A3) hospedagem com senha (Cloudflare/Vercel).
+  O conteúdo coletado é feedback público; o confidencial é a *leitura interna* disso —
+  mantenha conclusões de produto/roadmap num doc separado. **Nunca** exponha a chave de
+  API, nomes de usuários coletados ou dados de receita.
+  → _Escreva aqui a opção escolhida:_ **(A definir)**
 
-- [ ] Nenhuma cor além das 3 (incluindo gradientes)
-- [ ] Sem glassmorphism, blur ou sombra colorida
-- [ ] Fontes carregando (Bricolage Grotesque + IBM Plex Sans)
-- [ ] Sem grid de 3 cards idênticos com ícone
-- [ ] Sem card com borda colorida lateral
-- [ ] Hero não é centralizado com badge
-- [ ] Tema claro por padrão
-- [ ] Todas as imagens são trabalho real, não stock
-- [ ] Contraste de texto ≥ WCAG AA (4.5:1)
+- **B — Taxonomia fixa** (`config/taxonomia.json`). Se o modelo inventar nomes de tema a
+  cada dia, o gráfico de 1 ano vira lixo. A lista é **fechada**. Para evoluir:
+  **só ADICIONE** temas novos e incremente `versao` — **nunca** renomeie nem remova ids.
+  A categoria `outros` é o alarme: se inchar, falta um tema.
+
+- **C — Deduplicação** (`dados/vistos.json`). A busca diária retorna em grande parte os
+  mesmos threads. Sem dedup, uma discussão seria contada 365 vezes. O snapshot registra
+  **sinais novos**, não o acumulado.
+
+- **Ritual de uso** — _defina quem abre o painel e quando_ (ex.: "toda segunda antes do
+  refinamento"). Sem isso, a ferramenta vira painel bonito que ninguém abre.
+  → _Escreva aqui:_ **(A definir)**
+
+---
+
+## Como adicionar um tema (sem quebrar o histórico)
+
+1. Em `config/taxonomia.json`, **acrescente** um objeto em `temas` (id novo, nunca reusado).
+2. Incremente `versao`.
+3. Commit. A partir daí os dias novos podem usar o tema; os dias antigos continuam válidos.
+   **Não** renomeie nem remova ids existentes.
+
+---
+
+## Modelo e custo
+
+O script usa a variável de ambiente `MODELO` (padrão **`claude-sonnet-5`**, escolhido pela
+relação custo/qualidade para uma execução diária). O padrão do Claude Code é o Opus 4.8;
+troque definindo a *variable* `MODELO` no GitHub ou a env local.
+
+Estimativa (confira os valores atuais em https://claude.com/pricing antes de aprovar orçamento):
+
+| Período | Estimativa |
+|---|---|
+| Dia | ~US$0,25 |
+| Mês | ~US$7,50 |
+| Ano | ~US$90 |
+
+Cada snapshot registra `custo` (buscas + tokens + USD); o painel mostra o **custo acumulado
+do mês**.
+
+---
+
+## Confiabilidade (já embutido)
+
+- **Falha da API não corrompe o histórico** — o dia é gravado como `status: "sem-coleta"`
+  (não como "zero sinais"), preservando a continuidade da série.
+- **Validação de esquema antes de gravar** — snapshot malformado é rejeitado.
+- **Notificação de falha** — o workflow abre/atualiza uma issue rotulada `coleta-falhou`.
+- **Custo por execução** — registrado no snapshot e somado no painel.
+
+---
+
+## Limites honestos
+
+- Discord e grupos privados ficam de fora (busca web só alcança o público indexado).
+- Não é amostra estatística — é um radar direcional para levantar hipótese.
+- Enviesa para os extremos (quem está muito bravo ou muito satisfeito).
+- Combine com dado quantitativo próprio (churn, tickets, telemetria) antes de priorizar.

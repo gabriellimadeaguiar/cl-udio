@@ -1,0 +1,122 @@
+{
+  "esquema": 1,
+  "atualizado_em": "2026-07-23T12:41:21.530Z",
+  "taxonomia_versao": 1,
+  "dias": [
+    {
+      "data": "2026-07-18",
+      "status": "ok",
+      "sinais_novos": 4,
+      "por_tema": {
+        "latencia_ping": 1,
+        "cobertura_jogos": 0,
+        "preco_assinatura": 1,
+        "instalacao_setup": 0,
+        "suporte_atendimento": 0,
+        "confiabilidade_app": 0,
+        "confusao_produto": 1,
+        "comparacao_concorrente": 1,
+        "outros": 0
+      },
+      "sentimento": {
+        "positivo": 1,
+        "neutro": 2,
+        "negativo": 1
+      },
+      "custo_usd": 0.134,
+      "exemplo": true
+    },
+    {
+      "data": "2026-07-19",
+      "status": "ok",
+      "sinais_novos": 2,
+      "por_tema": {
+        "latencia_ping": 1,
+        "cobertura_jogos": 0,
+        "preco_assinatura": 1,
+        "instalacao_setup": 0,
+        "suporte_atendimento": 0,
+        "confiabilidade_app": 0,
+        "confusao_produto": 0,
+        "comparacao_concorrente": 0,
+        "outros": 0
+      },
+      "sentimento": {
+        "positivo": 0,
+        "neutro": 1,
+        "negativo": 1
+      },
+      "custo_usd": 0.134,
+      "exemplo": true
+    },
+    {
+      "data": "2026-07-20",
+      "status": "ok",
+      "sinais_novos": 5,
+      "por_tema": {
+        "latencia_ping": 1,
+        "cobertura_jogos": 0,
+        "preco_assinatura": 1,
+        "instalacao_setup": 1,
+        "suporte_atendimento": 0,
+        "confiabilidade_app": 0,
+        "confusao_produto": 1,
+        "comparacao_concorrente": 1,
+        "outros": 0
+      },
+      "sentimento": {
+        "positivo": 1,
+        "neutro": 2,
+        "negativo": 2
+      },
+      "custo_usd": 0.134,
+      "exemplo": true
+    },
+    {
+      "data": "2026-07-21",
+      "status": "ok",
+      "sinais_novos": 3,
+      "por_tema": {
+        "latencia_ping": 1,
+        "cobertura_jogos": 0,
+        "preco_assinatura": 1,
+        "instalacao_setup": 0,
+        "suporte_atendimento": 0,
+        "confiabilidade_app": 0,
+        "confusao_produto": 0,
+        "comparacao_concorrente": 1,
+        "outros": 0
+      },
+      "sentimento": {
+        "positivo": 1,
+        "neutro": 1,
+        "negativo": 1
+      },
+      "custo_usd": 0.134,
+      "exemplo": true
+    },
+    {
+      "data": "2026-07-22",
+      "status": "ok",
+      "sinais_novos": 4,
+      "por_tema": {
+        "latencia_ping": 1,
+        "cobertura_jogos": 0,
+        "preco_assinatura": 1,
+        "instalacao_setup": 0,
+        "suporte_atendimento": 0,
+        "confiabilidade_app": 0,
+        "confusao_produto": 1,
+        "comparacao_concorrente": 1,
+        "outros": 0
+      },
+      "sentimento": {
+        "positivo": 1,
+        "neutro": 2,
+        "negativo": 1
+      },
+      "custo_usd": 0.134,
+      "exemplo": true
+    }
+  ]
+}

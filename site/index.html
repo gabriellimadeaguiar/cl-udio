@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Radar de Feedback — ExitLag</title>
+  <link rel="stylesheet" href="estilo.css" />
+</head>
+<body>
+  <header class="topo">
+    <div class="wrap topo__linha">
+      <div>
+        <div class="marca">RADAR DE FEEDBACK · <span class="marca__prod">ExitLag</span></div>
+        <p class="sub">Menções públicas coletadas automaticamente, todo dia.</p>
+      </div>
+      <div id="statusColeta" class="status" aria-live="polite"></div>
+    </div>
+  </header>
+
+  <div id="bannerExemplo" class="banner banner--exemplo" hidden>
+    Exibindo <strong>dados de exemplo</strong>. A primeira coleta real substitui este conteúdo.
+  </div>
+
+  <main class="wrap">
+    <!-- PAINEL DO DIA -->
+    <section class="secao">
+      <div class="secao__cabec">
+        <h2>Painel do dia</h2>
+        <span id="dataDia" class="pill"></span>
+      </div>
+      <div id="resumoDia" class="grid-resumo"></div>
+      <h3 class="mini">Sinais novos por tema</h3>
+      <div id="temasDia" class="grid-temas"></div>
+      <h3 class="mini">Citações <span class="dica">(cada uma com link clicável para a fonte)</span></h3>
+      <div id="citacoes" class="citacoes"></div>
+    </section>
+
+    <!-- HISTÓRICO -->
+    <section class="secao">
+      <div class="secao__cabec">
+        <h2>Histórico</h2>
+        <div class="periodos" id="periodos" role="tablist">
+          <button data-dias="7">7d</button>
+          <button data-dias="30" class="on">30d</button>
+          <button data-dias="90">90d</button>
+          <button data-dias="365">365d</button>
+        </div>
+      </div>
+
+      <h3 class="mini">Volume de sinais por tema <span class="dica">(clique num ponto para abrir o dia)</span></h3>
+      <div id="graficoTemas" class="grafico"></div>
+      <div id="legendaTemas" class="legenda"></div>
+
+      <h3 class="mini">Sentimento ao longo do tempo</h3>
+      <div id="graficoSentimento" class="grafico"></div>
+
+      <h3 class="mini">Comparação de períodos <span class="dica" id="rotuloComparacao"></span></h3>
+      <div id="comparador" class="comparador"></div>
+    </section>
+  </main>
+
+  <!-- DETALHE DO DIA (painel deslizante) -->
+  <div id="detalheDia" class="detalhe" hidden>
+    <div class="detalhe__fundo" data-fechar></div>
+    <aside class="detalhe__painel" role="dialog" aria-label="Detalhe do dia">
+      <button class="detalhe__x" data-fechar aria-label="Fechar">×</button>
+      <div id="detalheConteudo"></div>
+    </aside>
+  </div>
+
+  <footer class="rodape wrap">
+    <p>Fonte: busca web pública via API da Anthropic. Radar direcional — não é amostra estatística.
+       Combine com dado quantitativo próprio antes de priorizar roadmap.</p>
+    <p id="rodapeAtualizado" class="muted"></p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

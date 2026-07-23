@@ -1,0 +1,29 @@
+{
+  "versao": 1,
+  "atualizado_em": "2026-07-23",
+  "descricao": "Lista FECHADA de temas. Ao evoluir: apenas ADICIONE temas novos e incremente 'versao'. NUNCA renomeie nem remova ids existentes — isso quebra o histórico comparável.",
+  "temas": [
+    { "id": "latencia_ping", "rotulo": "Latência / Ping", "descricao": "ping, jitter, perda de pacote, instabilidade, lag" },
+    { "id": "cobertura_jogos", "rotulo": "Cobertura de jogos", "descricao": "jogo não suportado, pedido de novo título, região" },
+    { "id": "preco_assinatura", "rotulo": "Preço / Assinatura", "descricao": "preço, planos, renovação, reembolso, cobrança" },
+    { "id": "instalacao_setup", "rotulo": "Instalação / Setup", "descricao": "instalar, configurar, driver, conflito com antivírus" },
+    { "id": "suporte_atendimento", "rotulo": "Suporte / Atendimento", "descricao": "tempo de resposta, qualidade do atendimento" },
+    { "id": "confiabilidade_app", "rotulo": "Confiabilidade do app", "descricao": "crash, travamento, bug de interface" },
+    { "id": "confusao_produto", "rotulo": "Confusão sobre o produto", "descricao": "é VPN?, é seguro?, é permitido pelo jogo?" },
+    { "id": "comparacao_concorrente", "rotulo": "Comparação com concorrente", "descricao": "comparações com outras soluções" },
+    { "id": "outros", "rotulo": "Outros", "descricao": "tudo que não encaixa — sistema de alerta: se crescer muito, falta um tema novo" }
+  ],
+  "sentimentos": ["positivo", "neutro", "negativo"],
+  "idiomas": ["pt", "en", "es", "outro"],
+  "termos_busca": [
+    "ExitLag",
+    "ExitLag review",
+    "ExitLag ping",
+    "ExitLag lag",
+    "ExitLag vale a pena",
+    "ExitLag reembolso",
+    "ExitLag opinion",
+    "ExitLag vs",
+    "ExitLag reddit"
+  ]
+}

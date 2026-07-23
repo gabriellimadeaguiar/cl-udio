@@ -1,0 +1,89 @@
+{
+  "esquema": 1,
+  "data": "2026-07-18",
+  "status": "ok",
+  "exemplo": true,
+  "modelo": "claude-sonnet-5",
+  "taxonomia_versao": 1,
+  "termos_busca": [
+    "ExitLag",
+    "ExitLag review",
+    "ExitLag ping",
+    "ExitLag lag",
+    "ExitLag vale a pena",
+    "ExitLag reembolso",
+    "ExitLag opinion",
+    "ExitLag vs",
+    "ExitLag reddit"
+  ],
+  "sinais_novos": 4,
+  "sinais": [
+    {
+      "url": "https://exemplo.local/2026-07-18/0",
+      "titulo": "Menção de exemplo #1",
+      "fonte": "exemplo.local",
+      "idioma": "pt",
+      "tema": "latencia_ping",
+      "sentimento": "negativo",
+      "trecho": "(dado de exemplo) o ping caiu mas ainda tem uns picos de jitter",
+      "resumo": "Item de exemplo — substituído pela primeira coleta real.",
+      "data_publicacao": "2026-07-18"
+    },
+    {
+      "url": "https://exemplo.local/2026-07-18/1",
+      "titulo": "Menção de exemplo #2",
+      "fonte": "exemplo.local",
+      "idioma": "pt",
+      "tema": "preco_assinatura",
+      "sentimento": "neutro",
+      "trecho": "(dado de exemplo) alguém sabe se dá pra pedir reembolso?",
+      "resumo": "Item de exemplo — substituído pela primeira coleta real.",
+      "data_publicacao": "2026-07-18"
+    },
+    {
+      "url": "https://exemplo.local/2026-07-18/2",
+      "titulo": "Menção de exemplo #3",
+      "fonte": "exemplo.local",
+      "idioma": "en",
+      "tema": "comparacao_concorrente",
+      "sentimento": "positivo",
+      "trecho": "(sample) ExitLag felt smoother than the alternative I tried",
+      "resumo": "Item de exemplo — substituído pela primeira coleta real.",
+      "data_publicacao": "2026-07-18"
+    },
+    {
+      "url": "https://exemplo.local/2026-07-18/3",
+      "titulo": "Menção de exemplo #4",
+      "fonte": "exemplo.local",
+      "idioma": "es",
+      "tema": "confusao_produto",
+      "sentimento": "neutro",
+      "trecho": "(ejemplo) ¿ExitLag es una VPN o algo distinto?",
+      "resumo": "Item de exemplo — substituído pela primeira coleta real.",
+      "data_publicacao": "2026-07-18"
+    }
+  ],
+  "contagem_por_tema": {
+    "latencia_ping": 1,
+    "cobertura_jogos": 0,
+    "preco_assinatura": 1,
+    "instalacao_setup": 0,
+    "suporte_atendimento": 0,
+    "confiabilidade_app": 0,
+    "confusao_produto": 1,
+    "comparacao_concorrente": 1,
+    "outros": 0
+  },
+  "sentimento": {
+    "positivo": 1,
+    "neutro": 2,
+    "negativo": 1
+  },
+  "custo": {
+    "buscas": 8,
+    "tokens_entrada": 12000,
+    "tokens_saida": 3000,
+    "usd": 0.134
+  },
+  "gerado_em": "2026-07-23T12:34:04.521Z"
+}

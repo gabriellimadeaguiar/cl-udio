@@ -1,0 +1,11 @@
+{
+  "esquema": 1,
+  "descricao": "Marcadores de evento (releases, incidentes) sobrepostos no gráfico. Edite à mão.",
+  "eventos": [
+    {
+      "data": "2026-07-20",
+      "titulo": "Exemplo: release 1.2",
+      "tipo": "release"
+    }
+  ]
+}
