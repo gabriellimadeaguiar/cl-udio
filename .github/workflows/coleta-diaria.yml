@@ -64,7 +64,7 @@ jobs:
           script: |
             const dia = process.env.DIA || new Date().toISOString().slice(0,10);
             const titulo = `Coleta falhou (${dia})`;
-            const corpo = `A coleta diária falhou. O dia foi registrado como "sem-coleta" no histórico.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const corpo = `A coleta diária falhou. O dia foi registrado com status "falha" no histórico (buraco ≠ zero).\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const { data: issues } = await github.rest.issues.listForRepo({
               owner: context.repo.owner, repo: context.repo.repo,
               state: "open", labels: "coleta-falhou",

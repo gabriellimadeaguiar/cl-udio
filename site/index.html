@@ -11,69 +11,88 @@
   <header class="topo">
     <div class="wrap topo__linha">
       <div>
-        <div class="marca">RADAR DE FEEDBACK · <span class="marca__prod">ExitLag</span></div>
-        <p class="sub">Menções públicas coletadas automaticamente, todo dia.</p>
+        <div class="marca">RADAR · <span class="marca__prod">ExitLag</span></div>
+        <p class="sub">O que mudou no feedback público — e o que fazer a respeito.</p>
       </div>
-      <div id="statusColeta" class="status" aria-live="polite"></div>
+      <div class="topo__dir">
+        <span id="confianca" class="badge" title="Confiança da última coleta"></span>
+        <span id="status" class="status"></span>
+      </div>
     </div>
+    <div id="alertaTax" class="alerta" hidden></div>
   </header>
 
-  <div id="bannerExemplo" class="banner banner--exemplo" hidden>
-    Exibindo <strong>dados de exemplo</strong>. A primeira coleta real substitui este conteúdo.
-  </div>
-
-  <main class="wrap">
-    <!-- PAINEL DO DIA -->
-    <section class="secao">
-      <div class="secao__cabec">
-        <h2>Painel do dia</h2>
-        <span id="dataDia" class="pill"></span>
-      </div>
-      <div id="resumoDia" class="grid-resumo"></div>
-      <h3 class="mini">Sinais novos por tema</h3>
-      <div id="temasDia" class="grid-temas"></div>
-      <h3 class="mini">Citações <span class="dica">(cada uma com link clicável para a fonte)</span></h3>
-      <div id="citacoes" class="citacoes"></div>
+  <main class="wrap" id="conteudo">
+    <!-- 1. Abertura: O que mudou -->
+    <section class="secao secao--abertura">
+      <div class="secao__cabec"><h2>O que mudou</h2><span class="dica">últimos 7 dias · clique numa linha para ver a origem</span></div>
+      <ol id="mudou" class="mudou"></ol>
     </section>
 
-    <!-- HISTÓRICO -->
+    <div class="periodos" id="periodos" role="tablist" aria-label="Período das séries">
+      <button data-dias="30">30d</button>
+      <button data-dias="90" class="on">90d</button>
+      <button data-dias="365">365d</button>
+      <button data-dias="0">tudo</button>
+    </div>
+
+    <!-- 2. Small multiples -->
     <section class="secao">
-      <div class="secao__cabec">
-        <h2>Histórico</h2>
-        <div class="periodos" id="periodos" role="tablist">
-          <button data-dias="7">7d</button>
-          <button data-dias="30" class="on">30d</button>
-          <button data-dias="90">90d</button>
-          <button data-dias="365">365d</button>
-        </div>
-      </div>
+      <div class="secao__cabec"><h2>Volume por tema</h2><span class="dica">mesma escala · faixa = média de 90 dias · clique num ponto</span></div>
+      <div id="smallMultiples" class="sm-grid"></div>
+    </section>
 
-      <h3 class="mini">Volume de sinais por tema <span class="dica">(clique num ponto para abrir o dia)</span></h3>
-      <div id="graficoTemas" class="grafico"></div>
-      <div id="legendaTemas" class="legenda"></div>
+    <!-- 3. Timeline com releases -->
+    <section class="secao">
+      <div class="secao__cabec"><h2>Linha do tempo</h2><span class="dica">volume total · marcadores de release (config/eventos.json)</span></div>
+      <div id="timeline" class="grafico"></div>
+    </section>
 
-      <h3 class="mini">Sentimento ao longo do tempo</h3>
-      <div id="graficoSentimento" class="grafico"></div>
+    <!-- 4. Matriz frequência × severidade -->
+    <section class="secao">
+      <div class="secao__cabec"><h2>Frequência × severidade</h2><span class="dica">últimos 30 dias · bolha = tema · tamanho = volume</span></div>
+      <div id="matriz" class="grafico"></div>
+    </section>
 
-      <h3 class="mini">Comparação de períodos <span class="dica" id="rotuloComparacao"></span></h3>
-      <div id="comparador" class="comparador"></div>
+    <!-- 5. Tabela por jogo -->
+    <section class="secao">
+      <div class="secao__cabec"><h2>Por jogo</h2><span class="dica">últimos 30 dias · clique num cabeçalho para ordenar · clique numa linha para os sinais</span></div>
+      <div class="tabela-wrap"><table id="tabelaJogos" class="tabela"></table></div>
+    </section>
+
+    <div class="duas">
+      <!-- 6. Feed de primeira aparição -->
+      <section class="secao">
+        <div class="secao__cabec"><h2>Primeira aparição</h2><span class="dica">alarme · assinatura tema+jogo nunca vista</span></div>
+        <div id="feedPrimeira" class="lista"></div>
+      </section>
+
+      <!-- 8. Painel de churn -->
+      <section class="secao secao--churn">
+        <div class="secao__cabec"><h2>Churn declarado</h2><span class="dica">fala direto com receita</span></div>
+        <div id="painelChurn" class="lista"></div>
+      </section>
+    </div>
+
+    <!-- 7. Coorte de release -->
+    <section class="secao" id="secaoCoorte">
+      <div class="secao__cabec"><h2>Coorte de release</h2><span class="dica">14 dias após cada lançamento · foi pior que o anterior?</span></div>
+      <div id="coorte" class="grafico"></div>
     </section>
   </main>
 
-  <!-- DETALHE DO DIA (painel deslizante) -->
-  <div id="detalheDia" class="detalhe" hidden>
-    <div class="detalhe__fundo" data-fechar></div>
-    <aside class="detalhe__painel" role="dialog" aria-label="Detalhe do dia">
-      <button class="detalhe__x" data-fechar aria-label="Fechar">×</button>
-      <div id="detalheConteudo"></div>
+  <footer class="rodape wrap">
+    <p>Fonte: busca web pública (API da Anthropic). Radar direcional — não é amostra estatística. Alcança só o público indexado; Discord e grupos privados ficam de fora.</p>
+    <p class="muted"><span id="custoMes"></span> · <span id="atualizado"></span></p>
+  </footer>
+
+  <div id="drill" class="drill" hidden>
+    <div class="drill__fundo" data-fechar></div>
+    <aside class="drill__painel" role="dialog" aria-label="Sinais de origem">
+      <button class="drill__x" data-fechar aria-label="Fechar">×</button>
+      <div id="drillConteudo"></div>
     </aside>
   </div>
-
-  <footer class="rodape wrap">
-    <p>Fonte: busca web pública via API da Anthropic. Radar direcional — não é amostra estatística.
-       Combine com dado quantitativo próprio antes de priorizar roadmap.</p>
-    <p id="rodapeAtualizado" class="muted"></p>
-  </footer>
 
   <script src="app.js"></script>
 </body>

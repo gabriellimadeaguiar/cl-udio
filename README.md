@@ -1,146 +1,148 @@
 # Radar de Feedback — ExitLag
 
-Página web hospedada no GitHub que roda uma **busca automática diária** por menções
-públicas à ExitLag e acumula histórico comparável (meta: 1+ ano). O truque central:
-**o próprio repositório Git é o banco de dados** — cada dia vira um JSON versionado.
-Sem servidor, sem banco, sem custo de hospedagem.
+Site estático no GitHub Pages que roda uma **coleta diária** (GitHub Actions), busca
+menções **públicas** à ExitLag na web, classifica os achados e acumula histórico
+comparável de 1+ ano. O repositório Git **é o banco de dados**: cada dia vira um JSON
+versionado — sem servidor, sem banco.
+
+A pergunta que o painel responde não é "como está o feedback?", e sim
+**"o que mudou e o que eu faço a respeito?"**. Regra de ouro: nível absoluto sem linha
+de base comparativa não entra. Todo número é clicável até o post de origem (drill-down).
+
+> **Sobre a ExitLag:** software de otimização de **rota** para jogos (multipath routing).
+> **Não é VPN** — não criptografa, não mascara IP, não serve para navegação geral.
+
+---
+
+## Como funciona
 
 ```
 GitHub Actions (cron 6h) → scripts/coletar.mjs → API Anthropic (busca web)
-   → dedup por URL → classifica só o novo → grava dados/snapshots/AAAA-MM-DD.json
-   → atualiza dados/serie-historica.json → commit no repo → GitHub Pages republica
+  → extrai schema rico → valida (inválido → dados/rejeitados/) → dedup por id
+  → marca 1ª aparição (catálogo) → grava dados/snapshots/AAAA-MM-DD.json
+  → agrega série + baselines + deltas → commit → GitHub Pages republica
 ```
-
----
 
 ## Estrutura
 
 ```
-.github/workflows/
-  coleta-diaria.yml     # cron 6h + botão "Run workflow" (manual)
-  deploy-site.yml       # publica no Pages a cada commit de dado
 config/
-  taxonomia.json        # a lista FECHADA de temas (o coração do histórico)
+  taxonomia.json     # 9 temas FECHADOS + regra de alerta de 'outros' > 15%
+  eventos.json       # marcadores de release/incidente — VOCÊ edita à mão
 scripts/
-  coletar.mjs           # chama a API com busca web, classifica, valida, grava
-  dedup.mjs             # compara com vistos.json (dedup por URL)
-  agregar.mjs           # atualiza a série histórica leve
-  comum.mjs             # utilidades compartilhadas (preços, validação, datas)
-  montar-site.mjs       # monta _site/ para o Pages e para preview local
-  semear-exemplo.mjs    # gera dados de EXEMPLO (rode uma vez; some após 1ª coleta real)
+  schema.mjs         # schema do sinal + validador + normalização de enums
+  comum.mjs          # id=sha1(url), médias móveis 7/30/90, múltiplo, custo
+  coletar.mjs        # chama a API, extrai, valida, grava snapshot
+  dedup.mjs          # dedup por id;  catalogo.mjs: 1ª aparição (tema+jogo)
+  agregar.mjs        # série + baselines + deltas + "O que mudou" + sinais-recentes
+  montar-site.mjs    # monta _site/ (Pages e preview local)
 dados/
-  snapshots/AAAA-MM-DD.json   # um arquivo por dia (sinais completos)
-  serie-historica.json        # agregado leve (números por dia) — o site desenha 1 ano disso
-  vistos.json                 # URLs já processadas
-  ultimo.json                 # atalho para o painel do dia
-  eventos.json                # marcadores de release/incidente (edite à mão)
+  snapshots/AAAA-MM-DD.json  # sinais completos do dia (dado histórico — IMUTÁVEL)
+  rejeitados/AAAA-MM-DD.json # sinais barrados na validação + motivo
+  serie-historica.json       # agregados/dia + baselines + deltas + "O que mudou"
+  sinais-recentes.json       # sinais dos últimos 90d (feeds/tabelas/drill-down)
+  catalogo.json / vistos.json / ultimo.json
 site/
-  index.html · app.js · estilo.css   # painel estático (fundo escuro, verde de sinal)
+  index.html · app.js · estilo.css   # painel (SVG/JS puro, sem framework)
 ```
 
-**Por que `serie-historica.json` separado:** o site não pode baixar 365 snapshots para
-desenhar um gráfico. Esse arquivo guarda só contagem por tema + sentimento + custo por dia;
-fica com poucos KB mesmo depois de um ano. Os snapshots completos só são buscados ao clicar
-num dia específico.
+## O schema do sinal (o gargalo é a coleta)
+
+Campo não extraído na hora da classificação **não é recuperável depois**. Cada sinal sai
+da API já com: `url, fonte, titulo_thread, data_publicacao, tema, sentimento, severidade,
+jogos[], regiao, intencao_churn, tipo_churn, concorrente_citado, direcao_concorrente,
+e_pergunta, respondida, confusao_proposta, resumo, citacao`. Calculados depois:
+`id` (sha1 da URL) e `primeira_aparicao` (assinatura tema+jogo nunca vista).
+
+- **`citacao` e `resumo` são sempre PARÁFRASE (≤15 palavras), nunca cópia literal.**
+- Sinal que falha o schema vai para `dados/rejeitados/` com o motivo — **nunca** entra no
+  histórico silenciosamente.
+
+## As views
+
+1. **O que mudou** — 5 linhas determinísticas (regra sobre os deltas, não IA). Se nada
+   cruza os limiares, diz exatamente *"Nada relevante mudou nos últimos 7 dias."*
+2. **Small multiples** — 9 mini-gráficos (um por tema), mesma escala, faixa = média de 90d.
+3. **Linha do tempo** — volume total + marcadores de release (de `config/eventos.json`).
+4. **Frequência × severidade** — 4 quadrantes: agir agora · investigar · melhorar UX ·
+   ignorar conscientemente.
+5. **Por jogo** — tabela ordenável: menções, Δ vs base, sentimento, tema dominante, região.
+6. **Primeira aparição** — só o inédito, cronológico. É o alarme do sistema.
+7. **Coorte de release** — 14 dias após cada lançamento, para comparar releases.
+8. **Churn declarado** — intenção de abandono com motivo e link. Fala direto com receita.
+
+Todo ponto/barra/linha abre os sinais de origem, cada um com link para o post.
 
 ---
 
 ## Ativação (primeira vez)
 
-1. **Chave de API** — crie em https://console.anthropic.com e **defina um limite de gasto
-   mensal** (um bug de loop pode multiplicar o custo).
-2. **GitHub Secret** — em `Settings → Secrets and variables → Actions`, crie o secret
-   **`ANTHROPIC_API_KEY`**. (Opcional: uma *variable* `MODELO` para trocar o modelo.)
+1. **Chave de API** — console.anthropic.com → **Billing** (adicione crédito) → **defina um
+   limite de gasto mensal** (freio contra loop) → **API keys → Create key** (`sk-ant-...`).
+2. **GitHub Secret** — `Settings → Secrets and variables → Actions` → secret
+   **`ANTHROPIC_API_KEY`**. (Opcional: *variable* `MODELO`.)
 3. **GitHub Pages** — `Settings → Pages → Source = GitHub Actions`.
-4. **Agendamento** — o GitHub só dispara o `cron` a partir do **branch padrão** do repo.
-   Enquanto isso, use **Actions → Coleta diária → Run workflow** (manual). Para automatizar,
-   faça deste branch o padrão (ou faça merge para o padrão).
-5. **Primeira coleta manual** — rode o workflow e **leia o resultado inteiro à mão**:
-   confirme que as fontes existem e que as citações batem com os links. Essa é a única
-   verificação real contra fonte inventada. Faça isso antes de confiar na automação.
+4. **Agendamento** — o `cron` só dispara a partir do **branch padrão** do repo. Até lá, use
+   **Actions → Coleta diária → Run workflow**. Para automatizar, torne este branch o padrão
+   (ou faça merge para ele).
+5. **Passo obrigatório — 1ª coleta conferida à mão** (contra o modelo inventar fonte):
+   rode uma coleta e **leia o JSON cru**, confirmando que cada `url` abre e que
+   `citacao`/`resumo` batem com a fonte. Só automatize depois disso.
 
 ### Rodar localmente
 
 ```bash
 npm install
-export ANTHROPIC_API_KEY=...      # sua chave
-node scripts/coletar.mjs          # faz uma coleta real (custa ~US$0,25)
+export ANTHROPIC_API_KEY=sk-ant-...        # macOS/Linux (Windows: $env:ANTHROPIC_API_KEY=...)
+node scripts/coletar.mjs                    # uma coleta real (~US$0,50–0,70 no Opus 4.8)
+cat dados/snapshots/$(date -u +%F).json     # confira as fontes
 
-# preview do site sem coletar (usa os dados atuais do repo):
-node scripts/montar-site.mjs
-python3 -m http.server -d _site 8000   # abra http://localhost:8000
+# preview do site sem coletar:
+node scripts/montar-site.mjs && python3 -m http.server -d _site 8000
 ```
 
-Sem chave de API, você ainda vê o site com os **dados de exemplo**
-(`node scripts/semear-exemplo.mjs` recria os exemplos, se precisar).
+O histórico começa **vazio**; o painel se preenche a partir da 1ª coleta.
 
 ---
 
-## As três decisões que sustentam a arquitetura
+## Operação
 
-- **A — Privacidade do site.** Repo privado **não** deixa o Pages privado. Opções: (A1)
-  repo privado + Pages público por link; (A3) hospedagem com senha (Cloudflare/Vercel).
-  O conteúdo coletado é feedback público; o confidencial é a *leitura interna* disso —
-  mantenha conclusões de produto/roadmap num doc separado. **Nunca** exponha a chave de
-  API, nomes de usuários coletados ou dados de receita.
-  → _Escreva aqui a opção escolhida:_ **(A definir)**
+**Adicionar um tema (sem quebrar o histórico):** em `config/taxonomia.json`, **acrescente**
+um objeto em `temas` (id novo) e incremente `versao`. **Nunca** renomeie nem remova ids. Se o
+painel avisar que `outros` passou de 15% em 30 dias, é sinal de que falta um tema.
 
-- **B — Taxonomia fixa** (`config/taxonomia.json`). Se o modelo inventar nomes de tema a
-  cada dia, o gráfico de 1 ano vira lixo. A lista é **fechada**. Para evoluir:
-  **só ADICIONE** temas novos e incremente `versao` — **nunca** renomeie nem remova ids.
-  A categoria `outros` é o alarme: se inchar, falta um tema.
+**Anotar um release/incidente:** edite `config/eventos.json`, adicionando
+`{ "data": "AAAA-MM-DD", "titulo": "Release X", "tipo": "release" }`. Aparece na timeline e na
+coorte. Ver o pico três dias depois de um deploy é o insight que justifica o projeto.
 
-- **C — Deduplicação** (`dados/vistos.json`). A busca diária retorna em grande parte os
-  mesmos threads. Sem dedup, uma discussão seria contada 365 vezes. O snapshot registra
-  **sinais novos**, não o acumulado.
+**Modelo e custo:** `MODELO` (padrão **`claude-opus-4-8`**, pela qualidade de extração do
+schema rico; troque para `claude-sonnet-5` para reduzir custo). Confira preços em
+https://claude.com/pricing.
 
-- **Ritual de uso** — _defina quem abre o painel e quando_ (ex.: "toda segunda antes do
-  refinamento"). Sem isso, a ferramenta vira painel bonito que ninguém abre.
-  → _Escreva aqui:_ **(A definir)**
+| Período | Opus 4.8 | Sonnet 5 |
+|---|---|---|
+| Dia | ~US$0,50–0,70 | ~US$0,25 |
+| Mês | ~US$15–20 | ~US$7,50 |
 
----
+O custo de cada execução vai no snapshot; o rodapé mostra o acumulado do mês.
 
-## Como adicionar um tema (sem quebrar o histórico)
+## Confiabilidade (embutida)
 
-1. Em `config/taxonomia.json`, **acrescente** um objeto em `temas` (id novo, nunca reusado).
-2. Incremente `versao`.
-3. Commit. A partir daí os dias novos podem usar o tema; os dias antigos continuam válidos.
-   **Não** renomeie nem remova ids existentes.
+- **Falha da API não corrompe o histórico** — o dia é gravado com `status:"falha"` (buraco ≠
+  zero); o workflow abre/atualiza uma issue `coleta-falhou`.
+- **Validação de schema antes de gravar** — inválido vai para `dados/rejeitados/`.
+- **Confiança baixa quando o material é escasso** — aparece no painel, em vez de encher a
+  tela com conteúdo fabricado.
 
----
+## Guardrails
 
-## Modelo e custo
-
-O script usa a variável de ambiente `MODELO` (padrão **`claude-sonnet-5`**, escolhido pela
-relação custo/qualidade para uma execução diária). O padrão do Claude Code é o Opus 4.8;
-troque definindo a *variable* `MODELO` no GitHub ou a env local.
-
-Estimativa (confira os valores atuais em https://claude.com/pricing antes de aprovar orçamento):
-
-| Período | Estimativa |
-|---|---|
-| Dia | ~US$0,25 |
-| Mês | ~US$7,50 |
-| Ano | ~US$90 |
-
-Cada snapshot registra `custo` (buscas + tokens + USD); o painel mostra o **custo acumulado
-do mês**.
-
----
-
-## Confiabilidade (já embutido)
-
-- **Falha da API não corrompe o histórico** — o dia é gravado como `status: "sem-coleta"`
-  (não como "zero sinais"), preservando a continuidade da série.
-- **Validação de esquema antes de gravar** — snapshot malformado é rejeitado.
-- **Notificação de falha** — o workflow abre/atualiza uma issue rotulada `coleta-falhou`.
-- **Custo por execução** — registrado no snapshot e somado no painel.
-
----
+Nunca inventar fonte, URL, número ou citação. Citação sempre paráfrase ≤15 palavras, com link.
+Chave de API só via `secrets.ANTHROPIC_API_KEY` — nunca no código do site, nunca commitada. O
+site publicado contém apenas dados agregados e links públicos.
 
 ## Limites honestos
 
-- Discord e grupos privados ficam de fora (busca web só alcança o público indexado).
-- Não é amostra estatística — é um radar direcional para levantar hipótese.
-- Enviesa para os extremos (quem está muito bravo ou muito satisfeito).
-- Combine com dado quantitativo próprio (churn, tickets, telemetria) antes de priorizar.
+- Alcança só o **público indexado**. **Discord e grupos privados ficam de fora** — se a
+  comunidade mais ativa está lá, esta ferramenta cobre a parte visível, não a mais rica.
+- **Não é amostra estatística** — é radar direcional; enviesa para os extremos (quem está
+  muito bravo ou muito satisfeito). Combine com churn/tickets/telemetria antes de priorizar.
