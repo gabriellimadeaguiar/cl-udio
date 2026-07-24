@@ -9,6 +9,11 @@ on:
       - "dados/**"
       - "config/**"
       - ".github/workflows/deploy-site.yml"
+  # A coleta diária commita via GITHUB_TOKEN, e um push assim NÃO dispara o gatilho
+  # 'push' acima. Este 'workflow_run' garante que o site republique após cada coleta.
+  workflow_run:
+    workflows: ["Coleta diária"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
