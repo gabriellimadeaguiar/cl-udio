@@ -1,7 +1,23 @@
 {
   "esquema": 2,
-  "atualizado_em": "2026-07-24T12:45:47.455Z",
-  "desde": "2026-04-26",
+  "data": "2026-07-24",
+  "status": "ok",
+  "modelo": "claude-opus-4-8",
+  "taxonomia_versao": 1,
+  "termos_busca": [
+    "ExitLag",
+    "ExitLag review",
+    "ExitLag ping",
+    "ExitLag lag",
+    "ExitLag vale a pena",
+    "ExitLag reembolso",
+    "ExitLag refund",
+    "ExitLag opinion",
+    "ExitLag vs",
+    "ExitLag reddit"
+  ],
+  "confianca": "alta",
+  "sinais_novos": 9,
   "sinais": [
     {
       "url": "https://gamescatalogue.blog/exitlag-review/",
@@ -26,8 +42,7 @@
       "resumo": "Testes mostram redução mensurável de latência com ExitLag ativado, resultado considerado positivo mas nuançado.",
       "citacao": "Latência caiu na maioria dos cenários testados; otimização de rota funciona, com ressalvas.",
       "id": "bd87d61743ab97b6ab037ea50ffa068938d08a9d",
-      "primeira_aparicao": true,
-      "data": "2026-07-24"
+      "primeira_aparicao": true
     },
     {
       "url": "https://hypixel.net/threads/is-exitlag-actually-worth-it.5958283/",
@@ -51,8 +66,7 @@
       "resumo": "Usuários debatem se ExitLag é VPN e risco de ban; esclarecem que não é VPN.",
       "citacao": "Não mascara IP nem criptografa; é túnel de otimização, não VPN, dizem membros.",
       "id": "26a2ec2e63e9f7b2912f5bf1d27a68abe0d47b2d",
-      "primeira_aparicao": true,
-      "data": "2026-07-24"
+      "primeira_aparicao": true
     },
     {
       "url": "https://www.reclameaqui.com.br/exitlag/reembolso_AmNZG9rJpEifPXyF/",
@@ -76,8 +90,7 @@
       "resumo": "Cliente pediu reembolso do plano anual por queda de FPS no Valorant; foi resolvido.",
       "citacao": "Comprou anual, teve queda de FPS jogando Valorant e solicitou reembolso; resolvido.",
       "id": "2a91489b4a26a2b6684146db6a16e91836ac7009",
-      "primeira_aparicao": true,
-      "data": "2026-07-24"
+      "primeira_aparicao": true
     },
     {
       "url": "https://www.reclameaqui.com.br/exitlag/solicitacao-de-reembolso-integral-apos-cancelamento-do-exit-lag_mIgSyyNxRc34e-Il/",
@@ -99,8 +112,7 @@
       "resumo": "Assinante não viu melhora, cancelou e cobrou reembolso integral; empresa resolveu por e-mail.",
       "citacao": "Sem melhoria após assinar; cancelou e exigiu devolução total do valor pago.",
       "id": "a8fb549f353b5cd8dc158ce4bf01ed1595bc5191",
-      "primeira_aparicao": true,
-      "data": "2026-07-24"
+      "primeira_aparicao": true
     },
     {
       "url": "https://www.trustpilot.com/review/exitlag.com",
@@ -122,8 +134,7 @@
       "resumo": "Cliente pagou mensalidade, não recebeu acesso e reclama de falta de resposta do suporte.",
       "citacao": "Pagou assinatura, dinheiro sumiu, abriu ticket e ficou sem resposta do suporte.",
       "id": "1efa0abcc85a54b2d6255320c09b19386c7edaf4",
-      "primeira_aparicao": true,
-      "data": "2026-07-24"
+      "primeira_aparicao": true
     },
     {
       "url": "https://www.lagofast.com/en/blog/comparison-between-lagofast-and-exitlag/",
@@ -145,8 +156,7 @@
       "resumo": "Post de concorrente compara recursos e desempenho, concluindo que LagoFast seria melhor.",
       "citacao": "Comparativo de otimizadores conclui, de forma tendenciosa, que LagoFast supera o ExitLag.",
       "id": "15e30db436fc7e0fd762bc2e5ab2d6be68ed106f",
-      "primeira_aparicao": true,
-      "data": "2026-07-24"
+      "primeira_aparicao": true
     },
     {
       "url": "https://steamcommunity.com/app/306130/discussions/0/3814032755156043624",
@@ -170,8 +180,7 @@
       "resumo": "Jogador questiona risco de ban e ganho real de ping; diz que não usaria.",
       "citacao": "Reduz ping só 10-20% e teme possível ban futuro; preferiria não usar.",
       "id": "1ab2f6b93043063f21b58aae7325069b0509f52f",
-      "primeira_aparicao": true,
-      "data": "2026-07-24"
+      "primeira_aparicao": true
     },
     {
       "url": "https://iminformatica.pt/exitlag-vale-mesmo-a-pena/",
@@ -193,8 +202,7 @@
       "resumo": "Análise PT esclarece que muitos confundem ExitLag com VPN, mas funcionamento é diferente.",
       "citacao": "Muitos confundem com VPN tradicional, porém funciona de forma bastante diferente.",
       "id": "ee39d2494a129b5278b1d9aa89154b060bb4abbf",
-      "primeira_aparicao": true,
-      "data": "2026-07-24"
+      "primeira_aparicao": true
     },
     {
       "url": "https://news.seagm.com/does-exitlag-really-work-how-to-know-if-exitlag-right-for-you/",
@@ -221,8 +229,15 @@
       "resumo": "Jogadores do Sudeste Asiático relatam sessões mais estáveis; útil para servidores distantes.",
       "citacao": "Popular entre gamers asiáticos; sessões mais suaves ao conectar em servidores distantes.",
       "id": "1634127c48ccca605e98771517d90eaf3a474832",
-      "primeira_aparicao": true,
-      "data": "2026-07-24"
+      "primeira_aparicao": true
     }
-  ]
+  ],
+  "rejeitados": 0,
+  "custo": {
+    "buscas": 8,
+    "tokens_entrada": 79931,
+    "tokens_saida": 6355,
+    "usd": 0.6385
+  },
+  "gerado_em": "2026-07-24T12:45:47.453Z"
 }
