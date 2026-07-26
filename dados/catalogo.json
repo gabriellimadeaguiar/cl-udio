@@ -1,6 +1,6 @@
 {
   "esquema": 2,
-  "atualizado_em": "2026-07-25T10:30:02.630Z",
+  "atualizado_em": "2026-07-26T10:44:58.316Z",
   "assinaturas": {
     "latencia_ping__apex-legends": {
       "primeira": "2026-07-24",
@@ -44,8 +44,8 @@
     },
     "confusao_produto___geral": {
       "primeira": "2026-07-24",
-      "ocorrencias": 1,
-      "ultima": "2026-07-24"
+      "ocorrencias": 2,
+      "ultima": "2026-07-26"
     },
     "latencia_ping__valorant": {
       "primeira": "2026-07-24",
@@ -66,6 +66,11 @@
       "primeira": "2026-07-25",
       "ocorrencias": 1,
       "ultima": "2026-07-25"
+    },
+    "confiabilidade_app__project-zomboid": {
+      "primeira": "2026-07-26",
+      "ocorrencias": 1,
+      "ultima": "2026-07-26"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "esquema": 2,
-  "atualizado_em": "2026-07-25T10:30:02.641Z",
-  "desde": "2026-04-27",
+  "atualizado_em": "2026-07-26T10:44:58.326Z",
+  "desde": "2026-04-28",
   "sinais": [
     {
       "url": "https://gamescatalogue.blog/exitlag-review/",
@@ -315,6 +315,54 @@
       "id": "e20a32ea830125f8f72f324653cd816b8741e2d8",
       "primeira_aparicao": false,
       "data": "2026-07-25"
+    },
+    {
+      "url": "https://steamcommunity.com/app/108600/discussions/1/598512725180558826",
+      "fonte": "forum",
+      "titulo_thread": "EXITLAG does not work in multiplayer (Project Zomboid)",
+      "data_publicacao": "2024-12-10",
+      "tema": "confiabilidade_app",
+      "sentimento": "negativo",
+      "severidade": "media",
+      "jogos": [
+        "project-zomboid"
+      ],
+      "regiao": "ASIA",
+      "intencao_churn": false,
+      "tipo_churn": "nenhum",
+      "concorrente_citado": null,
+      "direcao_concorrente": null,
+      "e_pergunta": true,
+      "respondida": true,
+      "confusao_proposta": false,
+      "resumo": "App trava ao entrar em servidor privado; usuário critica o suporte.",
+      "citacao": "Fica preso obtendo info do servidor; reclama do atendimento.",
+      "id": "a7f179511eddfd923d98a6314a6336e3c8fc3d63",
+      "primeira_aparicao": true,
+      "data": "2026-07-26"
+    },
+    {
+      "url": "https://urbanx.co.za/news/understanding-exitlag-vs-vpn-which-is-right-for-gamers",
+      "fonte": "blog",
+      "titulo_thread": "VPN vs ExitLag: What Is the Difference & Which Is Better?",
+      "data_publicacao": "2026-05-11",
+      "tema": "confusao_produto",
+      "sentimento": "positivo",
+      "severidade": "baixa",
+      "jogos": [],
+      "regiao": "desconhecida",
+      "intencao_churn": false,
+      "tipo_churn": "nenhum",
+      "concorrente_citado": null,
+      "direcao_concorrente": null,
+      "e_pergunta": false,
+      "respondida": false,
+      "confusao_proposta": true,
+      "resumo": "Explica diferença: ExitLag otimiza rota de jogo, VPN foca segurança geral.",
+      "citacao": "Para reduzir latência em jogos, ExitLag supera uma VPN comum.",
+      "id": "477c50014ea3d62dfc27ccf75dbd67f1cc7a79bf",
+      "primeira_aparicao": false,
+      "data": "2026-07-26"
     }
   ]
 }
