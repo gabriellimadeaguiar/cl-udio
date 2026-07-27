@@ -1,6 +1,6 @@
 {
   "esquema": 2,
-  "atualizado_em": "2026-07-26T10:44:58.326Z",
+  "atualizado_em": "2026-07-27T12:19:55.827Z",
   "taxonomia_versao": 1,
   "dias": [
     {
@@ -169,6 +169,54 @@
       "primeira_aparicao": 1,
       "outros_pct": 0,
       "custo_usd": 0.6433,
+      "buscas": 8
+    },
+    {
+      "data": "2026-07-27",
+      "status": "ok",
+      "total": 0,
+      "threads_distintos": 0,
+      "concentracao": 0,
+      "por_tema": {
+        "latencia_ping": 0,
+        "cobertura_jogos": 0,
+        "preco_assinatura": 0,
+        "instalacao_setup": 0,
+        "suporte_atendimento": 0,
+        "confiabilidade_app": 0,
+        "confusao_produto": 0,
+        "comparacao_concorrente": 0,
+        "outros": 0
+      },
+      "por_sentimento": {
+        "positivo": 0,
+        "neutro": 0,
+        "negativo": 0
+      },
+      "por_severidade": {
+        "alta": 0,
+        "media": 0,
+        "baixa": 0
+      },
+      "por_fonte": {},
+      "por_jogo": {},
+      "fatia_tema_pct": {
+        "latencia_ping": 0,
+        "cobertura_jogos": 0,
+        "preco_assinatura": 0,
+        "instalacao_setup": 0,
+        "suporte_atendimento": 0,
+        "confiabilidade_app": 0,
+        "confusao_produto": 0,
+        "comparacao_concorrente": 0,
+        "outros": 0
+      },
+      "intencao_churn": 0,
+      "perguntas_sem_resposta": 0,
+      "confusao_proposta": 0,
+      "primeira_aparicao": 0,
+      "outros_pct": 0,
+      "custo_usd": 0.2763,
       "buscas": 8
     }
   ],
@@ -426,6 +474,6 @@
       "outros_pct_30d": 0,
       "limiar": 15
     },
-    "confianca_ultima": "media"
+    "confianca_ultima": "baixa"
   }
 }
