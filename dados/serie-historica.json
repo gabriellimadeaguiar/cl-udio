@@ -1,6 +1,6 @@
 {
   "esquema": 2,
-  "atualizado_em": "2026-07-28T11:16:18.215Z",
+  "atualizado_em": "2026-07-29T11:24:59.781Z",
   "taxonomia_versao": 1,
   "dias": [
     {
@@ -271,6 +271,63 @@
       "outros_pct": 0,
       "custo_usd": 0.5558,
       "buscas": 8
+    },
+    {
+      "data": "2026-07-29",
+      "status": "ok",
+      "total": 6,
+      "threads_distintos": 6,
+      "concentracao": 1,
+      "por_tema": {
+        "latencia_ping": 0,
+        "cobertura_jogos": 0,
+        "preco_assinatura": 1,
+        "instalacao_setup": 0,
+        "suporte_atendimento": 1,
+        "confiabilidade_app": 0,
+        "confusao_produto": 1,
+        "comparacao_concorrente": 3,
+        "outros": 0
+      },
+      "por_sentimento": {
+        "positivo": 2,
+        "neutro": 1,
+        "negativo": 3
+      },
+      "por_severidade": {
+        "alta": 1,
+        "media": 0,
+        "baixa": 5
+      },
+      "por_fonte": {
+        "trustpilot": 2,
+        "blog": 4
+      },
+      "por_jogo": {
+        "_geral": 3,
+        "valorant": 2,
+        "cs2": 1,
+        "apex-legends": 1,
+        "league-of-legends": 1
+      },
+      "fatia_tema_pct": {
+        "latencia_ping": 0,
+        "cobertura_jogos": 0,
+        "preco_assinatura": 16.7,
+        "instalacao_setup": 0,
+        "suporte_atendimento": 16.7,
+        "confiabilidade_app": 0,
+        "confusao_produto": 16.7,
+        "comparacao_concorrente": 50,
+        "outros": 0
+      },
+      "intencao_churn": 1,
+      "perguntas_sem_resposta": 0,
+      "confusao_proposta": 1,
+      "primeira_aparicao": 3,
+      "outros_pct": 0,
+      "custo_usd": 0.5316,
+      "buscas": 8
     }
   ],
   "baselines": {
@@ -290,11 +347,11 @@
         "soma7": 0
       },
       "preco_assinatura": {
-        "mm7": 0.286,
-        "mm30": 0.067,
-        "mm90": 0.022,
+        "mm7": 0.429,
+        "mm30": 0.1,
+        "mm90": 0.033,
         "multiplo": 12.86,
-        "soma7": 2
+        "soma7": 3
       },
       "instalacao_setup": {
         "mm7": 0.143,
@@ -304,11 +361,11 @@
         "soma7": 1
       },
       "suporte_atendimento": {
-        "mm7": 0.143,
-        "mm30": 0.033,
-        "mm90": 0.011,
+        "mm7": 0.286,
+        "mm30": 0.067,
+        "mm90": 0.022,
         "multiplo": 12.86,
-        "soma7": 1
+        "soma7": 2
       },
       "confiabilidade_app": {
         "mm7": 0.143,
@@ -318,18 +375,18 @@
         "soma7": 1
       },
       "confusao_produto": {
+        "mm7": 0.857,
+        "mm30": 0.2,
+        "mm90": 0.067,
+        "multiplo": 12.86,
+        "soma7": 6
+      },
+      "comparacao_concorrente": {
         "mm7": 0.714,
         "mm30": 0.167,
         "mm90": 0.056,
         "multiplo": 12.86,
         "soma7": 5
-      },
-      "comparacao_concorrente": {
-        "mm7": 0.286,
-        "mm30": 0.067,
-        "mm90": 0.022,
-        "multiplo": 12.86,
-        "soma7": 2
       },
       "outros": {
         "mm7": 0,
@@ -341,11 +398,11 @@
     },
     "jogos": {
       "apex-legends": {
-        "mm7": 0.286,
-        "mm30": 0.067,
-        "mm90": 0.022,
+        "mm7": 0.429,
+        "mm30": 0.1,
+        "mm90": 0.033,
         "multiplo": 12.86,
-        "soma7": 2
+        "soma7": 3
       },
       "call-of-duty-warzone": {
         "mm7": 0.286,
@@ -362,11 +419,11 @@
         "soma7": 1
       },
       "valorant": {
-        "mm7": 0.286,
-        "mm30": 0.067,
-        "mm90": 0.022,
+        "mm7": 0.571,
+        "mm30": 0.133,
+        "mm90": 0.044,
         "multiplo": 12.86,
-        "soma7": 2
+        "soma7": 4
       },
       "the-elder-scrolls-online": {
         "mm7": 0.143,
@@ -388,22 +445,36 @@
         "mm90": 0.011,
         "multiplo": 12.86,
         "soma7": 1
+      },
+      "cs2": {
+        "mm7": 0.143,
+        "mm30": 0.033,
+        "mm90": 0.011,
+        "multiplo": 12.86,
+        "soma7": 1
+      },
+      "league-of-legends": {
+        "mm7": 0.143,
+        "mm30": 0.033,
+        "mm90": 0.011,
+        "multiplo": 12.86,
+        "soma7": 1
       }
     },
     "globais": {
       "total": {
-        "mm7": 2.429,
-        "mm30": 0.567,
-        "mm90": 0.189,
+        "mm7": 3.286,
+        "mm30": 0.767,
+        "mm90": 0.256,
         "multiplo": 12.86,
-        "soma7": 17
+        "soma7": 23
       },
       "intencao_churn": {
-        "mm7": 0.571,
-        "mm30": 0.133,
-        "mm90": 0.044,
+        "mm7": 0.714,
+        "mm30": 0.167,
+        "mm90": 0.056,
         "multiplo": 12.86,
-        "soma7": 4
+        "soma7": 5
       },
       "perguntas_sem_resposta": {
         "mm7": 0.143,
@@ -413,29 +484,29 @@
         "soma7": 1
       },
       "confusao_proposta": {
-        "mm7": 0.714,
-        "mm30": 0.167,
-        "mm90": 0.056,
+        "mm7": 0.857,
+        "mm30": 0.2,
+        "mm90": 0.067,
         "multiplo": 12.86,
-        "soma7": 5
+        "soma7": 6
       },
       "primeira_aparicao": {
-        "mm7": 1.714,
-        "mm30": 0.4,
-        "mm90": 0.133,
+        "mm7": 2.143,
+        "mm30": 0.5,
+        "mm90": 0.167,
         "multiplo": 12.86,
-        "soma7": 12
+        "soma7": 15
       }
     },
     "mm90_por_tema": {
       "latencia_ping": 0.056,
       "cobertura_jogos": 0,
-      "preco_assinatura": 0.022,
+      "preco_assinatura": 0.033,
       "instalacao_setup": 0.011,
-      "suporte_atendimento": 0.011,
+      "suporte_atendimento": 0.022,
       "confiabilidade_app": 0.011,
-      "confusao_produto": 0.056,
-      "comparacao_concorrente": 0.022,
+      "confusao_produto": 0.067,
+      "comparacao_concorrente": 0.056,
       "outros": 0
     }
   },
@@ -445,8 +516,8 @@
       "metrica": "primeira_aparicao",
       "escopo": "global",
       "rotulo": "Primeira aparição",
-      "valor": 12,
-      "texto": "12 assinatura(s) tema+jogo apareceram pela primeira vez em 7d",
+      "valor": 15,
+      "texto": "15 assinatura(s) tema+jogo apareceram pela primeira vez em 7d",
       "ids": [
         "bd87d61743ab97b6ab037ea50ffa068938d08a9d",
         "26a2ec2e63e9f7b2912f5bf1d27a68abe0d47b2d",
@@ -459,7 +530,10 @@
         "1634127c48ccca605e98771517d90eaf3a474832",
         "3e77c22c21f6df7dd1535296d463d02cb59a551c",
         "fe21558b427169681e2d726c5eeca7858afe69a2",
-        "a7f179511eddfd923d98a6314a6336e3c8fc3d63"
+        "a7f179511eddfd923d98a6314a6336e3c8fc3d63",
+        "ee63ca9ef69ffcb77d5ac0418e6f92b41971cbe9",
+        "45b5392c49d0930af2f7f6a10ef30e5fb2216576",
+        "02a21e4cc0b8d4493c4990cfecfd6233203ec8c0"
       ]
     },
     {
@@ -468,14 +542,48 @@
       "escopo": "global",
       "rotulo": "Confusão sobre a proposta",
       "multiplo": 12.86,
-      "valor": 5,
-      "texto": "Confusão sobre a proposta: 12.9x acima da média de 90 dias (5 em 7d)",
+      "valor": 6,
+      "texto": "Confusão sobre a proposta: 12.9x acima da média de 90 dias (6 em 7d)",
       "ids": [
         "26a2ec2e63e9f7b2912f5bf1d27a68abe0d47b2d",
         "ee39d2494a129b5278b1d9aa89154b060bb4abbf",
         "477c50014ea3d62dfc27ccf75dbd67f1cc7a79bf",
         "5ec956027cb9b880d9b950e0536deaa939ea2f9f",
-        "674e604cc3805a0b95857acdc65130c3618fd601"
+        "674e604cc3805a0b95857acdc65130c3618fd601",
+        "02a21e4cc0b8d4493c4990cfecfd6233203ec8c0"
+      ]
+    },
+    {
+      "tipo": "subiu",
+      "metrica": "volume",
+      "escopo": "confusao_produto",
+      "rotulo": "Confusão sobre o produto",
+      "multiplo": 12.86,
+      "valor": 6,
+      "texto": "Confusão sobre o produto: 12.9x acima da média de 90 dias (6 menções em 7d)",
+      "ids": [
+        "26a2ec2e63e9f7b2912f5bf1d27a68abe0d47b2d",
+        "1ab2f6b93043063f21b58aae7325069b0509f52f",
+        "ee39d2494a129b5278b1d9aa89154b060bb4abbf",
+        "477c50014ea3d62dfc27ccf75dbd67f1cc7a79bf",
+        "674e604cc3805a0b95857acdc65130c3618fd601",
+        "02a21e4cc0b8d4493c4990cfecfd6233203ec8c0"
+      ]
+    },
+    {
+      "tipo": "subiu",
+      "metrica": "intencao_churn",
+      "escopo": "global",
+      "rotulo": "Intenção de churn",
+      "multiplo": 12.86,
+      "valor": 5,
+      "texto": "Intenção de churn: 12.9x acima da média de 90 dias (5 em 7d)",
+      "ids": [
+        "2a91489b4a26a2b6684146db6a16e91836ac7009",
+        "a8fb549f353b5cd8dc158ce4bf01ed1595bc5191",
+        "1efa0abcc85a54b2d6255320c09b19386c7edaf4",
+        "5ec956027cb9b880d9b950e0536deaa939ea2f9f",
+        "4d67484cc1339d44253085c2d9498bf2360eedf1"
       ]
     },
     {
@@ -493,37 +601,6 @@
         "e20a32ea830125f8f72f324653cd816b8741e2d8",
         "5ec956027cb9b880d9b950e0536deaa939ea2f9f"
       ]
-    },
-    {
-      "tipo": "subiu",
-      "metrica": "volume",
-      "escopo": "confusao_produto",
-      "rotulo": "Confusão sobre o produto",
-      "multiplo": 12.86,
-      "valor": 5,
-      "texto": "Confusão sobre o produto: 12.9x acima da média de 90 dias (5 menções em 7d)",
-      "ids": [
-        "26a2ec2e63e9f7b2912f5bf1d27a68abe0d47b2d",
-        "1ab2f6b93043063f21b58aae7325069b0509f52f",
-        "ee39d2494a129b5278b1d9aa89154b060bb4abbf",
-        "477c50014ea3d62dfc27ccf75dbd67f1cc7a79bf",
-        "674e604cc3805a0b95857acdc65130c3618fd601"
-      ]
-    },
-    {
-      "tipo": "subiu",
-      "metrica": "intencao_churn",
-      "escopo": "global",
-      "rotulo": "Intenção de churn",
-      "multiplo": 12.86,
-      "valor": 4,
-      "texto": "Intenção de churn: 12.9x acima da média de 90 dias (4 em 7d)",
-      "ids": [
-        "2a91489b4a26a2b6684146db6a16e91836ac7009",
-        "a8fb549f353b5cd8dc158ce4bf01ed1595bc5191",
-        "1efa0abcc85a54b2d6255320c09b19386c7edaf4",
-        "5ec956027cb9b880d9b950e0536deaa939ea2f9f"
-      ]
     }
   ],
   "alertas": {
@@ -532,6 +609,6 @@
       "outros_pct_30d": 0,
       "limiar": 15
     },
-    "confianca_ultima": "media"
+    "confianca_ultima": "alta"
   }
 }

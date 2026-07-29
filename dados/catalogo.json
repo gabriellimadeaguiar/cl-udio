@@ -1,6 +1,6 @@
 {
   "esquema": 2,
-  "atualizado_em": "2026-07-28T11:16:18.205Z",
+  "atualizado_em": "2026-07-29T11:24:59.770Z",
   "assinaturas": {
     "latencia_ping__apex-legends": {
       "primeira": "2026-07-24",
@@ -24,18 +24,18 @@
     },
     "preco_assinatura___geral": {
       "primeira": "2026-07-24",
-      "ocorrencias": 1,
-      "ultima": "2026-07-24"
+      "ocorrencias": 2,
+      "ultima": "2026-07-29"
     },
     "suporte_atendimento___geral": {
       "primeira": "2026-07-24",
-      "ocorrencias": 1,
-      "ultima": "2026-07-24"
+      "ocorrencias": 2,
+      "ultima": "2026-07-29"
     },
     "comparacao_concorrente___geral": {
       "primeira": "2026-07-24",
-      "ocorrencias": 2,
-      "ultima": "2026-07-25"
+      "ocorrencias": 3,
+      "ultima": "2026-07-29"
     },
     "confusao_produto__the-elder-scrolls-online": {
       "primeira": "2026-07-24",
@@ -71,6 +71,26 @@
       "primeira": "2026-07-26",
       "ocorrencias": 1,
       "ultima": "2026-07-26"
+    },
+    "comparacao_concorrente__valorant": {
+      "primeira": "2026-07-29",
+      "ocorrencias": 2,
+      "ultima": "2026-07-29"
+    },
+    "comparacao_concorrente__cs2": {
+      "primeira": "2026-07-29",
+      "ocorrencias": 1,
+      "ultima": "2026-07-29"
+    },
+    "comparacao_concorrente__apex-legends": {
+      "primeira": "2026-07-29",
+      "ocorrencias": 1,
+      "ultima": "2026-07-29"
+    },
+    "confusao_produto__league-of-legends": {
+      "primeira": "2026-07-29",
+      "ocorrencias": 1,
+      "ultima": "2026-07-29"
     }
   }
 }
