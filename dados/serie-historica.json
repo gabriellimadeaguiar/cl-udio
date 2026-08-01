@@ -1,6 +1,6 @@
 {
   "esquema": 2,
-  "atualizado_em": "2026-07-31T11:32:19.716Z",
+  "atualizado_em": "2026-08-01T10:38:26.391Z",
   "taxonomia_versao": 1,
   "dias": [
     {
@@ -383,6 +383,13 @@
       "total": 0,
       "custo_usd": 0,
       "buscas": 0
+    },
+    {
+      "data": "2026-08-01",
+      "status": "falha",
+      "total": 0,
+      "custo_usd": 0,
+      "buscas": 0
     }
   ],
   "baselines": {
@@ -571,11 +578,9 @@
       "metrica": "primeira_aparicao",
       "escopo": "global",
       "rotulo": "Primeira aparição",
-      "valor": 6,
-      "texto": "6 assinatura(s) tema+jogo apareceram pela primeira vez em 7d",
+      "valor": 4,
+      "texto": "4 assinatura(s) tema+jogo apareceram pela primeira vez em 7d",
       "ids": [
-        "3e77c22c21f6df7dd1535296d463d02cb59a551c",
-        "fe21558b427169681e2d726c5eeca7858afe69a2",
         "a7f179511eddfd923d98a6314a6336e3c8fc3d63",
         "ee63ca9ef69ffcb77d5ac0418e6f92b41971cbe9",
         "45b5392c49d0930af2f7f6a10ef30e5fb2216576",
@@ -633,8 +638,6 @@
       "valor": 5,
       "texto": "Latência / Ping: 12.9x acima da média de 90 dias (5 menções em 7d)",
       "ids": [
-        "3e77c22c21f6df7dd1535296d463d02cb59a551c",
-        "e20a32ea830125f8f72f324653cd816b8741e2d8",
         "5ec956027cb9b880d9b950e0536deaa939ea2f9f"
       ]
     }
