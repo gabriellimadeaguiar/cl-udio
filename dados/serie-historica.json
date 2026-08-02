@@ -1,6 +1,6 @@
 {
   "esquema": 2,
-  "atualizado_em": "2026-08-01T10:38:26.391Z",
+  "atualizado_em": "2026-08-02T10:37:52.898Z",
   "taxonomia_versao": 1,
   "dias": [
     {
@@ -390,6 +390,13 @@
       "total": 0,
       "custo_usd": 0,
       "buscas": 0
+    },
+    {
+      "data": "2026-08-02",
+      "status": "falha",
+      "total": 0,
+      "custo_usd": 0,
+      "buscas": 0
     }
   ],
   "baselines": {
@@ -574,20 +581,6 @@
   },
   "mudou": [
     {
-      "tipo": "apareceu",
-      "metrica": "primeira_aparicao",
-      "escopo": "global",
-      "rotulo": "Primeira aparição",
-      "valor": 4,
-      "texto": "4 assinatura(s) tema+jogo apareceram pela primeira vez em 7d",
-      "ids": [
-        "a7f179511eddfd923d98a6314a6336e3c8fc3d63",
-        "ee63ca9ef69ffcb77d5ac0418e6f92b41971cbe9",
-        "45b5392c49d0930af2f7f6a10ef30e5fb2216576",
-        "02a21e4cc0b8d4493c4990cfecfd6233203ec8c0"
-      ]
-    },
-    {
       "tipo": "subiu",
       "metrica": "confusao_proposta",
       "escopo": "global",
@@ -596,7 +589,6 @@
       "valor": 6,
       "texto": "Confusão sobre a proposta: 12.9x acima da média de 90 dias (6 em 7d)",
       "ids": [
-        "477c50014ea3d62dfc27ccf75dbd67f1cc7a79bf",
         "5ec956027cb9b880d9b950e0536deaa939ea2f9f",
         "674e604cc3805a0b95857acdc65130c3618fd601",
         "02a21e4cc0b8d4493c4990cfecfd6233203ec8c0"
@@ -611,7 +603,6 @@
       "valor": 6,
       "texto": "Confusão sobre o produto: 12.9x acima da média de 90 dias (6 menções em 7d)",
       "ids": [
-        "477c50014ea3d62dfc27ccf75dbd67f1cc7a79bf",
         "674e604cc3805a0b95857acdc65130c3618fd601",
         "02a21e4cc0b8d4493c4990cfecfd6233203ec8c0"
       ]
@@ -627,6 +618,19 @@
       "ids": [
         "5ec956027cb9b880d9b950e0536deaa939ea2f9f",
         "4d67484cc1339d44253085c2d9498bf2360eedf1"
+      ]
+    },
+    {
+      "tipo": "apareceu",
+      "metrica": "primeira_aparicao",
+      "escopo": "global",
+      "rotulo": "Primeira aparição",
+      "valor": 3,
+      "texto": "3 assinatura(s) tema+jogo apareceram pela primeira vez em 7d",
+      "ids": [
+        "ee63ca9ef69ffcb77d5ac0418e6f92b41971cbe9",
+        "45b5392c49d0930af2f7f6a10ef30e5fb2216576",
+        "02a21e4cc0b8d4493c4990cfecfd6233203ec8c0"
       ]
     },
     {
