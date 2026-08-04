@@ -1,6 +1,6 @@
 {
   "esquema": 2,
-  "atualizado_em": "2026-08-03T12:19:37.354Z",
+  "atualizado_em": "2026-08-04T11:21:16.891Z",
   "taxonomia_versao": 1,
   "dias": [
     {
@@ -404,6 +404,13 @@
       "total": 0,
       "custo_usd": 0,
       "buscas": 0
+    },
+    {
+      "data": "2026-08-04",
+      "status": "falha",
+      "total": 0,
+      "custo_usd": 0,
+      "buscas": 0
     }
   ],
   "baselines": {
@@ -596,8 +603,6 @@
       "valor": 6,
       "texto": "Confusão sobre a proposta: 12.9x acima da média de 90 dias (6 em 7d)",
       "ids": [
-        "5ec956027cb9b880d9b950e0536deaa939ea2f9f",
-        "674e604cc3805a0b95857acdc65130c3618fd601",
         "02a21e4cc0b8d4493c4990cfecfd6233203ec8c0"
       ]
     },
@@ -610,7 +615,6 @@
       "valor": 6,
       "texto": "Confusão sobre o produto: 12.9x acima da média de 90 dias (6 menções em 7d)",
       "ids": [
-        "674e604cc3805a0b95857acdc65130c3618fd601",
         "02a21e4cc0b8d4493c4990cfecfd6233203ec8c0"
       ]
     },
@@ -623,7 +627,6 @@
       "valor": 5,
       "texto": "Intenção de churn: 12.9x acima da média de 90 dias (5 em 7d)",
       "ids": [
-        "5ec956027cb9b880d9b950e0536deaa939ea2f9f",
         "4d67484cc1339d44253085c2d9498bf2360eedf1"
       ]
     },
@@ -648,9 +651,7 @@
       "multiplo": 12.86,
       "valor": 5,
       "texto": "Latência / Ping: 12.9x acima da média de 90 dias (5 menções em 7d)",
-      "ids": [
-        "5ec956027cb9b880d9b950e0536deaa939ea2f9f"
-      ]
+      "ids": []
     }
   ],
   "alertas": {
