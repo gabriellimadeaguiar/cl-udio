@@ -1,6 +1,6 @@
 {
   "esquema": 2,
-  "atualizado_em": "2026-08-04T11:21:16.891Z",
+  "atualizado_em": "2026-08-05T11:17:56.725Z",
   "taxonomia_versao": 1,
   "dias": [
     {
@@ -411,6 +411,13 @@
       "total": 0,
       "custo_usd": 0,
       "buscas": 0
+    },
+    {
+      "data": "2026-08-05",
+      "status": "falha",
+      "total": 0,
+      "custo_usd": 0,
+      "buscas": 0
     }
   ],
   "baselines": {
@@ -602,9 +609,7 @@
       "multiplo": 12.86,
       "valor": 6,
       "texto": "Confusão sobre a proposta: 12.9x acima da média de 90 dias (6 em 7d)",
-      "ids": [
-        "02a21e4cc0b8d4493c4990cfecfd6233203ec8c0"
-      ]
+      "ids": []
     },
     {
       "tipo": "subiu",
@@ -614,9 +619,7 @@
       "multiplo": 12.86,
       "valor": 6,
       "texto": "Confusão sobre o produto: 12.9x acima da média de 90 dias (6 menções em 7d)",
-      "ids": [
-        "02a21e4cc0b8d4493c4990cfecfd6233203ec8c0"
-      ]
+      "ids": []
     },
     {
       "tipo": "subiu",
@@ -626,22 +629,7 @@
       "multiplo": 12.86,
       "valor": 5,
       "texto": "Intenção de churn: 12.9x acima da média de 90 dias (5 em 7d)",
-      "ids": [
-        "4d67484cc1339d44253085c2d9498bf2360eedf1"
-      ]
-    },
-    {
-      "tipo": "apareceu",
-      "metrica": "primeira_aparicao",
-      "escopo": "global",
-      "rotulo": "Primeira aparição",
-      "valor": 3,
-      "texto": "3 assinatura(s) tema+jogo apareceram pela primeira vez em 7d",
-      "ids": [
-        "ee63ca9ef69ffcb77d5ac0418e6f92b41971cbe9",
-        "45b5392c49d0930af2f7f6a10ef30e5fb2216576",
-        "02a21e4cc0b8d4493c4990cfecfd6233203ec8c0"
-      ]
+      "ids": []
     },
     {
       "tipo": "subiu",
@@ -651,6 +639,16 @@
       "multiplo": 12.86,
       "valor": 5,
       "texto": "Latência / Ping: 12.9x acima da média de 90 dias (5 menções em 7d)",
+      "ids": []
+    },
+    {
+      "tipo": "subiu",
+      "metrica": "volume",
+      "escopo": "comparacao_concorrente",
+      "rotulo": "Comparação com concorrente",
+      "multiplo": 12.86,
+      "valor": 5,
+      "texto": "Comparação com concorrente: 12.9x acima da média de 90 dias (5 menções em 7d)",
       "ids": []
     }
   ],
