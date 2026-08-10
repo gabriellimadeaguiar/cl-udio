@@ -11,15 +11,19 @@ Data: 10 de agosto de 2026
 **Adotar, com escopo limitado e teste próprio.** A evidência de que a linguagem da
 interface deve partir do vocabulário e da tarefa do usuário — e não da arquitetura do
 sistema — é sólida, antiga e replicada. O achado mais forte não vem do design: vem de um
-estudo de 1987 que mediu escolha espontânea de palavras e encontrou que **duas pessoas
-escolhem o mesmo termo para a mesma coisa com probabilidade menor que 0,20**.
+estudo de 1987 (**539 participantes**, lido em texto completo) que mediu escolha espontânea
+de palavras e encontrou que **duas pessoas escolhem o mesmo termo para a mesma coisa com
+probabilidade entre 0,07 e 0,18**.
 
 Mas três ressalvas mudam a decisão de "adotar sempre" para "adotar onde importa":
 
-1. **O ganho vem de pesquisar o vocabulário, não de escrever melhor.** O mesmo estudo que
-   justifica a prática mostra que *adivinhar* a palavra do usuário falha em 80–90% dos
-   casos. Sem pesquisa de vocabulário, você troca o palpite do engenheiro pelo palpite do
-   designer.
+1. **Pesquisar o vocabulário é necessário — e não basta.** É a descoberta mais incômoda da
+   auditoria. Furnas et al. testaram justamente isso: escolher a palavra *mais popular
+   entre usuários reais*, medida empiricamente. Ela ainda falha em **65–85%** das
+   tentativas de acesso. A conclusão literal dos autores é que a ideia de um termo "óbvio"
+   ou "natural" é um mito, e que **não podem existir regras para escolher um bom nome**. A
+   saída que eles propõem é redundância — muitos caminhos alternativos para a mesma coisa —
+   não acerto de nomenclatura.
 2. **O efeito não é universal.** Um estudo de 2023 com questionários web não encontrou
    efeito positivo geral de linguagem simples sobre qualidade de dados — o benefício se
    concentrou em respondentes de menor letramento.
@@ -78,26 +82,99 @@ resistiram à verificação. Ela é parte do resultado, não um apêndice.
 
 ## Base teórica — por que deveria funcionar
 
-### O problema do vocabulário [A]
+### O problema do vocabulário [A] — auditado no texto completo
 
-Furnas, Landauer, Gomez e Dumais (*Communications of the ACM*, 1987) mediram como pessoas
-nomeiam espontaneamente objetos e ações em cinco domínios de aplicação.
+> ✅ **Fonte lida integralmente** (PDF do artigo original, 8 páginas, CACM 30(11), 1987).
+> Esta é a única fonte do documento verificada em texto completo. Tudo abaixo vem do
+> artigo, não de resumo de terceiros.
 
-- Em todos os casos, **duas pessoas escolheram o mesmo termo com probabilidade < 0,20**.
-- A abordagem usual — acesso por *uma* palavra favorita do projetista — produz
-  **80–90% de falha** em situações comuns.
-- A estratégia ótima derivada pelos autores é o *unlimited aliasing*: aceitar múltiplos
-  nomes para a mesma coisa, com ganhos de várias vezes.
+Furnas, Landauer, Gomez e Dumais mediram como pessoas nomeiam espontaneamente objetos e
+ações. **Seis conjuntos de dados em cinco domínios, 539 participantes no total:**
 
-Este é o achado mais importante da pesquisa, e ele corta para os dois lados. Justifica
-usar a linguagem do usuário **e** demonstra que não existe "a" palavra certa a ser
-adivinhada. A implicação prática é desconfortável: a intervenção que funciona é *medir* o
-vocabulário, não *escrever com mais empatia*.
+| Conjunto | Quem | N |
+|---|---|---|
+| Editor-5 / Editor-25 | Datilógrafos descrevendo operações de edição de texto | 48 |
+| Decoder | Projetistas de sistema experientes nomeando comandos | 100 |
+| Common Objects | Estudantes universitários descrevendo 50 objetos comuns | 337 |
+| Classifieds | Donas de casa de Nova Jersey categorizando 64 anúncios | 30 |
+| Recipe Keywords | 8 cozinheiros especialistas + 16 donas de casa, 188 receitas | 24 |
 
-*Limite de extrapolação:* o estudo é de 1987 e trata de comandos e termos de indexação,
-não de rótulos de botão em interfaces gráficas modernas. O mecanismo — variabilidade
-lexical entre pessoas — não depende da época, mas o tamanho do efeito em UI atual não foi
-medido por este trabalho.
+**Probabilidade de duas pessoas usarem o mesmo termo para o mesmo objeto** (Tabela I do
+artigo): Editor-5 `.07` · Decoder `.08` · Editor-25 `.11` · Common Objects `.12` ·
+Classifieds `.14` · Recipe Keywords `.18`.
+
+#### O "80–90% de falha": medido ou derivado?
+
+**Era a pergunta central da auditoria. Resposta: derivado dos dados empíricos — e
+confirmado em sistemas reais.**
+
+Os autores escrevem que, se uma pessoa atribui o nome de um item, outras pessoas sem
+treino falharão em acessá-lo em 80 a 90% das tentativas, e acrescentam que isso *"não é
+verdade apenas para todos os seis conjuntos de dados de laboratório; também foi
+confirmado várias vezes por pesquisa com sistemas reais"* — citando três estudos
+independentes (Furnas [4]; Gomez & Lochbaum [5]; Good, Whiteside, Wixon & Jones [6]).
+
+Ou seja: o número sai de simulação sobre tabelas de frequência reais, mas não é
+especulativo — tem validação de campo. **É mais robusto do que eu havia registrado.**
+
+#### O achado que eu não tinha, e que muda a recomendação
+
+O artigo vai além do que meu relatório original dizia. Os autores testaram também **o
+melhor nome possível** — a palavra mais frequente entre usuários reais, escolhida
+empiricamente:
+
+| Estratégia | Taxa de sucesso |
+|---|---|
+| Nome escolhido pelo projetista ("armchair") | 10–20% |
+| **Melhor nome possível, medido empiricamente** | **15–36%** — ainda falha **65–85%** das vezes |
+| 3 nomes escolhidos pelo projetista | 20–45% |
+| 3 melhores nomes, medidos | 37–67% |
+| **15 nomes alternativos** | **apenas 60–80%** |
+
+E a conclusão dos autores, literal: *"os dados nos dizem que não existe um bom termo de
+acesso para a maioria dos objetos. A ideia de um termo 'óbvio', 'auto-evidente' ou
+'natural' é um mito! Como mesmo o melhor nome possível não é muito útil, segue-se que
+**não podem existir regras, diretrizes ou procedimentos para escolher um bom nome**, no
+sentido de 'acessível ao usuário não familiarizado'."*
+
+Dois achados secundários relevantes:
+
+- **Especialistas não se saem melhor.** Um terço dos participantes do estudo de receitas
+  eram cozinheiros especialistas; suas palavras-chave *"não se saíram melhor que a média"*,
+  nem para outros especialistas nem para novatos.
+- **Exigir nomes únicos piora tudo.** Quando cada nome só pode pertencer a um objeto,
+  o desempenho cai mais 5 a 60% (tipicamente ~10%).
+
+A solução proposta pelos autores **não é escolher a palavra certa** — é *unlimited
+aliasing*: fornecer muitos caminhos verbais alternativos para cada objeto (sinônimos,
+busca, múltiplas entradas de índice).
+
+> ⚠️ **Correção ao meu próprio relatório.** A versão anterior dizia que "a intervenção que
+> funciona é *medir* o vocabulário". Isso está **incompleto a ponto de enganar**. Medir e
+> escolher o termo mais popular melhora o acesso por um fator de ~2, mas ainda falha na
+> maioria das tentativas. Pesquisa de vocabulário é necessária e insuficiente. O que o
+> artigo defende é **redundância de acesso**, não acerto de nomenclatura.
+
+#### Limite de extrapolação — leia antes de usar este estudo
+
+Esta é a ressalva mais importante do documento inteiro, e ela **limita** o quanto Furnas
+sustenta copy de intenção.
+
+O estudo mede **produção livre**: a pessoa precisa *gerar* a palavra certa do nada, sem
+opções à vista — digitar um comando, escolher uma palavra-chave de busca. Rótulos de
+botão e itens de menu são **reconhecimento**: a palavra está na tela e o usuário só
+precisa reconhecê-la como correspondente ao objetivo dele. Reconhecimento é
+sistematicamente mais fácil que evocação.
+
+**Consequência honesta:** as taxas de falha de 80–90% **não transferem** para rótulos de
+botão. O que transfere é o mecanismo — pessoas divergem muito sobre como nomear coisas,
+e o projetista sistematicamente subestima essa divergência. Use Furnas para justificar
+*testar* nomenclatura com usuários e para desarmar o argumento "esse nome é óbvio". Não
+use os números dele como previsão de efeito em UI.
+
+Onde Furnas transfere com força quase integral: **busca interna, navegação por categorias
+e nomenclatura de funcionalidades** — situações em que o usuário de fato precisa produzir
+ou reconhecer o termo entre muitos concorrentes.
 
 ### Golfo de execução [B]
 
@@ -124,7 +201,7 @@ por que rótulos genéricos custam caro em fluxos de decisão.
 
 | # | Estudo | Método e N | Achado | Direção |
 |---|---|---|---|---|
-| 1 | Furnas et al., *CACM*, 1987 | Escolha espontânea de palavras, 5 domínios. Autores na Bell Communications Research. **N total `⚠ em aberto`** (há referência a "24 subjects" em um dos conjuntos, não confirmada como total) | Concordância entre duas pessoas < 0,20; palavra única do designer → 80–90% de falha | **A favor** |
+| 1 | Furnas et al., *CACM*, 1987 ✅ **texto completo lido** | **539 participantes**, 6 conjuntos em 5 domínios. Produção livre de termos | Concordância entre duas pessoas **.07 a .18**; nome do projetista → 80–90% de falha (validado em campo). **Mesmo o melhor nome medido falha 65–85%** | **A favor, com limite** — mede evocação, não reconhecimento |
 | 2 | Morkes & Nielsen, 1997 (também *CHI 98*) | **51 participantes**, 5 variações do mesmo site, cada uma com estilo de escrita diferente. Tarefas de busca de resposta | Conciso **+58%**; escaneável **+47%**; objetivo **+27%**; combinado **+124%** | **A favor** |
 | 3 | Plain language RCTs, *J Clin Epidemiol*, 2023 (adultos e pais) e ensaio com jovens | RCTs de superioridade, online, alocação ocultada, cegos. Poder calculado para **122 por braço (244 total)**; **≥240 por população**. Estudo com pais: 295 randomizados, 241 completaram (121 intervenção / 120 controle). Desfecho primário: proporção de acertos em 7 perguntas de compreensão | Diferença média de **19,8%** em acertos (IC 95% 14,7–24,9%; **P < 0,001**) para a recomendação da OMS | **A favor** |
 | 4 | Martínez, Mollica & Gibson, *PNAS*, 2023 | **105 advogados dos EUA**. **Dois experimentos pré-registrados**. Exp. 1: 12 pares de trechos de contrato (legalês vs. simplificado), testando compreensão e recordação | **Advogados também** compreendem e recordam pior o "legalês". Exp. 2: avaliam contratos simplificados como igualmente exequíveis **e preferíveis** em qualidade geral, adequação de estilo e probabilidade de assinatura pelo cliente | **A favor** (inclui especialistas) |
@@ -186,8 +263,10 @@ conversão com verniz de UX.
 
 1. **Reduz a tradução mental que o usuário precisa fazer** [B] — o golfo de execução
    encolhe quando o rótulo já está na linguagem do objetivo.
-2. **Ataca a maior fonte de falha de acesso: o vocabulário** [A, item 1] — e é uma falha
-   grande, medida, e quase sempre invisível para quem construiu o sistema.
+2. **Ataca uma fonte de falha grande, medida e quase sempre invisível para quem construiu
+   o sistema** [A, item 1] — a divergência de vocabulário entre projetista e usuário. O
+   projetista é a pessoa pior posicionada para julgar se um nome é óbvio, porque a
+   familiaridade dele com o sistema é justamente o que produz a ilusão de obviedade.
 3. **Efeito composto** [A, item 2] — as melhorias de escrita somaram mais juntas (+124%)
    do que qualquer uma isolada (+27% a +58%). Sugere que vale tratar como programa, não
    como ajuste pontual.
@@ -203,9 +282,12 @@ conversão com verniz de UX.
 
 ## Contras e riscos
 
-1. **O ganho exige pesquisa de vocabulário, não boa vontade** [A, item 1]. Sem estudo de
-   nomenclatura com usuários reais, você substitui um palpite por outro. Este é o custo
-   real de adoção e o mais subestimado.
+1. **Existe um teto, e ele é baixo** [A, item 1]. Sem estudo de nomenclatura com usuários
+   reais você substitui um palpite por outro — mas *com* o estudo, o ganho ainda é
+   limitado: o melhor termo medido empiricamente falha em 65–85% das tentativas de acesso
+   por produção livre. Se a sua expectativa é "achar a palavra certa e resolver", ela está
+   errada. Para busca e navegação, a resposta do artigo é redundância de acesso
+   (sinônimos, aliases, busca tolerante), não um rótulo melhor.
 2. **Efeito não é universal** [A, item 5]. Em tarefa de resposta a questionário, não houve
    ganho agregado. Não assuma transferência automática entre tipos de tarefa.
 3. **Verbosidade tem custo.** Rótulos de intenção tendem a ser mais longos que os
@@ -343,6 +425,10 @@ para prever o resultado.
    próprias palavras, o que querem fazer no ponto do fluxo em questão. Não ofereça
    opções — a variabilidade é o dado. Se a concordância vier baixa, isso confirma o
    achado de Furnas no *seu* contexto e já é argumento.
+   **Mas não pare no termo campeão.** Furnas mostra que o termo mais popular ainda deixa a
+   maioria de fora. Use a lista completa que você coletou para alimentar **sinônimos de
+   busca, aliases e termos alternativos de navegação** — é ali que o ganho grande está. O
+   rótulo do botão leva o termo mais frequente; o resto da lista não se joga fora.
 2. **Escolha um fluxo de alto valor e baixa frequência.** Alto valor para o efeito ser
    detectável; baixa frequência para o usuário realmente ler o texto.
 3. **Mude uma coisa.** Copy isolado, sem alterar layout, fluxo ou hierarquia visual.
@@ -394,16 +480,21 @@ Declaradas para você calibrar o quanto apoiar decisão nisto.
 Segunda passada em 10/08/2026, por busca dirigida. Recuperou N e desenho de três das seis
 prioridades; três continuam abertas.
 
-| Fonte | Status | O que falta |
+| Fonte | Status | Situação |
 |---|---|---|
-| Morkes & Nielsen 1997 | ✅ Resolvido | N = 51; índice = tempo, erros, memória, satisfação |
-| *J Clin Epidemiol* 2023 | ✅ Resolvido | N, desenho e efeito (19,8%, IC 95% 14,7–24,9%) obtidos |
-| PNAS 2023 (legalese) | ✅ Resolvido | N = 105 advogados; 2 experimentos pré-registrados |
-| **Furnas 1987** | ⚠ Aberto | N total e quais são os 5 domínios. Falta saber se o "80–90% de falha" é **medido** ou **derivado do modelo** — isso muda como o achado central deve ser apresentado |
+| **Furnas 1987** | ✅✅ **Texto completo lido** | PDF obtido. N = 539, 5 domínios identificados, "80–90%" é derivado dos dados **e validado em campo**. Descoberto o teto de 65–85% do melhor nome possível — corrigiu conclusão minha |
+| Morkes & Nielsen 1997 | ✅ Por busca | N = 51; índice = tempo, erros, memória, satisfação |
+| *J Clin Epidemiol* 2023 | ✅ Por busca | N, desenho e efeito (19,8%, IC 95% 14,7–24,9%) |
+| PNAS 2023 (legalese) | ✅ Por busca | N = 105 advogados; 2 experimentos pré-registrados |
 | **IJSRM 2023 / Kunz 2026** | ⚠ Aberto | N de ambos, e **qual dos dois artigos** traz o achado de tempos menores. Ver o alerta na seção de evidência |
 | **Preply (Frontitude)** | ⚠ Aberto | O wording exato antes/depois. Busca dirigida falhou |
 
-As três abertas exigem leitura do texto completo — não são recuperáveis por busca.
+**A auditoria de Furnas mudou o documento**, não só o confirmou: reforçou a validade do
+achado central (validação de campo que eu não conhecia) e ao mesmo tempo derrubou uma
+recomendação minha (a de que pesquisar vocabulário resolveria). É o argumento mais forte
+possível a favor de auditar as duas fontes restantes.
+
+As duas abertas exigem leitura do texto completo — não são recuperáveis por busca.
 3. **"Copy orientado à intenção" não é um campo de pesquisa.** Não existe literatura que
    teste exatamente este construto. O que reuni são quatro literaturas adjacentes
    (vocabulário, legibilidade, forrageamento de informação, linguagem simples) conectadas
