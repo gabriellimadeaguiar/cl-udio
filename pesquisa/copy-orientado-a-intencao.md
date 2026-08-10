@@ -368,32 +368,107 @@ teste isolado de copy com metodologia. O que existe são relatos de empresa, sem
 duração ou significância. Apresento os dois que sobreviveram à verificação, com o que
 **não** foi divulgado.
 
-### Preply — nomenclatura de tipo de aula [C]
+### Preply — nomenclatura de tipo de aula [C] ✅ auditado
 
-Plataforma de aulas de idiomas. O produto oferecia duas formas de agendar: escolher cada
-data manualmente (*One-by-one*) ou criar rotina recorrente (*Weekly*). O volume de
-agendamentos recorrentes estava abaixo do esperado. A equipe passou a **nomear os tipos
-de aula com a linguagem dos usuários**.
+> ✅ **Fonte lida integralmente.** O artigo da Frontitude traz o wording exato, capturas de
+> tela do antes e depois, e o raciocínio da equipe. A pendência da auditoria está resolvida.
+
+Plataforma de aulas de idiomas. A tela pergunta *"How do you want to schedule today?"* e
+oferece dois cartões. O volume de agendamentos recorrentes estava abaixo do esperado.
+
+**O wording exato:**
+
+| Elemento | Antes | Depois |
+|---|---|---|
+| Título do cartão 1 | `Weekly lessons` | **`Regular lessons`** |
+| Botão do cartão 1 | `Schedule weekly` | **`Schedule regular`** |
+| Título do cartão 2 | `One-by-one lessons` | **`Single lessons`** |
+| Botão do cartão 2 | `Schedule one-by-one` | **`Schedule single`** |
+
+Subtítulos ("Help you make a learning habit" / "For changing schedules"), lista de
+benefícios, ícones e layout permaneceram **idênticos**.
+
+**O raciocínio da equipe, nas palavras deles:**
+
+> *"Segundo a abordagem Features vs. Benefits, `Weekly lessons` foca no modo como a
+> funcionalidade funciona, e não no benefício para o usuário. […] Também sabíamos, por
+> entrevistas com usuários, que nossos clientes usavam a palavra `regular` para falar
+> positivamente sobre formar um hábito de aprendizado."*
 
 | Métrica | Resultado |
 |---|---|
 | Aulas regulares agendadas | **+11%** |
 | Horas compradas na plataforma | **+7,8%** |
 
-Relatado por Viktoria Kosiak, UX Writer da Preply, em publicação do blog da Frontitude.
+#### Por que este case importa mais do que eu supunha
 
-**O que não foi divulgado:** wording exato de antes e depois, tamanho de amostra, duração,
-significância estatística, se houve outras mudanças simultâneas.
+Ele é **o elo direto entre Furnas e a prática**, e a auditoria revelou isso: a Preply não
+escolheu "regular" por gosto ou por brainstorm. Descobriu a palavra em **entrevistas com
+usuários** — exatamente o procedimento que Furnas et al. defendem. É pesquisa de
+vocabulário aplicada, com resultado de negócio medido.
 
-> ⚠ **Busca dirigida pelo wording exato: sem sucesso.** Numa segunda passada procurei
-> especificamente o texto antes/depois dos rótulos, inclusive na central de ajuda da
-> Preply — que hoje usa os termos "weekly lessons", "regular lessons" e "subscription".
-> Não é possível determinar qual era o rótulo original nem qual o substituiu.
->
-> **Consequência para o seu uso:** este case comprova que *mudar o copy* moveu métrica.
-> Não comprova *qual princípio de nomenclatura* funcionou. Para virar guideline de design
-> system, ele é insuficiente — serve para justificar o experimento, não para copiar a
-> solução.
+Também é um caso limpo de **linguagem do sistema → linguagem da intenção**: `weekly`
+descreve a mecânica (a cadência com que o sistema dispara); `regular` descreve o que o
+usuário quer (constância, hábito). O subtítulo já dizia "help you make a learning habit" —
+o título contradizia o subtítulo, e a correção alinhou os dois.
+
+#### Limitações que a leitura revelou
+
+- ⚠️ **Duas mudanças no mesmo teste.** A equipe afirma: *"Sob este teste, também mudamos
+  `One-by-one lessons` para `Single lessons`."* Portanto o **+11% não é atribuível a uma
+  única troca de palavra** — são dois rótulos alterados simultaneamente. Continua sendo
+  evidência de que a nomenclatura importa; não isola qual das duas trocas produziu o efeito.
+- **Sem amostra, duração ou significância.** "Significativo" aparece em sentido coloquial,
+  não estatístico.
+- **Interesse comercial declarado.** A fonte afirma que alunos com agenda semanal retêm
+  melhor e que *"promover aulas semanais sempre foi do melhor interesse do nosso negócio"*.
+  Aqui intenção do usuário e interesse do negócio coincidiram — não há garantia de que
+  coincidam sempre.
+
+### Fundbox — CTA que declarava o desfecho errado [C] ✅ auditado
+
+Fintech B2B de crédito rotativo nos EUA. Relatado por Yael Ben-David, UX Writer.
+
+O botão que abria o painel de saque dizia `Draw Funds`. Segundo a equipe, os usuários
+*"tinham medo demais de clicar, porque soava muito definitivo. Achavam que puxaria os
+fundos imediatamente para a conta e que não teriam chance de revisar os termos de
+pagamento antes. Nunca terminavam o saque por causa disso."*
+
+| Elemento | Antes | Depois |
+|---|---|---|
+| CTA principal | `Draw Funds` | **`Review & Draw`** |
+
+**Resultado:** melhora na métrica central — se o usuário saca nos primeiros 7 dias após a
+aprovação, um indicador forte de LTV — e nos saques totais. **Nenhum número divulgado.**
+
+Este é o caso mais puro do documento do ponto de vista conceitual: o rótulo antigo
+descrevia corretamente a ação do sistema, mas **implicava um desfecho que não era o real**.
+O usuário não recusava a ação; recusava a consequência que o rótulo prometia. `Review &
+Draw` declara a sequência verdadeira. Nenhuma palavra ficou mais simples — ficou mais
+*honesta quanto ao que acontece a seguir*.
+
+### Gong.io — explicar a restrição em vez de bloquear [C] ✅ auditado
+
+Plataforma de *revenue intelligence*. Relatado por Naomi Papoushado.
+
+Usuários tentavam associar uma chamada a um registro de CRM, mas a opção ficava
+indisponível quando o registro era um *Lead* em vez de um *Contact*. Sem explicação, eles
+abriam ticket achando que era bug. A equipe adicionou uma mensagem que nomeia a causa e
+diz o que fazer:
+
+> **CAN'T ASSOCIATE CALL** — *"Esta chamada não pode ser associada a uma conta ou
+> oportunidade porque está atualmente associada a leads do CRM. Apenas chamadas associadas
+> a contatos do CRM podem ser associadas a uma conta ou oportunidade. Converta os leads em
+> contatos no seu CRM e tente de novo. (Note que pode levar algumas horas para ver a
+> mudança do CRM no Gong.)"*
+
+**Resultado:** pouco depois do lançamento, a equipe de suporte reportou **zero tickets
+abertos para esse problema específico**.
+
+É o melhor case do documento para o argumento de **redução de suporte** — e o mais fácil
+de replicar, porque não exige pesquisa de vocabulário: exige apenas explicar a restrição
+do sistema em termos da tarefa que o usuário estava tentando concluir. Ressalva: não há
+número absoluto de tickets antes, então a magnitude da economia não é conhecida.
 
 **Nuance que importa para a sua decisão:** a própria fonte declara que alunos com agenda
 semanal têm melhor retenção e que promover o formato semanal "sempre foi do interesse do
@@ -416,12 +491,34 @@ para 16** (2017).
 tarefa. Não é possível isolar quanto do ganho veio do texto e quanto veio de haver menos
 páginas competindo entre si. Serve como evidência do programa, não da técnica isolada.
 
+### O padrão que os cases revelam
+
+Lidos lado a lado, eles não contam a mesma história — e a diferença é útil para decidir
+onde aplicar:
+
+| Case | Tipo de mudança | Precisou de pesquisa? | Número? |
+|---|---|---|---|
+| Preply | Mecânica → benefício/hábito | **Sim** — entrevistas revelaram "regular" | +11% / +7,8% |
+| Fundbox | Desfecho implícito errado → sequência real | Não — bastou observar a hesitação | Não divulgado |
+| Gong.io | Silêncio → explicação da restrição | Não — os tickets já diziam o problema | "Zero tickets" |
+
+**Só um dos três exigiu pesquisa de vocabulário.** Os outros dois vieram de observar onde o
+usuário travava. Isso é uma boa notícia para adoção: a modalidade mais barata — explicar o
+que o sistema está fazendo, em vez de nomear melhor — não depende de estudo prévio e
+produziu o resultado mais nítido do conjunto.
+
 ### Por que não há mais cases aqui
 
 Busquei ativamente cases nomeados com métrica em blogs de engenharia e design de empresas
-de produto. O que encontrei repetidamente foram números sem empresa identificada, números
-sem fonte primária, ou estudos de caso de fornecedores de ferramentas de teste A/B com
-incentivo comercial evidente. Nenhum deles passa no critério de rigor que combinamos.
+de produto. Fora deste artigo, o que encontrei repetidamente foram números sem empresa
+identificada, números sem fonte primária, ou estudos de caso de fornecedores de ferramentas
+de teste A/B com incentivo comercial evidente. Nenhum deles passa no critério de rigor que
+combinamos.
+
+**Viés da fonte, declarado:** a Frontitude vende uma ferramenta de gestão de conteúdo de
+UX, e o artigo existe para demonstrar que copy move métrica. Isso não invalida os relatos —
+os profissionais são nomeados, as capturas de tela são específicas e o wording é
+verificável — mas significa que nenhum experimento fracassado apareceria ali.
 
 ---
 
@@ -521,20 +618,22 @@ prioridades; três continuam abertas.
 | *J Clin Epidemiol* 2023 | ✅ Por busca | N, desenho e efeito (19,8%, IC 95% 14,7–24,9%) |
 | PNAS 2023 (legalese) | ✅ Por busca | N = 105 advogados; 2 experimentos pré-registrados |
 | **IJSRM 2023 (Bauer et al.)** | ✅✅ **Texto completo lido** | PDF obtido. N = 4.025. Todos os 8 indicadores mapeados. **Ambiguidade com o item 6 resolvida** — minha atribuição estava correta. Descoberto que o custo de tempo é comprimento, não dificuldade |
-| **Kunz 2026** (*Field Methods*) | ⚠ Aberto | N. O achado já está corretamente atribuído; falta só a amostra |
-| **Preply (Frontitude)** | ⚠ Aberto | O wording exato antes/depois. Busca dirigida falhou |
+| **Preply (Frontitude)** | ✅✅ **Texto completo lido** | Wording exato obtido. Revelou que a palavra veio de **entrevistas com usuários** — o elo direto com Furnas. Revelou também que **duas mudanças ocorreram no mesmo teste**, limitando a atribuição. Rendeu dois cases adicionais (Fundbox, Gong.io) |
+| **Kunz 2026** (*Field Methods*) | ⚠ Aberto | N. O achado já está corretamente atribuído; falta só a amostra. É a pendência de menor consequência |
 
-**As duas auditorias em texto completo mudaram o documento**, não só o confirmaram:
+**Nenhuma das três auditorias em texto completo apenas confirmou o que estava escrito:**
 
 - **Furnas** reforçou a validade do achado central (validação de campo que eu desconhecia)
   e derrubou uma recomendação minha — a de que pesquisar vocabulário resolveria.
 - **Bauer et al.** resolveu a ambiguidade 5/6, converteu o contra "verbosidade" de
   argumento teórico em achado medido, e acrescentou um dado que ninguém gosta de ouvir:
   copy melhor **não** melhorou a percepção subjetiva dos respondentes.
+- **Frontitude/Preply** deu o wording exato, revelou o elo com Furnas (a palavra veio de
+  entrevistas), expôs uma limitação de atribuição que a fonte secundária omitia, e rendeu
+  **dois cases que eu não tinha**.
 
-Esse é o argumento mais forte possível a favor de auditar o que resta. Das duas pendências,
-a da **Preply** é a que mais importa — é a única que sustenta um case, e sem o wording ela
-não vira guideline.
+Resta apenas o N do Kunz 2026 — a pendência de menor consequência, já que o achado está
+corretamente atribuído. **O documento pode ser usado para decisão como está.**
 3. **"Copy orientado à intenção" não é um campo de pesquisa.** Não existe literatura que
    teste exatamente este construto. O que reuni são quatro literaturas adjacentes
    (vocabulário, legibilidade, forrageamento de informação, linguagem simples) conectadas
@@ -586,7 +685,8 @@ não vira guideline.
 
 **Cases**
 
-- Frontitude — How UX Copy Drives Better Business Results (case Preply).
+- **✅ lido em texto completo** — Frontitude — How UX Copy Drives Better Business Results
+  (cases Preply, Fundbox e Gong.io).
   https://www.frontitude.com/blog/how-ux-copy-drives-better-business-results
 - Government Digital Service — Taking care of business on GOV.UK (2017).
   https://gds.blog.gov.uk/2017/07/18/taking-care-of-business-on-gov-uk/
