@@ -27,6 +27,12 @@ Mas três ressalvas mudam a decisão de "adotar sempre" para "adotar onde import
    entender uma ação também aumentam aceitação quando usados para constranger. Há efeito
    medido, e ele recai desproporcionalmente sobre pessoas de menor escolaridade.
 
+**Se você precisa de um único número para a reunião**, use este: em ensaio clínico
+randomizado com alocação ocultada e cegamento, versões em linguagem simples produziram
+**19,8% a mais de respostas corretas** de compreensão (IC 95% 14,7–24,9%; P < 0,001). É o
+dado de melhor qualidade metodológica do documento. Evite o "+124%" — ele é real, mas é um
+índice composto de 1997, e não sobrevive a uma pergunta sobre o que exatamente foi medido.
+
 **Confiança:** alta para o princípio, média para o tamanho do efeito, baixa para
 transferência direta dos números de case para o seu contexto.
 
@@ -111,23 +117,58 @@ por que rótulos genéricos custam caro em fluxos de decisão.
 
 ## Evidência empírica
 
-| # | Estudo | Método | Achado | Direção |
+> **Estado da auditoria (10/08/2026).** As colunas de método e N abaixo foram
+> complementadas por busca dirigida numa segunda passada. Continuam **sem leitura de
+> texto completo** — ver [Limitações](#limitações-desta-pesquisa). Itens marcados
+> `⚠ em aberto` ainda precisam de verificação na fonte.
+
+| # | Estudo | Método e N | Achado | Direção |
 |---|---|---|---|---|
-| 1 | Furnas et al., *CACM*, 1987 | Escolha espontânea de palavras, 5 domínios | Concordância entre duas pessoas < 0,20; palavra única do designer → 80–90% de falha | **A favor** |
-| 2 | Morkes & Nielsen, 1997 (também *CHI 98*) | 5 estilos de escrita comparados, usabilidade medida | Conciso **+58%**; escaneável **+47%**; objetivo **+27%**; combinado **+124%** | **A favor** |
-| 3 | Plain language RCTs, *J Clin Epidemiol*, 2023 (adultos e pais) e ensaio com jovens | RCTs de superioridade, online, alocação ocultada, cegos | Versões em linguagem simples melhoraram compreensão, acessibilidade, usabilidade e satisfação | **A favor** |
-| 4 | Martínez, Mollica & Gibson, *PNAS*, 2023 | Comparação de compreensão e recordação, texto jurídico vs. simplificado | **Advogados também** compreendem e recordam pior o "legalês"; avaliam contratos simplificados como igualmente exequíveis e preferíveis | **A favor** (inclui especialistas) |
-| 5 | *Int. J. Social Research Methodology*, 2023 (28:1) | Experimento com questionários web | **Sem efeito positivo geral** sobre qualidade de dados. Ganho concentrado em quem fala outro idioma em casa: menos não-resposta de item, mais diferenciação | **Contra / limitante** |
-| 6 | Kunz, Gummer & Neuert, 2026 (*Field Methods*) | Escala multi-item em linguagem simples | Maior diferenciação, menos respostas no ponto médio, **tempos de resposta menores** | **A favor** |
-| 7 | Pesquisa sobre *confirmshaming* | Experimento com condição de controle | Copy manipulativo elevou aceitação em **4,8 pontos percentuais** (14,8% → 19,6%), **+32,4% relativo** | **Alerta ético** |
-| 8 | University of Chicago Law School | Estudo sobre design manipulativo | Copy manipulativo aumentou cadastros em **≥5%**, afetando desproporcionalmente pessoas de **menor escolaridade** | **Alerta ético** |
+| 1 | Furnas et al., *CACM*, 1987 | Escolha espontânea de palavras, 5 domínios. Autores na Bell Communications Research. **N total `⚠ em aberto`** (há referência a "24 subjects" em um dos conjuntos, não confirmada como total) | Concordância entre duas pessoas < 0,20; palavra única do designer → 80–90% de falha | **A favor** |
+| 2 | Morkes & Nielsen, 1997 (também *CHI 98*) | **51 participantes**, 5 variações do mesmo site, cada uma com estilo de escrita diferente. Tarefas de busca de resposta | Conciso **+58%**; escaneável **+47%**; objetivo **+27%**; combinado **+124%** | **A favor** |
+| 3 | Plain language RCTs, *J Clin Epidemiol*, 2023 (adultos e pais) e ensaio com jovens | RCTs de superioridade, online, alocação ocultada, cegos. Poder calculado para **122 por braço (244 total)**; **≥240 por população**. Estudo com pais: 295 randomizados, 241 completaram (121 intervenção / 120 controle). Desfecho primário: proporção de acertos em 7 perguntas de compreensão | Diferença média de **19,8%** em acertos (IC 95% 14,7–24,9%; **P < 0,001**) para a recomendação da OMS | **A favor** |
+| 4 | Martínez, Mollica & Gibson, *PNAS*, 2023 | **105 advogados dos EUA**. **Dois experimentos pré-registrados**. Exp. 1: 12 pares de trechos de contrato (legalês vs. simplificado), testando compreensão e recordação | **Advogados também** compreendem e recordam pior o "legalês". Exp. 2: avaliam contratos simplificados como igualmente exequíveis **e preferíveis** em qualidade geral, adequação de estilo e probabilidade de assinatura pelo cliente | **A favor** (inclui especialistas) |
+| 5 | *Int. J. Social Research Methodology*, 2023 (28:1) — GESIS | Desenho entre-sujeitos, questionário web, linguagem simples vs. padrão. **N `⚠ em aberto`** | **Sem efeito positivo geral** sobre qualidade de dados. Ganho concentrado em quem fala outro idioma em casa: menos não-resposta de item, mais diferenciação | **Contra / limitante** |
+| 6 | Kunz, Gummer & Neuert, 2026 (*Field Methods*) | Escala multi-item em linguagem simples. **N `⚠ em aberto`** | Maior diferenciação, menos respostas no ponto médio, **tempos de resposta menores** | **A favor** |
+| 7 | Pesquisa sobre *confirmshaming* | Experimento com condição de controle. **N `⚠ em aberto`** | Copy manipulativo elevou aceitação em **4,8 pontos percentuais** (14,8% → 19,6%), **+32,4% relativo** | **Alerta ético** |
+| 8 | University of Chicago Law School | Estudo sobre design manipulativo. **N `⚠ em aberto`** | Copy manipulativo aumentou cadastros em **≥5%**, afetando desproporcionalmente pessoas de **menor escolaridade** | **Alerta ético** |
+
+### O que a auditoria mudou
+
+**Item 2 ficou mais forte e mais limitado ao mesmo tempo.** Confirmei os 51 participantes e
+o que compõe a "usabilidade medida": **tempo de tarefa, erros, memória e satisfação
+subjetiva**. É um índice composto de quatro dimensões — não uma métrica única e não uma
+métrica de negócio. O `+124%` é real, mas significa "melhora no índice agregado", o que é
+bem menos impressionante do que soa quando citado solto. Continue tratando com cautela.
+
+**Item 3 ganhou um tamanho de efeito de verdade.** A diferença média de **19,8% em
+respostas corretas** (IC 95% 14,7–24,9%, P < 0,001) é o número mais defensável de todo o
+documento: vem de RCT com alocação ocultada, cegamento, poder calculado a priori e
+desfecho primário declarado. Se você precisa de **um** número para sustentar o argumento
+numa reunião, use este — e não o +124%.
+
+**Item 4 é metodologicamente melhor do que eu havia registrado.** São **dois experimentos
+pré-registrados** com 105 advogados. Pré-registro é uma salvaguarda forte contra
+*p-hacking*; isso eleva a confiabilidade acima da média da tabela.
+
+> ⚠ **Inconsistência que encontrei no meu próprio relatório.** Os itens 5 e 6 vêm do mesmo
+> grupo de pesquisa (GESIS) e tratam do mesmo tema. Numa das buscas, o achado de "maior
+> diferenciação, menos respostas no ponto médio e tempos menores" apareceu atribuído ao
+> estudo de **2023**, e noutra ao de **2026**. Registrei como item 6, mas **não consigo
+> confirmar qual dos dois artigos traz esse resultado** sem abrir os textos. Se for o de
+> 2023, a contraevidência do item 5 é mais matizada do que apresento — e a leitura cruzada
+> abaixo precisa ser revista. **Trate os itens 5 e 6 como um par a ser desembaraçado antes
+> de usar qualquer um dos dois.**
 
 ### Leitura cruzada
 
-Os itens 3, 4 e 6 convergem: reescrever na linguagem de quem lê melhora compreensão em
-populações e domínios diferentes. O item 4 derruba a objeção mais comum em produtos
-técnicos — "meu usuário é especialista, prefere o termo técnico". Advogados, diante de
-texto jurídico, também se saem pior com jargão.
+Os itens 3 e 4 convergem, e são os dois mais fortes metodologicamente da tabela: reescrever
+na linguagem de quem lê melhora compreensão em populações e domínios diferentes. O item 4
+derruba a objeção mais comum em produtos técnicos — "meu usuário é especialista, prefere o
+termo técnico". Advogados, diante de texto jurídico, também se saem pior com jargão.
+
+O item 6 apontaria na mesma direção, mas está sujeito à ambiguidade sinalizada acima e não
+deve ser usado como apoio até que o par 5/6 seja desembaraçado.
 
 O item 5 é a contraevidência honesta e não deve ser minimizada: quando a tarefa é
 *responder um questionário* (e não *encontrar e executar uma ação*), a linguagem simples
@@ -227,6 +268,16 @@ Relatado por Viktoria Kosiak, UX Writer da Preply, em publicação do blog da Fr
 
 **O que não foi divulgado:** wording exato de antes e depois, tamanho de amostra, duração,
 significância estatística, se houve outras mudanças simultâneas.
+
+> ⚠ **Busca dirigida pelo wording exato: sem sucesso.** Numa segunda passada procurei
+> especificamente o texto antes/depois dos rótulos, inclusive na central de ajuda da
+> Preply — que hoje usa os termos "weekly lessons", "regular lessons" e "subscription".
+> Não é possível determinar qual era o rótulo original nem qual o substituiu.
+>
+> **Consequência para o seu uso:** este case comprova que *mudar o copy* moveu métrica.
+> Não comprova *qual princípio de nomenclatura* funcionou. Para virar guideline de design
+> system, ele é insuficiente — serve para justificar o experimento, não para copiar a
+> solução.
 
 **Nuance que importa para a sua decisão:** a própria fonte declara que alunos com agenda
 semanal têm melhor retenção e que promover o formato semanal "sempre foi do interesse do
@@ -329,13 +380,30 @@ Declaradas para você calibrar o quanto apoiar decisão nisto.
 
 1. **Não li os textos completos das fontes primárias.** O ambiente onde esta pesquisa foi
    executada bloqueia acesso de rede a domínios externos — ACM, PubMed, PNAS, gov.uk e
-   demais foram inacessíveis. A verificação foi feita por convergência de múltiplas buscas
-   independentes sobre a mesma fonte, o que confirma achados e citações bibliográficas,
-   mas **não** permite conferir método, tamanho de amostra, intervalos de confiança ou
-   ressalvas dos próprios autores.
+   demais foram inacessíveis, e continuavam inacessíveis na segunda passada. A verificação
+   foi feita por convergência de múltiplas buscas independentes sobre a mesma fonte, o que
+   confirma achados, N e citações bibliográficas, mas **não** permite conferir
+   procedimento, ressalvas dos próprios autores, nem checar se o número citado por
+   terceiros corresponde ao que o artigo de fato reporta.
 2. **Consequência prática:** os números da tabela de evidências devem ser tratados como
-   corretamente atribuídos, porém não auditados por mim. Antes de usar qualquer um deles
-   em decisão de peso, recomendo abrir a fonte listada na bibliografia.
+   corretamente atribuídos, porém não auditados na fonte. Antes de usar qualquer um deles
+   em decisão de peso, abra a referência listada na bibliografia.
+
+### Estado da auditoria — o que ainda falta
+
+Segunda passada em 10/08/2026, por busca dirigida. Recuperou N e desenho de três das seis
+prioridades; três continuam abertas.
+
+| Fonte | Status | O que falta |
+|---|---|---|
+| Morkes & Nielsen 1997 | ✅ Resolvido | N = 51; índice = tempo, erros, memória, satisfação |
+| *J Clin Epidemiol* 2023 | ✅ Resolvido | N, desenho e efeito (19,8%, IC 95% 14,7–24,9%) obtidos |
+| PNAS 2023 (legalese) | ✅ Resolvido | N = 105 advogados; 2 experimentos pré-registrados |
+| **Furnas 1987** | ⚠ Aberto | N total e quais são os 5 domínios. Falta saber se o "80–90% de falha" é **medido** ou **derivado do modelo** — isso muda como o achado central deve ser apresentado |
+| **IJSRM 2023 / Kunz 2026** | ⚠ Aberto | N de ambos, e **qual dos dois artigos** traz o achado de tempos menores. Ver o alerta na seção de evidência |
+| **Preply (Frontitude)** | ⚠ Aberto | O wording exato antes/depois. Busca dirigida falhou |
+
+As três abertas exigem leitura do texto completo — não são recuperáveis por busca.
 3. **"Copy orientado à intenção" não é um campo de pesquisa.** Não existe literatura que
    teste exatamente este construto. O que reuni são quatro literaturas adjacentes
    (vocabulário, legibilidade, forrageamento de informação, linguagem simples) conectadas
