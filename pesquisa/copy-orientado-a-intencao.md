@@ -24,9 +24,11 @@ Mas três ressalvas mudam a decisão de "adotar sempre" para "adotar onde import
    ou "natural" é um mito, e que **não podem existir regras para escolher um bom nome**. A
    saída que eles propõem é redundância — muitos caminhos alternativos para a mesma coisa —
    não acerto de nomenclatura.
-2. **O efeito não é universal.** Um estudo de 2023 com questionários web não encontrou
-   efeito positivo geral de linguagem simples sobre qualidade de dados — o benefício se
-   concentrou em respondentes de menor letramento.
+2. **O efeito não é universal — e há um estudo grande que não achou quase nada.** O
+   experimento GESIS de 2023 (**n = 4.025**, lido em texto completo) testou oito
+   indicadores de qualidade de dados. **Cinco deram nulo**, o tempo de conclusão *piorou*
+   em 20 segundos, e a avaliação subjetiva dos respondentes não mudou. O benefício real
+   apareceu apenas no subgrupo que fala outro idioma em casa.
 3. **A técnica é neutra quanto à ética.** Os mesmos mecanismos que ajudam alguém a
    entender uma ação também aumentam aceitação quando usados para constranger. Há efeito
    medido, e ele recai desproporcionalmente sobre pessoas de menor escolaridade.
@@ -205,7 +207,7 @@ por que rótulos genéricos custam caro em fluxos de decisão.
 | 2 | Morkes & Nielsen, 1997 (também *CHI 98*) | **51 participantes**, 5 variações do mesmo site, cada uma com estilo de escrita diferente. Tarefas de busca de resposta | Conciso **+58%**; escaneável **+47%**; objetivo **+27%**; combinado **+124%** | **A favor** |
 | 3 | Plain language RCTs, *J Clin Epidemiol*, 2023 (adultos e pais) e ensaio com jovens | RCTs de superioridade, online, alocação ocultada, cegos. Poder calculado para **122 por braço (244 total)**; **≥240 por população**. Estudo com pais: 295 randomizados, 241 completaram (121 intervenção / 120 controle). Desfecho primário: proporção de acertos em 7 perguntas de compreensão | Diferença média de **19,8%** em acertos (IC 95% 14,7–24,9%; **P < 0,001**) para a recomendação da OMS | **A favor** |
 | 4 | Martínez, Mollica & Gibson, *PNAS*, 2023 | **105 advogados dos EUA**. **Dois experimentos pré-registrados**. Exp. 1: 12 pares de trechos de contrato (legalês vs. simplificado), testando compreensão e recordação | **Advogados também** compreendem e recordam pior o "legalês". Exp. 2: avaliam contratos simplificados como igualmente exequíveis **e preferíveis** em qualidade geral, adequação de estilo e probabilidade de assinatura pelo cliente | **A favor** (inclui especialistas) |
-| 5 | *Int. J. Social Research Methodology*, 2023 (28:1) — GESIS | Desenho entre-sujeitos, questionário web, linguagem simples vs. padrão. **N `⚠ em aberto`** | **Sem efeito positivo geral** sobre qualidade de dados. Ganho concentrado em quem fala outro idioma em casa: menos não-resposta de item, mais diferenciação | **Contra / limitante** |
+| 5 | Bauer, Neuert, Kunz & Gummer, *Int. J. Social Research Methodology*, 2023 (28:1) — GESIS ✅ **texto completo lido** | Desenho entre-sujeitos, painel de acesso online alemão com quotas. 5.332 iniciaram, **4.025 completaram**. Testes t e regressão logística sobre 8 indicadores | **Sem efeito positivo geral.** Tempo absoluto **+20s** (pior); diferenciação (CV) melhorou; **nulo** em straightlining, probabilidade de diferenciação, abandono, não-resposta e tempo até 1º clique; **nulo** na avaliação do questionário. Ganho real só no subgrupo que fala outro idioma em casa | **Contra / limitante** |
 | 6 | Kunz, Gummer & Neuert, 2026 (*Field Methods*) | Escala multi-item em linguagem simples. **N `⚠ em aberto`** | Maior diferenciação, menos respostas no ponto médio, **tempos de resposta menores** | **A favor** |
 | 7 | Pesquisa sobre *confirmshaming* | Experimento com condição de controle. **N `⚠ em aberto`** | Copy manipulativo elevou aceitação em **4,8 pontos percentuais** (14,8% → 19,6%), **+32,4% relativo** | **Alerta ético** |
 | 8 | University of Chicago Law School | Estudo sobre design manipulativo. **N `⚠ em aberto`** | Copy manipulativo aumentou cadastros em **≥5%**, afetando desproporcionalmente pessoas de **menor escolaridade** | **Alerta ético** |
@@ -228,14 +230,44 @@ numa reunião, use este — e não o +124%.
 pré-registrados** com 105 advogados. Pré-registro é uma salvaguarda forte contra
 *p-hacking*; isso eleva a confiabilidade acima da média da tabela.
 
-> ⚠ **Inconsistência que encontrei no meu próprio relatório.** Os itens 5 e 6 vêm do mesmo
-> grupo de pesquisa (GESIS) e tratam do mesmo tema. Numa das buscas, o achado de "maior
-> diferenciação, menos respostas no ponto médio e tempos menores" apareceu atribuído ao
-> estudo de **2023**, e noutra ao de **2026**. Registrei como item 6, mas **não consigo
-> confirmar qual dos dois artigos traz esse resultado** sem abrir os textos. Se for o de
-> 2023, a contraevidência do item 5 é mais matizada do que apresento — e a leitura cruzada
-> abaixo precisa ser revista. **Trate os itens 5 e 6 como um par a ser desembaraçado antes
-> de usar qualquer um dos dois.**
+> ✅ **Ambiguidade entre os itens 5 e 6: resolvida.** Li o artigo de 2023 na íntegra. Ele
+> encontrou tempos de conclusão **20 segundos MAIORES** com linguagem simples, não menores.
+> O achado de "tempos menores, menos respostas no ponto médio" pertence mesmo ao artigo de
+> **2026** — a atribuição do meu relatório estava correta. Os dois itens podem ser usados
+> como registrados.
+
+#### O item 5 auditado: o que exatamente não melhorou
+
+Este é o estudo mais desconfortável do documento, e agora tenho os detalhes. Amostra
+completa (n = 4.025):
+
+| Indicador | Resultado com linguagem simples |
+|---|---|
+| Tempo absoluto de conclusão | **+20 segundos** (pior) |
+| Tempo *relativo* (ajustado por nº de caracteres) | Sem diferença significativa |
+| Diferenciação de resposta (coef. de variação) | **Melhorou** |
+| Straightlining | Nulo |
+| Probabilidade de diferenciação | Nulo |
+| Abandono (*break-off*) | Nulo |
+| Não-resposta de item | Nulo |
+| Tempo até o primeiro clique | Nulo |
+| **Avaliação do questionário pelo respondente** | **Nulo** — nem no índice agregado nem item a item |
+
+No subgrupo que fala outro idioma em casa: **menos** não-resposta, **menos** straightlining
+e **maior** probabilidade de diferenciação. E o tempo maior apareceu **somente** entre
+quem tem letramento presumidamente alto — quem mais precisava de ajuda não pagou o
+pedágio de tempo.
+
+**Duas leituras que este artigo obriga:**
+
+1. **O tempo extra é comprimento, não dificuldade.** O tempo absoluto piorou, mas o tempo
+   *por caractere* não mudou. Linguagem simples ficou mais longa; o custo é de leitura, não
+   de processamento. Isso valida empiricamente o trade-off do contra nº 3 — e explica por
+   que "mais explícito" e "melhor" não são sinônimos.
+2. **Os respondentes não perceberam diferença.** A avaliação subjetiva do questionário foi
+   estatisticamente nula. Se você espera que copy melhor gere elogio ou percepção de
+   qualidade, este estudo diz que não gera. O benefício, quando existe, é comportamental e
+   silencioso.
 
 ### Leitura cruzada
 
@@ -244,8 +276,7 @@ na linguagem de quem lê melhora compreensão em populações e domínios difere
 derruba a objeção mais comum em produtos técnicos — "meu usuário é especialista, prefere o
 termo técnico". Advogados, diante de texto jurídico, também se saem pior com jargão.
 
-O item 6 apontaria na mesma direção, mas está sujeito à ambiguidade sinalizada acima e não
-deve ser usado como apoio até que o par 5/6 seja desembaraçado.
+O item 6 aponta na mesma direção e, com a ambiguidade resolvida, pode ser usado como apoio.
 
 O item 5 é a contraevidência honesta e não deve ser minimizada: quando a tarefa é
 *responder um questionário* (e não *encontrar e executar uma ação*), a linguagem simples
@@ -290,10 +321,13 @@ conversão com verniz de UX.
    (sinônimos, aliases, busca tolerante), não um rótulo melhor.
 2. **Efeito não é universal** [A, item 5]. Em tarefa de resposta a questionário, não houve
    ganho agregado. Não assuma transferência automática entre tipos de tarefa.
-3. **Verbosidade tem custo.** Rótulos de intenção tendem a ser mais longos que os
-   genéricos. O estudo de maior efeito da tabela (item 2) premiou justamente a
-   **concisão** — ou seja, "mais explícito" e "melhor" não são a mesma coisa. Há tensão
-   real entre ser específico e ser curto.
+3. **Verbosidade tem custo, e agora ele está medido** [A, item 5]. Rótulos de intenção
+   tendem a ser mais longos que os genéricos. No estudo GESIS (n = 4.025), a versão em
+   linguagem simples levou **20 segundos a mais** para ser respondida — mas o tempo *por
+   caractere* não mudou. O custo é de **comprimento**, não de dificuldade de processamento.
+   Some-se a isso que o estudo de maior efeito da tabela (item 2) premiou justamente a
+   **concisão**: "mais explícito" e "melhor" não são a mesma coisa, e o texto mais longo é
+   pago em tempo de leitura toda vez que a tela aparece.
 4. **Custo de manutenção e tradução.** Rótulos específicos multiplicam strings, quebram
    reuso de componentes e encarecem localização. Um botão `Confirmar` reusado em 40 telas
    vira 40 textos distintos, cada um com sua tradução.
@@ -486,15 +520,21 @@ prioridades; três continuam abertas.
 | Morkes & Nielsen 1997 | ✅ Por busca | N = 51; índice = tempo, erros, memória, satisfação |
 | *J Clin Epidemiol* 2023 | ✅ Por busca | N, desenho e efeito (19,8%, IC 95% 14,7–24,9%) |
 | PNAS 2023 (legalese) | ✅ Por busca | N = 105 advogados; 2 experimentos pré-registrados |
-| **IJSRM 2023 / Kunz 2026** | ⚠ Aberto | N de ambos, e **qual dos dois artigos** traz o achado de tempos menores. Ver o alerta na seção de evidência |
+| **IJSRM 2023 (Bauer et al.)** | ✅✅ **Texto completo lido** | PDF obtido. N = 4.025. Todos os 8 indicadores mapeados. **Ambiguidade com o item 6 resolvida** — minha atribuição estava correta. Descoberto que o custo de tempo é comprimento, não dificuldade |
+| **Kunz 2026** (*Field Methods*) | ⚠ Aberto | N. O achado já está corretamente atribuído; falta só a amostra |
 | **Preply (Frontitude)** | ⚠ Aberto | O wording exato antes/depois. Busca dirigida falhou |
 
-**A auditoria de Furnas mudou o documento**, não só o confirmou: reforçou a validade do
-achado central (validação de campo que eu não conhecia) e ao mesmo tempo derrubou uma
-recomendação minha (a de que pesquisar vocabulário resolveria). É o argumento mais forte
-possível a favor de auditar as duas fontes restantes.
+**As duas auditorias em texto completo mudaram o documento**, não só o confirmaram:
 
-As duas abertas exigem leitura do texto completo — não são recuperáveis por busca.
+- **Furnas** reforçou a validade do achado central (validação de campo que eu desconhecia)
+  e derrubou uma recomendação minha — a de que pesquisar vocabulário resolveria.
+- **Bauer et al.** resolveu a ambiguidade 5/6, converteu o contra "verbosidade" de
+  argumento teórico em achado medido, e acrescentou um dado que ninguém gosta de ouvir:
+  copy melhor **não** melhorou a percepção subjetiva dos respondentes.
+
+Esse é o argumento mais forte possível a favor de auditar o que resta. Das duas pendências,
+a da **Preply** é a que mais importa — é a única que sustenta um case, e sem o wording ela
+não vira guideline.
 3. **"Copy orientado à intenção" não é um campo de pesquisa.** Não existe literatura que
    teste exatamente este construto. O que reuni são quatro literaturas adjacentes
    (vocabulário, legibilidade, forrageamento de informação, linguagem simples) conectadas
@@ -524,8 +564,9 @@ As duas abertas exigem leitura do texto completo — não são recuperáveis por
   https://pubmed.ncbi.nlm.nih.gov/37421995/
 - Plain Language vs Standard Format for Youth Understanding of COVID-19 Recommendations:
   A Randomized Clinical Trial (2023). https://pubmed.ncbi.nlm.nih.gov/37548983/
-- Plain language in web questionnaires: effects on data quality and questionnaire
-  evaluation. *International Journal of Social Research Methodology*, 28(1) (2023).
+- **✅ lido em texto completo** — Bauer, I., Neuert, C., Kunz, T., & Gummer, T. (2023).
+  Plain language in web questionnaires: effects on data quality and questionnaire
+  evaluation. *International Journal of Social Research Methodology*, 28(1).
   https://www.tandfonline.com/doi/full/10.1080/13645579.2023.2294880
 - Kunz, T., Gummer, T., & Neuert, C. E. (2026). Measurement Quality of a Multi-item Scale
   in Plain Language. *Field Methods.* https://journals.sagepub.com/doi/10.1177/1525822X251322031
