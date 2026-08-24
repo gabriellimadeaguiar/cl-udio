@@ -208,7 +208,7 @@ por que rótulos genéricos custam caro em fluxos de decisão.
 | 3 | Plain language RCTs, *J Clin Epidemiol*, 2023 (adultos e pais) e ensaio com jovens | RCTs de superioridade, online, alocação ocultada, cegos. Poder calculado para **122 por braço (244 total)**; **≥240 por população**. Estudo com pais: 295 randomizados, 241 completaram (121 intervenção / 120 controle). Desfecho primário: proporção de acertos em 7 perguntas de compreensão | Diferença média de **19,8%** em acertos (IC 95% 14,7–24,9%; **P < 0,001**) para a recomendação da OMS | **A favor** |
 | 4 | Martínez, Mollica & Gibson, *PNAS*, 2023 | **105 advogados dos EUA**. **Dois experimentos pré-registrados**. Exp. 1: 12 pares de trechos de contrato (legalês vs. simplificado), testando compreensão e recordação | **Advogados também** compreendem e recordam pior o "legalês". Exp. 2: avaliam contratos simplificados como igualmente exequíveis **e preferíveis** em qualidade geral, adequação de estilo e probabilidade de assinatura pelo cliente | **A favor** (inclui especialistas) |
 | 5 | Bauer, Neuert, Kunz & Gummer, *Int. J. Social Research Methodology*, 2023 (28:1) — GESIS ✅ **texto completo lido** | Desenho entre-sujeitos, painel de acesso online alemão com quotas. 5.332 iniciaram, **4.025 completaram**. Testes t e regressão logística sobre 8 indicadores | **Sem efeito positivo geral.** Tempo absoluto **+20s** (pior); diferenciação (CV) melhorou; **nulo** em straightlining, probabilidade de diferenciação, abandono, não-resposta e tempo até 1º clique; **nulo** na avaliação do questionário. Ganho real só no subgrupo que fala outro idioma em casa | **Contra / limitante** |
-| 6 | Kunz, Gummer & Neuert, 2026 (*Field Methods*) | Escala multi-item em linguagem simples. **N `⚠ em aberto`** | Maior diferenciação, menos respostas no ponto médio, **tempos de resposta menores** | **A favor** |
+| 6 | Kunz, Gummer & Neuert, *Field Methods*, 2026, 38(1) — GESIS ✅ **texto completo lido** | Entre-sujeitos, web survey (dez/2022), painel alemão com quotas. 5.661 convidados, 4.353 iniciaram, **3.256 completaram**. Escala Need to Evaluate de 16 itens; tradução para linguagem simples feita por **profissionais externos** e mantida sem alteração pelos pesquisadores | Diferenciação **.669 → .681**; ponto médio **24,7% → 21,7%**; tempo **−18,4s** (154,9 → 136,5). Não-resposta e straightlining **sem diferença**. Propriedades da escala preservadas (α ligeiramente melhor) | **A favor** |
 | 7 | Pesquisa sobre *confirmshaming* | Experimento com condição de controle. **N `⚠ em aberto`** | Copy manipulativo elevou aceitação em **4,8 pontos percentuais** (14,8% → 19,6%), **+32,4% relativo** | **Alerta ético** |
 | 8 | University of Chicago Law School | Estudo sobre design manipulativo. **N `⚠ em aberto`** | Copy manipulativo aumentou cadastros em **≥5%**, afetando desproporcionalmente pessoas de **menor escolaridade** | **Alerta ético** |
 
@@ -230,11 +230,46 @@ numa reunião, use este — e não o +124%.
 pré-registrados** com 105 advogados. Pré-registro é uma salvaguarda forte contra
 *p-hacking*; isso eleva a confiabilidade acima da média da tabela.
 
-> ✅ **Ambiguidade entre os itens 5 e 6: resolvida.** Li o artigo de 2023 na íntegra. Ele
-> encontrou tempos de conclusão **20 segundos MAIORES** com linguagem simples, não menores.
-> O achado de "tempos menores, menos respostas no ponto médio" pertence mesmo ao artigo de
-> **2026** — a atribuição do meu relatório estava correta. Os dois itens podem ser usados
-> como registrados.
+> ✅ **Ambiguidade entre os itens 5 e 6: resolvida, com os dois textos completos em mãos.**
+> O artigo de 2023 encontrou tempos **20 segundos MAIORES**; o de 2026, **18,4 segundos
+> MENORES**. A atribuição do meu relatório estava correta.
+
+#### A tensão entre os dois estudos GESIS — e ela desmente um pró meu
+
+Os itens 5 e 6 vêm do mesmo instituto, usam desenho parecido e chegam a conclusões que
+**não se encaixam**. Vale ver lado a lado:
+
+| | Bauer et al., 2023 (item 5) | Kunz et al., 2026 (item 6) |
+|---|---|---|
+| Objeto | Questionário inteiro | Escala de 16 itens |
+| N | 4.025 | 3.256 |
+| Tempo | **+20s (pior)** | **−18,4s (melhor)** |
+| Não-resposta de item | Nulo (geral) | **Nulo** |
+| Straightlining | Nulo (geral) | **Nulo** |
+| Diferenciação | Melhorou | Melhorou (.669 → .681) |
+| Ponto médio | não medido | **24,7% → 21,7%** |
+| **Quem se beneficiou** | **Quem fala outro idioma em casa** | **Escolaridade média/alta — e *nenhum* efeito para escolaridade baixa** |
+
+> ⚠️ **Correção ao meu próprio relatório (segunda).** Meu pró nº 5 afirmava que o benefício
+> é *"consistentemente maior em populações de menor letramento ou não-nativas"*. **Isso não
+> se sustenta.** Kunz et al. escrevem que os efeitos se deveram *principalmente a
+> respondentes com escolaridade média ou alta*, e que **nenhuma dessas diferenças apareceu
+> entre respondentes de menor escolaridade** — o oposto do padrão de 2023.
+>
+> Os dois estudos usam proxies diferentes de vulnerabilidade (idioma falado em casa vs.
+> escolaridade) e desfechos diferentes, o que pode explicar a divergência. Mas a palavra
+> "consistentemente" era minha, não das fontes, e está errada. **Quem se beneficia de
+> linguagem simples é uma questão em aberto**, não um fato estabelecido.
+
+Um detalhe metodológico a favor do item 6: a tradução para linguagem simples foi feita por
+**profissionais externos** (Lebenshilfe Bremen e.V.) e os pesquisadores a mantiveram
+praticamente inalterada, justamente para testá-la sem viés. Isso é mais rigoroso do que a
+prática comum de o próprio time escrever a variante que espera ver vencer.
+
+E um achado tranquilizador para quem teme que simplificar distorça a medição: as
+propriedades psicométricas se mantiveram. A estrutura de dois componentes se repetiu, a
+variância explicada subiu levemente (38,7% → 42,5%) e o alfa de Cronbach das subescalas
+ficou um pouco melhor (.799/.666 → .826/.724). **Simplificar não degradou o instrumento.**
 
 #### O item 5 auditado: o que exatamente não melhorou
 
@@ -303,9 +338,12 @@ conversão com verniz de UX.
    como ajuste pontual.
 4. **Funciona também com especialistas** [A, item 4] — remove a objeção de produto
    técnico.
-5. **Melhora acessibilidade para quem mais precisa** [A, itens 3 e 5] — o benefício é
-   consistentemente maior em populações de menor letramento ou não-nativas. É um ganho de
-   equidade, não só de eficiência.
+5. **Pode melhorar acessibilidade para quem mais precisa — mas isso está em disputa**
+   [A, itens 5 e 6]. Bauer et al. (2023) encontraram o ganho concentrado em quem fala outro
+   idioma em casa. Kunz et al. (2026), do mesmo instituto, encontraram o oposto: efeitos
+   principalmente entre escolaridade média/alta, e **nenhum** entre escolaridade baixa.
+   Trate o argumento de equidade como plausível e não demonstrado — ele é o mais citado em
+   apresentações e o menos sustentado pelos dados que li.
 6. **Barato de testar** [C] — mudança de texto não exige migração nem refatoração, o que
    torna o custo de um experimento controlado muito baixo comparado a mudanças estruturais.
 
@@ -619,7 +657,7 @@ prioridades; três continuam abertas.
 | PNAS 2023 (legalese) | ✅ Por busca | N = 105 advogados; 2 experimentos pré-registrados |
 | **IJSRM 2023 (Bauer et al.)** | ✅✅ **Texto completo lido** | PDF obtido. N = 4.025. Todos os 8 indicadores mapeados. **Ambiguidade com o item 6 resolvida** — minha atribuição estava correta. Descoberto que o custo de tempo é comprimento, não dificuldade |
 | **Preply (Frontitude)** | ✅✅ **Texto completo lido** | Wording exato obtido. Revelou que a palavra veio de **entrevistas com usuários** — o elo direto com Furnas. Revelou também que **duas mudanças ocorreram no mesmo teste**, limitando a atribuição. Rendeu dois cases adicionais (Fundbox, Gong.io) |
-| **Kunz 2026** (*Field Methods*) | ⚠ Aberto | N. O achado já está corretamente atribuído; falta só a amostra. É a pendência de menor consequência |
+| **Kunz et al. 2026** (*Field Methods*) | ✅✅ **Texto completo lido** | PDF obtido. N = 3.256, magnitudes exatas. **Contradisse meu pró nº 5** sobre quem se beneficia. Confirmou que simplificar não degrada as propriedades psicométricas |
 
 **Nenhuma das três auditorias em texto completo apenas confirmou o que estava escrito:**
 
@@ -631,9 +669,14 @@ prioridades; três continuam abertas.
 - **Frontitude/Preply** deu o wording exato, revelou o elo com Furnas (a palavra veio de
   entrevistas), expôs uma limitação de atribuição que a fonte secundária omitia, e rendeu
   **dois cases que eu não tinha**.
+- **Kunz et al.** contradisse meu pró nº 5 sobre quem se beneficia de linguagem simples, e
+  acrescentou um dado que faltava: simplificar **não degradou** as propriedades
+  psicométricas do instrumento.
 
-Resta apenas o N do Kunz 2026 — a pendência de menor consequência, já que o achado está
-corretamente atribuído. **O documento pode ser usado para decisão como está.**
+**Auditoria concluída: 6 de 6, quatro fontes em texto completo.** Duas afirmações minhas
+foram corrigidas no processo — a de que pesquisar vocabulário resolveria, e a de que o
+benefício é consistentemente maior em populações vulneráveis. Nenhuma das quatro leituras
+apenas confirmou o que estava escrito.
 3. **"Copy orientado à intenção" não é um campo de pesquisa.** Não existe literatura que
    teste exatamente este construto. O que reuni são quatro literaturas adjacentes
    (vocabulário, legibilidade, forrageamento de informação, linguagem simples) conectadas
@@ -667,8 +710,9 @@ corretamente atribuído. **O documento pode ser usado para decisão como está.*
   Plain language in web questionnaires: effects on data quality and questionnaire
   evaluation. *International Journal of Social Research Methodology*, 28(1).
   https://www.tandfonline.com/doi/full/10.1080/13645579.2023.2294880
-- Kunz, T., Gummer, T., & Neuert, C. E. (2026). Measurement Quality of a Multi-item Scale
-  in Plain Language. *Field Methods.* https://journals.sagepub.com/doi/10.1177/1525822X251322031
+- **✅ lido em texto completo** — Kunz, T., Gummer, T., & Neuert, C. E. (2026). Measurement
+  Quality of a Multi-item Scale in Plain Language. *Field Methods*, 38(1), 33–45.
+  (© The Author(s) 2025.) https://journals.sagepub.com/doi/10.1177/1525822X251322031
 - Martínez, E., Mollica, F., & Gibson, E. (2023). Even lawyers do not like legalese.
   *PNAS.* https://www.pnas.org/doi/10.1073/pnas.2302672120
 - Martínez, E., Mollica, F., & Gibson, E. (2024). Even laypeople use legalese. *PNAS.*
