@@ -633,21 +633,17 @@ um efeito real (itens 7 e 8) e mesmo assim deve descartá-la.
 
 Declaradas para você calibrar o quanto apoiar decisão nisto.
 
-1. **Não li os textos completos das fontes primárias.** O ambiente onde esta pesquisa foi
-   executada bloqueia acesso de rede a domínios externos — ACM, PubMed, PNAS, gov.uk e
-   demais foram inacessíveis, e continuavam inacessíveis na segunda passada. A verificação
-   foi feita por convergência de múltiplas buscas independentes sobre a mesma fonte, o que
-   confirma achados, N e citações bibliográficas, mas **não** permite conferir
-   procedimento, ressalvas dos próprios autores, nem checar se o número citado por
-   terceiros corresponde ao que o artigo de fato reporta.
-2. **Consequência prática:** os números da tabela de evidências devem ser tratados como
-   corretamente atribuídos, porém não auditados na fonte. Antes de usar qualquer um deles
-   em decisão de peso, abra a referência listada na bibliografia.
+1. **Parte das fontes não foi lida na íntegra.** Quatro foram auditadas em texto completo e
+   estão marcadas como tal ao longo do documento. As demais — Morkes & Nielsen, os RCTs do
+   *J Clin Epidemiol*, o PNAS, os estudos sobre *confirmshaming* e o case do GOV.UK — foram
+   verificadas por convergência de buscas independentes. Isso confirma achados, N e
+   citações, mas não permite conferir procedimento nem as ressalvas dos próprios autores.
+   Antes de usar um desses números em decisão de peso, abra a referência na bibliografia.
 
-### Estado da auditoria — o que ainda falta
+### Estado da auditoria
 
-Segunda passada em 10/08/2026, por busca dirigida. Recuperou N e desenho de três das seis
-prioridades; três continuam abertas.
+**Concluída.** As seis prioridades foram fechadas, quatro delas por leitura de texto
+completo a partir de PDFs fornecidos. Duas afirmações minhas foram corrigidas no processo.
 
 | Fonte | Status | Situação |
 |---|---|---|
@@ -682,8 +678,9 @@ apenas confirmou o que estava escrito.
    (vocabulário, legibilidade, forrageamento de informação, linguagem simples) conectadas
    por mim. A conexão é defensável, mas é interpretação, não achado.
 4. **Viés de publicação.** Empresas publicam experimentos de copy que funcionaram. Os que
-   não funcionaram não viram post de blog. Os dois cases desta pesquisa quase certamente
-   são sobreviventes desse filtro.
+   não funcionaram não viram post de blog. Os quatro cases desta pesquisa quase certamente
+   são sobreviventes desse filtro — e três deles vêm de uma única fonte, que vende
+   ferramenta de conteúdo de UX.
 
 ---
 
