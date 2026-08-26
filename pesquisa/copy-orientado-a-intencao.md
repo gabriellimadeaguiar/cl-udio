@@ -67,8 +67,7 @@ tom de voz/branding, internacionalização.
 
 ## Como ler este documento
 
-Cada afirmação carrega uma etiqueta de evidência. Isso existe para você saber, numa
-reunião, o que sustenta pressão e o que não sustenta.
+Cada afirmação carrega uma etiqueta de evidência.
 
 | Etiqueta | Significado |
 |---|---|
