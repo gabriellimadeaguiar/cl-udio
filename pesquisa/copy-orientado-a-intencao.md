@@ -146,11 +146,9 @@ A solução proposta pelos autores **não é escolher a palavra certa** — é *
 aliasing*: fornecer muitos caminhos verbais alternativos para cada objeto (sinônimos,
 busca, múltiplas entradas de índice).
 
-> ⚠️ **Correção ao meu próprio relatório.** A versão anterior dizia que "a intervenção que
-> funciona é *medir* o vocabulário". Isso está **incompleto a ponto de enganar**. Medir e
-> escolher o termo mais popular melhora o acesso por um fator de ~2, mas ainda falha na
-> maioria das tentativas. Pesquisa de vocabulário é necessária e insuficiente. O que o
-> artigo defende é **redundância de acesso**, não acerto de nomenclatura.
+Vale sublinhar a implicação prática: medir o vocabulário e escolher o termo mais popular
+melhora o acesso por um fator de ~2, mas ainda falha na maioria das tentativas. **Pesquisa
+de vocabulário é necessária e insuficiente.**
 
 #### Limite de extrapolação — leia antes de usar este estudo
 
