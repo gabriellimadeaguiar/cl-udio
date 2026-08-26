@@ -85,10 +85,6 @@ resistiram à verificação. Ela é parte do resultado, não um apêndice.
 
 ### O problema do vocabulário [A] — auditado no texto completo
 
-> ✅ **Fonte lida integralmente** (PDF do artigo original, 8 páginas, CACM 30(11), 1987).
-> Esta é a única fonte do documento verificada em texto completo. Tudo abaixo vem do
-> artigo, não de resumo de terceiros.
-
 Furnas, Landauer, Gomez e Dumais mediram como pessoas nomeiam espontaneamente objetos e
 ações. **Seis conjuntos de dados em cinco domínios, 539 participantes no total:**
 
