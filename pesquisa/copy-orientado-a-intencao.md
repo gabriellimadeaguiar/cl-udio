@@ -11,21 +11,21 @@ Data: 10 de agosto de 2026
 **Adotar, com escopo limitado e teste próprio.** A evidência de que a linguagem da
 interface deve partir do vocabulário e da tarefa do usuário — e não da arquitetura do
 sistema — é sólida, antiga e replicada. O achado mais forte não vem do design: vem de um
-estudo de 1987 (**539 participantes**, lido em texto completo) que mediu escolha espontânea
+estudo de 1987 (**539 participantes**) que mediu escolha espontânea
 de palavras e encontrou que **duas pessoas escolhem o mesmo termo para a mesma coisa com
 probabilidade entre 0,07 e 0,18**.
 
 Mas três ressalvas mudam a decisão de "adotar sempre" para "adotar onde importa":
 
-1. **Pesquisar o vocabulário é necessário — e não basta.** É a descoberta mais incômoda da
-   auditoria. Furnas et al. testaram justamente isso: escolher a palavra *mais popular
-   entre usuários reais*, medida empiricamente. Ela ainda falha em **65–85%** das
+1. **Pesquisar o vocabulário é necessário — e não basta.** Furnas et al. testaram
+   justamente isso: escolher a palavra *mais popular entre usuários reais*, medida
+   empiricamente. Ela ainda falha em **65–85%** das
    tentativas de acesso. A conclusão literal dos autores é que a ideia de um termo "óbvio"
    ou "natural" é um mito, e que **não podem existir regras para escolher um bom nome**. A
    saída que eles propõem é redundância — muitos caminhos alternativos para a mesma coisa —
    não acerto de nomenclatura.
 2. **O efeito não é universal — e há um estudo grande que não achou quase nada.** O
-   experimento GESIS de 2023 (**n = 4.025**, lido em texto completo) testou oito
+   experimento GESIS de 2023 (**n = 4.025**) testou oito
    indicadores de qualidade de dados. **Cinco deram nulo**, o tempo de conclusão *piorou*
    em 20 segundos, e a avaliação subjetiva dos respondentes não mudou. O benefício real
    apareceu apenas no subgrupo que fala outro idioma em casa.
@@ -83,7 +83,7 @@ resistiram à verificação. Ela é parte do resultado, não um apêndice.
 
 ## Base teórica — por que deveria funcionar
 
-### O problema do vocabulário [A] — auditado no texto completo
+### O problema do vocabulário [A]
 
 Furnas, Landauer, Gomez e Dumais mediram como pessoas nomeiam espontaneamente objetos e
 ações. **Seis conjuntos de dados em cinco domínios, 539 participantes no total:**
@@ -102,8 +102,7 @@ Classifieds `.14` · Recipe Keywords `.18`.
 
 #### O "80–90% de falha": medido ou derivado?
 
-**Era a pergunta central da auditoria. Resposta: derivado dos dados empíricos — e
-confirmado em sistemas reais.**
+**Derivado dos dados empíricos — e confirmado em sistemas reais.**
 
 Os autores escrevem que, se uma pessoa atribui o nome de um item, outras pessoas sem
 treino falharão em acessá-lo em 80 a 90% das tentativas, e acrescentam que isso *"não é
@@ -112,12 +111,11 @@ confirmado várias vezes por pesquisa com sistemas reais"* — citando três est
 independentes (Furnas [4]; Gomez & Lochbaum [5]; Good, Whiteside, Wixon & Jones [6]).
 
 Ou seja: o número sai de simulação sobre tabelas de frequência reais, mas não é
-especulativo — tem validação de campo. **É mais robusto do que eu havia registrado.**
+especulativo — tem validação de campo.
 
-#### O achado que eu não tinha, e que muda a recomendação
+#### O teto do melhor nome possível
 
-O artigo vai além do que meu relatório original dizia. Os autores testaram também **o
-melhor nome possível** — a palavra mais frequente entre usuários reais, escolhida
+Os autores testaram também **o melhor nome possível** — a palavra mais frequente entre usuários reais, escolhida
 empiricamente:
 
 | Estratégia | Taxa de sucesso |
@@ -189,45 +187,34 @@ por que rótulos genéricos custam caro em fluxos de decisão.
 
 ## Evidência empírica
 
-> **Estado da auditoria (10/08/2026).** As colunas de método e N abaixo foram
-> complementadas por busca dirigida numa segunda passada. Continuam **sem leitura de
-> texto completo** — ver [Limitações](#limitações-desta-pesquisa). Itens marcados
-> `⚠ em aberto` ainda precisam de verificação na fonte.
-
 | # | Estudo | Método e N | Achado | Direção |
 |---|---|---|---|---|
-| 1 | Furnas et al., *CACM*, 1987 ✅ **texto completo lido** | **539 participantes**, 6 conjuntos em 5 domínios. Produção livre de termos | Concordância entre duas pessoas **.07 a .18**; nome do projetista → 80–90% de falha (validado em campo). **Mesmo o melhor nome medido falha 65–85%** | **A favor, com limite** — mede evocação, não reconhecimento |
+| 1 | Furnas et al., *CACM*, 1987 | **539 participantes**, 6 conjuntos em 5 domínios. Produção livre de termos | Concordância entre duas pessoas **.07 a .18**; nome do projetista → 80–90% de falha (validado em campo). **Mesmo o melhor nome medido falha 65–85%** | **A favor, com limite** — mede evocação, não reconhecimento |
 | 2 | Morkes & Nielsen, 1997 (também *CHI 98*) | **51 participantes**, 5 variações do mesmo site, cada uma com estilo de escrita diferente. Tarefas de busca de resposta | Conciso **+58%**; escaneável **+47%**; objetivo **+27%**; combinado **+124%** | **A favor** |
 | 3 | Plain language RCTs, *J Clin Epidemiol*, 2023 (adultos e pais) e ensaio com jovens | RCTs de superioridade, online, alocação ocultada, cegos. Poder calculado para **122 por braço (244 total)**; **≥240 por população**. Estudo com pais: 295 randomizados, 241 completaram (121 intervenção / 120 controle). Desfecho primário: proporção de acertos em 7 perguntas de compreensão | Diferença média de **19,8%** em acertos (IC 95% 14,7–24,9%; **P < 0,001**) para a recomendação da OMS | **A favor** |
 | 4 | Martínez, Mollica & Gibson, *PNAS*, 2023 | **105 advogados dos EUA**. **Dois experimentos pré-registrados**. Exp. 1: 12 pares de trechos de contrato (legalês vs. simplificado), testando compreensão e recordação | **Advogados também** compreendem e recordam pior o "legalês". Exp. 2: avaliam contratos simplificados como igualmente exequíveis **e preferíveis** em qualidade geral, adequação de estilo e probabilidade de assinatura pelo cliente | **A favor** (inclui especialistas) |
-| 5 | Bauer, Neuert, Kunz & Gummer, *Int. J. Social Research Methodology*, 2023 (28:1) — GESIS ✅ **texto completo lido** | Desenho entre-sujeitos, painel de acesso online alemão com quotas. 5.332 iniciaram, **4.025 completaram**. Testes t e regressão logística sobre 8 indicadores | **Sem efeito positivo geral.** Tempo absoluto **+20s** (pior); diferenciação (CV) melhorou; **nulo** em straightlining, probabilidade de diferenciação, abandono, não-resposta e tempo até 1º clique; **nulo** na avaliação do questionário. Ganho real só no subgrupo que fala outro idioma em casa | **Contra / limitante** |
-| 6 | Kunz, Gummer & Neuert, *Field Methods*, 2026, 38(1) — GESIS ✅ **texto completo lido** | Entre-sujeitos, web survey (dez/2022), painel alemão com quotas. 5.661 convidados, 4.353 iniciaram, **3.256 completaram**. Escala Need to Evaluate de 16 itens; tradução para linguagem simples feita por **profissionais externos** e mantida sem alteração pelos pesquisadores | Diferenciação **.669 → .681**; ponto médio **24,7% → 21,7%**; tempo **−18,4s** (154,9 → 136,5). Não-resposta e straightlining **sem diferença**. Propriedades da escala preservadas (α ligeiramente melhor) | **A favor** |
-| 7 | Pesquisa sobre *confirmshaming* | Experimento com condição de controle. **N `⚠ em aberto`** | Copy manipulativo elevou aceitação em **4,8 pontos percentuais** (14,8% → 19,6%), **+32,4% relativo** | **Alerta ético** |
-| 8 | University of Chicago Law School | Estudo sobre design manipulativo. **N `⚠ em aberto`** | Copy manipulativo aumentou cadastros em **≥5%**, afetando desproporcionalmente pessoas de **menor escolaridade** | **Alerta ético** |
+| 5 | Bauer, Neuert, Kunz & Gummer, *Int. J. Social Research Methodology*, 2023 (28:1) — GESIS | Desenho entre-sujeitos, painel de acesso online alemão com quotas. 5.332 iniciaram, **4.025 completaram**. Testes t e regressão logística sobre 8 indicadores | **Sem efeito positivo geral.** Tempo absoluto **+20s** (pior); diferenciação (CV) melhorou; **nulo** em straightlining, probabilidade de diferenciação, abandono, não-resposta e tempo até 1º clique; **nulo** na avaliação do questionário. Ganho real só no subgrupo que fala outro idioma em casa | **Contra / limitante** |
+| 6 | Kunz, Gummer & Neuert, *Field Methods*, 2026, 38(1) — GESIS | Entre-sujeitos, web survey (dez/2022), painel alemão com quotas. 5.661 convidados, 4.353 iniciaram, **3.256 completaram**. Escala Need to Evaluate de 16 itens; tradução para linguagem simples feita por **profissionais externos** e mantida sem alteração pelos pesquisadores | Diferenciação **.669 → .681**; ponto médio **24,7% → 21,7%**; tempo **−18,4s** (154,9 → 136,5). Não-resposta e straightlining **sem diferença**. Propriedades da escala preservadas (α ligeiramente melhor) | **A favor** |
+| 7 | Pesquisa sobre *confirmshaming* | Experimento com condição de controle | Copy manipulativo elevou aceitação em **4,8 pontos percentuais** (14,8% → 19,6%), **+32,4% relativo** | **Alerta ético** |
+| 8 | University of Chicago Law School | Estudo sobre design manipulativo | Copy manipulativo aumentou cadastros em **≥5%**, afetando desproporcionalmente pessoas de **menor escolaridade** | **Alerta ético** |
 
-### O que a auditoria mudou
+### Notas sobre a qualidade dos estudos
 
-**Item 2 ficou mais forte e mais limitado ao mesmo tempo.** Confirmei os 51 participantes e
-o que compõe a "usabilidade medida": **tempo de tarefa, erros, memória e satisfação
-subjetiva**. É um índice composto de quatro dimensões — não uma métrica única e não uma
+**Item 2 — atenção ao que o índice mede.** São 51 participantes, e a "usabilidade
+medida" compõe-se de **tempo de tarefa, erros, memória e satisfação subjetiva**. É um índice composto de quatro dimensões — não uma métrica única e não uma
 métrica de negócio. O `+124%` é real, mas significa "melhora no índice agregado", o que é
-bem menos impressionante do que soa quando citado solto. Continue tratando com cautela.
+bem menos impressionante do que soa quando citado solto. Trate com cautela.
 
-**Item 3 ganhou um tamanho de efeito de verdade.** A diferença média de **19,8% em
+**Item 3 — o efeito mais defensável.** A diferença média de **19,8% em
 respostas corretas** (IC 95% 14,7–24,9%, P < 0,001) é o número mais defensável de todo o
 documento: vem de RCT com alocação ocultada, cegamento, poder calculado a priori e
 desfecho primário declarado. Se você precisa de **um** número para sustentar o argumento
 numa reunião, use este — e não o +124%.
 
-**Item 4 é metodologicamente melhor do que eu havia registrado.** São **dois experimentos
-pré-registrados** com 105 advogados. Pré-registro é uma salvaguarda forte contra
+**Item 4 — pré-registro.** São **dois experimentos pré-registrados** com 105 advogados. Pré-registro é uma salvaguarda forte contra
 *p-hacking*; isso eleva a confiabilidade acima da média da tabela.
 
-> ✅ **Ambiguidade entre os itens 5 e 6: resolvida, com os dois textos completos em mãos.**
-> O artigo de 2023 encontrou tempos **20 segundos MAIORES**; o de 2026, **18,4 segundos
-> MENORES**. A atribuição do meu relatório estava correta.
-
-#### A tensão entre os dois estudos GESIS — e ela desmente um pró meu
+#### A tensão entre os dois estudos GESIS
 
 Os itens 5 e 6 vêm do mesmo instituto, usam desenho parecido e chegam a conclusões que
 **não se encaixam**. Vale ver lado a lado:
@@ -243,16 +230,13 @@ Os itens 5 e 6 vêm do mesmo instituto, usam desenho parecido e chegam a conclus
 | Ponto médio | não medido | **24,7% → 21,7%** |
 | **Quem se beneficiou** | **Quem fala outro idioma em casa** | **Escolaridade média/alta — e *nenhum* efeito para escolaridade baixa** |
 
-> ⚠️ **Correção ao meu próprio relatório (segunda).** Meu pró nº 5 afirmava que o benefício
-> é *"consistentemente maior em populações de menor letramento ou não-nativas"*. **Isso não
-> se sustenta.** Kunz et al. escrevem que os efeitos se deveram *principalmente a
-> respondentes com escolaridade média ou alta*, e que **nenhuma dessas diferenças apareceu
-> entre respondentes de menor escolaridade** — o oposto do padrão de 2023.
->
-> Os dois estudos usam proxies diferentes de vulnerabilidade (idioma falado em casa vs.
-> escolaridade) e desfechos diferentes, o que pode explicar a divergência. Mas a palavra
-> "consistentemente" era minha, não das fontes, e está errada. **Quem se beneficia de
-> linguagem simples é uma questão em aberto**, não um fato estabelecido.
+A divergência mais consequente está na última linha. Kunz et al. escrevem que os efeitos
+se deveram *principalmente a respondentes com escolaridade média ou alta*, e que **nenhuma
+dessas diferenças apareceu entre respondentes de menor escolaridade** — o oposto do padrão
+de 2023. Os dois estudos usam proxies diferentes de vulnerabilidade (idioma falado em casa
+vs. escolaridade) e desfechos diferentes, o que pode explicar a divergência. De todo modo,
+**quem se beneficia de linguagem simples é uma questão em aberto**, não um fato
+estabelecido.
 
 Um detalhe metodológico a favor do item 6: a tradução para linguagem simples foi feita por
 **profissionais externos** (Lebenshilfe Bremen e.V.) e os pesquisadores a mantiveram
@@ -264,10 +248,9 @@ propriedades psicométricas se mantiveram. A estrutura de dois componentes se re
 variância explicada subiu levemente (38,7% → 42,5%) e o alfa de Cronbach das subescalas
 ficou um pouco melhor (.799/.666 → .826/.724). **Simplificar não degradou o instrumento.**
 
-#### O item 5 auditado: o que exatamente não melhorou
+#### O que exatamente não melhorou no item 5
 
-Este é o estudo mais desconfortável do documento, e agora tenho os detalhes. Amostra
-completa (n = 4.025):
+É o estudo mais desconfortável do documento. Amostra completa (n = 4.025):
 
 | Indicador | Resultado com linguagem simples |
 |---|---|
@@ -399,10 +382,7 @@ teste isolado de copy com metodologia. O que existe são relatos de empresa, sem
 duração ou significância. Apresento os dois que sobreviveram à verificação, com o que
 **não** foi divulgado.
 
-### Preply — nomenclatura de tipo de aula [C] ✅ auditado
-
-> ✅ **Fonte lida integralmente.** O artigo da Frontitude traz o wording exato, capturas de
-> tela do antes e depois, e o raciocínio da equipe. A pendência da auditoria está resolvida.
+### Preply — nomenclatura de tipo de aula [C]
 
 Plataforma de aulas de idiomas. A tela pergunta *"How do you want to schedule today?"* e
 oferece dois cartões. O volume de agendamentos recorrentes estava abaixo do esperado.
@@ -431,9 +411,9 @@ benefícios, ícones e layout permaneceram **idênticos**.
 | Aulas regulares agendadas | **+11%** |
 | Horas compradas na plataforma | **+7,8%** |
 
-#### Por que este case importa mais do que eu supunha
+#### Por que este case importa
 
-Ele é **o elo direto entre Furnas e a prática**, e a auditoria revelou isso: a Preply não
+Ele é **o elo direto entre Furnas e a prática**: a Preply não
 escolheu "regular" por gosto ou por brainstorm. Descobriu a palavra em **entrevistas com
 usuários** — exatamente o procedimento que Furnas et al. defendem. É pesquisa de
 vocabulário aplicada, com resultado de negócio medido.
@@ -443,9 +423,9 @@ descreve a mecânica (a cadência com que o sistema dispara); `regular` descreve
 usuário quer (constância, hábito). O subtítulo já dizia "help you make a learning habit" —
 o título contradizia o subtítulo, e a correção alinhou os dois.
 
-#### Limitações que a leitura revelou
+#### Limitações do case
 
-- ⚠️ **Duas mudanças no mesmo teste.** A equipe afirma: *"Sob este teste, também mudamos
+- **Duas mudanças no mesmo teste.** A equipe afirma: *"Sob este teste, também mudamos
   `One-by-one lessons` para `Single lessons`."* Portanto o **+11% não é atribuível a uma
   única troca de palavra** — são dois rótulos alterados simultaneamente. Continua sendo
   evidência de que a nomenclatura importa; não isola qual das duas trocas produziu o efeito.
@@ -456,7 +436,7 @@ o título contradizia o subtítulo, e a correção alinhou os dois.
   Aqui intenção do usuário e interesse do negócio coincidiram — não há garantia de que
   coincidam sempre.
 
-### Fundbox — CTA que declarava o desfecho errado [C] ✅ auditado
+### Fundbox — CTA que declarava o desfecho errado [C]
 
 Fintech B2B de crédito rotativo nos EUA. Relatado por Yael Ben-David, UX Writer.
 
@@ -478,7 +458,7 @@ O usuário não recusava a ação; recusava a consequência que o rótulo promet
 Draw` declara a sequência verdadeira. Nenhuma palavra ficou mais simples — ficou mais
 *honesta quanto ao que acontece a seguir*.
 
-### Gong.io — explicar a restrição em vez de bloquear [C] ✅ auditado
+### Gong.io — explicar a restrição em vez de bloquear [C]
 
 Plataforma de *revenue intelligence*. Relatado por Naomi Papoushado.
 
@@ -626,46 +606,13 @@ um efeito real (itens 7 e 8) e mesmo assim deve descartá-la.
 
 Declaradas para você calibrar o quanto apoiar decisão nisto.
 
-1. **Parte das fontes não foi lida na íntegra.** Quatro foram auditadas em texto completo e
-   estão marcadas como tal ao longo do documento. As demais — Morkes & Nielsen, os RCTs do
-   *J Clin Epidemiol*, o PNAS, os estudos sobre *confirmshaming* e o case do GOV.UK — foram
-   verificadas por convergência de buscas independentes. Isso confirma achados, N e
+1. **Parte das fontes não foi consultada no texto integral.** Morkes & Nielsen, os RCTs do
+   *J Clin Epidemiol*, o PNAS, os estudos sobre *confirmshaming* e o case do GOV.UK foram
+   verificados por convergência de buscas independentes. Isso confirma achados, N e
    citações, mas não permite conferir procedimento nem as ressalvas dos próprios autores.
    Antes de usar um desses números em decisão de peso, abra a referência na bibliografia.
 
-### Estado da auditoria
 
-**Concluída.** As seis prioridades foram fechadas, quatro delas por leitura de texto
-completo a partir de PDFs fornecidos. Duas afirmações minhas foram corrigidas no processo.
-
-| Fonte | Status | Situação |
-|---|---|---|
-| **Furnas 1987** | ✅✅ **Texto completo lido** | PDF obtido. N = 539, 5 domínios identificados, "80–90%" é derivado dos dados **e validado em campo**. Descoberto o teto de 65–85% do melhor nome possível — corrigiu conclusão minha |
-| Morkes & Nielsen 1997 | ✅ Por busca | N = 51; índice = tempo, erros, memória, satisfação |
-| *J Clin Epidemiol* 2023 | ✅ Por busca | N, desenho e efeito (19,8%, IC 95% 14,7–24,9%) |
-| PNAS 2023 (legalese) | ✅ Por busca | N = 105 advogados; 2 experimentos pré-registrados |
-| **IJSRM 2023 (Bauer et al.)** | ✅✅ **Texto completo lido** | PDF obtido. N = 4.025. Todos os 8 indicadores mapeados. **Ambiguidade com o item 6 resolvida** — minha atribuição estava correta. Descoberto que o custo de tempo é comprimento, não dificuldade |
-| **Preply (Frontitude)** | ✅✅ **Texto completo lido** | Wording exato obtido. Revelou que a palavra veio de **entrevistas com usuários** — o elo direto com Furnas. Revelou também que **duas mudanças ocorreram no mesmo teste**, limitando a atribuição. Rendeu dois cases adicionais (Fundbox, Gong.io) |
-| **Kunz et al. 2026** (*Field Methods*) | ✅✅ **Texto completo lido** | PDF obtido. N = 3.256, magnitudes exatas. **Contradisse meu pró nº 5** sobre quem se beneficia. Confirmou que simplificar não degrada as propriedades psicométricas |
-
-**Nenhuma das três auditorias em texto completo apenas confirmou o que estava escrito:**
-
-- **Furnas** reforçou a validade do achado central (validação de campo que eu desconhecia)
-  e derrubou uma recomendação minha — a de que pesquisar vocabulário resolveria.
-- **Bauer et al.** resolveu a ambiguidade 5/6, converteu o contra "verbosidade" de
-  argumento teórico em achado medido, e acrescentou um dado que ninguém gosta de ouvir:
-  copy melhor **não** melhorou a percepção subjetiva dos respondentes.
-- **Frontitude/Preply** deu o wording exato, revelou o elo com Furnas (a palavra veio de
-  entrevistas), expôs uma limitação de atribuição que a fonte secundária omitia, e rendeu
-  **dois cases que eu não tinha**.
-- **Kunz et al.** contradisse meu pró nº 5 sobre quem se beneficia de linguagem simples, e
-  acrescentou um dado que faltava: simplificar **não degradou** as propriedades
-  psicométricas do instrumento.
-
-**Auditoria concluída: 6 de 6, quatro fontes em texto completo.** Duas afirmações minhas
-foram corrigidas no processo — a de que pesquisar vocabulário resolveria, e a de que o
-benefício é consistentemente maior em populações vulneráveis. Nenhuma das quatro leituras
-apenas confirmou o que estava escrito.
 3. **"Copy orientado à intenção" não é um campo de pesquisa.** Não existe literatura que
    teste exatamente este construto. O que reuni são quatro literaturas adjacentes
    (vocabulário, legibilidade, forrageamento de informação, linguagem simples) conectadas
@@ -696,11 +643,11 @@ apenas confirmou o que estava escrito.
   https://pubmed.ncbi.nlm.nih.gov/37421995/
 - Plain Language vs Standard Format for Youth Understanding of COVID-19 Recommendations:
   A Randomized Clinical Trial (2023). https://pubmed.ncbi.nlm.nih.gov/37548983/
-- **✅ lido em texto completo** — Bauer, I., Neuert, C., Kunz, T., & Gummer, T. (2023).
+- Bauer, I., Neuert, C., Kunz, T., & Gummer, T. (2023).
   Plain language in web questionnaires: effects on data quality and questionnaire
   evaluation. *International Journal of Social Research Methodology*, 28(1).
   https://www.tandfonline.com/doi/full/10.1080/13645579.2023.2294880
-- **✅ lido em texto completo** — Kunz, T., Gummer, T., & Neuert, C. E. (2026). Measurement
+- Kunz, T., Gummer, T., & Neuert, C. E. (2026). Measurement
   Quality of a Multi-item Scale in Plain Language. *Field Methods*, 38(1), 33–45.
   (© The Author(s) 2025.) https://journals.sagepub.com/doi/10.1177/1525822X251322031
 - Martínez, E., Mollica, F., & Gibson, E. (2023). Even lawyers do not like legalese.
@@ -719,7 +666,7 @@ apenas confirmou o que estava escrito.
 
 **Cases**
 
-- **✅ lido em texto completo** — Frontitude — How UX Copy Drives Better Business Results
+- Frontitude — How UX Copy Drives Better Business Results
   (cases Preply, Fundbox e Gong.io).
   https://www.frontitude.com/blog/how-ux-copy-drives-better-business-results
 - Government Digital Service — Taking care of business on GOV.UK (2017).
