@@ -1,0 +1,682 @@
+# Copy orientado à intenção do usuário
+
+**Pesquisa para decisão de adoção** — prós, contras, base acadêmica e cases com indicador.
+
+Data: 10 de agosto de 2026
+
+---
+
+## Resumo para decisão
+
+**Adotar, com escopo limitado e teste próprio.** A evidência de que a linguagem da
+interface deve partir do vocabulário e da tarefa do usuário — e não da arquitetura do
+sistema — é sólida, antiga e replicada. O achado mais forte não vem do design: vem de um
+estudo de 1987 (**539 participantes**) que mediu escolha espontânea
+de palavras e encontrou que **duas pessoas escolhem o mesmo termo para a mesma coisa com
+probabilidade entre 0,07 e 0,18**.
+
+Mas três ressalvas mudam a decisão de "adotar sempre" para "adotar onde importa":
+
+1. **Pesquisar o vocabulário é necessário — e não basta.** Furnas et al. testaram
+   justamente isso: escolher a palavra *mais popular entre usuários reais*, medida
+   empiricamente. Ela ainda falha em **65–85%** das
+   tentativas de acesso. A conclusão literal dos autores é que a ideia de um termo "óbvio"
+   ou "natural" é um mito, e que **não podem existir regras para escolher um bom nome**. A
+   saída que eles propõem é redundância — muitos caminhos alternativos para a mesma coisa —
+   não acerto de nomenclatura.
+2. **O efeito não é universal — e há um estudo grande que não achou quase nada.** O
+   experimento GESIS de 2023 (**n = 4.025**) testou oito
+   indicadores de qualidade de dados. **Cinco deram nulo**, o tempo de conclusão *piorou*
+   em 20 segundos, e a avaliação subjetiva dos respondentes não mudou. O benefício real
+   apareceu apenas no subgrupo que fala outro idioma em casa.
+3. **A técnica é neutra quanto à ética.** Os mesmos mecanismos que ajudam alguém a
+   entender uma ação também aumentam aceitação quando usados para constranger. Há efeito
+   medido, e ele recai desproporcionalmente sobre pessoas de menor escolaridade.
+
+**Se você precisa de um único número para a reunião**, use este: em ensaio clínico
+randomizado com alocação ocultada e cegamento, versões em linguagem simples produziram
+**19,8% a mais de respostas corretas** de compreensão (IC 95% 14,7–24,9%; P < 0,001). É o
+dado de melhor qualidade metodológica do documento. Evite o "+124%" — ele é real, mas é um
+índice composto de 1997, e não sobrevive a uma pergunta sobre o que exatamente foi medido.
+
+**Confiança:** alta para o princípio, média para o tamanho do efeito, baixa para
+transferência direta dos números de case para o seu contexto.
+
+---
+
+## O que é (definição operacional)
+
+Escrever os elementos de ação de um software na linguagem do **objetivo do usuário**, em
+vez da linguagem da **arquitetura do sistema**.
+
+| Linguagem do sistema | Linguagem da intenção |
+|---|---|
+| `Submit` | `Enviar candidatura` |
+| `OK` (num diálogo de descarte) | `Descartar rascunho` |
+| `Configurar recorrência` | `Repetir toda semana` |
+| `Erro 422: payload inválido` | `Faltou o CEP. Preencha para continuar.` |
+| `Gerenciar entidades` | `Meus clientes` |
+
+**Está no escopo:** rótulos de botão, títulos de confirmação, mensagens de erro, estados
+vazios, nomenclatura de navegação e de funcionalidades.
+
+**Fora do escopo:** personalização dinâmica por intenção inferida, copy de aquisição,
+tom de voz/branding, internacionalização.
+
+---
+
+## Como ler este documento
+
+Cada afirmação carrega uma etiqueta de evidência.
+
+| Etiqueta | Significado |
+|---|---|
+| **[A]** | Empírico revisado por pares — experimento com método declarado |
+| **[B]** | Teoria estabelecida em HCI — explica mecanismo, não fornece número próprio |
+| **[C]** | Case institucional — a organização publicou o número sobre si mesma |
+| **[D]** | Consenso de prática — recomendação de autoridade, sem estudo próprio |
+
+Há ainda uma seção **"Números que descartei"**, com valores que circulam amplamente e não
+resistiram à verificação. Ela é parte do resultado, não um apêndice.
+
+---
+
+## Base teórica — por que deveria funcionar
+
+### O problema do vocabulário [A]
+
+Furnas, Landauer, Gomez e Dumais mediram como pessoas nomeiam espontaneamente objetos e
+ações. **Seis conjuntos de dados em cinco domínios, 539 participantes no total:**
+
+| Conjunto | Quem | N |
+|---|---|---|
+| Editor-5 / Editor-25 | Datilógrafos descrevendo operações de edição de texto | 48 |
+| Decoder | Projetistas de sistema experientes nomeando comandos | 100 |
+| Common Objects | Estudantes universitários descrevendo 50 objetos comuns | 337 |
+| Classifieds | Donas de casa de Nova Jersey categorizando 64 anúncios | 30 |
+| Recipe Keywords | 8 cozinheiros especialistas + 16 donas de casa, 188 receitas | 24 |
+
+**Probabilidade de duas pessoas usarem o mesmo termo para o mesmo objeto** (Tabela I do
+artigo): Editor-5 `.07` · Decoder `.08` · Editor-25 `.11` · Common Objects `.12` ·
+Classifieds `.14` · Recipe Keywords `.18`.
+
+#### O "80–90% de falha": medido ou derivado?
+
+**Derivado dos dados empíricos — e confirmado em sistemas reais.**
+
+Os autores escrevem que, se uma pessoa atribui o nome de um item, outras pessoas sem
+treino falharão em acessá-lo em 80 a 90% das tentativas, e acrescentam que isso *"não é
+verdade apenas para todos os seis conjuntos de dados de laboratório; também foi
+confirmado várias vezes por pesquisa com sistemas reais"* — citando três estudos
+independentes (Furnas [4]; Gomez & Lochbaum [5]; Good, Whiteside, Wixon & Jones [6]).
+
+Ou seja: o número sai de simulação sobre tabelas de frequência reais, mas não é
+especulativo — tem validação de campo.
+
+#### O teto do melhor nome possível
+
+Os autores testaram também **o melhor nome possível** — a palavra mais frequente entre usuários reais, escolhida
+empiricamente:
+
+| Estratégia | Taxa de sucesso |
+|---|---|
+| Nome escolhido pelo projetista ("armchair") | 10–20% |
+| **Melhor nome possível, medido empiricamente** | **15–36%** — ainda falha **65–85%** das vezes |
+| 3 nomes escolhidos pelo projetista | 20–45% |
+| 3 melhores nomes, medidos | 37–67% |
+| **15 nomes alternativos** | **apenas 60–80%** |
+
+E a conclusão dos autores, literal: *"os dados nos dizem que não existe um bom termo de
+acesso para a maioria dos objetos. A ideia de um termo 'óbvio', 'auto-evidente' ou
+'natural' é um mito! Como mesmo o melhor nome possível não é muito útil, segue-se que
+**não podem existir regras, diretrizes ou procedimentos para escolher um bom nome**, no
+sentido de 'acessível ao usuário não familiarizado'."*
+
+Dois achados secundários relevantes:
+
+- **Especialistas não se saem melhor.** Um terço dos participantes do estudo de receitas
+  eram cozinheiros especialistas; suas palavras-chave *"não se saíram melhor que a média"*,
+  nem para outros especialistas nem para novatos.
+- **Exigir nomes únicos piora tudo.** Quando cada nome só pode pertencer a um objeto,
+  o desempenho cai mais 5 a 60% (tipicamente ~10%).
+
+A solução proposta pelos autores **não é escolher a palavra certa** — é *unlimited
+aliasing*: fornecer muitos caminhos verbais alternativos para cada objeto (sinônimos,
+busca, múltiplas entradas de índice).
+
+Vale sublinhar a implicação prática: medir o vocabulário e escolher o termo mais popular
+melhora o acesso por um fator de ~2, mas ainda falha na maioria das tentativas. **Pesquisa
+de vocabulário é necessária e insuficiente.**
+
+#### Limite de extrapolação — leia antes de usar este estudo
+
+Esta é a ressalva mais importante do documento inteiro, e ela **limita** o quanto Furnas
+sustenta copy de intenção.
+
+O estudo mede **produção livre**: a pessoa precisa *gerar* a palavra certa do nada, sem
+opções à vista — digitar um comando, escolher uma palavra-chave de busca. Rótulos de
+botão e itens de menu são **reconhecimento**: a palavra está na tela e o usuário só
+precisa reconhecê-la como correspondente ao objetivo dele. Reconhecimento é
+sistematicamente mais fácil que evocação.
+
+**Consequência honesta:** as taxas de falha de 80–90% **não transferem** para rótulos de
+botão. O que transfere é o mecanismo — pessoas divergem muito sobre como nomear coisas,
+e o projetista sistematicamente subestima essa divergência. Use Furnas para justificar
+*testar* nomenclatura com usuários e para desarmar o argumento "esse nome é óbvio". Não
+use os números dele como previsão de efeito em UI.
+
+Onde Furnas transfere com força quase integral: **busca interna, navegação por categorias
+e nomenclatura de funcionalidades** — situações em que o usuário de fato precisa produzir
+ou reconhecer o termo entre muitos concorrentes.
+
+### Golfo de execução [B]
+
+Donald Norman descreve a distância entre a intenção do usuário e as ações que o sistema
+oferece. Quando a interface é nomeada pela sua própria estrutura interna, o usuário
+precisa traduzir o objetivo dele para a linguagem da máquina — e essa tradução é onde o
+erro acontece. É o arcabouço conceitual da prática, sem número próprio.
+
+### Rastro de informação (*information scent*) [B]
+
+Pirolli e Card modelaram navegação como forrageamento: o usuário decide onde clicar por
+pistas locais. Quando o rótulo contém as **palavras-gatilho** da tarefa que ele tem em
+mente, o rastro é forte e ele segue; quando não contém, ele hesita ou abandona. Explica
+por que rótulos genéricos custam caro em fluxos de decisão.
+
+---
+
+## Evidência empírica
+
+| # | Estudo | Método e N | Achado | Direção |
+|---|---|---|---|---|
+| 1 | Furnas et al., *CACM*, 1987 | **539 participantes**, 6 conjuntos em 5 domínios. Produção livre de termos | Concordância entre duas pessoas **.07 a .18**; nome do projetista → 80–90% de falha (validado em campo). **Mesmo o melhor nome medido falha 65–85%** | **A favor, com limite** — mede evocação, não reconhecimento |
+| 2 | Morkes & Nielsen, 1997 (também *CHI 98*) | **51 participantes**, 5 variações do mesmo site, cada uma com estilo de escrita diferente. Tarefas de busca de resposta | Conciso **+58%**; escaneável **+47%**; objetivo **+27%**; combinado **+124%** | **A favor** |
+| 3 | Plain language RCTs, *J Clin Epidemiol*, 2023 (adultos e pais) e ensaio com jovens | RCTs de superioridade, online, alocação ocultada, cegos. Poder calculado para **122 por braço (244 total)**; **≥240 por população**. Estudo com pais: 295 randomizados, 241 completaram (121 intervenção / 120 controle). Desfecho primário: proporção de acertos em 7 perguntas de compreensão | Diferença média de **19,8%** em acertos (IC 95% 14,7–24,9%; **P < 0,001**) para a recomendação da OMS | **A favor** |
+| 4 | Martínez, Mollica & Gibson, *PNAS*, 2023 | **105 advogados dos EUA**. **Dois experimentos pré-registrados**. Exp. 1: 12 pares de trechos de contrato (legalês vs. simplificado), testando compreensão e recordação | **Advogados também** compreendem e recordam pior o "legalês". Exp. 2: avaliam contratos simplificados como igualmente exequíveis **e preferíveis** em qualidade geral, adequação de estilo e probabilidade de assinatura pelo cliente | **A favor** (inclui especialistas) |
+| 5 | Bauer, Neuert, Kunz & Gummer, *Int. J. Social Research Methodology*, 2023 (28:1) — GESIS | Desenho entre-sujeitos, painel de acesso online alemão com quotas. 5.332 iniciaram, **4.025 completaram**. Testes t e regressão logística sobre 8 indicadores | **Sem efeito positivo geral.** Tempo absoluto **+20s** (pior); diferenciação (CV) melhorou; **nulo** em straightlining, probabilidade de diferenciação, abandono, não-resposta e tempo até 1º clique; **nulo** na avaliação do questionário. Ganho real só no subgrupo que fala outro idioma em casa | **Contra / limitante** |
+| 6 | Kunz, Gummer & Neuert, *Field Methods*, 2026, 38(1) — GESIS | Entre-sujeitos, web survey (dez/2022), painel alemão com quotas. 5.661 convidados, 4.353 iniciaram, **3.256 completaram**. Escala Need to Evaluate de 16 itens; tradução para linguagem simples feita por **profissionais externos** e mantida sem alteração pelos pesquisadores | Diferenciação **.669 → .681**; ponto médio **24,7% → 21,7%**; tempo **−18,4s** (154,9 → 136,5). Não-resposta e straightlining **sem diferença**. Propriedades da escala preservadas (α ligeiramente melhor) | **A favor** |
+| 7 | Pesquisa sobre *confirmshaming* | Experimento com condição de controle | Copy manipulativo elevou aceitação em **4,8 pontos percentuais** (14,8% → 19,6%), **+32,4% relativo** | **Alerta ético** |
+| 8 | University of Chicago Law School | Estudo sobre design manipulativo | Copy manipulativo aumentou cadastros em **≥5%**, afetando desproporcionalmente pessoas de **menor escolaridade** | **Alerta ético** |
+
+### Notas sobre a qualidade dos estudos
+
+**Item 2 — atenção ao que o índice mede.** São 51 participantes, e a "usabilidade
+medida" compõe-se de **tempo de tarefa, erros, memória e satisfação subjetiva**. É um índice composto de quatro dimensões — não uma métrica única e não uma
+métrica de negócio. O `+124%` é real, mas significa "melhora no índice agregado", o que é
+bem menos impressionante do que soa quando citado solto. Trate com cautela.
+
+**Item 3 — o efeito mais defensável.** A diferença média de **19,8% em
+respostas corretas** (IC 95% 14,7–24,9%, P < 0,001) é o número mais defensável de todo o
+documento: vem de RCT com alocação ocultada, cegamento, poder calculado a priori e
+desfecho primário declarado. Se você precisa de **um** número para sustentar o argumento
+numa reunião, use este — e não o +124%.
+
+**Item 4 — pré-registro.** São **dois experimentos pré-registrados** com 105 advogados. Pré-registro é uma salvaguarda forte contra
+*p-hacking*; isso eleva a confiabilidade acima da média da tabela.
+
+#### A tensão entre os dois estudos GESIS
+
+Os itens 5 e 6 vêm do mesmo instituto, usam desenho parecido e chegam a conclusões que
+**não se encaixam**. Vale ver lado a lado:
+
+| | Bauer et al., 2023 (item 5) | Kunz et al., 2026 (item 6) |
+|---|---|---|
+| Objeto | Questionário inteiro | Escala de 16 itens |
+| N | 4.025 | 3.256 |
+| Tempo | **+20s (pior)** | **−18,4s (melhor)** |
+| Não-resposta de item | Nulo (geral) | **Nulo** |
+| Straightlining | Nulo (geral) | **Nulo** |
+| Diferenciação | Melhorou | Melhorou (.669 → .681) |
+| Ponto médio | não medido | **24,7% → 21,7%** |
+| **Quem se beneficiou** | **Quem fala outro idioma em casa** | **Escolaridade média/alta — e *nenhum* efeito para escolaridade baixa** |
+
+A divergência mais consequente está na última linha. Kunz et al. escrevem que os efeitos
+se deveram *principalmente a respondentes com escolaridade média ou alta*, e que **nenhuma
+dessas diferenças apareceu entre respondentes de menor escolaridade** — o oposto do padrão
+de 2023. Os dois estudos usam proxies diferentes de vulnerabilidade (idioma falado em casa
+vs. escolaridade) e desfechos diferentes, o que pode explicar a divergência. De todo modo,
+**quem se beneficia de linguagem simples é uma questão em aberto**, não um fato
+estabelecido.
+
+Um detalhe metodológico a favor do item 6: a tradução para linguagem simples foi feita por
+**profissionais externos** (Lebenshilfe Bremen e.V.) e os pesquisadores a mantiveram
+praticamente inalterada, justamente para testá-la sem viés. Isso é mais rigoroso do que a
+prática comum de o próprio time escrever a variante que espera ver vencer.
+
+E um achado tranquilizador para quem teme que simplificar distorça a medição: as
+propriedades psicométricas se mantiveram. A estrutura de dois componentes se repetiu, a
+variância explicada subiu levemente (38,7% → 42,5%) e o alfa de Cronbach das subescalas
+ficou um pouco melhor (.799/.666 → .826/.724). **Simplificar não degradou o instrumento.**
+
+#### O que exatamente não melhorou no item 5
+
+É o estudo mais desconfortável do documento. Amostra completa (n = 4.025):
+
+| Indicador | Resultado com linguagem simples |
+|---|---|
+| Tempo absoluto de conclusão | **+20 segundos** (pior) |
+| Tempo *relativo* (ajustado por nº de caracteres) | Sem diferença significativa |
+| Diferenciação de resposta (coef. de variação) | **Melhorou** |
+| Straightlining | Nulo |
+| Probabilidade de diferenciação | Nulo |
+| Abandono (*break-off*) | Nulo |
+| Não-resposta de item | Nulo |
+| Tempo até o primeiro clique | Nulo |
+| **Avaliação do questionário pelo respondente** | **Nulo** — nem no índice agregado nem item a item |
+
+No subgrupo que fala outro idioma em casa: **menos** não-resposta, **menos** straightlining
+e **maior** probabilidade de diferenciação. E o tempo maior apareceu **somente** entre
+quem tem letramento presumidamente alto — quem mais precisava de ajuda não pagou o
+pedágio de tempo.
+
+**Duas leituras que este artigo obriga:**
+
+1. **O tempo extra é comprimento, não dificuldade.** O tempo absoluto piorou, mas o tempo
+   *por caractere* não mudou. Linguagem simples ficou mais longa; o custo é de leitura, não
+   de processamento. Isso valida empiricamente o trade-off do contra nº 3 — e explica por
+   que "mais explícito" e "melhor" não são sinônimos.
+2. **Os respondentes não perceberam diferença.** A avaliação subjetiva do questionário foi
+   estatisticamente nula. Se você espera que copy melhor gere elogio ou percepção de
+   qualidade, este estudo diz que não gera. O benefício, quando existe, é comportamental e
+   silencioso.
+
+### Leitura cruzada
+
+Os itens 3 e 4 convergem, e são os dois mais fortes metodologicamente da tabela: reescrever
+na linguagem de quem lê melhora compreensão em populações e domínios diferentes. O item 4
+derruba a objeção mais comum em produtos técnicos — "meu usuário é especialista, prefere o
+termo técnico". Advogados, diante de texto jurídico, também se saem pior com jargão.
+
+O item 6 aponta na mesma direção e, com a ambiguidade resolvida, pode ser usado como apoio.
+
+O item 5 é a contraevidência honesta e não deve ser minimizada: quando a tarefa é
+*responder um questionário* (e não *encontrar e executar uma ação*), a linguagem simples
+não moveu a qualidade dos dados no agregado. Isso sugere que o benefício depende do tipo
+de tarefa — ele aparece onde há **decisão e execução**, que é justamente o caso de copy
+de ação. Mas essa é minha leitura conectando dois contextos, não um achado dos autores.
+
+Os itens 7 e 8 mostram que a mesma alavanca funciona para manipular. Um programa de copy
+orientado à intenção precisa de um critério explícito de fronteira, ou vira otimização de
+conversão com verniz de UX.
+
+---
+
+## Prós
+
+1. **Reduz a tradução mental que o usuário precisa fazer** [B] — o golfo de execução
+   encolhe quando o rótulo já está na linguagem do objetivo.
+2. **Ataca uma fonte de falha grande, medida e quase sempre invisível para quem construiu
+   o sistema** [A, item 1] — a divergência de vocabulário entre projetista e usuário. O
+   projetista é a pessoa pior posicionada para julgar se um nome é óbvio, porque a
+   familiaridade dele com o sistema é justamente o que produz a ilusão de obviedade.
+3. **Efeito composto** [A, item 2] — as melhorias de escrita somaram mais juntas (+124%)
+   do que qualquer uma isolada (+27% a +58%). Sugere que vale tratar como programa, não
+   como ajuste pontual.
+4. **Funciona também com especialistas** [A, item 4] — remove a objeção de produto
+   técnico.
+5. **Pode melhorar acessibilidade para quem mais precisa — mas isso está em disputa**
+   [A, itens 5 e 6]. Bauer et al. (2023) encontraram o ganho concentrado em quem fala outro
+   idioma em casa. Kunz et al. (2026), do mesmo instituto, encontraram o oposto: efeitos
+   principalmente entre escolaridade média/alta, e **nenhum** entre escolaridade baixa.
+   Trate o argumento de equidade como plausível e não demonstrado — ele é o mais citado em
+   apresentações e o menos sustentado pelos dados que li.
+6. **Barato de testar** [C] — mudança de texto não exige migração nem refatoração, o que
+   torna o custo de um experimento controlado muito baixo comparado a mudanças estruturais.
+
+---
+
+## Contras e riscos
+
+1. **Existe um teto, e ele é baixo** [A, item 1]. Sem estudo de nomenclatura com usuários
+   reais você substitui um palpite por outro — mas *com* o estudo, o ganho ainda é
+   limitado: o melhor termo medido empiricamente falha em 65–85% das tentativas de acesso
+   por produção livre. Se a sua expectativa é "achar a palavra certa e resolver", ela está
+   errada. Para busca e navegação, a resposta do artigo é redundância de acesso
+   (sinônimos, aliases, busca tolerante), não um rótulo melhor.
+2. **Efeito não é universal** [A, item 5]. Em tarefa de resposta a questionário, não houve
+   ganho agregado. Não assuma transferência automática entre tipos de tarefa.
+3. **Verbosidade tem custo, e agora ele está medido** [A, item 5]. Rótulos de intenção
+   tendem a ser mais longos que os genéricos. No estudo GESIS (n = 4.025), a versão em
+   linguagem simples levou **20 segundos a mais** para ser respondida — mas o tempo *por
+   caractere* não mudou. O custo é de **comprimento**, não de dificuldade de processamento.
+   Some-se a isso que o estudo de maior efeito da tabela (item 2) premiou justamente a
+   **concisão**: "mais explícito" e "melhor" não são a mesma coisa, e o texto mais longo é
+   pago em tempo de leitura toda vez que a tela aparece.
+4. **Custo de manutenção e tradução.** Rótulos específicos multiplicam strings, quebram
+   reuso de componentes e encarecem localização. Um botão `Confirmar` reusado em 40 telas
+   vira 40 textos distintos, cada um com sua tradução.
+5. **Conflito com design systems.** Componentes de diálogo padronizados frequentemente
+   assumem pares genéricos. Adotar copy de intenção implica renegociar o design system,
+   não só reescrever telas.
+6. **Risco de presumir a intenção errada.** Um rótulo específico e *errado* é pior que um
+   genérico: ele afirma com confiança algo que não corresponde ao que o usuário quer.
+7. **Fronteira ética estreita** [A, itens 7 e 8]. Copy que "reflete a intenção" desliza
+   com facilidade para copy que *fabrica* intenção. O efeito medido do constrangimento é
+   real e recai mais sobre pessoas de menor escolaridade.
+8. **Fricção deliberada pode ser dark pattern.** Tornar explícita a consequência de uma
+   ação destrutiva é bom; tornar a saída emocionalmente custosa não é a mesma coisa,
+   embora as duas se pareçam no código.
+
+---
+
+## Quando NÃO usar
+
+- **Ações repetitivas de usuário experiente.** Depois da décima vez, o rótulo longo vira
+  ruído. O usuário já não lê — ele mira a posição.
+- **Vocabulário de domínio já estabelecido.** Se o termo técnico *é* a palavra que o
+  usuário usa no dia a dia, ele não é jargão para essa audiência. Explicar o óbvio pode
+  sinalizar que o produto não foi feito para ele. [D]
+- **Restrição severa de espaço.** Barras de ferramentas, células de tabela, mobile
+  denso — onde truncar destrói mais sentido do que o rótulo específico agrega.
+- **Quando você não pesquisou o vocabulário.** Sem dados, o ganho esperado não se
+  sustenta (item 1).
+- **Ações de baixo risco e alta frequência.** O custo de errar é baixo e o custo de ler é
+  pago toda vez.
+
+---
+
+## Cases com indicador publicado
+
+Esta é a seção mais fraca do relatório, e por um motivo estrutural: quase ninguém publica
+teste isolado de copy com metodologia. O que existe são relatos de empresa, sem amostra,
+duração ou significância. Apresento os dois que sobreviveram à verificação, com o que
+**não** foi divulgado.
+
+### Preply — nomenclatura de tipo de aula [C]
+
+Plataforma de aulas de idiomas. A tela pergunta *"How do you want to schedule today?"* e
+oferece dois cartões. O volume de agendamentos recorrentes estava abaixo do esperado.
+
+**O wording exato:**
+
+| Elemento | Antes | Depois |
+|---|---|---|
+| Título do cartão 1 | `Weekly lessons` | **`Regular lessons`** |
+| Botão do cartão 1 | `Schedule weekly` | **`Schedule regular`** |
+| Título do cartão 2 | `One-by-one lessons` | **`Single lessons`** |
+| Botão do cartão 2 | `Schedule one-by-one` | **`Schedule single`** |
+
+Subtítulos ("Help you make a learning habit" / "For changing schedules"), lista de
+benefícios, ícones e layout permaneceram **idênticos**.
+
+**O raciocínio da equipe, nas palavras deles:**
+
+> *"Segundo a abordagem Features vs. Benefits, `Weekly lessons` foca no modo como a
+> funcionalidade funciona, e não no benefício para o usuário. […] Também sabíamos, por
+> entrevistas com usuários, que nossos clientes usavam a palavra `regular` para falar
+> positivamente sobre formar um hábito de aprendizado."*
+
+| Métrica | Resultado |
+|---|---|
+| Aulas regulares agendadas | **+11%** |
+| Horas compradas na plataforma | **+7,8%** |
+
+#### Por que este case importa
+
+Ele é **o elo direto entre Furnas e a prática**: a Preply não
+escolheu "regular" por gosto ou por brainstorm. Descobriu a palavra em **entrevistas com
+usuários** — exatamente o procedimento que Furnas et al. defendem. É pesquisa de
+vocabulário aplicada, com resultado de negócio medido.
+
+Também é um caso limpo de **linguagem do sistema → linguagem da intenção**: `weekly`
+descreve a mecânica (a cadência com que o sistema dispara); `regular` descreve o que o
+usuário quer (constância, hábito). O subtítulo já dizia "help you make a learning habit" —
+o título contradizia o subtítulo, e a correção alinhou os dois.
+
+#### Limitações do case
+
+- **Duas mudanças no mesmo teste.** A equipe afirma: *"Sob este teste, também mudamos
+  `One-by-one lessons` para `Single lessons`."* Portanto o **+11% não é atribuível a uma
+  única troca de palavra** — são dois rótulos alterados simultaneamente. Continua sendo
+  evidência de que a nomenclatura importa; não isola qual das duas trocas produziu o efeito.
+- **Sem amostra, duração ou significância.** "Significativo" aparece em sentido coloquial,
+  não estatístico.
+- **Interesse comercial declarado.** A fonte afirma que alunos com agenda semanal retêm
+  melhor e que *"promover aulas semanais sempre foi do melhor interesse do nosso negócio"*.
+  Aqui intenção do usuário e interesse do negócio coincidiram — não há garantia de que
+  coincidam sempre.
+
+### Fundbox — CTA que declarava o desfecho errado [C]
+
+Fintech B2B de crédito rotativo nos EUA. Relatado por Yael Ben-David, UX Writer.
+
+O botão que abria o painel de saque dizia `Draw Funds`. Segundo a equipe, os usuários
+*"tinham medo demais de clicar, porque soava muito definitivo. Achavam que puxaria os
+fundos imediatamente para a conta e que não teriam chance de revisar os termos de
+pagamento antes. Nunca terminavam o saque por causa disso."*
+
+| Elemento | Antes | Depois |
+|---|---|---|
+| CTA principal | `Draw Funds` | **`Review & Draw`** |
+
+**Resultado:** melhora na métrica central — se o usuário saca nos primeiros 7 dias após a
+aprovação, um indicador forte de LTV — e nos saques totais. **Nenhum número divulgado.**
+
+Este é o caso mais puro do documento do ponto de vista conceitual: o rótulo antigo
+descrevia corretamente a ação do sistema, mas **implicava um desfecho que não era o real**.
+O usuário não recusava a ação; recusava a consequência que o rótulo prometia. `Review &
+Draw` declara a sequência verdadeira. Nenhuma palavra ficou mais simples — ficou mais
+*honesta quanto ao que acontece a seguir*.
+
+### Gong.io — explicar a restrição em vez de bloquear [C]
+
+Plataforma de *revenue intelligence*. Relatado por Naomi Papoushado.
+
+Usuários tentavam associar uma chamada a um registro de CRM, mas a opção ficava
+indisponível quando o registro era um *Lead* em vez de um *Contact*. Sem explicação, eles
+abriam ticket achando que era bug. A equipe adicionou uma mensagem que nomeia a causa e
+diz o que fazer:
+
+> **CAN'T ASSOCIATE CALL** — *"Esta chamada não pode ser associada a uma conta ou
+> oportunidade porque está atualmente associada a leads do CRM. Apenas chamadas associadas
+> a contatos do CRM podem ser associadas a uma conta ou oportunidade. Converta os leads em
+> contatos no seu CRM e tente de novo. (Note que pode levar algumas horas para ver a
+> mudança do CRM no Gong.)"*
+
+**Resultado:** pouco depois do lançamento, a equipe de suporte reportou **zero tickets
+abertos para esse problema específico**.
+
+É o melhor case do documento para o argumento de **redução de suporte** — e o mais fácil
+de replicar, porque não exige pesquisa de vocabulário: exige apenas explicar a restrição
+do sistema em termos da tarefa que o usuário estava tentando concluir. Ressalva: não há
+número absoluto de tickets antes, então a magnitude da economia não é conhecida.
+
+**Nuance que importa para a sua decisão:** a própria fonte declara que alunos com agenda
+semanal têm melhor retenção e que promover o formato semanal "sempre foi do interesse do
+negócio". O caso é, portanto, tanto um exemplo de alinhamento com a intenção do usuário
+quanto de direcionamento comercial. Os dois objetivos coincidiram aqui — não há garantia
+de que coincidam sempre, e é exatamente nessa junção que mora o risco ético da seção
+anterior.
+
+### GOV.UK / Government Digital Service — guia para abertura de empresas [C]
+
+Reorganização de conteúdo orientada a necessidade do usuário, reduzindo **50 páginas
+para 16** (2017).
+
+| Métrica | Resultado |
+|---|---|
+| Cliques para os serviços necessários | **+25%** |
+| Páginas por sessão até chegar ao serviço | **−5%** |
+
+**Ressalva importante:** este case mistura redução de conteúdo com reescrita orientada à
+tarefa. Não é possível isolar quanto do ganho veio do texto e quanto veio de haver menos
+páginas competindo entre si. Serve como evidência do programa, não da técnica isolada.
+
+### O padrão que os cases revelam
+
+Lidos lado a lado, eles não contam a mesma história — e a diferença é útil para decidir
+onde aplicar:
+
+| Case | Tipo de mudança | Precisou de pesquisa? | Número? |
+|---|---|---|---|
+| Preply | Mecânica → benefício/hábito | **Sim** — entrevistas revelaram "regular" | +11% / +7,8% |
+| Fundbox | Desfecho implícito errado → sequência real | Não — bastou observar a hesitação | Não divulgado |
+| Gong.io | Silêncio → explicação da restrição | Não — os tickets já diziam o problema | "Zero tickets" |
+
+**Só um dos três exigiu pesquisa de vocabulário.** Os outros dois vieram de observar onde o
+usuário travava. Isso é uma boa notícia para adoção: a modalidade mais barata — explicar o
+que o sistema está fazendo, em vez de nomear melhor — não depende de estudo prévio e
+produziu o resultado mais nítido do conjunto.
+
+### Por que não há mais cases aqui
+
+Busquei ativamente cases nomeados com métrica em blogs de engenharia e design de empresas
+de produto. Fora deste artigo, o que encontrei repetidamente foram números sem empresa
+identificada, números sem fonte primária, ou estudos de caso de fornecedores de ferramentas
+de teste A/B com incentivo comercial evidente. Nenhum deles passa no critério de rigor que
+combinamos.
+
+**Viés da fonte, declarado:** a Frontitude vende uma ferramenta de gestão de conteúdo de
+UX, e o artigo existe para demonstrar que copy move métrica. Isso não invalida os relatos —
+os profissionais são nomeados, as capturas de tela são específicas e o wording é
+verificável — mas significa que nenhum experimento fracassado apareceria ali.
+
+---
+
+## Números que descartei
+
+Todos estes circulam em artigos sobre microcopy e UX writing. Nenhum resistiu à
+verificação. Se aparecerem numa apresentação interna, você agora sabe o que perguntar.
+
+| Número que circula | Por que descartei |
+|---|---|
+| "+20% em taxa de interação, segundo o Nielsen Norman Group" | Atribuído ao NN/g em artigos de SEO, sem link para estudo algum. Não localizei a fonte. |
+| "−15% no tempo de conclusão de tarefa" | Mesma origem, mesma ausência de fonte. |
+| "+30% de cliques ao trocar botão genérico por 'Sign Up for Free Trial'" | Sem estudo, sem amostra, sem contexto. |
+| "Empresa X reescreveu o onboarding: +23% de conclusão e −15% de tickets" | A fonte não nomeia a empresa. Número não auditável por construção. |
+| "Going.com: +104% em inícios de teste ao trocar o CTA" | Blog de fornecedor de teste A/B. Sem amostra, duração ou significância. |
+| "Portal B2B: +38,26% ao mudar uma palavra do CTA" | Idem. A precisão decimal sugere leitura direta de painel, não análise. |
+| "Booking.com: +5% em conversão simplificando copy" | Não localizei publicação primária da Booking.com com esse dado. |
+| "Rastro de informação forte reduz tempo de navegação em 30–50%" | Aparece em site agregador atribuído a "Nielsen 2003, 2004", sem referência rastreável. |
+
+Observação sobre o item 2 da tabela de evidências (Morkes & Nielsen, +124%): este número
+**é** rastreável a um estudo real, com desenho descrito e publicação associada ao CHI 98.
+Ainda assim, trate-o com cautela — é de 1997, sobre páginas web de conteúdo, e
+"usabilidade medida" é um índice composto, não uma métrica de negócio.
+
+---
+
+## Como testar no seu produto
+
+O tamanho de efeito dos cases não transfere. Use-os para justificar o experimento, não
+para prever o resultado.
+
+### Sequência recomendada
+
+1. **Pesquisa de vocabulário primeiro.** Peça a 15–20 usuários que descrevam, com as
+   próprias palavras, o que querem fazer no ponto do fluxo em questão. Não ofereça
+   opções — a variabilidade é o dado. Se a concordância vier baixa, isso confirma o
+   achado de Furnas no *seu* contexto e já é argumento.
+   **Mas não pare no termo campeão.** Furnas mostra que o termo mais popular ainda deixa a
+   maioria de fora. Use a lista completa que você coletou para alimentar **sinônimos de
+   busca, aliases e termos alternativos de navegação** — é ali que o ganho grande está. O
+   rótulo do botão leva o termo mais frequente; o resto da lista não se joga fora.
+2. **Escolha um fluxo de alto valor e baixa frequência.** Alto valor para o efeito ser
+   detectável; baixa frequência para o usuário realmente ler o texto.
+3. **Mude uma coisa.** Copy isolado, sem alterar layout, fluxo ou hierarquia visual.
+4. **Teste A/B com poder estatístico calculado antes.** Defina o efeito mínimo detectável
+   de interesse e derive a amostra a partir dele.
+
+### Métricas, em ordem de qualidade
+
+| Métrica | Por que |
+|---|---|
+| Conclusão da tarefa pretendida | O que a técnica promete afetar diretamente |
+| Taxa de erro e de desfazer/retrabalho | Captura o custo de o usuário ter entendido errado |
+| Tempo até a primeira ação bem-sucedida | Sensível a hesitação |
+| Tickets de suporte sobre aquele fluxo | Efeito a jusante, com atraso |
+| Conversão | Última — é onde intenção do usuário e interesse do negócio se confundem |
+
+### Critério de decisão
+
+Defina **antes** do teste qual efeito justificaria o custo de manutenção, tradução e
+renegociação do design system. Se o ganho for real mas menor que esse limiar, a resposta
+correta é não adotar de forma ampla — e isso é um resultado válido, não um fracasso.
+
+### Salvaguarda ética
+
+Antes de subir qualquer variante, aplique um teste simples: *se o usuário visse o
+resultado do experimento, ele se sentiria melhor ou pior servido?* Se a variante vencedora
+ganha porque comunica melhor, adote. Se ganha porque constrange ou obscurece, você mediu
+um efeito real (itens 7 e 8) e mesmo assim deve descartá-la.
+
+---
+
+## Limitações desta pesquisa
+
+Declaradas para você calibrar o quanto apoiar decisão nisto.
+
+1. **Parte das fontes não foi consultada no texto integral.** Morkes & Nielsen, os RCTs do
+   *J Clin Epidemiol*, o PNAS, os estudos sobre *confirmshaming* e o case do GOV.UK foram
+   verificados por convergência de buscas independentes. Isso confirma achados, N e
+   citações, mas não permite conferir procedimento nem as ressalvas dos próprios autores.
+   Antes de usar um desses números em decisão de peso, abra a referência na bibliografia.
+
+
+3. **"Copy orientado à intenção" não é um campo de pesquisa.** Não existe literatura que
+   teste exatamente este construto. O que reuni são quatro literaturas adjacentes
+   (vocabulário, legibilidade, forrageamento de informação, linguagem simples) conectadas
+   por mim. A conexão é defensável, mas é interpretação, não achado.
+4. **Viés de publicação.** Empresas publicam experimentos de copy que funcionaram. Os que
+   não funcionaram não viram post de blog. Os quatro cases desta pesquisa quase certamente
+   são sobreviventes desse filtro — e três deles vêm de uma única fonte, que vende
+   ferramenta de conteúdo de UX.
+
+---
+
+## Bibliografia
+
+**Empírico**
+
+- Furnas, G. W., Landauer, T. K., Gomez, L. M., & Dumais, S. T. (1987). The vocabulary
+  problem in human-system communication. *Communications of the ACM*, 30(11), 964–971.
+  https://dl.acm.org/doi/10.1145/32206.32212
+- Morkes, J., & Nielsen, J. (1997). *Concise, SCANNABLE, and Objective: How to Write for
+  the Web.* https://www.nngroup.com/articles/concise-scannable-and-objective-how-to-write-for-the-web/
+- Morkes, J., & Nielsen, J. (1998). Applying writing guidelines to Web pages. *CHI 98
+  Conference Summary.* https://dl.acm.org/doi/10.1145/286498.286792
+- A multimethods randomized trial found that plain language versions improved adults'
+  understanding of health recommendations. *Journal of Clinical Epidemiology* (2023).
+  https://www.jclinepi.com/article/S0895-4356(23)00303-7/fulltext
+- A multimethods randomized trial found that plain language versions improved parents'
+  understanding of health recommendations. *Journal of Clinical Epidemiology* (2023).
+  https://pubmed.ncbi.nlm.nih.gov/37421995/
+- Plain Language vs Standard Format for Youth Understanding of COVID-19 Recommendations:
+  A Randomized Clinical Trial (2023). https://pubmed.ncbi.nlm.nih.gov/37548983/
+- Bauer, I., Neuert, C., Kunz, T., & Gummer, T. (2023).
+  Plain language in web questionnaires: effects on data quality and questionnaire
+  evaluation. *International Journal of Social Research Methodology*, 28(1).
+  https://www.tandfonline.com/doi/full/10.1080/13645579.2023.2294880
+- Kunz, T., Gummer, T., & Neuert, C. E. (2026). Measurement
+  Quality of a Multi-item Scale in Plain Language. *Field Methods*, 38(1), 33–45.
+  (© The Author(s) 2025.) https://journals.sagepub.com/doi/10.1177/1525822X251322031
+- Martínez, E., Mollica, F., & Gibson, E. (2023). Even lawyers do not like legalese.
+  *PNAS.* https://www.pnas.org/doi/10.1073/pnas.2302672120
+- Martínez, E., Mollica, F., & Gibson, E. (2024). Even laypeople use legalese. *PNAS.*
+  https://www.pnas.org/doi/10.1073/pnas.2405564121
+- Creative manipulation: a case study of confirmshaming as a deceptive design pattern.
+  *Creativity Studies.* https://journals.vilniustech.lt/index.php/CS/article/view/21308
+
+**Teoria**
+
+- Pirolli, P., & Card, S. K. *Information Foraging.* UIR Technical Report.
+  https://act-r.psy.cmu.edu/wordpress/wp-content/uploads/2012/12/280uir-1999-05-pirolli.pdf
+- Norman, D. Gulfs of execution and evaluation (conceito).
+  https://www.interaction-design.org/literature/book/the-glossary-of-human-computer-interaction/gulf-of-evaluation-and-gulf-of-execution
+
+**Cases**
+
+- Frontitude — How UX Copy Drives Better Business Results
+  (cases Preply, Fundbox e Gong.io).
+  https://www.frontitude.com/blog/how-ux-copy-drives-better-business-results
+- Government Digital Service — Taking care of business on GOV.UK (2017).
+  https://gds.blog.gov.uk/2017/07/18/taking-care-of-business-on-gov-uk/
+
+**Prática**
+
+- Nielsen Norman Group — Plain Language Is for Everyone, Even Experts.
+  https://www.nngroup.com/articles/plain-language-experts/
+- Nielsen Norman Group — The 3 I's of Microcopy.
+  https://www.nngroup.com/articles/3-is-of-microcopy/
+- Nielsen Norman Group — Information Foraging: A Theory of How People Navigate on the Web.
+  https://www.nngroup.com/articles/information-foraging/
