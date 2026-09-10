@@ -177,29 +177,3 @@ que o texto diferencie as consequências.
 mas provavelmente com menos volume por ser parte da configuração do Traffic Shaper.
 
 **Fica como segundo candidato**, ou como o teste seguinte.
-
----
-
-## 5. Próximos passos revisados
-
-| # | Passo | Mudou porque |
-|---|---|---|
-| 1 | **Levar o dado das 261 mil traduções pendentes para a Cassa e o Plassede** | O timing deixou de ser argumento e virou número |
-| 2 | Promover `Latency (ping)` a padrão nos 28 rótulos | Custo mínimo, risco nulo, padrão já existe no produto |
-| 3 | Confirmar volume de uso do `RegionSelection` | É o único critério da matriz que os dados de string não respondem |
-| 4 | Levar a triagem por zona à mesa do DS | Agora com números reais, não com lista especulativa |
-| 5 | Desenhar o teste no `RegionSelection` | — |
-
----
-
-## 6. O que esta análise não responde
-
-- **Volume de uso por tela.** O registry diz o que existe, não quantas pessoas passam por
-  ali. Sem isso não há como calcular poder estatístico.
-- **Se `jitter`, `packet loss` e `route` são marcadores de pertencimento** na comunidade da
-  ExitLag. O teste do fórum (buscar se o termo circula sem explicação) resolve isso e não
-  foi feito.
-- **Quais strings estão em superfícies visíveis** vs. logs e telas de diagnóstico avançado.
-  A chave não distingue.
-- **Se o pt-BR não traduzido é intencional** (aguardando decisão) ou pendência de processo.
-  Vale confirmar com o Plassede — muda a leitura da urgência.
