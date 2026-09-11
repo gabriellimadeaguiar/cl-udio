@@ -1,0 +1,394 @@
+[
+ {
+  "group": "Medida de atraso",
+  "variants": [
+   {
+    "term": "ping",
+    "count": 314,
+    "by_prod": {
+     "desktop": 122,
+     "mobile": 84,
+     "portal": 108
+    },
+    "labels": [
+     {
+      "key": "ConnectionDetails.average-ping",
+      "prod": "desktop",
+      "text": "Average ping"
+     },
+     {
+      "key": "ConnectionDetails.higher-ping",
+      "prod": "desktop",
+      "text": "Higher ping"
+     },
+     {
+      "key": "ConnectionDetails.last-ping",
+      "prod": "desktop",
+      "text": "Last ping"
+     },
+     {
+      "key": "ConnectionDetails.lower-ping",
+      "prod": "desktop",
+      "text": "Lower ping"
+     },
+     {
+      "key": "ConnectionDetails.ping",
+      "prod": "desktop",
+      "text": "Ping"
+     },
+     {
+      "key": "ConnectionDetails.ping-chart",
+      "prod": "desktop",
+      "text": "Ping chart"
+     }
+    ]
+   },
+   {
+    "term": "latency",
+    "count": 142,
+    "by_prod": {
+     "desktop": 72,
+     "mobile": 22,
+     "portal": 48
+    },
+    "labels": [
+     {
+      "key": "HealthMonitoringPanel.latency",
+      "prod": "desktop",
+      "text": "Latency"
+     },
+     {
+      "key": "MTRTool.latency",
+      "prod": "desktop",
+      "text": "Latency"
+     },
+     {
+      "key": "PingDetailsRttChart.latency-ms",
+      "prod": "desktop",
+      "text": "Latency (ms)"
+     },
+     {
+      "key": "PingTcpingTool.latency-ms",
+      "prod": "desktop",
+      "text": "Latency (ms)"
+     },
+     {
+      "key": "RealTimeMonitoringTab.latency-chart",
+      "prod": "desktop",
+      "text": "Latency chart"
+     },
+     {
+      "key": "RealTimeMonitoringTab.latency-ms",
+      "prod": "desktop",
+      "text": "Latency (ms)"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "group": "Caminho da conexão",
+  "variants": [
+   {
+    "term": "route",
+    "count": 278,
+    "by_prod": {
+     "desktop": 106,
+     "mobile": 80,
+     "portal": 92
+    },
+    "labels": [
+     {
+      "key": "AdvancedConfigurationPopUp.multipath-routes",
+      "prod": "desktop",
+      "text": "Multipath® routes"
+     },
+     {
+      "key": "AdvancedConfigurationPopUp.prefer-ipv6-routes",
+      "prod": "desktop",
+      "text": "Prefer IPv6 routes"
+     },
+     {
+      "key": "AdvancedConfigurationPopUp.tcp-routes",
+      "prod": "desktop",
+      "text": "TCP Routes"
+     },
+     {
+      "key": "AdvancedConfigurationPopUp.udp-routes",
+      "prod": "desktop",
+      "text": "UDP Routes"
+     },
+     {
+      "key": "AdvancedConfigurationPopUp.use-local-routes-first",
+      "prod": "desktop",
+      "text": "Use local routes first"
+     },
+     {
+      "key": "ConnectionDetails.route-details",
+      "prod": "desktop",
+      "text": "Route details"
+     }
+    ]
+   },
+   {
+    "term": "routing",
+    "count": 34,
+    "by_prod": {
+     "desktop": 2,
+     "portal": 32
+    },
+    "labels": [
+     {
+      "key": "ScannerRunningModal.analyzing-data-routing",
+      "prod": "desktop",
+      "text": "Analyzing Data Routing"
+     },
+     {
+      "key": "desktop.scanner_running_modal.library.label_analyzing_data_routing",
+      "prod": "desktop",
+      "text": "Analyzing Data Routing"
+     }
+    ]
+   },
+   {
+    "term": "path",
+    "count": 22,
+    "by_prod": {
+     "desktop": 6,
+     "mobile": 6,
+     "portal": 10
+    },
+    "labels": [
+     {
+      "key": "portal.products.marketing.desktop_features_cards_route_optimization_description.label_third_bold",
+      "prod": "portal",
+      "text": "fastest paths"
+     },
+     {
+      "key": "products.desktop.features.cards.route_optimization.description.thirdBold",
+      "prod": "portal",
+      "text": "fastest paths"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "group": "Perda de dados",
+  "variants": [
+   {
+    "term": "packet loss",
+    "count": 88,
+    "by_prod": {
+     "desktop": 36,
+     "mobile": 14,
+     "portal": 38
+    },
+    "labels": [
+     {
+      "key": "ConnectionDetails.packet-loss",
+      "prod": "desktop",
+      "text": "Packet loss"
+     },
+     {
+      "key": "HealthMonitoringPanel.packet-loss",
+      "prod": "desktop",
+      "text": "Packet loss"
+     },
+     {
+      "key": "LastSessionData.packet-loss",
+      "prod": "desktop",
+      "text": "Packet loss"
+     },
+     {
+      "key": "LogsPopup.packet-loss",
+      "prod": "desktop",
+      "text": "Packet loss"
+     },
+     {
+      "key": "PingDetailsRttChart.packet-loss",
+      "prod": "desktop",
+      "text": "Packet loss"
+     },
+     {
+      "key": "PingTcpingTool.packet-loss",
+      "prod": "desktop",
+      "text": "Packet loss"
+     }
+    ]
+   },
+   {
+    "term": "lost packets",
+    "count": 2,
+    "by_prod": {
+     "desktop": 2
+    },
+    "labels": [
+     {
+      "key": "ToolsTab.packets-lost",
+      "prod": "desktop",
+      "text": "Packets lost"
+     },
+     {
+      "key": "desktop.tools_tab.monitoring.label_packets_lost",
+      "prod": "desktop",
+      "text": "Packets lost"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "group": "Atraso percebido",
+  "variants": [
+   {
+    "term": "lag",
+    "count": 196,
+    "by_prod": {
+     "desktop": 4,
+     "mobile": 44,
+     "portal": 148
+    },
+    "labels": [
+     {
+      "key": "SystemTweaksTab.reduce-input-lag",
+      "prod": "desktop",
+      "text": "Reduce input lag"
+     },
+     {
+      "key": "desktop.system_tweaks_tab.optimization.label_reduce_input_lag",
+      "prod": "desktop",
+      "text": "Reduce input lag"
+     },
+     {
+      "key": "DayStreak.TROPHY_DESCRIPTION",
+      "prod": "mobile",
+      "text": "no lag"
+     },
+     {
+      "key": "FeedBackSucessoModal.ITEM_3",
+      "prod": "mobile",
+      "text": "Start playing without lag!"
+     },
+     {
+      "key": "PremiumExpirationBanner.TITLE",
+      "prod": "mobile",
+      "text": "Don't let lag win!"
+     },
+     {
+      "key": "ReferAFriend.STEP_GG_WP_DESCRIPTION",
+      "prod": "mobile",
+      "text": "No more lag excuses!"
+     }
+    ]
+   },
+   {
+    "term": "delay",
+    "count": 6,
+    "by_prod": {
+     "desktop": 2,
+     "mobile": 2,
+     "portal": 2
+    },
+    "labels": []
+   }
+  ]
+ },
+ {
+  "group": "Instabilidade",
+  "variants": [
+   {
+    "term": "jitter",
+    "count": 54,
+    "by_prod": {
+     "desktop": 14,
+     "mobile": 18,
+     "portal": 22
+    },
+    "labels": [
+     {
+      "key": "ConnectionDetails.jitter",
+      "prod": "desktop",
+      "text": "Jitter"
+     },
+     {
+      "key": "HealthMonitoringPanel.jitter",
+      "prod": "desktop",
+      "text": "Jitter"
+     },
+     {
+      "key": "LastSessionData.average-jitter",
+      "prod": "desktop",
+      "text": "Average Jitter"
+     },
+     {
+      "key": "ResultsPage.jitter",
+      "prod": "desktop",
+      "text": "Jitter:"
+     },
+     {
+      "key": "RouteDetails.jitter",
+      "prod": "desktop",
+      "text": "Jitter"
+     },
+     {
+      "key": "desktop.connection_details.monitoring.label_jitter",
+      "prod": "desktop",
+      "text": "Jitter"
+     }
+    ]
+   },
+   {
+    "term": "spikes",
+    "count": 28,
+    "by_prod": {
+     "desktop": 8,
+     "mobile": 14,
+     "portal": 6
+    },
+    "labels": [
+     {
+      "key": "DiagnosticServer.spike-detected-1-ms",
+      "prod": "desktop",
+      "text": "Spike detected (%1 ms)"
+     },
+     {
+      "key": "HealthMonitoringPanel.spikes",
+      "prod": "desktop",
+      "text": "Spikes"
+     },
+     {
+      "key": "desktop.diagnostic_server.support.label_spike_detected_1_ms",
+      "prod": "desktop",
+      "text": "Spike detected (%1 ms)"
+     },
+     {
+      "key": "desktop.health_monitoring_panel.monitoring.label_spikes",
+      "prod": "desktop",
+      "text": "Spikes"
+     },
+     {
+      "key": "MonitoringReportSummary.peak_spike",
+      "prod": "mobile",
+      "text": "Peak spike"
+     },
+     {
+      "key": "MonitoringReportSummary.spikes",
+      "prod": "mobile",
+      "text": "Spikes"
+     }
+    ]
+   },
+   {
+    "term": "instability",
+    "count": 18,
+    "by_prod": {
+     "desktop": 6,
+     "mobile": 4,
+     "portal": 8
+    },
+    "labels": []
+   }
+  ]
+ }
+]
