@@ -64,10 +64,10 @@
 <body>
   <div class="bar">
     <div class="urlrow">
-      <div class="gloss" id="gloss">glossário embutido</div>
-      <button id="scan" class="primary">Verificar</button>
+      <div class="gloss" id="gloss">carregando glossário…</div>
+      <button id="scan" class="primary" disabled>Verificar</button>
     </div>
-    <div class="status" id="status">Selecione camadas — ou nada, para a página inteira.</div>
+    <div class="status" id="status">Buscando o glossário do time…</div>
   </div>
 
   <div class="list" id="list">
@@ -161,6 +161,17 @@ $('#scan').onclick = () => {
 
 $('#close').onclick = () => send({type:'close'});
 
+// Só o iframe da UI tem rede no Figma; o thread principal pede, a gente busca.
+async function fetchGlossary(url){
+  try {
+    const res = await fetch(url, {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    send({type:'fetched', glossary: await res.json()});
+  } catch(e){
+    send({type:'fetch-failed', message: e.message});
+  }
+}
+
 // Data no formato que se lê num relance, para saber se o plugin está velho.
 function brDate(iso){
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ''));
@@ -170,6 +181,7 @@ function brDate(iso){
 onmessage = (event) => {
   const msg = event.data.pluginMessage;
   if(!msg) return;
+  if(msg.type === 'fetch'){ status('Buscando glossário…'); fetchGlossary(msg.url); }
   if(msg.type === 'glossary'){
     const g = $('#gloss');
     g.textContent = '';
@@ -186,7 +198,10 @@ onmessage = (event) => {
       w.textContent = 'glossário de exemplo — não é a decisão do time';
       g.appendChild(w);
     }
+    $('#scan').disabled = false;
+    if(!msg.stale) status('Selecione camadas — ou nada, para a página inteira.');
   }
+  if(msg.type === 'warn'){ $('#scan').disabled = false; status(msg.message); }
   if(msg.type === 'results'){
     results = msg.results;
     $('#scan').disabled = false;

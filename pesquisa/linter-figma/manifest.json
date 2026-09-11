@@ -6,7 +6,11 @@
   "editorType": ["figma"],
   "documentAccess": "dynamic-page",
   "networkAccess": {
-    "allowedDomains": ["none"],
-    "reasoning": "O glossário vem embutido no plugin. Nenhuma requisição de rede é feita, e nada do arquivo do Figma sai daqui."
+    "allowedDomains": [
+      "https://gist.githubusercontent.com",
+      "https://raw.githubusercontent.com",
+      "https://*.github.io"
+    ],
+    "reasoning": "Baixa o glossário de vocabulário decidido pelo time. É uma leitura só: nada do arquivo do Figma é enviado para fora."
   }
 }

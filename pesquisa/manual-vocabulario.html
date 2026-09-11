@@ -227,11 +227,11 @@
   <div class="peca">
     <h3>glossario.json</h3>
     <p>O que sai do Triador. Só os termos já decididos, com o substituto de cada um.</p>
-    <p class="quem">você embute no plugin</p>
+    <p class="quem">você mantém num gist</p>
   </div>
   <div class="peca">
     <h3>Linter</h3>
-    <p>Plugin do Figma. Carrega o glossário dentro de si e aponta os termos descartados nas telas.</p>
+    <p>Plugin do Figma. Busca o glossário sozinho e aponta os termos descartados nas telas.</p>
     <p class="quem">quem desenha</p>
   </div>
 </div>
@@ -239,8 +239,8 @@
 <section>
   <h2><span class="marca">Parte 1</span> Você monta, uma vez só</h2>
   <p class="sub">
-    Meia hora. Os dois últimos passos — embutir e publicar — voltam a cada rodada de triagem,
-    porque o glossário viaja dentro do plugin. É o preço de não depender de nada hospedado.
+    Meia hora, e acabou: depois disso o vocabulário muda sem ninguém republicar nada. O plugin
+    é publicado uma vez; o glossário vive fora dele, editável pelo navegador.
   </p>
 
   <ol class="passos">
@@ -282,18 +282,34 @@
     </li>
 
     <li>
-      <h4>Embuta o glossário no plugin</h4>
+      <h4>Ponha o glossário num gist</h4>
       <p>
-        Ponha o <code>glossario.json</code> na pasta do plugin e rode, no terminal, de dentro dela:
+        <a href="https://gist.github.com">gist.github.com</a> → cole o JSON → nome
+        <code>glossario.json</code> → <strong>Create secret gist</strong> → botão
+        <strong>Raw</strong> → copie a URL.
       </p>
-      <pre><code>python3 embutir.py</code></pre>
       <p>
-        Ele grava o glossário dentro do <code>code.js</code>, valida o JSON e diz quantos termos
-        passaram a valer. Nada é hospedado em lugar nenhum: o plugin não faz requisição de rede.
+        Gist secreto não aparece em busca nem no seu perfil, mas quem tem o link lê. É discrição,
+        não sigilo — se o vocabulário for sensível, use um host interno do time.
       </p>
       <p class="nota">
-        <b>O arquivo sai do Triador já pronto.</b> Se o caminho for outro, passe junto:
-        <code>python3 embutir.py ~/Downloads/glossario.json</code>
+        <b>Apague o hash longo do meio da URL.</b> O link do botão Raw aponta para aquela revisão
+        e nunca muda. Sem o hash, ele serve sempre a versão mais recente — é isso que faz o
+        glossário poder ser atualizado sem tocar no plugin.
+      </p>
+      <pre><code>fixa  …/<span style="opacity:.55">a1b2c3d4e5f6…/</span>glossario.json
+viva  …/glossario.json</code></pre>
+    </li>
+
+    <li>
+      <h4>Grave a URL no plugin, uma vez</h4>
+      <p>
+        Abra o <code>code.js</code> e preencha a linha do topo:
+      </p>
+      <pre><code>const GLOSSARY_URL = 'https://gist.githubusercontent.com/…/glossario.json';</code></pre>
+      <p>
+        É a última vez que alguém toca nesse endereço. O plugin não tem campo de URL: ele busca
+        sozinho ao abrir, e ninguém do time precisa saber que existe um link.
       </p>
     </li>
 
@@ -401,8 +417,9 @@
         selecione nada, e ele varre a página inteira. Depois, <strong>Verificar</strong>.
       </p>
       <p class="nota">
-        O cabeçalho do plugin diz quantos termos estão valendo e de quando é o glossário. É por
-        ali que dá para perceber que a versão instalada ficou para trás.
+        O cabeçalho diz quantos termos estão valendo e de quando é o glossário. Sem rede, o
+        plugin usa a última versão que baixou e avisa — apontar com o vocabulário de ontem é
+        melhor que não apontar.
       </p>
     </li>
     <li>
@@ -463,16 +480,22 @@
     <div>
       <dt>O plugin diz “glossário de exemplo”</dt>
       <dd>
-        O que está embutido ainda é o de teste, com decisões inventadas. Rode o
-        <code>embutir.py</code> com o glossário que saiu do Triador e publique.
+        O gist ainda tem o JSON de teste, com decisões inventadas. Substitua pelo que saiu do
+        Triador — só editar o gist, o plugin acompanha.
       </dd>
     </div>
     <div>
-      <dt>Atualizei o glossário e o time continua vendo o antigo</dt>
+      <dt>Atualizei o gist e o plugin mostra o antigo</dt>
       <dd>
-        Rodar o <code>embutir.py</code> mexe só na sua cópia. Para o time receber, é preciso
-        publicar de novo pelo <strong>Publish</strong> — é o mesmo passo para qualquer mudança
-        no plugin.
+        Duas causas. A URL pode ter o hash de revisão no meio, e aí aponta para sempre àquela
+        versão — tire o hash. Ou o cache do GitHub ainda não virou: costuma levar minutos.
+      </dd>
+    </div>
+    <div>
+      <dt>“Não consegui buscar o glossário”</dt>
+      <dd>
+        Sem rede ou URL fora do ar. O plugin cai na última versão que baixou e segue
+        funcionando — o cabeçalho mostra a data dela, para você saber de quando é.
       </dd>
     </div>
     <div>

@@ -30,9 +30,9 @@ texto — o plugin não enxergaria quase nada, então nem aparece lá.
 2. Selecione camadas — ou não selecione nada, para varrer a página inteira
 3. **Verificar**
 
-Não há nada para configurar: o glossário vem dentro do plugin. O cabeçalho mostra quantos
-termos estão valendo e de quando é o glossário, para dar para perceber quando a versão
-instalada ficou para trás.
+Não há nada para configurar. O plugin busca o glossário sozinho ao abrir e o cabeçalho mostra
+quantos termos estão valendo e de quando é a versão. Sem rede, ele usa a última que baixou e
+diz isso — apontar com o vocabulário de ontem é melhor que não apontar.
 
 Cada ocorrência mostra o termo, a camada e o texto. Dois botões:
 
@@ -57,25 +57,42 @@ aponta e deixa a decisão com quem está escrevendo.
 
 ## O glossário
 
-Ele mora **dentro do `code.js`**, entre os marcadores `<<<GLOSSARIO` e `GLOSSARIO>>>`. O
-plugin não faz nenhuma requisição de rede — `manifest.json` declara `allowedDomains: ["none"]`,
-o que também é a resposta curta para quem, na organização, perguntar o que o plugin envia
-para fora: nada.
+Ele mora **numa URL**, não dentro do plugin — é o que permite o vocabulário mudar sem
+ninguém republicar nada. Ninguém digita esse endereço: ele é gravado uma vez em
+`GLOSSARY_URL`, no topo do `code.js`, e a interface não tem campo para ele.
+
+O plugin faz uma leitura e só. Nada do arquivo do Figma é enviado para fora — é a resposta
+curta para quem perguntar isso na hora de publicar para a organização.
+
+### Onde hospedar
+
+Precisa servir o JSON cru, sem autenticação. **Gist secreto** é o caminho mais curto:
+
+1. [gist.github.com](https://gist.github.com) → cole o JSON → nome `glossario.json`
+2. **Create secret gist** — não aparece em busca nem no seu perfil, mas quem tem o link lê.
+   Não é sigilo: é discrição. Se o vocabulário for sensível, use um host interno do time.
+3. Botão **Raw** → copie a URL → **apague o hash longo do meio dela**
+
+O link do botão Raw aponta para aquela revisão e nunca muda. Sem o hash, ele serve sempre a
+versão mais recente — e é essa forma que vai no `GLOSSARY_URL`:
+
+```
+fixa  …/a1b2c3d4e5f6…/glossario.json
+viva  …/glossario.json
+```
+
+Alternativas: **GitHub Pages**, **raw do GitHub** (só em repositório público) ou qualquer host
+interno. Fora dos domínios já liberados, acrescente o seu em `manifest.json` →
+`networkAccess.allowedDomains` e publique de novo.
 
 ### Atualizar depois de uma rodada de triagem
 
-1. No Triador, **Exportar glossário** — baixa `glossario.json`
-2. Ponha o arquivo nesta pasta e rode:
+1. No Triador, **Exportar glossário**
+2. Abra o gist, **Edit**, cole o novo conteúdo, **Save**
 
-```bash
-python3 embutir.py              # ou: python3 embutir.py ~/Downloads/glossario.json
-```
-
-3. No Figma, **Publish** no plugin
-
-O script valida o JSON, recusa termo sem `term` ou `decision`, avisa se a origem ainda diz
-"exemplo", e conta quantos termos passam a gerar apontamento. Enquanto você não publicar,
-o time continua na versão anterior.
+Acabou. O time pega a versão nova na próxima vez que abrir o plugin. Nenhum republish, nenhum
+arquivo local, nenhum terminal — dá para fazer de qualquer computador. O cache do GitHub
+costuma levar alguns minutos para virar.
 
 O formato é exatamente o que o Triador exporta:
 
@@ -97,14 +114,14 @@ O formato é exatamente o que o Triador exporta:
 | `traduzir` | Aponta como **evitar**; sugere `prefer` e corrige se for seguro |
 | `decidir` | Aponta como **em discussão**, com a nota; nunca corrige |
 
-### O glossário que já vem embutido é de exemplo
+### Testar antes de o time ter triado
 
-`glossario.exemplo.json` — as decisões ali são inventadas, não saíram do Triador. Serve para
-ver o linter achando e corrigindo antes de o time ter triado qualquer coisa.
+`glossario.exemplo.json` — as decisões ali são inventadas, não saíram do Triador. Ponha num
+gist e aponte o `GLOSSARY_URL` para ele para ver o linter achando e corrigindo.
 
-Enquanto ele for o embutido, o cabeçalho do plugin mostra **“glossário de exemplo — não é a
-decisão do time”** em âmbar, e o `embutir.py` avisa no terminal. Troque pelo real antes de
-publicar para a organização.
+Enquanto a origem do glossário disser "exemplo", o cabeçalho do plugin mostra **“glossário de
+exemplo — não é a decisão do time”** em âmbar. Troque pelo real antes de publicar para a
+organização.
 
 ## Limitação que vale conhecer antes de adotar
 

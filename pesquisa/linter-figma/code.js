@@ -1,58 +1,22 @@
 // Linter de Vocabulário — thread principal.
 // Varre nós de texto da seleção (ou da página) e compara com o glossário
-// decidido no Triador. O glossário vem embutido: o plugin não faz rede.
+// decidido no Triador.
 //
-// Para atualizar: exporte o glossario.json no Triador, deixe o arquivo
-// nesta pasta e rode `python3 embutir.py`. Depois, Publish no Figma.
+// O glossário mora numa URL, não aqui dentro: assim o time atualiza o
+// vocabulário sem ninguém republicar o plugin. Ninguém digita esse endereço —
+// ele vem gravado abaixo, e a interface não tem campo para ele.
 
-// <<<GLOSSARIO — gerado por embutir.py, não edite à mão
-const GLOSSARY = {
-  "version": 1,
-  "updated": "2026-09-11",
-  "source": "EXEMPLO — não é a decisão do time",
-  "terms": [
-    {
-      "term": "latency",
-      "decision": "traduzir",
-      "prefer": "ping"
-    },
-    {
-      "term": "ndis",
-      "decision": "traduzir",
-      "prefer": "driver de rede"
-    },
-    {
-      "term": "ipv6",
-      "decision": "traduzir",
-      "prefer": "conexão"
-    },
-    {
-      "term": "ping",
-      "decision": "manter"
-    },
-    {
-      "term": "lag",
-      "decision": "manter"
-    },
-    {
-      "term": "fps",
-      "decision": "manter"
-    },
-    {
-      "term": "route",
-      "decision": "decidir",
-      "note": "marketing usa em 33% das strings do portal — decidir por superfície"
-    },
-    {
-      "term": "packet",
-      "decision": "decidir",
-      "note": "aparece como packet loss; decidir se o conceito vira um nome só"
-    }
-  ]
-};
-// GLOSSARIO>>>
+// Preencha uma vez, antes de publicar para a organização. Depois disso, o
+// vocabulário muda editando o arquivo nessa URL, e o plugin acompanha sozinho.
+const GLOSSARY_URL = '';
+
+// Última versão que carregou com sucesso, para o plugin continuar servindo
+// quando a rede falhar. Fica na máquina de quem usa, não no arquivo do Figma.
+const CACHE_KEY = 'glossaryCache';
 
 figma.showUI(__html__, { width: 420, height: 560, themeColors: true });
+
+let glossary = null;
 
 function escapeRe(s) {
   return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -80,11 +44,29 @@ function safeReplacement(text, term, prefer) {
   return m[1] + matchCase(m[2], prefer) + m[3];
 }
 
+function valid(g) {
+  return !!(g && Array.isArray(g.terms) && g.terms.length
+    && g.terms.every((t) => t && t.term && t.decision));
+}
+
+function summary(g, stale) {
+  const terms = g.terms;
+  return {
+    type: 'glossary',
+    updated: g.updated || '',
+    source: g.source || '',
+    total: terms.length,
+    // "manter" não gera apontamento — só estes contam como regra ativa.
+    active: terms.filter((t) => t.decision !== 'manter').length,
+    stale: !!stale,
+  };
+}
+
 function findings(node) {
   const text = node.characters;
   if (!text || !text.trim()) return [];
   const out = [];
-  for (const entry of GLOSSARY.terms) {
+  for (const entry of glossary.terms) {
     if (entry.decision === 'manter') continue;
     const re = new RegExp('\\b' + escapeRe(entry.term) + 's?\\b', 'i');
     if (!re.test(text)) continue;
@@ -124,23 +106,49 @@ async function loadFontsOf(node) {
   await Promise.all(fonts.map(figma.loadFontAsync));
 }
 
+// Quando a busca falha, tenta o último glossário que funcionou. Melhor apontar
+// com vocabulário de ontem do que não apontar nada.
+async function useCache(reason) {
+  const cached = await figma.clientStorage.getAsync(CACHE_KEY);
+  if (valid(cached)) {
+    glossary = cached;
+    figma.ui.postMessage(summary(cached, true));
+    figma.ui.postMessage({ type: 'warn', message: reason + ' Usando a última versão que baixou.' });
+  } else {
+    figma.ui.postMessage({ type: 'error', message: reason });
+  }
+}
+
 figma.ui.onmessage = async (msg) => {
   if (msg.type === 'ready') {
-    const terms = Array.isArray(GLOSSARY.terms) ? GLOSSARY.terms : [];
-    figma.ui.postMessage({
-      type: 'glossary',
-      updated: GLOSSARY.updated || '',
-      source: GLOSSARY.source || '',
-      total: terms.length,
-      // "manter" não gera apontamento — só estes contam como regra ativa.
-      active: terms.filter((t) => t.decision !== 'manter').length,
-    });
+    if (!GLOSSARY_URL) {
+      figma.ui.postMessage({ type: 'error', message: 'Este plugin foi distribuído sem a URL do glossário. Preencha GLOSSARY_URL no code.js e publique de novo.' });
+      return;
+    }
+    figma.ui.postMessage({ type: 'fetch', url: GLOSSARY_URL });
+    return;
+  }
+
+  // A UI é quem tem rede; ela busca e devolve o resultado para cá.
+  if (msg.type === 'fetched') {
+    if (!valid(msg.glossary)) {
+      await useCache('O glossário baixado está vazio ou fora do formato.');
+      return;
+    }
+    glossary = msg.glossary;
+    await figma.clientStorage.setAsync(CACHE_KEY, glossary);
+    figma.ui.postMessage(summary(glossary, false));
+    return;
+  }
+
+  if (msg.type === 'fetch-failed') {
+    await useCache('Não consegui buscar o glossário: ' + msg.message + '.');
     return;
   }
 
   if (msg.type === 'scan') {
-    if (!Array.isArray(GLOSSARY.terms) || !GLOSSARY.terms.length) {
-      figma.ui.postMessage({ type: 'error', message: 'O glossário embutido está vazio. Rode embutir.py e publique de novo.' });
+    if (!valid(glossary)) {
+      figma.ui.postMessage({ type: 'error', message: 'Nenhum glossário carregado.' });
       return;
     }
     const { nodes, scope } = scopeNodes();
