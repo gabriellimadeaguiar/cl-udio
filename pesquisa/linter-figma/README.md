@@ -74,6 +74,12 @@ Triador produz:
 | `traduzir` | Aponta como **evitar**; sugere `prefer` e corrige se for seguro |
 | `decidir` | Aponta como **em discussão**, com a nota; nunca corrige |
 
+### Testar antes de ter glossário
+
+`glossario.exemplo.json` existe para conferir a fiação do plugin: as decisões ali são
+inventadas, não saíram do Triador. Serve para ver o linter achando e corrigindo, e nada além
+disso — troque pelo glossário real antes de qualquer pessoa usar em arquivo de verdade.
+
 ### Onde hospedar
 
 A URL precisa servir o JSON cru, sem autenticação. Opções:

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "updated": "2026-09-11",
+  "source": "EXEMPLO — não é a decisão do time",
+  "terms": [
+    { "term": "latency", "decision": "traduzir", "prefer": "ping" },
+    { "term": "ndis", "decision": "traduzir", "prefer": "driver de rede" },
+    { "term": "ipv6", "decision": "traduzir", "prefer": "conexão" },
+    { "term": "ping", "decision": "manter" },
+    { "term": "lag", "decision": "manter" },
+    { "term": "fps", "decision": "manter" },
+    { "term": "route", "decision": "decidir", "note": "marketing usa em 33% das strings do portal — decidir por superfície" },
+    { "term": "packet", "decision": "decidir", "note": "aparece como packet loss; decidir se o conceito vira um nome só" }
+  ]
+}
