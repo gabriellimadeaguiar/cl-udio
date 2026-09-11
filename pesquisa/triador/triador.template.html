@@ -111,13 +111,22 @@
     display:flex;flex-direction:column;gap:11px}
   .group h3{margin:0;font-size:1.02rem;font-weight:600;letter-spacing:-.012em}
   .vars{display:flex;flex-direction:column;gap:9px}
-  .var{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;
-    padding:8px 10px;border-radius:5px;background:var(--surface-2)}
+  .var{display:flex;flex-direction:column;gap:7px;
+    padding:9px 11px;border-radius:5px;background:var(--surface-2)}
+  .varTop{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
   .var .t{font-family:var(--mono);font-weight:600;font-size:.88rem}
   .var .n{font-family:var(--mono);font-size:.76rem;color:var(--ink-2);font-variant-numeric:tabular-nums}
   .labels{display:flex;flex-wrap:wrap;gap:5px;width:100%}
+  .where{display:flex;flex-wrap:wrap;gap:5px;align-items:baseline}
+  .whereLbl{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--ink-3);margin-right:2px}
   .lbl{font-family:var(--mono);font-size:.7rem;padding:2px 7px;border-radius:4px;
-    background:var(--surface);border:1px solid var(--line);color:var(--ink-2)}
+    background:var(--surface);border:1px solid var(--line);color:var(--ink-2);
+    font-variant-numeric:tabular-nums}
+  .lbl.warn{background:var(--decide-bg);border-color:var(--decide-line);color:var(--decide);font-weight:500}
+  .clash{background:var(--decide-bg);border:1px solid var(--decide-line);border-radius:6px;
+    padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+  .clash h4{margin:0;font-size:.82rem;font-weight:600;color:var(--decide)}
 
   .out{background:var(--surface);border:1px solid var(--decide-line);border-radius:7px;padding:16px;
     display:flex;flex-direction:column;gap:11px}
@@ -298,7 +307,30 @@ function flatten(json){
   return out;
 }
 
-function extractFrom(strings){
+// Nome da tela a partir da chave. Quando o primeiro segmento é o produto,
+// o componente é o segundo ("desktop.mtrtool.x" -> "mtrtool").
+function compOf(key, product){
+  const parts = String(key).split(".");
+  if(parts.length > 1 && parts[0].toLowerCase() === String(product).toLowerCase()) return parts[1];
+  return parts[0];
+}
+
+// Uma entrada por texto único, por produto. Registries em migração costumam
+// carregar a mesma string em dois formatos de chave; contar as duas dobra tudo.
+function dedupe(strings){
+  const seen = new Map();
+  for(const s of strings){
+    const id = s.product + " " + s.text;
+    const legacy = String(s.key).split(".")[0].toLowerCase() !== String(s.product).toLowerCase();
+    const prev = seen.get(id);
+    if(!prev || (legacy && !prev.legacy)) seen.set(id, {...s, legacy});
+  }
+  return [...seen.values()];
+}
+
+function extractFrom(raw){
+  const strings = dedupe(raw);
+  const dropped = raw.length - strings.length;
   const products = [...new Set(strings.map(s => s.product))].filter(p => p !== "—");
   const portalish = products.find(p => /portal|web|site|market/i.test(p));
   const terms = [];
@@ -338,22 +370,28 @@ function extractFrom(strings){
   for(const [group, variants] of GROUPS){
     const present = [];
     for(const [vname, re] of variants){
-      const byProd = {}; const labels = []; let count = 0;
+      const byProd = {}, comps = {}; const labels = []; let count = 0;
       for(const s of strings){
         if(!re.test(s.text)) continue;
         count++; byProd[s.product] = (byProd[s.product] || 0) + 1;
+        const c = s.product + "/" + compOf(s.key, s.product);
+        comps[c] = (comps[c] || 0) + 1;
         if(s.text.trim().length <= 28 && labels.length < 4)
           labels.push({key: s.key, prod: s.product, text: s.text.trim()});
       }
-      if(count) present.push({term: vname, count, by_prod: byProd, labels});
+      if(count) present.push({term: vname, count, by_prod: byProd, labels,
+        comps: Object.entries(comps).sort((a,b) => b[1]-a[1]).slice(0,12).map(([name,n]) => ({name, n}))});
     }
     if(present.length > 1){
       present.sort((a,b) => b.count - a.count);
-      inconsistencies.push({group, variants: present});
+      const seen = {};
+      present.forEach(v => v.comps.forEach(c => { seen[c.name] = (seen[c.name] || 0) + 1; }));
+      const clashes = Object.keys(seen).filter(k => seen[k] > 1).sort();
+      inconsistencies.push({group, variants: present, clashes});
     }
   }
   return {terms, inconsistencies,
-    meta: {strings: strings.length, products, loadedAt: new Date().toISOString()}};
+    meta: {strings: strings.length, dropped, products, loadedAt: new Date().toISOString()}};
 }
 
 const LBL = {manter:"manter",traduzir:"traduzir",decidir:"decidir",neutro:"neutro"};
@@ -470,12 +508,36 @@ function renderGroups(){
   DATA.inconsistencies.forEach(g => {
     const c = el("div","group");
     c.appendChild(el("h3", null, g.group));
+
+    if(g.clashes?.length){
+      const cl = el("div","clash");
+      cl.appendChild(el("h4", null, `${g.clashes.length} ${g.clashes.length === 1 ? "tela usa" : "telas usam"} mais de um destes termos`));
+      const list = el("div","labels");
+      g.clashes.forEach(name => list.appendChild(el("span","lbl warn", name)));
+      cl.appendChild(list);
+      c.appendChild(cl);
+    }
+
     const vs = el("div","vars");
     g.variants.forEach(v => {
       const r = el("div","var");
-      r.appendChild(el("span","t", v.term));
+      const top = el("div","varTop");
+      top.appendChild(el("span","t", v.term));
       const bp = Object.entries(v.by_prod).map(([k,n])=>`${k.slice(0,4)} ${n}`).join("  ");
-      r.appendChild(el("span","n", `${v.count}×   ${bp}`));
+      top.appendChild(el("span","n", `${v.count}×   ${bp}`));
+      r.appendChild(top);
+
+      if(v.comps?.length){
+        const where = el("div","where");
+        where.appendChild(el("span","whereLbl","onde:"));
+        v.comps.forEach(cp => {
+          const clash = g.clashes?.includes(cp.name);
+          const s = el("span","lbl" + (clash ? " warn" : ""), `${cp.name} ${cp.n}`);
+          if(clash) s.title = "esta tela também usa outro termo do mesmo grupo";
+          where.appendChild(s);
+        });
+        r.appendChild(where);
+      }
       if(v.labels?.length){
         const lb = el("div","labels");
         v.labels.forEach(l => lb.appendChild(el("span","lbl", `"${l.text}"`)));
@@ -526,7 +588,8 @@ function renderMeta(){
   const meta = DATA.meta;
   const add = (k, v) => { const s = el("span"); s.append(k + " ", el("b", null, String(v))); m.appendChild(s); };
   add("origem:", meta ? "arquivo carregado" : "registry ExitLag 2026-09-09");
-  add("strings:", meta ? meta.strings.toLocaleString("pt-BR") : "12.440");
+  add("strings únicas:", meta ? meta.strings.toLocaleString("pt-BR") : "4.719");
+  if(meta?.dropped) add("duplicadas ignoradas:", meta.dropped.toLocaleString("pt-BR"));
   add("termos:", DATA.terms.length);
   add("grupos:", DATA.inconsistencies.length);
   if(meta?.products?.length) add("produtos:", meta.products.join(", "));
@@ -539,7 +602,9 @@ function showResult(ok, title, body, extracted){
   if(body) r.appendChild(el("p", null, body));
   if(ok && extracted){
     const st = el("div","stats");
-    st.appendChild(el("span", null, `${extracted.meta.strings.toLocaleString("pt-BR")} strings`));
+    st.appendChild(el("span", null, `${extracted.meta.strings.toLocaleString("pt-BR")} strings únicas`));
+    if(extracted.meta.dropped)
+      st.appendChild(el("span", null, `${extracted.meta.dropped.toLocaleString("pt-BR")} duplicadas ignoradas`));
     st.appendChild(el("span", null, `${extracted.terms.length} termos técnicos`));
     st.appendChild(el("span", null, `${extracted.inconsistencies.length} grupos inconsistentes`));
     if(extracted.meta.products.length) st.appendChild(el("span", null, extracted.meta.products.join(" · ")));

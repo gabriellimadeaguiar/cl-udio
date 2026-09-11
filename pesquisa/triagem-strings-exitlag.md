@@ -1,7 +1,12 @@
 # Triagem de strings — ExitLag
 
 Análise do registry de strings real (`registry.json`, hash `084fa52c`, gerado em
-2026-09-09). **12.440 chaves** distribuídas em três produtos.
+2026-09-09). **12.440 chaves** em três produtos, correspondendo a **4.716 textos únicos**.
+
+> **Correção (11/09).** A primeira versão deste documento contava chaves, não textos. O
+> registry carrega cada string em dois formatos — legado (`FTUESteps.chave`) e novo
+> (`desktop.ftuesteps.categoria.label_chave`) — e as contagens de termos saíram infladas
+> em cerca de 2×. Os números abaixo já estão corrigidos: contam texto único por produto.
 
 Este documento substitui a lista candidata especulativa do dossiê pela **triagem com os
 termos que estão de fato no produto**.
@@ -15,8 +20,12 @@ termos que estão de fato no produto**.
 `id`, `ja`, `fa`, **`pt-BR`**, `pt-PT`, `ru`, `th`, `tr`, `uk`, `vi`, `zgh`.
 
 ```
-12.440 chaves × 21 idiomas = 261.240 traduções ainda não feitas
+12.440 chaves × 21 idiomas = 261.240 traduções pendentes
+ 4.716 textos únicos × 21  =  99.036, se o sistema reusar tradução por texto idêntico
 ```
+
+Qual dos dois vale depende de o string system deduplicar traduções — pergunta para o
+Plassede. Em qualquer cenário, a ordem de grandeza sustenta o argumento.
 
 **Consequência direta para a decisão:** a nomenclatura ainda não foi propagada. Decidir
 agora custa uma revisão de termos em inglês. Decidir depois da tradução custa retrabalho em
@@ -33,27 +42,18 @@ Busca por ocorrência em `en-US`, com fronteira de palavra.
 
 | Termo | Total | desktop | mobile | portal | Zona |
 |---|---:|---:|---:|---:|---|
-| `ping` | 314 | 122 | 84 | 108 | **1 — manter** |
-| `route` / `rota` | 310 | 108 | 80 | 122 | **3 — decidir** |
-| `lag` | 196 | 4 | 44 | 148 | **1 — manter** |
-| `latency` | 142 | 72 | 22 | 48 | **3 — decidir** |
-| `DNS` | 94 | 54 | 40 | 0 | **2 — traduzir** |
-| `packet loss` | 88 | 36 | 14 | 38 | **3 — decidir** |
-| `protocol` | 62 | 30 | 30 | 2 | **2 — traduzir** |
-| `jitter` | 54 | 14 | 18 | 22 | **3 — decidir** |
-| `VPN` | 50 | 0 | 36 | 14 | contexto próprio |
-| `fps` | 34 | 8 | 2 | 24 | **1 — manter** |
-| `IP` | 32 | 20 | 10 | 2 | **2 — traduzir** |
-| `TCP` / `UDP` | 30 | 16 | 14 | 0 | **2 — traduzir** |
-| `bandwidth` | 28 | 22 | 0 | 6 | **3 — decidir** |
-| `driver` | 28 | 28 | 0 | 0 | **2 — traduzir** |
-| `multipath` | 26 | 2 | 16 | 8 | **2 — traduzir** |
-| `proxy` | 22 | 20 | 0 | 2 | **2 — traduzir** |
-| `timeout` | 14 | 0 | 2 | 12 | **2 — traduzir** |
-| `firewall` | 10 | 10 | 0 | 0 | contexto próprio |
-| `hops` | 6 | 6 | 0 | 0 | **2 — traduzir** |
-| `tunnel` | 2 | 0 | 2 | 0 | **2 — traduzir** |
-| `socket` | 2 | 0 | 0 | 2 | **2 — traduzir** |
+| `route` | 132 | 50 | 38 | 44 | **3 — decidir** |
+| `ping` | 124 | 48 | 34 | 42 | **1 — manter** |
+| `lag` | 82 | 2 | 20 | 60 | **1 — manter** |
+| `routes` | 81 | 32 | 24 | 25 | **3 — decidir** |
+| `latency` | 60 | 30 | 10 | 20 | **3 — decidir** |
+| `packet` | 49 | 24 | 12 | 13 | **3 — decidir** |
+| `dns` | 45 | 26 | 19 | 0 | **2 — traduzir** |
+| `ms` | 26 | 24 | 0 | 2 | **1 — manter** |
+| `jitter` | 22 | 6 | 8 | 8 | **3 — decidir** |
+| `protocol` | 21 | 10 | 10 | 1 | **2 — traduzir** |
+
+*Tabela completa em `pesquisa/triador/terms.json` — 36 termos.*
 
 **Termos que eu havia listado como candidatos e que não existem no produto:** `MTU`,
 `tickrate`, `throughput`. A lista especulativa errou em três de dezesseis.
@@ -62,8 +62,8 @@ Busca por ocorrência em `en-US`, com fronteira de palavra.
 
 | Termo | desktop | portal |
 |---|---:|---:|
-| `lag` (nativo) | **4** | **148** |
-| `latency` (técnico) | **72** | 48 |
+| `lag` (nativo) | **2** | **60** |
+| `latency` (técnico) | **30** | 20 |
 
 O marketing fala a língua do usuário; o produto fala a língua do sistema. **A distância
 entre a promessa e a interface é mensurável.**
@@ -72,8 +72,8 @@ entre a promessa e a interface é mensurável.**
 
 ## 3. O ganho mais fácil: `Latency` vs `ping`
 
-**28 rótulos curtos dizem literalmente "Latency"** — sendo 14 no desktop, 12 no mobile e 2
-no portal:
+**14 rótulos curtos dizem literalmente "Latency"** — 7 no desktop, 6 no mobile e 1 no
+portal (contando texto único):
 
 ```
 HealthMonitoringPanel.latency            = "Latency"
@@ -93,7 +93,7 @@ exposto ao usuário é **Latency**.
 > O vocabulário nativo está no código. O vocabulário técnico está na tela.
 > Está invertido.
 
-E `ping` aparece **314 vezes** no produto — não é um termo estranho ao vocabulário da casa.
+E `ping` aparece **124 vezes** no produto — não é um termo estranho ao vocabulário da casa.
 
 ### 3.1 A solução já existe dentro do produto
 
@@ -104,7 +104,7 @@ RealTimeMonitoringUserEducation.latency_title = "Latency (ping)"
 ```
 
 **Termo técnico com o nativo entre parênteses.** É redundância de acesso — a saída que
-Furnas propõe — aplicada por alguém do time, sem que virasse padrão. Duas chaves em 12.440.
+Furnas propõe — aplicada por alguém do time, sem que virasse padrão. Uma string em 4.716.
 
 **Recomendação:** promover esse padrão de exceção a regra. É a mudança de menor custo e
 menor risco do inventário inteiro, e não exige decidir nada polêmico — ninguém perde o

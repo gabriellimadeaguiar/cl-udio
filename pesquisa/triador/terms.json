@@ -1,48 +1,10 @@
 [
  {
-  "term": "ping",
-  "total": 314,
-  "desktop": 122,
-  "mobile": 84,
-  "portal": 108,
-  "portal_ratio": 0.34,
-  "pre": "manter",
-  "why": "vocabulário nativo de gaming",
-  "samples": [
-   {
-    "key": "ConnectionDetails.average-ping",
-    "prod": "desktop",
-    "text": "Average ping"
-   },
-   {
-    "key": "ConnectionDetails.higher-ping",
-    "prod": "desktop",
-    "text": "Higher ping"
-   },
-   {
-    "key": "ConnectionsEmptyState.add-an-app-to-configure-an-optimized-route-improving-stabili",
-    "prod": "desktop",
-    "text": "Add an app to configure an optimized route, improving stability and ping."
-   },
-   {
-    "key": "ContinentSelection.ping-measurement-unavailable",
-    "prod": "desktop",
-    "text": "Ping measurement unavailable"
-   },
-   {
-    "key": "ContinentSelection.where-do-you-want-to-check-the-ping",
-    "prod": "desktop",
-    "text": "Where do you want to check the ping?"
-   }
-  ],
-  "key_count": 314
- },
- {
   "term": "route",
-  "total": 278,
-  "desktop": 106,
-  "mobile": 80,
-  "portal": 92,
+  "total": 132,
+  "desktop": 51,
+  "mobile": 37,
+  "portal": 44,
   "portal_ratio": 0.33,
   "pre": "decidir",
   "why": "marketing usa (33% no portal): comunica, mas é técnico",
@@ -61,27 +23,45 @@
     "key": "AdvancedConfigurationPopUp.multipath-routes",
     "prod": "desktop",
     "text": "Multipath® routes"
-   },
-   {
-    "key": "AdvancedConfigurationPopUp.prefer-ipv6-routes",
-    "prod": "desktop",
-    "text": "Prefer IPv6 routes"
-   },
-   {
-    "key": "AdvancedConfigurationPopUp.use-local-routes-first",
-    "prod": "desktop",
-    "text": "Use local routes first"
    }
   ],
-  "key_count": 278
+  "key_count": 132
+ },
+ {
+  "term": "ping",
+  "total": 124,
+  "desktop": 44,
+  "mobile": 34,
+  "portal": 46,
+  "portal_ratio": 0.37,
+  "pre": "manter",
+  "why": "vocabulário nativo de gaming",
+  "samples": [
+   {
+    "key": "ConnectionDetails.average-ping",
+    "prod": "desktop",
+    "text": "Average ping"
+   },
+   {
+    "key": "ConnectionDetails.higher-ping",
+    "prod": "desktop",
+    "text": "Higher ping"
+   },
+   {
+    "key": "ConnectionsEmptyState.add-an-app-to-configure-an-optimized-route-improving-stabili",
+    "prod": "desktop",
+    "text": "Add an app to configure an optimized route, improving stability and ping."
+   }
+  ],
+  "key_count": 124
  },
  {
   "term": "lag",
-  "total": 196,
-  "desktop": 4,
-  "mobile": 44,
-  "portal": 148,
-  "portal_ratio": 0.76,
+  "total": 82,
+  "desktop": 2,
+  "mobile": 22,
+  "portal": 58,
+  "portal_ratio": 0.71,
   "pre": "manter",
   "why": "vocabulário nativo de gaming",
   "samples": [
@@ -96,29 +76,19 @@
     "text": "Reduce input lag"
    },
    {
-    "key": "desktop.modal_full_screen.app_state.label_for_free_to_play_without_lag",
-    "prod": "desktop",
-    "text": "FOR FREE TO PLAY <span style=\"font-family: Organetto UltraBold Ext;\">WITHOUT LAG</span>!"
-   },
-   {
-    "key": "desktop.system_tweaks_tab.optimization.label_reduce_input_lag",
-    "prod": "desktop",
-    "text": "Reduce input lag"
-   },
-   {
     "key": "FeedBackSucessoModal.ITEM_3",
     "prod": "mobile",
     "text": "Start playing without lag!"
    }
   ],
-  "key_count": 196
+  "key_count": 82
  },
  {
   "term": "routes",
-  "total": 168,
-  "desktop": 66,
-  "mobile": 48,
-  "portal": 54,
+  "total": 81,
+  "desktop": 31,
+  "mobile": 24,
+  "portal": 26,
   "portal_ratio": 0.32,
   "pre": "decidir",
   "why": "marketing usa (32% no portal): comunica, mas é técnico",
@@ -137,29 +107,19 @@
     "key": "AdvancedConfigurationPopUp.multipath-routes",
     "prod": "desktop",
     "text": "Multipath® routes"
-   },
-   {
-    "key": "AdvancedConfigurationPopUp.prefer-ipv6-routes",
-    "prod": "desktop",
-    "text": "Prefer IPv6 routes"
-   },
-   {
-    "key": "AdvancedConfigurationPopUp.use-local-routes-first",
-    "prod": "desktop",
-    "text": "Use local routes first"
    }
   ],
-  "key_count": 168
+  "key_count": 81
  },
  {
   "term": "latency",
-  "total": 142,
-  "desktop": 72,
-  "mobile": 22,
-  "portal": 48,
-  "portal_ratio": 0.34,
+  "total": 60,
+  "desktop": 32,
+  "mobile": 7,
+  "portal": 21,
+  "portal_ratio": 0.35,
   "pre": "decidir",
-  "why": "marketing usa (33% no portal): comunica, mas é técnico",
+  "why": "marketing usa (35% no portal): comunica, mas é técnico",
   "samples": [
    {
     "key": "FTUESteps.for-best-results-choose-the-destination-server-for-your-game",
@@ -175,29 +135,19 @@
     "key": "PingDetailsRttChart.latency-ms",
     "prod": "desktop",
     "text": "Latency (ms)"
-   },
-   {
-    "key": "PingMonitoring.verify-the-game-s-latency-without-exitlag-data-will-appear-h",
-    "prod": "desktop",
-    "text": "Verify the game's latency without ExitLag. Data will appear here."
-   },
-   {
-    "key": "PingTcpingTool.latency-ms",
-    "prod": "desktop",
-    "text": "Latency (ms)"
    }
   ],
-  "key_count": 142
+  "key_count": 60
  },
  {
   "term": "packet",
-  "total": 130,
-  "desktop": 62,
-  "mobile": 30,
-  "portal": 38,
-  "portal_ratio": 0.29,
+  "total": 49,
+  "desktop": 23,
+  "mobile": 14,
+  "portal": 12,
+  "portal_ratio": 0.24,
   "pre": "decidir",
-  "why": "técnico e pouco usado no marketing (29% no portal)",
+  "why": "técnico e pouco usado no marketing (24% no portal)",
   "samples": [
    {
     "key": "ConnectionDetails.packet-loss",
@@ -213,25 +163,15 @@
     "key": "ExitlagApp.no-packet-redirection-methods-available",
     "prod": "desktop",
     "text": "No packet redirection methods available"
-   },
-   {
-    "key": "ExitlagApp.seems-that-a-firewall-is-blocking-exitlag-driver-the-packet",
-    "prod": "desktop",
-    "text": "Seems that a Firewall is blocking ExitLag driver. The packet redirection method will be changed in an attempt to solve the problem."
-   },
-   {
-    "key": "GeneralSettingsController.cannot-change-packet-redirection-method",
-    "prod": "desktop",
-    "text": "Cannot change packet redirection method"
    }
   ],
-  "key_count": 130
+  "key_count": 49
  },
  {
   "term": "dns",
-  "total": 94,
-  "desktop": 54,
-  "mobile": 40,
+  "total": 45,
+  "desktop": 27,
+  "mobile": 18,
   "portal": 0,
   "portal_ratio": 0.0,
   "pre": "traduzir",
@@ -251,27 +191,17 @@
     "key": "DNSOptimizerTab.dns-applied",
     "prod": "desktop",
     "text": "DNS applied!"
-   },
-   {
-    "key": "DNSOptimizerTab.dns-optimizer-is-not-supported-on-ipv6-only-networks",
-    "prod": "desktop",
-    "text": "DNS Optimizer is not supported on IPv6-only networks"
-   },
-   {
-    "key": "DNSOptimizerTab.dns-response-time",
-    "prod": "desktop",
-    "text": "DNS response time"
    }
   ],
-  "key_count": 94
+  "key_count": 45
  },
  {
   "term": "ms",
-  "total": 82,
-  "desktop": 76,
+  "total": 26,
+  "desktop": 24,
   "mobile": 0,
-  "portal": 6,
-  "portal_ratio": 0.07,
+  "portal": 2,
+  "portal_ratio": 0.08,
   "pre": "manter",
   "why": "vocabulário nativo de gaming",
   "samples": [
@@ -289,27 +219,17 @@
     "key": "MTRTool.average-ms",
     "prod": "desktop",
     "text": "Average (ms)"
-   },
-   {
-    "key": "PingDetailsRttChart.latency-ms",
-    "prod": "desktop",
-    "text": "Latency (ms)"
-   },
-   {
-    "key": "PingTcpingTool.latency-ms",
-    "prod": "desktop",
-    "text": "Latency (ms)"
    }
   ],
-  "key_count": 82
+  "key_count": 26
  },
  {
   "term": "protocol",
-  "total": 62,
-  "desktop": 30,
-  "mobile": 30,
-  "portal": 2,
-  "portal_ratio": 0.03,
+  "total": 24,
+  "desktop": 12,
+  "mobile": 11,
+  "portal": 1,
+  "portal_ratio": 0.04,
   "pre": "traduzir",
   "why": "implementação: marketing não usa",
   "samples": [
@@ -327,67 +247,19 @@
     "key": "ComboboxRoutes.the-connection-oriented-protocol-provides-reliable-communica",
     "prod": "desktop",
     "text": "The connection-oriented protocol provides reliable communication with many features."
-   },
-   {
-    "key": "ComboboxRoutes.udp-protocol",
-    "prod": "desktop",
-    "text": "UDP Protocol"
-   },
-   {
-    "key": "ConnectionDetails.protocol-port",
-    "prod": "desktop",
-    "text": "Protocol / Port"
    }
   ],
-  "key_count": 62
- },
- {
-  "term": "jitter",
-  "total": 54,
-  "desktop": 14,
-  "mobile": 18,
-  "portal": 22,
-  "portal_ratio": 0.41,
-  "pre": "decidir",
-  "why": "marketing usa (40% no portal): comunica, mas é técnico",
-  "samples": [
-   {
-    "key": "LastSessionData.average-jitter",
-    "prod": "desktop",
-    "text": "Average Jitter"
-   },
-   {
-    "key": "ScannerRunningModal.measuring-jitter-to-assess-data-transmission",
-    "prod": "desktop",
-    "text": "Measuring jitter to assess data transmission..."
-   },
-   {
-    "key": "ToolsTab.this-tool-verifies-host-reachability-by-sending-packets-and",
-    "prod": "desktop",
-    "text": "This tool verifies host reachability by sending packets and measures latency, packet loss, and jitter."
-   },
-   {
-    "key": "desktop.last_session_data.monitoring.label_average_jitter",
-    "prod": "desktop",
-    "text": "Average Jitter"
-   },
-   {
-    "key": "desktop.scanner_running_modal.library.label_measuring_jitter_to_assess_data_transmission",
-    "prod": "desktop",
-    "text": "Measuring jitter to assess data transmission..."
-   }
-  ],
-  "key_count": 54
+  "key_count": 24
  },
  {
   "term": "vpn",
-  "total": 50,
+  "total": 22,
   "desktop": 0,
-  "mobile": 36,
-  "portal": 14,
-  "portal_ratio": 0.28,
+  "mobile": 18,
+  "portal": 4,
+  "portal_ratio": 0.18,
   "pre": "decidir",
-  "why": "técnico e pouco usado no marketing (28% no portal)",
+  "why": "técnico e pouco usado no marketing (18% no portal)",
   "samples": [
    {
     "key": "Error.PREPARE_VPN_ALREADY_IN_FLIGHT",
@@ -403,63 +275,15 @@
     "key": "Error.PREPARE_VPN_CONTROLLER_UNAVAILABLE",
     "prod": "mobile",
     "text": "VPN controller is not available."
-   },
-   {
-    "key": "Error.PREPARE_VPN_ENABLE_VPN_FAILED",
-    "prod": "mobile",
-    "text": "Failed to enable VPN."
-   },
-   {
-    "key": "Error.PREPARE_VPN_LOAD_PREFERENCE_FAILED",
-    "prod": "mobile",
-    "text": "Failed to load VPN preferences."
    }
   ],
-  "key_count": 50
- },
- {
-  "term": "ram",
-  "total": 50,
-  "desktop": 12,
-  "mobile": 32,
-  "portal": 6,
-  "portal_ratio": 0.12,
-  "pre": "decidir",
-  "why": "técnico e pouco usado no marketing (12% no portal)",
-  "samples": [
-   {
-    "key": "ELRamCleanerListener.1-mb-of-ram-is-now-free",
-    "prod": "desktop",
-    "text": "%1 MB of RAM is now free."
-   },
-   {
-    "key": "GeneralSettings.show-the-pc-performance-on-the-home-page-cpu-gpu-ram",
-    "prod": "desktop",
-    "text": "Show the PC performance on the home page_x000d_ (CPU, GPU, RAM)."
-   },
-   {
-    "key": "PerformanceBoost.ram-cleaner",
-    "prod": "desktop",
-    "text": "RAM cleaner"
-   },
-   {
-    "key": "RamCleanerTab.automatically-runs-ram-cleanup-based-on-the-selected-trigger",
-    "prod": "desktop",
-    "text": "Automatically runs RAM cleanup based on the selected trigger and frequency."
-   },
-   {
-    "key": "RamStatusCard.ram-cleaner",
-    "prod": "desktop",
-    "text": "RAM cleaner"
-   }
-  ],
-  "key_count": 50
+  "key_count": 22
  },
  {
   "term": "ipv6",
-  "total": 42,
-  "desktop": 16,
-  "mobile": 26,
+  "total": 20,
+  "desktop": 7,
+  "mobile": 13,
   "portal": 0,
   "portal_ratio": 0.0,
   "pre": "traduzir",
@@ -479,64 +303,44 @@
     "key": "DNSOptimizerTab.dns-optimizer-is-not-supported-on-ipv6-only-networks",
     "prod": "desktop",
     "text": "DNS Optimizer is not supported on IPv6-only networks"
-   },
-   {
-    "key": "MultiInternet.public-ipv6",
-    "prod": "desktop",
-    "text": "Public IPv6:"
-   },
-   {
-    "key": "NetworkInterfaceCard.public-ipv6",
-    "prod": "desktop",
-    "text": "Public IPv6:"
    }
   ],
-  "key_count": 42
+  "key_count": 20
  },
  {
-  "term": "ip",
-  "total": 36,
-  "desktop": 20,
-  "mobile": 14,
-  "portal": 2,
-  "portal_ratio": 0.06,
-  "pre": "traduzir",
-  "why": "termo de implementação",
+  "term": "ram",
+  "total": 20,
+  "desktop": 5,
+  "mobile": 12,
+  "portal": 3,
+  "portal_ratio": 0.15,
+  "pre": "decidir",
+  "why": "técnico e pouco usado no marketing (15% no portal)",
   "samples": [
    {
-    "key": "GeneralSettings.ip-version-for-route-analysis",
+    "key": "ELRamCleanerListener.1-mb-of-ram-is-now-free",
     "prod": "desktop",
-    "text": "IP version for route analysis"
+    "text": "%1 MB of RAM is now free."
    },
    {
-    "key": "NetworkInterfacesPopup.interface-ip",
+    "key": "GeneralSettings.show-the-pc-performance-on-the-home-page-cpu-gpu-ram",
     "prod": "desktop",
-    "text": "Interface IP:"
+    "text": "Show the PC performance on the home page_x000d_ (CPU, GPU, RAM)."
    },
    {
-    "key": "RealTimeMonitoringTab.ip-address",
+    "key": "PerformanceBoost.ram-cleaner",
     "prod": "desktop",
-    "text": "IP address "
-   },
-   {
-    "key": "ToolsTab.server-ip-or-domain",
-    "prod": "desktop",
-    "text": "Server IP or domain"
-   },
-   {
-    "key": "desktop.general_settings.settings.label_ip_version_for_route_analysis",
-    "prod": "desktop",
-    "text": "IP version for route analysis"
+    "text": "RAM cleaner"
    }
   ],
-  "key_count": 36
+  "key_count": 20
  },
  {
   "term": "fps",
-  "total": 34,
-  "desktop": 8,
-  "mobile": 2,
-  "portal": 24,
+  "total": 17,
+  "desktop": 4,
+  "mobile": 1,
+  "portal": 12,
   "portal_ratio": 0.71,
   "pre": "manter",
   "why": "vocabulário nativo de gaming",
@@ -552,27 +356,17 @@
     "text": "Disables automatic recordings and captures to free up resources and improve FPS."
    },
    {
-    "key": "desktop.modal_general_onboarding.onboarding.label_low_fps_laggy_gameplay",
-    "prod": "desktop",
-    "text": "Low FPS, laggy gameplay"
-   },
-   {
-    "key": "desktop.system_tweaks_tab.optimization.label_disables_automatic_recordings_and_captures_to_free_up",
-    "prod": "desktop",
-    "text": "Disables automatic recordings and captures to free up resources and improve FPS."
-   },
-   {
     "key": "header.nav.features.submenu.fps_boost.subtitle",
     "prod": "portal",
     "text": "Boost your FPS"
    }
   ],
-  "key_count": 34
+  "key_count": 17
  },
  {
   "term": "ndis",
-  "total": 34,
-  "desktop": 34,
+  "total": 16,
+  "desktop": 16,
   "mobile": 0,
   "portal": 0,
   "portal_ratio": 0.0,
@@ -593,29 +387,47 @@
     "key": "GeneralSettings.do-you-want-to-continue-with-the-ndis-installation",
     "prod": "desktop",
     "text": "Do you want to continue with the NDIS installation?"
-   },
-   {
-    "key": "GeneralSettings.install-ndis",
-    "prod": "desktop",
-    "text": "Install NDIS"
-   },
-   {
-    "key": "GeneralSettings.installing-ndis",
-    "prod": "desktop",
-    "text": "Installing NDIS"
    }
   ],
-  "key_count": 34
+  "key_count": 16
+ },
+ {
+  "term": "jitter",
+  "total": 16,
+  "desktop": 5,
+  "mobile": 5,
+  "portal": 6,
+  "portal_ratio": 0.38,
+  "pre": "decidir",
+  "why": "marketing usa (37% no portal): comunica, mas é técnico",
+  "samples": [
+   {
+    "key": "LastSessionData.average-jitter",
+    "prod": "desktop",
+    "text": "Average Jitter"
+   },
+   {
+    "key": "ScannerRunningModal.measuring-jitter-to-assess-data-transmission",
+    "prod": "desktop",
+    "text": "Measuring jitter to assess data transmission..."
+   },
+   {
+    "key": "ToolsTab.this-tool-verifies-host-reachability-by-sending-packets-and",
+    "prod": "desktop",
+    "text": "This tool verifies host reachability by sending packets and measures latency, packet loss, and jitter."
+   }
+  ],
+  "key_count": 16
  },
  {
   "term": "routing",
-  "total": 34,
-  "desktop": 2,
+  "total": 16,
+  "desktop": 1,
   "mobile": 0,
-  "portal": 32,
+  "portal": 15,
   "portal_ratio": 0.94,
   "pre": "decidir",
-  "why": "marketing usa (94% no portal): comunica, mas é técnico",
+  "why": "marketing usa (93% no portal): comunica, mas é técnico",
   "samples": [
    {
     "key": "ScannerRunningModal.analyzing-data-routing",
@@ -623,71 +435,23 @@
     "text": "Analyzing Data Routing"
    },
    {
-    "key": "desktop.scanner_running_modal.library.label_analyzing_data_routing",
-    "prod": "desktop",
-    "text": "Analyzing Data Routing"
-   },
-   {
-    "key": "portal.seo.seo.business_community_network.label_description",
+    "key": "seo.business-community-network.description",
     "prod": "portal",
     "text": "Learn how community networks can benefit from ExitLag routing optimization to deliver more stable and reliable gaming connections."
    },
    {
-    "key": "portal.seo.seo.business_isps.label_description",
+    "key": "seo.business-isps.description",
     "prod": "portal",
     "text": "Discover how internet service providers can improve routing efficiency and network performance using ExitLag optimization technology."
-   },
-   {
-    "key": "portal.seo.seo.dashboard_billing_invoice_pay.label_description",
-    "prod": "portal",
-    "text": "Complete payment for this ExitLag invoice securely and confirm your subscription access to continue using optimized routing and connection features."
    }
   ],
-  "key_count": 34
- },
- {
-  "term": "shaper",
-  "total": 34,
-  "desktop": 20,
-  "mobile": 0,
-  "portal": 14,
-  "portal_ratio": 0.41,
-  "pre": "decidir",
-  "why": "marketing usa (41% no portal): comunica, mas é técnico",
-  "samples": [
-   {
-    "key": "Main.traffic-shaper-disabled",
-    "prod": "desktop",
-    "text": "Traffic Shaper disabled"
-   },
-   {
-    "key": "Sidebar.traffic-shaper",
-    "prod": "desktop",
-    "text": "Traffic Shaper"
-   },
-   {
-    "key": "TrafficShaper.click-to-turn-on-traffic-shaper",
-    "prod": "desktop",
-    "text": "Click to turn on Traffic Shaper"
-   },
-   {
-    "key": "TrafficShaper.switch-to-wfp-mode-in-packets-redirection-method-in-general",
-    "prod": "desktop",
-    "text": "Switch to WFP mode in <a href=\"settings\">Packets redirection method</a> in General Settings to use Traffic Shaper."
-   },
-   {
-    "key": "TrafficShaper.to-use-this-feature-you-need-to-uninstall-dr-web-from-your-c",
-    "prod": "desktop",
-    "text": "To use this feature, you need to uninstall Dr.Web from your computer.<br> After removing it, restart your PC to use the Traffic Shaper."
-   }
-  ],
-  "key_count": 34
+  "key_count": 16
  },
  {
   "term": "packets",
-  "total": 30,
-  "desktop": 18,
-  "mobile": 12,
+  "total": 14,
+  "desktop": 9,
+  "mobile": 5,
   "portal": 0,
   "portal_ratio": 0.0,
   "pre": "traduzir",
@@ -707,24 +471,42 @@
     "key": "ToolsTab.all-sent-packets-were-lost",
     "prod": "desktop",
     "text": "All sent packets were lost!"
-   },
-   {
-    "key": "ToolsTab.all-sent-packets-were-received-and-there-was-no-loss",
-    "prod": "desktop",
-    "text": "All sent packets were received and there was no loss."
-   },
-   {
-    "key": "ToolsTab.packets-lost",
-    "prod": "desktop",
-    "text": "Packets lost"
    }
   ],
-  "key_count": 30
+  "key_count": 14
+ },
+ {
+  "term": "bandwidth",
+  "total": 14,
+  "desktop": 11,
+  "mobile": 0,
+  "portal": 3,
+  "portal_ratio": 0.21,
+  "pre": "decidir",
+  "why": "técnico e pouco usado no marketing (21% no portal)",
+  "samples": [
+   {
+    "key": "BandwidthDrawer.do-not-enter-values-higher-than-your-real-bandwidth-this-may",
+    "prod": "desktop",
+    "text": "Do not enter values higher than your real bandwidth. This may negatively affect prioritization."
+   },
+   {
+    "key": "BandwidthDrawer.please-wait-while-we-measure-the-maximum-bandwidth-of-your-c",
+    "prod": "desktop",
+    "text": "Please wait while we measure the maximum bandwidth of your connection."
+   },
+   {
+    "key": "BandwidthDrawer.this-is-the-detected-bandwidth-for-your-connection",
+    "prod": "desktop",
+    "text": "This is the detected bandwidth for your connection."
+   }
+  ],
+  "key_count": 14
  },
  {
   "term": "driver",
-  "total": 28,
-  "desktop": 28,
+  "total": 13,
+  "desktop": 13,
   "mobile": 0,
   "portal": 0,
   "portal_ratio": 0.0,
@@ -745,63 +527,127 @@
     "key": "ExitlagApp.please-restart-the-system-to-use-the-ndis-driver",
     "prod": "desktop",
     "text": "Please restart the system to use the NDIS driver"
-   },
-   {
-    "key": "ExitlagApp.seems-that-a-firewall-is-blocking-exitlag-driver-the-packet",
-    "prod": "desktop",
-    "text": "Seems that a Firewall is blocking ExitLag driver. The packet redirection method will be changed in an attempt to solve the problem."
-   },
-   {
-    "key": "GeneralSettings.after-restarting-the-ndis-driver-will-be-activated",
-    "prod": "desktop",
-    "text": "After restarting, the NDIS driver will be activated."
    }
   ],
-  "key_count": 28
+  "key_count": 13
  },
  {
-  "term": "bandwidth",
-  "total": 28,
-  "desktop": 22,
-  "mobile": 0,
-  "portal": 6,
-  "portal_ratio": 0.21,
-  "pre": "decidir",
-  "why": "técnico e pouco usado no marketing (21% no portal)",
+  "term": "ip",
+  "total": 13,
+  "desktop": 7,
+  "mobile": 5,
+  "portal": 1,
+  "portal_ratio": 0.08,
+  "pre": "traduzir",
+  "why": "termo de implementação",
   "samples": [
    {
-    "key": "BandwidthDrawer.do-not-enter-values-higher-than-your-real-bandwidth-this-may",
+    "key": "GeneralSettings.ip-version-for-route-analysis",
     "prod": "desktop",
-    "text": "Do not enter values higher than your real bandwidth. This may negatively affect prioritization."
+    "text": "IP version for route analysis"
    },
    {
-    "key": "BandwidthDrawer.please-wait-while-we-measure-the-maximum-bandwidth-of-your-c",
+    "key": "NetworkInterfacesPopup.interface-ip",
     "prod": "desktop",
-    "text": "Please wait while we measure the maximum bandwidth of your connection."
+    "text": "Interface IP:"
    },
    {
-    "key": "BandwidthDrawer.this-is-the-detected-bandwidth-for-your-connection",
+    "key": "ToolsTab.server-ip-or-domain",
     "prod": "desktop",
-    "text": "This is the detected bandwidth for your connection."
-   },
-   {
-    "key": "BandwidthDrawer.this-test-helps-us-define-the-best-bandwidth-to-optimize-you",
-    "prod": "desktop",
-    "text": "This test helps us define the best bandwidth to optimize your connection."
-   },
-   {
-    "key": "BandwidthDrawer.you-can-manually-set-the-download-and-upload-bandwidth-for-y",
-    "prod": "desktop",
-    "text": "You can manually set the download and upload bandwidth for your connection."
+    "text": "Server IP or domain"
    }
   ],
-  "key_count": 28
+  "key_count": 13
+ },
+ {
+  "term": "shaper",
+  "total": 13,
+  "desktop": 10,
+  "mobile": 0,
+  "portal": 3,
+  "portal_ratio": 0.23,
+  "pre": "decidir",
+  "why": "técnico e pouco usado no marketing (23% no portal)",
+  "samples": [
+   {
+    "key": "Main.traffic-shaper-disabled",
+    "prod": "desktop",
+    "text": "Traffic Shaper disabled"
+   },
+   {
+    "key": "Sidebar.traffic-shaper",
+    "prod": "desktop",
+    "text": "Traffic Shaper"
+   },
+   {
+    "key": "TrafficShaper.click-to-turn-on-traffic-shaper",
+    "prod": "desktop",
+    "text": "Click to turn on Traffic Shaper"
+   }
+  ],
+  "key_count": 13
+ },
+ {
+  "term": "multipath",
+  "total": 12,
+  "desktop": 1,
+  "mobile": 8,
+  "portal": 3,
+  "portal_ratio": 0.25,
+  "pre": "traduzir",
+  "why": "termo de implementação",
+  "samples": [
+   {
+    "key": "AdvancedConfigurationPopUp.multipath-routes",
+    "prod": "desktop",
+    "text": "Multipath® routes"
+   },
+   {
+    "key": "LoadingBoostGameScreen.BOOSTING_MESSAGES[7]",
+    "prod": "mobile",
+    "text": "Our Multipath technology uses different routes simultaneously."
+   },
+   {
+    "key": "MultiPathScreen.INFO_PRIMARY_MESSAGE",
+    "prod": "mobile",
+    "text": "MultiPath® uses multiple routes at the same time. Each additional route increases network usage."
+   }
+  ],
+  "key_count": 12
+ },
+ {
+  "term": "proxy",
+  "total": 11,
+  "desktop": 10,
+  "mobile": 0,
+  "portal": 1,
+  "portal_ratio": 0.09,
+  "pre": "traduzir",
+  "why": "termo de implementação",
+  "samples": [
+   {
+    "key": "ExitlagApp.proxy-error",
+    "prod": "desktop",
+    "text": "Proxy error"
+   },
+   {
+    "key": "ExitlagApp.proxy-is-inactive",
+    "prod": "desktop",
+    "text": "Proxy is inactive"
+   },
+   {
+    "key": "ExitlagApp.starting-proxy",
+    "prod": "desktop",
+    "text": "Starting Proxy"
+   }
+  ],
+  "key_count": 11
  },
  {
   "term": "ipv4",
-  "total": 26,
-  "desktop": 16,
-  "mobile": 10,
+  "total": 11,
+  "desktop": 6,
+  "mobile": 5,
   "portal": 0,
   "portal_ratio": 0.0,
   "pre": "traduzir",
@@ -821,37 +667,22 @@
     "key": "MultiInternet.public-ipv4",
     "prod": "desktop",
     "text": "Public IPv4:"
-   },
-   {
-    "key": "NetworkInterfaceCard.interface-ipv4",
-    "prod": "desktop",
-    "text": "Interface IPv4:"
-   },
-   {
-    "key": "NetworkInterfaceCard.public-ipv4",
-    "prod": "desktop",
-    "text": "Public IPv4:"
    }
   ],
-  "key_count": 26
+  "key_count": 11
  },
  {
   "term": "spikes",
-  "total": 24,
-  "desktop": 6,
-  "mobile": 12,
-  "portal": 6,
-  "portal_ratio": 0.25,
+  "total": 9,
+  "desktop": 3,
+  "mobile": 3,
+  "portal": 3,
+  "portal_ratio": 0.33,
   "pre": "manter",
   "why": "vocabulário nativo de gaming",
   "samples": [
    {
     "key": "MTRTool.breaks-down-your-connection-path-step-by-step-helping-you-se",
-    "prod": "desktop",
-    "text": "Breaks down your connection path step by step, helping you see where ping spikes, packet loss, or instability may be affecting your game."
-   },
-   {
-    "key": "desktop.mtrtool.support.label_breaks_down_your_connection_path_step_by_step_helping",
     "prod": "desktop",
     "text": "Breaks down your connection path step by step, helping you see where ping spikes, packet loss, or instability may be affecting your game."
    },
@@ -864,96 +695,15 @@
     "key": "RealTimeMonitoringUserEducation.spikes_description",
     "prod": "mobile",
     "text": "Sudden spike in ping causing micro stutters during gameplay. Even with good ping, the spikes delay your commands and hinder the gameplay."
-   },
-   {
-    "key": "mobile.monitoring_report_summary.monitoring.label_total_spikes",
-    "prod": "mobile",
-    "text": "Total spikes"
    }
   ],
-  "key_count": 24
- },
- {
-  "term": "multipath",
-  "total": 24,
-  "desktop": 2,
-  "mobile": 16,
-  "portal": 6,
-  "portal_ratio": 0.25,
-  "pre": "traduzir",
-  "why": "termo de implementação",
-  "samples": [
-   {
-    "key": "AdvancedConfigurationPopUp.multipath-routes",
-    "prod": "desktop",
-    "text": "Multipath® routes"
-   },
-   {
-    "key": "desktop.advanced_configuration_pop_up.network_settings.label_multipath_routes",
-    "prod": "desktop",
-    "text": "Multipath® routes"
-   },
-   {
-    "key": "LoadingBoostGameScreen.BOOSTING_MESSAGES[7]",
-    "prod": "mobile",
-    "text": "Our Multipath technology uses different routes simultaneously."
-   },
-   {
-    "key": "MultiPathScreen.INFO_PRIMARY_MESSAGE",
-    "prod": "mobile",
-    "text": "MultiPath® uses multiple routes at the same time. Each additional route increases network usage."
-   },
-   {
-    "key": "MultiPathScreen.ROUTES_SECTION_TITLE",
-    "prod": "mobile",
-    "text": "MultiPath® Routes"
-   }
-  ],
-  "key_count": 24
- },
- {
-  "term": "proxy",
-  "total": 22,
-  "desktop": 20,
-  "mobile": 0,
-  "portal": 2,
-  "portal_ratio": 0.09,
-  "pre": "traduzir",
-  "why": "termo de implementação",
-  "samples": [
-   {
-    "key": "ExitlagApp.proxy-error",
-    "prod": "desktop",
-    "text": "Proxy error"
-   },
-   {
-    "key": "ExitlagApp.proxy-is-inactive",
-    "prod": "desktop",
-    "text": "Proxy is inactive"
-   },
-   {
-    "key": "ExitlagApp.starting-proxy",
-    "prod": "desktop",
-    "text": "Starting Proxy"
-   },
-   {
-    "key": "ExitlagApp.stopping-proxy",
-    "prod": "desktop",
-    "text": "Stopping Proxy"
-   },
-   {
-    "key": "GeneralSettings.restarting-proxy",
-    "prod": "desktop",
-    "text": "Restarting Proxy"
-   }
-  ],
-  "key_count": 22
+  "key_count": 9
  },
  {
   "term": "tcp",
-  "total": 18,
-  "desktop": 10,
-  "mobile": 8,
+  "total": 9,
+  "desktop": 5,
+  "mobile": 4,
   "portal": 0,
   "portal_ratio": 0.0,
   "pre": "traduzir",
@@ -970,28 +720,18 @@
     "text": "This tool checks the availability of an address by verifying if a specific TCP port is open and accessible."
    },
    {
-    "key": "desktop.combobox_routes.routes.label_tcp_protocol",
-    "prod": "desktop",
-    "text": "TCP Protocol"
-   },
-   {
-    "key": "desktop.tools_tab.monitoring.label_this_tool_checks_the_availability_of_an_address_by_ver",
-    "prod": "desktop",
-    "text": "This tool checks the availability of an address by verifying if a specific TCP port is open and accessible."
-   },
-   {
     "key": "Modals.tcproute.TITLE",
     "prod": "mobile",
     "text": "What are TCP Routes?"
    }
   ],
-  "key_count": 18
+  "key_count": 9
  },
  {
   "term": "udp",
-  "total": 14,
-  "desktop": 8,
-  "mobile": 6,
+  "total": 7,
+  "desktop": 4,
+  "mobile": 3,
   "portal": 0,
   "portal_ratio": 0.0,
   "pre": "traduzir",
@@ -1003,27 +743,17 @@
     "text": "UDP Protocol"
    },
    {
-    "key": "desktop.combobox_routes.routes.label_udp_protocol",
-    "prod": "desktop",
-    "text": "UDP Protocol"
-   },
-   {
     "key": "Modals.udproute.TITLE",
-    "prod": "mobile",
-    "text": "What are UDP Routes?"
-   },
-   {
-    "key": "mobile.modals.onboarding.udproute.label_title",
     "prod": "mobile",
     "text": "What are UDP Routes?"
    }
   ],
-  "key_count": 14
+  "key_count": 7
  },
  {
   "term": "wfp",
-  "total": 14,
-  "desktop": 14,
+  "total": 7,
+  "desktop": 7,
   "mobile": 0,
   "portal": 0,
   "portal_ratio": 0.0,
@@ -1044,26 +774,16 @@
     "key": "TrafficShaper.switch-to-wfp-mode-in-packets-redirection-method-in-general",
     "prod": "desktop",
     "text": "Switch to WFP mode in <a href=\"settings\">Packets redirection method</a> in General Settings to use Traffic Shaper."
-   },
-   {
-    "key": "desktop.general_settings_controller.settings.label_beta_wfp_driver_is_not_available",
-    "prod": "desktop",
-    "text": "Beta - WFP driver is not available"
-   },
-   {
-    "key": "desktop.multi_internet.network_settings.label_switch_to_wfp_mode_in_packets_redirection_method_in_ge",
-    "prod": "desktop",
-    "text": "Switch to WFP mode in <a href=\"settings\">Packets redirection method</a> in General Settings to use  Multi Internet."
    }
   ],
-  "key_count": 14
+  "key_count": 7
  },
  {
   "term": "timeout",
-  "total": 14,
+  "total": 7,
   "desktop": 0,
-  "mobile": 2,
-  "portal": 12,
+  "mobile": 1,
+  "portal": 6,
   "portal_ratio": 0.86,
   "pre": "traduzir",
   "why": "termo de implementação",
@@ -1074,32 +794,22 @@
     "text": "Connection timeout, please try again."
    },
    {
-    "key": "mobile.error.app_state.label_sign_in_timeout_error",
-    "prod": "mobile",
-    "text": "Connection timeout, please try again."
-   },
-   {
-    "key": "portal.pricing.billing.payment_errors.label_braintree_load_timeout",
+    "key": "pricing.payment.errors.braintreeLoadTimeout",
     "prod": "portal",
     "text": "Braintree load timeout"
    },
    {
-    "key": "portal.pricing.billing.payment_errors.label_dropin_create_timeout",
+    "key": "pricing.payment.errors.dropinCreateTimeout",
     "prod": "portal",
     "text": "Drop-in creation timeout"
-   },
-   {
-    "key": "portal.pricing.billing.payment_errors.label_element_mount_timeout",
-    "prod": "portal",
-    "text": "Payment element mount timeout"
    }
   ],
-  "key_count": 14
+  "key_count": 7
  },
  {
   "term": "mtr",
-  "total": 10,
-  "desktop": 10,
+  "total": 5,
+  "desktop": 5,
   "mobile": 0,
   "portal": 0,
   "portal_ratio": 0.0,
@@ -1120,24 +830,14 @@
     "key": "MTRTool.running-mtr-test",
     "prod": "desktop",
     "text": "Running MTR test"
-   },
-   {
-    "key": "MTRTool.save-mtr-results",
-    "prod": "desktop",
-    "text": "Save MTR results"
-   },
-   {
-    "key": "desktop.mtrtool.support.action_save_mtr_results",
-    "prod": "desktop",
-    "text": "Save MTR results"
    }
   ],
-  "key_count": 10
+  "key_count": 5
  },
  {
   "term": "firewall",
-  "total": 10,
-  "desktop": 10,
+  "total": 5,
+  "desktop": 5,
   "mobile": 0,
   "portal": 0,
   "portal_ratio": 0.0,
@@ -1158,26 +858,16 @@
     "key": "ExitlagApp.seems-that-a-firewall-is-blocking-exitlag-driver-the-packet",
     "prod": "desktop",
     "text": "Seems that a Firewall is blocking ExitLag driver. The packet redirection method will be changed in an attempt to solve the problem."
-   },
-   {
-    "key": "RamCleanerErrorModal.antivirus-firewall-or-other-security-software-blocking-acces",
-    "prod": "desktop",
-    "text": "Antivirus, firewall, or other security software blocking access"
-   },
-   {
-    "key": "RamCleanerErrorModal.check-your-antivirus-and-firewall-settings",
-    "prod": "desktop",
-    "text": "Check your antivirus and firewall settings"
    }
   ],
-  "key_count": 10
+  "key_count": 5
  },
  {
   "term": "gateway",
-  "total": 8,
-  "desktop": 6,
+  "total": 4,
+  "desktop": 3,
   "mobile": 0,
-  "portal": 2,
+  "portal": 1,
   "portal_ratio": 0.25,
   "pre": "traduzir",
   "why": "termo de implementação",
@@ -1191,24 +881,14 @@
     "key": "DiagnosticInterface.gateway-1",
     "prod": "desktop",
     "text": "Gateway: %1"
-   },
-   {
-    "key": "desktop.diagnostic_interface.support.label_cannot_find_gateway_1",
-    "prod": "desktop",
-    "text": "Cannot find gateway: %1"
-   },
-   {
-    "key": "desktop.diagnostic_interface.support.label_gateway_1",
-    "prod": "desktop",
-    "text": "Gateway: %1"
    }
   ],
-  "key_count": 8
+  "key_count": 4
  },
  {
   "term": "hop",
-  "total": 6,
-  "desktop": 6,
+  "total": 3,
+  "desktop": 3,
   "mobile": 0,
   "portal": 0,
   "portal_ratio": 0.0,
@@ -1224,37 +904,27 @@
     "key": "ScannerRunningModal.tracking-packet-loss-at-each-hop",
     "prod": "desktop",
     "text": "Tracking packet loss at each hop..."
-   },
-   {
-    "key": "desktop.mtrtool.support.label_analyzing_network_hops",
-    "prod": "desktop",
-    "text": "Analyzing network hops..."
-   },
-   {
-    "key": "desktop.scanner_running_modal.library.label_tracking_packet_loss_at_each_hop",
-    "prod": "desktop",
-    "text": "Tracking packet loss at each hop..."
    }
   ],
-  "key_count": 6
+  "key_count": 3
  },
  {
   "term": "socket",
-  "total": 2,
+  "total": 1,
   "desktop": 0,
   "mobile": 0,
-  "portal": 2,
+  "portal": 1,
   "portal_ratio": 1.0,
   "pre": "traduzir",
   "why": "termo de implementação",
   "samples": [],
-  "key_count": 2
+  "key_count": 1
  },
  {
   "term": "tunnel",
-  "total": 2,
+  "total": 1,
   "desktop": 0,
-  "mobile": 2,
+  "mobile": 1,
   "portal": 0,
   "portal_ratio": 0.0,
   "pre": "traduzir",
@@ -1264,19 +934,14 @@
     "key": "Error.VPN_START_VPN_CONNECTION_FAILED",
     "prod": "mobile",
     "text": "We could not start the VPN tunnel. Please try again."
-   },
-   {
-    "key": "mobile.error.app_state.label_vpn_start_vpn_connection_failed",
-    "prod": "mobile",
-    "text": "We could not start the VPN tunnel. Please try again."
    }
   ],
-  "key_count": 2
+  "key_count": 1
  },
  {
   "term": "hops",
-  "total": 2,
-  "desktop": 2,
+  "total": 1,
+  "desktop": 1,
   "mobile": 0,
   "portal": 0,
   "portal_ratio": 0.0,
@@ -1287,13 +952,8 @@
     "key": "MTRTool.analyzing-network-hops",
     "prod": "desktop",
     "text": "Analyzing network hops..."
-   },
-   {
-    "key": "desktop.mtrtool.support.label_analyzing_network_hops",
-    "prod": "desktop",
-    "text": "Analyzing network hops..."
    }
   ],
-  "key_count": 2
+  "key_count": 1
  }
 ]

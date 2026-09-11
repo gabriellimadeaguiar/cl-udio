@@ -27,16 +27,53 @@ GROUPS = {
 }
 
 
+def comp_of(key, product):
+    """Nome da tela/componente a partir da chave.
+
+    As chaves vêm em dois formatos: 'Componente.chave' e
+    'produto.componente.categoria.label'. Quando o primeiro segmento é o
+    nome do produto, o componente é o segundo.
+    """
+    parts = key.split('.')
+    if len(parts) > 1 and parts[0].lower() == str(product).lower():
+        return parts[1]
+    return parts[0]
+
+
+def dedupe(prods):
+    """Uma entrada por texto único, por produto.
+
+    O registry carrega cada string em dois formatos de chave: o legado
+    ('FTUESteps.chave') e o novo ('desktop.ftuesteps.categoria.label_chave').
+    São a mesma string na interface. Contar as duas dobra todos os números.
+    Mantemos a chave legada, que nomeia a tela de forma legível.
+    """
+    out = []
+    for prod, entries in prods.items():
+        by_text = {}
+        for key, v in entries.items():
+            en = (v.get('translations', {}).get('en-US') or '').strip()
+            if not en:
+                continue
+            prev = by_text.get(en)
+            legacy = key.split('.')[0].lower() != str(prod).lower()
+            if prev is None or (legacy and not prev[1]):
+                by_text[en] = (key, legacy)
+        for en, (key, _) in by_text.items():
+            out.append({'key': key, 'text': en, 'prod': prod})
+    return out
+
+
 def extract(path):
     prods = json.load(open(path, encoding='utf-8'))['product']
+    strings = dedupe(prods)
 
     rows = []
     for term, kind in CURATED.items():
         pf, samples, keys = collections.Counter(), [], set()
         pat = re.compile(r'\b' + re.escape(term) + r's?\b', re.I)
-        for prod, entries in prods.items():
-            for key, v in entries.items():
-                en = v.get('translations', {}).get('en-US') or ''
+        for s in strings:
+                en, key, prod = s['text'], s['key'], s['prod']
                 if pat.search(en):
                     pf[prod] += 1
                     keys.add(key)
@@ -62,21 +99,29 @@ def extract(path):
 
     report = []
     for gname, variants in GROUPS.items():
-        usage = collections.defaultdict(lambda: {'count': 0, 'labels': [], 'prods': collections.Counter()})
-        for prod, entries in prods.items():
-            for key, v in entries.items():
-                en = (v.get('translations', {}).get('en-US') or '').strip()
+        usage = collections.defaultdict(lambda: {'count': 0, 'labels': [], 'prods': collections.Counter(),
+                                                 'comps': collections.Counter()})
+        for s in strings:
+                en, key, prod = s['text'], s['key'], s['prod']
                 for vname, pat in variants:
                     if re.search(pat, en, re.I):
                         u = usage[vname]
                         u['count'] += 1
                         u['prods'][prod] += 1
+                        u['comps'][f'{prod}/{comp_of(key, prod)}'] += 1
                         if len(en) <= 28 and len(u['labels']) < 4:
                             u['labels'].append({'key': key, 'prod': prod, 'text': en})
         present = {k: v for k, v in usage.items() if v['count']}
         if len(present) > 1:
-            report.append({'group': gname, 'variants': [
-                {'term': k, 'count': v['count'], 'by_prod': dict(v['prods']), 'labels': v['labels']}
+            # telas que usam mais de uma variante do mesmo grupo: conflito local
+            seen = collections.Counter()
+            for v in present.values():
+                for c in v['comps']:
+                    seen[c] += 1
+            clashes = sorted(c for c, n in seen.items() if n > 1)
+            report.append({'group': gname, 'clashes': clashes, 'variants': [
+                {'term': k, 'count': v['count'], 'by_prod': dict(v['prods']), 'labels': v['labels'],
+                 'comps': [{'name': c, 'n': n} for c, n in v['comps'].most_common(12)]}
                 for k, v in sorted(present.items(), key=lambda x: -x[1]['count'])]})
     return rows, report
 

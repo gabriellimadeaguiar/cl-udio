@@ -1,14 +1,31 @@
 [
  {
   "group": "Medida de atraso",
+  "clashes": [
+   "desktop/ModalGeneralOnboarding",
+   "desktop/PingMonitoring",
+   "desktop/ResultsPage",
+   "desktop/ScannerRunningModal",
+   "desktop/ToolsTab",
+   "mobile/GameOptimization",
+   "mobile/Modals",
+   "mobile/RealTimeMonitoringUserEducation",
+   "portal/home",
+   "portal/isps",
+   "portal/lpTrial",
+   "portal/miscellaneous",
+   "portal/pricing",
+   "portal/products",
+   "portal/seo"
+  ],
   "variants": [
    {
     "term": "ping",
-    "count": 314,
+    "count": 124,
     "by_prod": {
-     "desktop": 122,
-     "mobile": 84,
-     "portal": 108
+     "desktop": 44,
+     "mobile": 34,
+     "portal": 46
     },
     "labels": [
      {
@@ -30,35 +47,70 @@
       "key": "ConnectionDetails.lower-ping",
       "prod": "desktop",
       "text": "Lower ping"
+     }
+    ],
+    "comps": [
+     {
+      "name": "portal/products",
+      "n": 19
      },
      {
-      "key": "ConnectionDetails.ping",
-      "prod": "desktop",
-      "text": "Ping"
+      "name": "mobile/Error",
+      "n": 13
      },
      {
-      "key": "ConnectionDetails.ping-chart",
-      "prod": "desktop",
-      "text": "Ping chart"
+      "name": "portal/home",
+      "n": 12
+     },
+     {
+      "name": "desktop/ConnectionDetails",
+      "n": 6
+     },
+     {
+      "name": "desktop/PingGameModal",
+      "n": 5
+     },
+     {
+      "name": "desktop/PingMonitoring",
+      "n": 5
+     },
+     {
+      "name": "desktop/ToolsTab",
+      "n": 5
+     },
+     {
+      "name": "portal/seo",
+      "n": 5
+     },
+     {
+      "name": "desktop/SettingsPopup",
+      "n": 4
+     },
+     {
+      "name": "mobile/GameOptimization",
+      "n": 4
+     },
+     {
+      "name": "mobile/LoadingBoostGameScreen",
+      "n": 4
+     },
+     {
+      "name": "desktop/LogsPopup",
+      "n": 3
      }
     ]
    },
    {
     "term": "latency",
-    "count": 142,
+    "count": 60,
     "by_prod": {
-     "desktop": 72,
-     "mobile": 22,
-     "portal": 48
+     "desktop": 32,
+     "mobile": 7,
+     "portal": 21
     },
     "labels": [
      {
       "key": "HealthMonitoringPanel.latency",
-      "prod": "desktop",
-      "text": "Latency"
-     },
-     {
-      "key": "MTRTool.latency",
       "prod": "desktop",
       "text": "Latency"
      },
@@ -68,19 +120,64 @@
       "text": "Latency (ms)"
      },
      {
-      "key": "PingTcpingTool.latency-ms",
-      "prod": "desktop",
-      "text": "Latency (ms)"
-     },
-     {
       "key": "RealTimeMonitoringTab.latency-chart",
       "prod": "desktop",
       "text": "Latency chart"
      },
      {
-      "key": "RealTimeMonitoringTab.latency-ms",
+      "key": "ResultsPage.latency-increase-200-ms",
       "prod": "desktop",
-      "text": "Latency (ms)"
+      "text": "Latency increase &lt; 200 ms"
+     }
+    ],
+    "comps": [
+     {
+      "name": "desktop/ResultsPage",
+      "n": 14
+     },
+     {
+      "name": "desktop/RegionSelection",
+      "n": 5
+     },
+     {
+      "name": "desktop/ScannerRunningModal",
+      "n": 5
+     },
+     {
+      "name": "portal/products",
+      "n": 5
+     },
+     {
+      "name": "portal/business",
+      "n": 3
+     },
+     {
+      "name": "portal/home",
+      "n": 3
+     },
+     {
+      "name": "portal/lpTrial",
+      "n": 3
+     },
+     {
+      "name": "desktop/HealthMonitoringPanel",
+      "n": 2
+     },
+     {
+      "name": "mobile/RealTimeMonitoringReportTimer",
+      "n": 2
+     },
+     {
+      "name": "portal/seo",
+      "n": 2
+     },
+     {
+      "name": "desktop/FTUESteps",
+      "n": 1
+     },
+     {
+      "name": "desktop/ModalGeneralOnboarding",
+      "n": 1
      }
     ]
    }
@@ -88,14 +185,25 @@
  },
  {
   "group": "Caminho da conexão",
+  "clashes": [
+   "desktop/GeneralSettings",
+   "desktop/ScannerRunningModal",
+   "mobile/LoadingBoostGameScreen",
+   "mobile/Modals",
+   "portal/business",
+   "portal/home",
+   "portal/lpTrial",
+   "portal/products",
+   "portal/seo"
+  ],
   "variants": [
    {
     "term": "route",
-    "count": 278,
+    "count": 132,
     "by_prod": {
-     "desktop": 106,
-     "mobile": 80,
-     "portal": 92
+     "desktop": 51,
+     "mobile": 37,
+     "portal": 44
     },
     "labels": [
      {
@@ -117,57 +225,139 @@
       "key": "AdvancedConfigurationPopUp.udp-routes",
       "prod": "desktop",
       "text": "UDP Routes"
+     }
+    ],
+    "comps": [
+     {
+      "name": "portal/lpTrial",
+      "n": 11
      },
      {
-      "key": "AdvancedConfigurationPopUp.use-local-routes-first",
-      "prod": "desktop",
-      "text": "Use local routes first"
+      "name": "portal/home",
+      "n": 10
      },
      {
-      "key": "ConnectionDetails.route-details",
-      "prod": "desktop",
-      "text": "Route details"
+      "name": "desktop/GamePage",
+      "n": 9
+     },
+     {
+      "name": "mobile/Modals",
+      "n": 9
+     },
+     {
+      "name": "portal/products",
+      "n": 9
+     },
+     {
+      "name": "desktop/GeneralSettings",
+      "n": 8
+     },
+     {
+      "name": "mobile/LoadingBoostGameScreen",
+      "n": 8
+     },
+     {
+      "name": "desktop/AdvancedConfigurationPopUp",
+      "n": 7
+     },
+     {
+      "name": "desktop/FTUESteps",
+      "n": 7
+     },
+     {
+      "name": "mobile/MultiPathScreen",
+      "n": 5
+     },
+     {
+      "name": "mobile/GameRegions",
+      "n": 4
+     },
+     {
+      "name": "portal/seo",
+      "n": 4
      }
     ]
    },
    {
     "term": "routing",
-    "count": 34,
+    "count": 16,
     "by_prod": {
-     "desktop": 2,
-     "portal": 32
+     "desktop": 1,
+     "portal": 15
     },
     "labels": [
      {
       "key": "ScannerRunningModal.analyzing-data-routing",
       "prod": "desktop",
       "text": "Analyzing Data Routing"
+     }
+    ],
+    "comps": [
+     {
+      "name": "portal/seo",
+      "n": 13
      },
      {
-      "key": "desktop.scanner_running_modal.library.label_analyzing_data_routing",
-      "prod": "desktop",
-      "text": "Analyzing Data Routing"
+      "name": "desktop/ScannerRunningModal",
+      "n": 1
+     },
+     {
+      "name": "portal/home",
+      "n": 1
+     },
+     {
+      "name": "portal/products",
+      "n": 1
      }
     ]
    },
    {
     "term": "path",
-    "count": 22,
+    "count": 11,
     "by_prod": {
-     "desktop": 6,
-     "mobile": 6,
-     "portal": 10
+     "desktop": 3,
+     "mobile": 3,
+     "portal": 5
     },
     "labels": [
-     {
-      "key": "portal.products.marketing.desktop_features_cards_route_optimization_description.label_third_bold",
-      "prod": "portal",
-      "text": "fastest paths"
-     },
      {
       "key": "products.desktop.features.cards.route_optimization.description.thirdBold",
       "prod": "portal",
       "text": "fastest paths"
+     }
+    ],
+    "comps": [
+     {
+      "name": "desktop/MTRTool",
+      "n": 2
+     },
+     {
+      "name": "mobile/Modals",
+      "n": 2
+     },
+     {
+      "name": "portal/products",
+      "n": 2
+     },
+     {
+      "name": "desktop/GeneralSettings",
+      "n": 1
+     },
+     {
+      "name": "mobile/LoadingBoostGameScreen",
+      "n": 1
+     },
+     {
+      "name": "portal/business",
+      "n": 1
+     },
+     {
+      "name": "portal/home",
+      "n": 1
+     },
+     {
+      "name": "portal/lpTrial",
+      "n": 1
      }
     ]
    }
@@ -175,14 +365,17 @@
  },
  {
   "group": "Perda de dados",
+  "clashes": [
+   "desktop/ToolsTab"
+  ],
   "variants": [
    {
     "term": "packet loss",
-    "count": 88,
+    "count": 29,
     "by_prod": {
-     "desktop": 36,
-     "mobile": 14,
-     "portal": 38
+     "desktop": 10,
+     "mobile": 7,
+     "portal": 12
     },
     "labels": [
      {
@@ -191,48 +384,89 @@
       "text": "Packet loss"
      },
      {
-      "key": "HealthMonitoringPanel.packet-loss",
-      "prod": "desktop",
+      "key": "MonitoringReportSummary.packet_loss",
+      "prod": "mobile",
       "text": "Packet loss"
      },
      {
-      "key": "LastSessionData.packet-loss",
-      "prod": "desktop",
-      "text": "Packet loss"
+      "key": "RealTimeMonitoringUserEducation.packet_title",
+      "prod": "mobile",
+      "text": "Packet Loss"
      },
      {
-      "key": "LogsPopup.packet-loss",
-      "prod": "desktop",
-      "text": "Packet loss"
+      "key": "miscellaneous.network.packetLoss",
+      "prod": "portal",
+      "text": "Packet Loss"
+     }
+    ],
+    "comps": [
+     {
+      "name": "desktop/ToolsTab",
+      "n": 3
      },
      {
-      "key": "PingDetailsRttChart.packet-loss",
-      "prod": "desktop",
-      "text": "Packet loss"
+      "name": "portal/home",
+      "n": 3
      },
      {
-      "key": "PingTcpingTool.packet-loss",
-      "prod": "desktop",
-      "text": "Packet loss"
+      "name": "portal/products",
+      "n": 3
+     },
+     {
+      "name": "desktop/ScannerRunningModal",
+      "n": 2
+     },
+     {
+      "name": "mobile/LoadingBoostGameScreen",
+      "n": 2
+     },
+     {
+      "name": "mobile/Modals",
+      "n": 2
+     },
+     {
+      "name": "portal/lpTrial",
+      "n": 2
+     },
+     {
+      "name": "desktop/ConnectionDetails",
+      "n": 1
+     },
+     {
+      "name": "desktop/GeneralSettings",
+      "n": 1
+     },
+     {
+      "name": "desktop/HealthMonitoringPanel",
+      "n": 1
+     },
+     {
+      "name": "desktop/MTRTool",
+      "n": 1
+     },
+     {
+      "name": "desktop/Main",
+      "n": 1
      }
     ]
    },
    {
     "term": "lost packets",
-    "count": 2,
+    "count": 1,
     "by_prod": {
-     "desktop": 2
+     "desktop": 1
     },
     "labels": [
      {
       "key": "ToolsTab.packets-lost",
       "prod": "desktop",
       "text": "Packets lost"
-     },
+     }
+    ],
+    "comps": [
      {
-      "key": "desktop.tools_tab.monitoring.label_packets_lost",
-      "prod": "desktop",
-      "text": "Packets lost"
+      "name": "desktop/ToolsTab",
+      "n": 1
      }
     ]
    }
@@ -240,23 +474,22 @@
  },
  {
   "group": "Atraso percebido",
+  "clashes": [
+   "desktop/SystemTweaksTab",
+   "portal/products"
+  ],
   "variants": [
    {
     "term": "lag",
-    "count": 196,
+    "count": 82,
     "by_prod": {
-     "desktop": 4,
-     "mobile": 44,
-     "portal": 148
+     "desktop": 2,
+     "mobile": 22,
+     "portal": 58
     },
     "labels": [
      {
       "key": "SystemTweaksTab.reduce-input-lag",
-      "prod": "desktop",
-      "text": "Reduce input lag"
-     },
-     {
-      "key": "desktop.system_tweaks_tab.optimization.label_reduce_input_lag",
       "prod": "desktop",
       "text": "Reduce input lag"
      },
@@ -274,45 +507,106 @@
       "key": "PremiumExpirationBanner.TITLE",
       "prod": "mobile",
       "text": "Don't let lag win!"
+     }
+    ],
+    "comps": [
+     {
+      "name": "portal/products",
+      "n": 14
      },
      {
-      "key": "ReferAFriend.STEP_GG_WP_DESCRIPTION",
-      "prod": "mobile",
-      "text": "No more lag excuses!"
+      "name": "portal/home",
+      "n": 13
+     },
+     {
+      "name": "portal/seo",
+      "n": 9
+     },
+     {
+      "name": "portal/lpTrial",
+      "n": 8
+     },
+     {
+      "name": "portal/isps",
+      "n": 6
+     },
+     {
+      "name": "portal/dashboard",
+      "n": 3
+     },
+     {
+      "name": "mobile/LocalPushNotifications",
+      "n": 2
+     },
+     {
+      "name": "mobile/PremiumExpirationBanner",
+      "n": 2
+     },
+     {
+      "name": "mobile/ReferAFriend",
+      "n": 2
+     },
+     {
+      "name": "mobile/Stores",
+      "n": 2
+     },
+     {
+      "name": "desktop/ModalFullScreen",
+      "n": 1
+     },
+     {
+      "name": "desktop/SystemTweaksTab",
+      "n": 1
      }
     ]
    },
    {
     "term": "delay",
-    "count": 6,
+    "count": 3,
     "by_prod": {
-     "desktop": 2,
-     "mobile": 2,
-     "portal": 2
+     "desktop": 1,
+     "mobile": 1,
+     "portal": 1
     },
-    "labels": []
+    "labels": [],
+    "comps": [
+     {
+      "name": "desktop/SystemTweaksTab",
+      "n": 1
+     },
+     {
+      "name": "mobile/RealTimeMonitoringUserEducation",
+      "n": 1
+     },
+     {
+      "name": "portal/products",
+      "n": 1
+     }
+    ]
    }
   ]
  },
  {
   "group": "Instabilidade",
+  "clashes": [
+   "desktop/MTRTool",
+   "mobile/RealTimeMonitoringUserEducation",
+   "portal/dashboard",
+   "portal/lpTrial",
+   "portal/products"
+  ],
   "variants": [
    {
     "term": "jitter",
-    "count": 54,
+    "count": 16,
     "by_prod": {
-     "desktop": 14,
-     "mobile": 18,
-     "portal": 22
+     "desktop": 5,
+     "mobile": 5,
+     "portal": 6
     },
     "labels": [
      {
       "key": "ConnectionDetails.jitter",
-      "prod": "desktop",
-      "text": "Jitter"
-     },
-     {
-      "key": "HealthMonitoringPanel.jitter",
       "prod": "desktop",
       "text": "Jitter"
      },
@@ -327,24 +621,69 @@
       "text": "Jitter:"
      },
      {
-      "key": "RouteDetails.jitter",
-      "prod": "desktop",
+      "key": "GameBoost.Jitter",
+      "prod": "mobile",
       "text": "Jitter"
+     }
+    ],
+    "comps": [
+     {
+      "name": "mobile/LoadingBoostGameScreen",
+      "n": 2
      },
      {
-      "key": "desktop.connection_details.monitoring.label_jitter",
-      "prod": "desktop",
-      "text": "Jitter"
+      "name": "mobile/RealTimeMonitoringUserEducation",
+      "n": 2
+     },
+     {
+      "name": "portal/products",
+      "n": 2
+     },
+     {
+      "name": "desktop/ConnectionDetails",
+      "n": 1
+     },
+     {
+      "name": "desktop/LastSessionData",
+      "n": 1
+     },
+     {
+      "name": "desktop/ResultsPage",
+      "n": 1
+     },
+     {
+      "name": "desktop/ScannerRunningModal",
+      "n": 1
+     },
+     {
+      "name": "desktop/ToolsTab",
+      "n": 1
+     },
+     {
+      "name": "mobile/GameBoost",
+      "n": 1
+     },
+     {
+      "name": "portal/business",
+      "n": 1
+     },
+     {
+      "name": "portal/lpTrial",
+      "n": 1
+     },
+     {
+      "name": "portal/miscellaneous",
+      "n": 1
      }
     ]
    },
    {
     "term": "spikes",
-    "count": 28,
+    "count": 11,
     "by_prod": {
-     "desktop": 8,
-     "mobile": 14,
-     "portal": 6
+     "desktop": 4,
+     "mobile": 4,
+     "portal": 3
     },
     "labels": [
      {
@@ -358,16 +697,6 @@
       "text": "Spikes"
      },
      {
-      "key": "desktop.diagnostic_server.support.label_spike_detected_1_ms",
-      "prod": "desktop",
-      "text": "Spike detected (%1 ms)"
-     },
-     {
-      "key": "desktop.health_monitoring_panel.monitoring.label_spikes",
-      "prod": "desktop",
-      "text": "Spikes"
-     },
-     {
       "key": "MonitoringReportSummary.peak_spike",
       "prod": "mobile",
       "text": "Peak spike"
@@ -377,17 +706,85 @@
       "prod": "mobile",
       "text": "Spikes"
      }
+    ],
+    "comps": [
+     {
+      "name": "mobile/MonitoringReportSummary",
+      "n": 3
+     },
+     {
+      "name": "desktop/HealthMonitoringPanel",
+      "n": 2
+     },
+     {
+      "name": "desktop/DiagnosticServer",
+      "n": 1
+     },
+     {
+      "name": "desktop/MTRTool",
+      "n": 1
+     },
+     {
+      "name": "mobile/RealTimeMonitoringUserEducation",
+      "n": 1
+     },
+     {
+      "name": "portal/dashboard",
+      "n": 1
+     },
+     {
+      "name": "portal/lpTrial",
+      "n": 1
+     },
+     {
+      "name": "portal/products",
+      "n": 1
+     }
     ]
    },
    {
     "term": "instability",
-    "count": 18,
+    "count": 9,
     "by_prod": {
-     "desktop": 6,
-     "mobile": 4,
-     "portal": 8
+     "desktop": 3,
+     "mobile": 2,
+     "portal": 4
     },
-    "labels": []
+    "labels": [],
+    "comps": [
+     {
+      "name": "portal/home",
+      "n": 2
+     },
+     {
+      "name": "desktop/BandwidthDrawer",
+      "n": 1
+     },
+     {
+      "name": "desktop/MTRTool",
+      "n": 1
+     },
+     {
+      "name": "desktop/SystemTweaksTab",
+      "n": 1
+     },
+     {
+      "name": "mobile/Modals",
+      "n": 1
+     },
+     {
+      "name": "mobile/OverlayScreen",
+      "n": 1
+     },
+     {
+      "name": "portal/dashboard",
+      "n": 1
+     },
+     {
+      "name": "portal/terms",
+      "n": 1
+     }
+    ]
    }
   ]
  }
