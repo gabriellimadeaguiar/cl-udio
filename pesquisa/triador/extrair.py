@@ -7,7 +7,7 @@ Gera terms.json e inconsistencies.json, insumos do Triador de Vocabulário.
 A heurística de pré-classificação usa o portal como prova de comunicação:
 termo que o marketing usa é termo que o público entende.
 """
-import json, re, sys, collections
+import json, os, re, sys, collections
 
 CURATED = {
  'ping':'n','lag':'n','fps':'n','ms':'n','spikes':'n',
@@ -123,12 +123,17 @@ def extract(path):
                 {'term': k, 'count': v['count'], 'by_prod': dict(v['prods']), 'labels': v['labels'],
                  'comps': [{'name': c, 'n': n} for c, n in v['comps'].most_common(12)]}
                 for k, v in sorted(present.items(), key=lambda x: -x[1]['count'])]})
-    return rows, report
+
+    meta = {'strings': len(strings), 'products': sorted(prods.keys())}
+    return rows, report, meta
 
 
 if __name__ == '__main__':
     src = sys.argv[1] if len(sys.argv) > 1 else 'registry.json'
-    terms, inc = extract(src)
+    terms, inc, meta = extract(src)
+    meta['source'] = os.path.basename(src)
     json.dump(terms, open('terms.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     json.dump(inc, open('inconsistencies.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    print(f'{len(terms)} termos, {len(inc)} grupos de inconsistência')
+    json.dump(meta, open('meta.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    print(f'{len(terms)} termos, {len(inc)} grupos de inconsistência, '
+          f'{meta["strings"]} strings únicas')

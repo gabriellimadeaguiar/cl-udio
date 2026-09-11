@@ -35,8 +35,9 @@
   header{padding-block:32px 0;display:flex;flex-direction:column;gap:14px}
   .hrow{display:flex;gap:18px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
   .htext{display:flex;flex-direction:column;gap:10px;min-width:min(100%,320px);flex:1}
-  .btn.import{flex:none;margin-top:4px}
-  @media (max-width:560px){.btn.import{width:100%}}
+  .hbtns{display:flex;gap:8px;flex-wrap:wrap;flex:none;margin-top:4px}
+  .btn.import{flex:none}
+  @media (max-width:560px){.hbtns{width:100%}.hbtns .btn{flex:1}}
   h1{font-size:clamp(1.6rem,3.4vw,2.15rem);font-weight:700;letter-spacing:-.028em;margin:0;text-wrap:balance}
   .lede{color:var(--ink-2);margin:0;max-width:64ch}
   .lede b{color:var(--ink);font-weight:600}
@@ -204,7 +205,10 @@
         <p class="lede">Termos técnicos extraídos das strings do produto. Classifique cada um.
           O que ficar em <b>decidir</b> vira a pauta da discussão do Design System.</p>
       </div>
-      <button class="btn import" id="openImport" type="button">Importar JSON</button>
+      <div class="hbtns">
+        <button class="btn ghost" id="exportGloss" type="button">Exportar glossário</button>
+        <button class="btn import" id="openImport" type="button">Importar JSON</button>
+      </div>
     </div>
     <div class="bar">
       <div class="prog" id="prog" role="img" aria-label="Progresso da triagem"></div>
@@ -500,6 +504,14 @@ function renderRows(){
       p.append(b, document.createTextNode(" — "+s.text));
       det.appendChild(p);
     });
+    const ph = el("h4",null,"Usar no lugar");
+    det.appendChild(ph);
+    const pf = el("input","note"); pf.type = "text"; pf.id = "pref-"+t.term;
+    pf.value = st.prefer || "";
+    pf.placeholder = "termo recomendado — o linter sugere este no lugar";
+    pf.onchange = () => setPrefer(t.term, pf.value.trim());
+    det.appendChild(pf);
+
     const nh = el("h4",null,"Nota para a discussão"); det.appendChild(nh);
     const ta = el("textarea","note"); ta.id = "note-"+t.term; ta.value = st.note || "";
     ta.placeholder = "por que este termo fica, sai ou precisa de decisão";
@@ -605,12 +617,22 @@ function renderGroups(){
 async function setDec(term, d){
   state[term] = {...(state[term]||{}), d, seeded:false};
   renderRows();
-  if(coll) { try { await coll.doc(term).set({d, note: state[term].note||"", ts: Date.now()}); } catch(e){} }
+  await persist(term);
 }
 async function setNote(term, note){
   state[term] = {...(state[term]||{}), note};
   renderPauta();
-  if(coll) { try { await coll.doc(term).set({d: state[term].d||null, note, ts: Date.now()}); } catch(e){} }
+  await persist(term);
+}
+async function setPrefer(term, prefer){
+  state[term] = {...(state[term]||{}), prefer};
+  await persist(term);
+}
+async function persist(term){
+  if(!coll) return;
+  const st = state[term] || {};
+  try { await coll.doc(term).set({d: st.d||null, note: st.note||"", prefer: st.prefer||"", ts: Date.now()}); }
+  catch(e){}
 }
 
 function buildFilters(){
@@ -712,6 +734,50 @@ function handleFile(f){
   fr.readAsText(f);
 }
 
+function buildGlossary(){
+  const terms = DATA.terms
+    .filter(t => state[t.term]?.d && !state[t.term]?.seeded)
+    .map(t => {
+      const st = state[t.term];
+      const e = {term: t.term, decision: st.d};
+      if(st.prefer) e.prefer = st.prefer;
+      if(st.note) e.note = st.note;
+      return e;
+    });
+  return {
+    version: 1,
+    updated: new Date().toISOString().slice(0,10),
+    source: DATA.meta?.source || "registry ExitLag",
+    terms
+  };
+}
+
+(function wireExport(){
+  const btn = $("#exportGloss");
+  btn.onclick = async () => {
+    const g = buildGlossary();
+    if(!g.terms.length){
+      btn.textContent = "Nada triado ainda";
+      setTimeout(() => btn.textContent = "Exportar glossário", 2200);
+      return;
+    }
+    const json = JSON.stringify(g, null, 2);
+    const dl = await (window.claude?.use?.("downloads") ?? Promise.resolve(null));
+    if(dl){
+      try {
+        await dl.save({filename: "glossario.json", data: json});
+        btn.textContent = `${g.terms.length} termos exportados`;
+      } catch(e){ btn.textContent = "Download recusado"; }
+    } else {
+      try {
+        await navigator.clipboard.writeText(json);
+        btn.textContent = `${g.terms.length} termos copiados`;
+      } catch(e){ btn.textContent = "Não consegui copiar"; }
+    }
+    setTimeout(() => btn.textContent = "Exportar glossário", 2600);
+  };
+})();
+
 (function wireUpload(){
   const drop = $("#drop"), file = $("#file"), dlg = $("#importDlg");
   $("#openImport").onclick = () => { renderMeta(); dlg.showModal(); };
@@ -757,7 +823,7 @@ seedFromPre(); buildFilters(); renderRows(); renderGroups(); renderMeta();
         const id = doc.id || d.id;
         if(id && (d.d || d.note)){
           const dec = DECS.includes(d.d) ? d.d : null;   // "neutro" foi retirado
-          state[id] = {d: dec, note: d.note || "", seeded:false};
+          state[id] = {d: dec, note: d.note || "", prefer: d.prefer || "", seeded:false};
         }
       });
       renderRows();

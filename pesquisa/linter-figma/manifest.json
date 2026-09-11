@@ -1,0 +1,16 @@
+{
+  "name": "Linter de Vocabulário",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma", "figjam"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": [
+      "https://raw.githubusercontent.com",
+      "https://gist.githubusercontent.com",
+      "https://*.github.io"
+    ],
+    "reasoning": "Busca o glossário de vocabulário publicado pelo time. Nenhum dado do arquivo do Figma sai do plugin."
+  }
+}

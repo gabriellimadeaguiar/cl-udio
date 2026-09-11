@@ -1,7 +1,7 @@
 # Triador de Vocabulário
 
-Ferramenta para classificar os termos técnicos do produto em **manter**, **traduzir**,
-**decidir** ou **neutro**, e produzir a pauta da discussão do Design System.
+Ferramenta para classificar os termos técnicos do produto em **manter**, **traduzir** ou
+**decidir**, e produzir a pauta da discussão do Design System.
 
 **App:** https://claude.ai/code/artifact/c06dc16d-431b-4270-96e1-c730e1e38d0d
 
@@ -20,16 +20,38 @@ Formatos aceitos:
 | Lista | `[{"key":"Tela.chave","text":"Texto","product":"desktop"}]` |
 | Aninhado | Qualquer profundidade — a chave vira o caminho até o texto |
 
+## Exportando o glossário
+
+Botão **Exportar glossário**, no topo à direita. Sai um JSON só com os termos que alguém
+decidiu — termo, decisão, o substituto (`prefer`) e a nota:
+
+```json
+{
+  "version": 1,
+  "updated": "2026-09-11",
+  "source": "registry ExitLag",
+  "terms": [
+    { "term": "latency", "decision": "traduzir", "prefer": "ping" },
+    { "term": "ping",    "decision": "manter" },
+    { "term": "jitter",  "decision": "decidir", "note": "definir por superfície" }
+  ]
+}
+```
+
+É esse arquivo que o [Linter de Vocabulário](../linter-figma/README.md) consome. Para o
+linter enxergar, o JSON precisa estar numa URL pública — Pages, raw do GitHub ou gist.
+
 ## Regerando os dados embutidos
 
 O app abre com o registry da ExitLag já carregado. Para trocar esse padrão:
 
 ```bash
-python3 extrair.py caminho/para/registry.json
+python3 extrair.py caminho/para/registry.json   # gera terms.json e inconsistencies.json
+python3 build.py                                # injeta no lugar de __DATA__
 ```
 
-Gera `terms.json` e `inconsistencies.json`. Injete os dois em `triador.template.html` no
-lugar do marcador `__DATA__`, como `{"terms": [...], "inconsistencies": [...]}`.
+O `build.py` também confere que toda aba tem painel — o tipo de erro que já deixou uma aba
+em branco antes.
 
 O `extrair.py` e a extração em JavaScript dentro do app implementam a mesma lógica —
 verificado contra o registry real: 12.440 strings, 36 termos, 5 grupos nos dois.
@@ -53,6 +75,8 @@ A sugestão é ponto de partida, não veredito — a triagem no app é que decid
 | Arquivo | O que é |
 |---|---|
 | `extrair.py` | Extração e pré-classificação a partir do registry |
+| `build.py` | Injeta os dados no template e confere abas × painéis |
 | `terms.json` | 36 termos com frequência, distribuição e exemplos |
 | `inconsistencies.json` | Conceitos com mais de um nome no produto |
+| `meta.json` | Origem e tamanho do registry usado |
 | `triador.template.html` | Fonte do app, com `__DATA__` como marcador |
