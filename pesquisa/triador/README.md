@@ -20,6 +20,21 @@ Formatos aceitos:
 | Lista | `[{"key":"Tela.chave","text":"Texto","product":"desktop"}]` |
 | Aninhado | Qualquer profundidade — a chave vira o caminho até o texto |
 
+## Acrescentando um termo à mão
+
+O campo **adicionar termo…**, na barra de filtros, entra com qualquer termo que a lista
+curada não pegou. O termo é compartilhado com o time como qualquer decisão, e pode ser
+removido pelo detalhe da linha.
+
+Se houver um registry carregado nesta sessão, o termo nasce medido — frequência, distribuição
+por produto e exemplos, pela mesma contagem que o `extrair.py` usa. Sem registry, ele entra
+sem números, e a interface diz isso em vez de mostrar zeros. Ao importar um registry depois,
+os termos à mão são medidos de novo.
+
+O que ele nunca ganha é **sugestão de classificação**. A pré-classificação depende de saber
+se o termo é vocabulário nativo de gaming ou linguagem de arquitetura — e isso a ferramenta
+não tem como inferir de um termo que acabou de aprender.
+
 ## Exportando o glossário
 
 Botão **Exportar glossário**, no topo à direita. Sai um JSON só com os termos que alguém

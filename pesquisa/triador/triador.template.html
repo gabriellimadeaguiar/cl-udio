@@ -8,6 +8,7 @@
     --keep:#15803D; --keep-bg:#E4F3E9; --keep-line:#9BCFAF;
     --trans:#1D4ED8; --trans-bg:#E5EBFA; --trans-line:#A3B8EE;
     --decide:#B45309; --decide-bg:#FBEFE0; --decide-line:#E5BC8A;
+    --bad:#B91C1C;
     --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
     --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   }
@@ -18,6 +19,7 @@
     --keep:#5FD68B; --keep-bg:#132A1D; --keep-line:#2F6B45;
     --trans:#8FB0F7; --trans-bg:#161F3A; --trans-line:#3D5490;
     --decide:#FBBF24; --decide-bg:#2E2312; --decide-line:#7A5C1E;
+    --bad:#F87171;
   }}
   :root[data-theme="dark"]{
     --bg:#0D1316; --surface:#141C21; --surface-2:#1C262C; --line:#2A373F; --line-soft:#212D34;
@@ -26,6 +28,7 @@
     --keep:#5FD68B; --keep-bg:#132A1D; --keep-line:#2F6B45;
     --trans:#8FB0F7; --trans-bg:#161F3A; --trans-line:#3D5490;
     --decide:#FBBF24; --decide-bg:#2E2312; --decide-line:#7A5C1E;
+    --bad:#F87171;
   }
   *,*::before,*::after{box-sizing:border-box}
   body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;
@@ -48,7 +51,8 @@
   .prog i{display:block;height:100%}
   .prog i.k{background:var(--keep)} .prog i.t{background:var(--trans)}
   .prog i.d{background:var(--decide)}
-  .count{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .count{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);font-variant-numeric:tabular-nums}
+  @media (min-width:560px){.count{white-space:nowrap}}
 
   .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line)}
   .tab{appearance:none;border:0;background:none;font-family:var(--sans);font-size:.88rem;font-weight:600;
@@ -75,6 +79,27 @@
     color:var(--ink-2);cursor:pointer}
   .chip[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
   .chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .filterbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .addterm{display:flex;gap:6px;align-items:center;margin-left:auto}
+  .addterm input{font-family:var(--mono);font-size:.75rem;padding:5px 11px;border-radius:99px;
+    border:1px solid var(--line);background:var(--surface);color:var(--ink);width:186px;min-width:0}
+  .addterm input::placeholder{color:var(--ink-3)}
+  .addterm input:focus-visible,.addterm button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .addmsg{font-size:.75rem;color:var(--ink-3);margin:6px 0 0;min-height:1em}
+  .addmsg.bad{color:var(--bad)}
+  @media (max-width:640px){.addterm{margin-left:0;width:100%}.addterm input{flex:1}}
+
+  .manual .term::after{content:"à mão";font-family:var(--mono);font-size:.58rem;font-weight:600;
+    letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);background:var(--surface-2);
+    border:1px solid var(--line);border-radius:3px;padding:2px 5px;flex:none}
+  .nomeasure{font-size:.76rem;color:var(--ink-3);line-height:1.35;font-style:italic}
+  .rm{appearance:none;align-self:flex-start;font-family:var(--sans);font-size:.78rem;
+    padding:6px 11px;border-radius:5px;border:1px solid var(--line);background:none;
+    color:var(--ink-3);cursor:pointer;margin-top:4px}
+  .rm:hover{color:var(--bad);border-color:var(--bad)}
+  .rm:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
   .rows{display:flex;flex-direction:column;gap:7px}
   .row{background:var(--surface);border:1px solid var(--line);border-radius:7px;
@@ -244,7 +269,16 @@
         <p class="test">Não escolha um lado: defina em que superfície cada um aparece.</p>
       </div>
     </div>
-    <div class="filters" id="filters"></div>
+    <div class="filterbar">
+      <div class="filters" id="filters"></div>
+      <form class="addterm" id="addTerm">
+        <label class="sr" for="newTerm">Adicionar termo</label>
+        <input type="text" id="newTerm" placeholder="adicionar termo…" autocomplete="off"
+               spellcheck="false" maxlength="40">
+        <button class="chip" type="submit" id="addBtn">Adicionar</button>
+      </form>
+    </div>
+    <p class="addmsg" id="addMsg" role="status"></p>
     <div class="rows" id="rows" style="margin-top:14px"></div>
   </section>
 
@@ -382,21 +416,31 @@ function dedupe(strings){
   return [...seen.values()];
 }
 
+const esc = s => String(s).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+
+// Conta um termo nas strings já deduplicadas. Serve tanto para a extração
+// inicial quanto para medir um termo que alguém acrescentou à mão.
+function countTerm(term, strings){
+  const re = new RegExp("\\b" + esc(term) + "s?\\b", "i");
+  const byProd = {}; const samples = []; let total = 0;
+  for(const s of strings){
+    if(!re.test(s.text)) continue;
+    total++; byProd[s.product] = (byProd[s.product] || 0) + 1;
+    if(samples.length < 3 && s.text.length > 10 && s.text.length < 150)
+      samples.push({key: s.key, prod: s.product, text: s.text.replace(/\s+/g," ").slice(0,150)});
+  }
+  return {total, byProd, samples};
+}
+
 function extractFrom(raw){
   const strings = dedupe(raw);
   const dropped = raw.length - strings.length;
   const products = [...new Set(strings.map(s => s.product))].filter(p => p !== "—");
   const portalish = products.find(p => /portal|web|site|market/i.test(p));
+  STRINGS = strings; PRODUCTS = products; PORTALISH = portalish || null;
   const terms = [];
   for(const [term, kind] of Object.entries(CURATED)){
-    const re = new RegExp("\\b" + term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + "s?\\b", "i");
-    const byProd = {}; const samples = []; let total = 0;
-    for(const s of strings){
-      if(!re.test(s.text)) continue;
-      total++; byProd[s.product] = (byProd[s.product] || 0) + 1;
-      if(samples.length < 3 && s.text.length > 10 && s.text.length < 150)
-        samples.push({key: s.key, prod: s.product, text: s.text.replace(/\s+/g," ").slice(0,150)});
-    }
+    const {total, byProd, samples} = countTerm(term, strings);
     if(!total) continue;
     const portal = portalish ? (byProd[portalish] || 0) : 0;
     const ratio = portal / total;
@@ -449,15 +493,53 @@ function extractFrom(raw){
 }
 
 const LBL = {manter:"manter",traduzir:"traduzir",decidir:"decidir"};
-let state = {};   // term -> {d, note}
-let db = null, coll = null;
+let state = {};   // term -> {d, note, prefer}
+let db = null, coll = null, collM = null;
+
+// Strings do registry carregado nesta sessão. Vazio até alguém importar um
+// JSON: por isso um termo acrescentado à mão pode nascer sem medição.
+let STRINGS = [], PRODUCTS = [], PORTALISH = null;
+let MANUAIS = [];   // termos acrescentados à mão, compartilhados com o time
+
+// O id do documento precisa caber no formato aceito pelo banco. Termos de uma
+// palavra só (todos os do registry) passam intactos, então nada muda para eles.
+const docId = s => /^[A-Za-z0-9_\-.~:@+]{1,200}$/.test(s)
+  ? s
+  : (s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") || "termo");
 
 const $ = s => document.querySelector(s);
 const el = (t, c, txt) => { const n = document.createElement(t); if(c) n.className = c; if(txt!=null) n.textContent = txt; return n; };
 
 function seedFromPre(){ DATA.terms.forEach(t => {
-  if(!state[t.term]) state[t.term] = {d: DECS.includes(t.pre) ? t.pre : null, note:"", seeded:true};
+  if(state[t.term]) return;
+  // Termo acrescentado à mão não recebe sugestão: não sabemos se é vocabulário
+  // nativo ou linguagem de arquitetura, e chutar seria pior que não dizer nada.
+  state[t.term] = t.manual
+    ? {d:null, note:"", seeded:false}
+    : {d: DECS.includes(t.pre) ? t.pre : null, note:"", seeded:true};
 }); }
+
+// Monta a linha de um termo à mão, medida contra o registry quando há um
+// carregado. Sem registry, entra sem números e a interface diz isso.
+function shapeManual(term){
+  const base = {term, manual:true, pre:null, samples:[], desktop:0, mobile:0, portal:0};
+  if(!STRINGS.length) return {...base, total:0, measured:false, why:""};
+  const {total, byProd, samples} = countTerm(term, STRINGS);
+  const portal = PORTALISH ? (byProd[PORTALISH] || 0) : 0;
+  const ratio = total ? portal / total : 0;
+  const ordered = PRODUCTS.length ? PRODUCTS : Object.keys(byProd);
+  return {...base, total, measured:true, samples, by_product:byProd,
+    desktop: byProd[ordered[0]] || 0, mobile: byProd[ordered[1]] || 0, portal: byProd[ordered[2]] || 0,
+    portal_ratio: Math.round(ratio*100)/100, key_count: total,
+    why: total
+      ? (PORTALISH ? `${Math.round(ratio*100)}% das ocorrências estão no portal` : `${total} ocorrências no registry`)
+      : "não aparece nas strings do registry"};
+}
+
+function mergeManuais(){
+  const have = new Set(DATA.terms.map(t => t.term.toLowerCase()));
+  MANUAIS.forEach(m => { if(!have.has(m.term.toLowerCase())){ DATA.terms.push(m); have.add(m.term.toLowerCase()); } });
+}
 
 function bar(t){
   const d = el("div","dist"); const tot = t.total || 1;
@@ -474,15 +556,15 @@ function renderRows(){
   DATA.terms.forEach(t => {
     const st = state[t.term] || {d:null,note:""};
     if(active.length && !active.includes(st.d)) return;
-    const row = el("div","row"); row.dataset.dec = st.d || "";
+    const row = el("div","row" + (t.manual ? " manual" : "")); row.dataset.dec = st.d || "";
     const head = el("div","head");
 
     const term = el("div","term");
     const tgl = el("button", null, "▸"); tgl.setAttribute("aria-expanded","false");
     tgl.setAttribute("aria-label","Ver exemplos de "+t.term);
     term.append(tgl, document.createTextNode(t.term));
-    const freq = el("div","freq", t.total+"×");
-    const why = el("div","why", st.seeded ? "sugerido: "+t.why : "");
+    const freq = el("div","freq", t.manual && !t.measured ? "—" : t.total+"×");
+    const why = el("div","why", st.seeded ? "sugerido: "+t.why : (t.manual ? t.why : ""));
 
     const acts = el("div","acts");
     DECS.forEach(v => {
@@ -498,6 +580,13 @@ function renderRows(){
     const det = el("div","detail hidden");
     const h4 = el("h4",null,"Onde aparece");
     det.appendChild(h4);
+    if(t.manual && !t.measured){
+      det.appendChild(el("p","nomeasure",
+        "Sem medição: nenhum registry foi carregado nesta sessão. Importe o JSON das strings e "
+        + "este termo passa a mostrar frequência e exemplos, como os demais."));
+    } else if(!(t.samples||[]).length){
+      det.appendChild(el("p","nomeasure","Nenhuma ocorrência nas strings do registry."));
+    }
     (t.samples||[]).forEach(s => {
       const p = el("div","samp");
       const b = el("b", null, s.prod+" · "+s.key.split(".")[0]);
@@ -517,6 +606,15 @@ function renderRows(){
     ta.placeholder = "por que este termo fica, sai ou precisa de decisão";
     ta.onchange = () => setNote(t.term, ta.value);
     det.appendChild(ta);
+
+    if(t.manual){
+      const rm = el("button","rm","Remover termo"); rm.type = "button";
+      rm.onclick = () => {
+        if(confirm(`Remover “${t.term}” da triagem? A decisão registrada nele se perde.`))
+          removeTerm(t.term);
+      };
+      det.appendChild(rm);
+    }
     row.appendChild(det);
 
     tgl.onclick = () => {
@@ -631,8 +729,57 @@ async function setPrefer(term, prefer){
 async function persist(term){
   if(!coll) return;
   const st = state[term] || {};
-  try { await coll.doc(term).set({d: st.d||null, note: st.note||"", prefer: st.prefer||"", ts: Date.now()}); }
+  try { await coll.doc(docId(term)).set({term, d: st.d||null, note: st.note||"", prefer: st.prefer||"", ts: Date.now()}); }
   catch(e){}
+}
+
+/* ---------- termos acrescentados à mão ---------- */
+function addMsg(text, bad){
+  const m = $("#addMsg"); m.textContent = text || "";
+  m.className = "addmsg" + (bad ? " bad" : "");
+}
+
+async function addTerm(raw){
+  const term = String(raw||"").trim().replace(/\s+/g," ").toLowerCase();
+  if(!term) return addMsg("");
+  if(term.length < 2) return addMsg("Um termo precisa de pelo menos duas letras.", true);
+  if(!/^[\p{L}\p{N}][\p{L}\p{N} .\-/+]*$/u.test(term))
+    return addMsg("Use letras, números, espaço, hífen, ponto ou barra.", true);
+  const existing = DATA.terms.find(t => t.term.toLowerCase() === term);
+  if(existing) return addMsg(`“${term}” já está na lista.`, true);
+
+  const shaped = shapeManual(term);
+  MANUAIS.push(shaped);
+  DATA.terms.push(shaped);
+  seedFromPre(); renderRows(); renderMeta();
+  addMsg(shaped.measured
+    ? (shaped.total ? `“${term}” medido: ${shaped.total} ocorrências.` : `“${term}” não aparece no registry — decida assim mesmo se for o caso.`)
+    : `“${term}” adicionado sem medição.`);
+  $("#newTerm").value = "";
+
+  if(collM){
+    try { await collM.doc(docId(term)).set({...shaped, ts: Date.now()}); }
+    catch(e){ addMsg(`“${term}” ficou só nesta tela — não consegui compartilhar com o time.`, true); }
+  }
+}
+
+async function removeTerm(term){
+  MANUAIS = MANUAIS.filter(m => m.term !== term);
+  DATA.terms = DATA.terms.filter(t => t.term !== term);
+  delete state[term];
+  renderRows(); renderMeta(); addMsg(`“${term}” removido.`);
+  if(collM){ try { await collM.doc(docId(term)).delete(); } catch(e){} }
+  if(coll){ try { await coll.doc(docId(term)).delete(); } catch(e){} }
+}
+
+// Quando entra um registry novo, os termos à mão passam a ter números também.
+async function remeasureManuais(){
+  if(!STRINGS.length || !MANUAIS.length) return;
+  MANUAIS = MANUAIS.map(m => ({...m, ...shapeManual(m.term)}));
+  if(!collM) return;
+  for(const m of MANUAIS){
+    try { await collM.doc(docId(m.term)).set({...m, ts: Date.now()}); } catch(e){}
+  }
 }
 
 function buildFilters(){
@@ -697,6 +844,8 @@ function showResult(ok, title, body, extracted){
 async function applyDataset(ds, persist){
   DATA = ds;
   Object.keys(state).forEach(k => { if(state[k]?.seeded) delete state[k]; });
+  await remeasureManuais();
+  mergeManuais();
   seedFromPre(); renderRows(); renderGroups(); renderMeta();
   $("#srcResult").textContent = "";
   showResult(true, "Dados aplicados", `${ds.terms.length} termos prontos para triagem.`, null);
@@ -795,6 +944,12 @@ function buildGlossary(){
   drop.addEventListener("drop", e => handleFile(e.dataTransfer?.files?.[0]));
 })();
 
+(function wireAdd(){
+  const form = $("#addTerm"), input = $("#newTerm");
+  form.addEventListener("submit", e => { e.preventDefault(); addTerm(input.value); });
+  input.addEventListener("input", () => { if($("#addMsg").classList.contains("bad")) addMsg(""); });
+})();
+
 seedFromPre(); buildFilters(); renderRows(); renderGroups(); renderMeta();
 
 (async () => {
@@ -805,6 +960,7 @@ seedFromPre(); buildFilters(); renderRows(); renderGroups(); renderMeta();
     return;
   }
   coll = db.collection("decisions");
+  collM = db.collection("manuais");
   $("#dot").className = "dot on";
   $("#syncTxt").textContent = "compartilhado";
   try {
@@ -817,11 +973,23 @@ seedFromPre(); buildFilters(); renderRows(); renderGroups(); renderMeta();
     }
   } catch(e){}
   try {
+    // Termos à mão primeiro: as decisões que chegam logo abaixo podem ser deles.
+    collM.onSnapshot(docs => {
+      MANUAIS = (docs || []).map(doc => {
+        const d = doc.data ? doc.data() : doc;
+        return d && d.term ? {...d, manual:true} : null;
+      }).filter(Boolean);
+      DATA.terms = DATA.terms.filter(t => !t.manual);
+      mergeManuais(); seedFromPre(); renderRows(); renderMeta();
+    });
+  } catch(e){}
+  try {
     coll.onSnapshot(docs => {
       (docs || []).forEach(doc => {
         const d = doc.data ? doc.data() : doc;
-        const id = doc.id || d.id;
-        if(id && (d.d || d.note)){
+        // Documentos antigos não guardavam o termo; aí o id é o próprio termo.
+        const id = d.term || doc.id || d.id;
+        if(id && (d.d || d.note || d.prefer)){
           const dec = DECS.includes(d.d) ? d.d : null;   // "neutro" foi retirado
           state[id] = {d: dec, note: d.note || "", prefer: d.prefer || "", seeded:false};
         }
