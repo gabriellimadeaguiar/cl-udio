@@ -21,19 +21,18 @@ Plugin privado não passa pela revisão do Figma. Ao publicar, o Figma grava um 
 `icone-128.png` é o ícone do formulário de publicação (fonte em `icone.svg`). Troque pelo do
 Design System quando houver um.
 
-**Antes de passar a pasta adiante**, preencha `DEFAULT_URL` no topo do `code.js` com a URL
-do glossário do time. Aí o plugin já abre apontando para o lugar certo e ninguém precisa
-colar nada. Quem trocar o campo tem a própria escolha salva, que passa na frente do padrão.
-
 Só **Figma Design**. Em FigJam o texto mora dentro de sticky notes, que não são nós de
 texto — o plugin não enxergaria quase nada, então nem aparece lá.
 
 ## Usar
 
 1. Abra o plugin
-2. Confira a **URL do glossário** (fica salva para as próximas vezes)
-3. Selecione camadas — ou não selecione nada, para varrer a página inteira
-4. **Verificar**
+2. Selecione camadas — ou não selecione nada, para varrer a página inteira
+3. **Verificar**
+
+Não há nada para configurar: o glossário vem dentro do plugin. O cabeçalho mostra quantos
+termos estão valendo e de quando é o glossário, para dar para perceber quando a versão
+instalada ficou para trás.
 
 Cada ocorrência mostra o termo, a camada e o texto. Dois botões:
 
@@ -58,8 +57,27 @@ aponta e deixa a decisão com quem está escrevendo.
 
 ## O glossário
 
-O plugin espera um JSON assim — é exatamente o que o botão **Exportar glossário** do
-Triador produz:
+Ele mora **dentro do `code.js`**, entre os marcadores `<<<GLOSSARIO` e `GLOSSARIO>>>`. O
+plugin não faz nenhuma requisição de rede — `manifest.json` declara `allowedDomains: ["none"]`,
+o que também é a resposta curta para quem, na organização, perguntar o que o plugin envia
+para fora: nada.
+
+### Atualizar depois de uma rodada de triagem
+
+1. No Triador, **Exportar glossário** — baixa `glossario.json`
+2. Ponha o arquivo nesta pasta e rode:
+
+```bash
+python3 embutir.py              # ou: python3 embutir.py ~/Downloads/glossario.json
+```
+
+3. No Figma, **Publish** no plugin
+
+O script valida o JSON, recusa termo sem `term` ou `decision`, avisa se a origem ainda diz
+"exemplo", e conta quantos termos passam a gerar apontamento. Enquanto você não publicar,
+o time continua na versão anterior.
+
+O formato é exatamente o que o Triador exporta:
 
 ```json
 {
@@ -79,23 +97,14 @@ Triador produz:
 | `traduzir` | Aponta como **evitar**; sugere `prefer` e corrige se for seguro |
 | `decidir` | Aponta como **em discussão**, com a nota; nunca corrige |
 
-### Testar antes de ter glossário
+### O glossário que já vem embutido é de exemplo
 
-`glossario.exemplo.json` existe para conferir a fiação do plugin: as decisões ali são
-inventadas, não saíram do Triador. Serve para ver o linter achando e corrigindo, e nada além
-disso — troque pelo glossário real antes de qualquer pessoa usar em arquivo de verdade.
+`glossario.exemplo.json` — as decisões ali são inventadas, não saíram do Triador. Serve para
+ver o linter achando e corrigindo antes de o time ter triado qualquer coisa.
 
-### Onde hospedar
-
-A URL precisa servir o JSON cru, sem autenticação. Opções:
-
-- **GitHub Pages** do projeto
-- **Raw do GitHub** (`raw.githubusercontent.com/...`) — só funciona em repositório público
-- **Gist público**
-- Qualquer host interno do time
-
-Os domínios liberados estão em `manifest.json` → `networkAccess.allowedDomains`. Para usar
-outro host, acrescente ali e reimporte o plugin.
+Enquanto ele for o embutido, o cabeçalho do plugin mostra **“glossário de exemplo — não é a
+decisão do time”** em âmbar, e o `embutir.py` avisa no terminal. Troque pelo real antes de
+publicar para a organização.
 
 ## Limitação que vale conhecer antes de adotar
 

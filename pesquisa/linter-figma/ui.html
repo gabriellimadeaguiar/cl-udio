@@ -24,11 +24,11 @@
     font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     display:flex;flex-direction:column;height:100vh}
   .bar{padding:12px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px;flex:none}
-  label{font-size:11px;color:var(--ink-2);font-weight:500}
-  .urlrow{display:flex;gap:6px}
-  input[type=url]{flex:1;min-width:0;font-family:var(--mono);font-size:11px;padding:6px 8px;
-    border:1px solid var(--line);border-radius:5px;background:var(--bg);color:var(--ink)}
-  input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .urlrow{display:flex;gap:8px;align-items:center}
+  .gloss{flex:1;min-width:0;font-size:11px;color:var(--ink-2);line-height:1.35}
+  .gloss b{color:var(--ink);font-weight:600}
+  .gloss .warn{color:var(--warn);font-weight:600}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
   button{font-family:inherit;font-size:11px;font-weight:600;padding:6px 11px;border-radius:5px;
     border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;white-space:nowrap}
   button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -63,12 +63,11 @@
 </head>
 <body>
   <div class="bar">
-    <label for="url">URL do glossário</label>
     <div class="urlrow">
-      <input type="url" id="url" placeholder="https://…/glossario.json" spellcheck="false">
+      <div class="gloss" id="gloss">glossário embutido</div>
       <button id="scan" class="primary">Verificar</button>
     </div>
-    <div class="status" id="status">Cole a URL do glossário exportado pelo Triador.</div>
+    <div class="status" id="status">Selecione camadas — ou nada, para a página inteira.</div>
   </div>
 
   <div class="list" id="list">
@@ -154,32 +153,40 @@ function render(){
   });
 }
 
-$('#scan').onclick = async () => {
-  const url = $('#url').value.trim();
-  if(!url){ status('Informe a URL do glossário.', true); return; }
-  send({type:'save-url', url: url});
+$('#scan').onclick = () => {
   $('#scan').disabled = true;
-  status('Buscando glossário…');
-  try {
-    const res = await fetch(url, {cache:'no-store'});
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const glossary = await res.json();
-    if(!glossary || !Array.isArray(glossary.terms)) throw new Error('o JSON não tem um array "terms"');
-    status('Glossário com ' + glossary.terms.length + ' termos. Verificando…');
-    send({type:'scan', glossary: glossary});
-  } catch(e){
-    $('#scan').disabled = false;
-    status('Não consegui carregar: ' + e.message, true);
-  }
+  status('Verificando…');
+  send({type:'scan'});
 };
 
 $('#close').onclick = () => send({type:'close'});
-$('#url').onkeydown = e => { if(e.key === 'Enter') $('#scan').click(); };
+
+// Data no formato que se lê num relance, para saber se o plugin está velho.
+function brDate(iso){
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ''));
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : '';
+}
 
 onmessage = (event) => {
   const msg = event.data.pluginMessage;
   if(!msg) return;
-  if(msg.type === 'url' && msg.url) $('#url').value = msg.url;
+  if(msg.type === 'glossary'){
+    const g = $('#gloss');
+    g.textContent = '';
+    const n = document.createElement('b');
+    n.textContent = msg.active + (msg.active === 1 ? ' termo' : ' termos') + ' a evitar';
+    g.appendChild(n);
+    const d = brDate(msg.updated);
+    if(d) g.appendChild(document.createTextNode(' · glossário de ' + d));
+    // O glossário de exemplo não é decisão de ninguém — avisa em vez de deixar passar.
+    if(/exemplo/i.test(msg.source || '')){
+      g.appendChild(document.createElement('br'));
+      const w = document.createElement('span');
+      w.className = 'warn';
+      w.textContent = 'glossário de exemplo — não é a decisão do time';
+      g.appendChild(w);
+    }
+  }
   if(msg.type === 'results'){
     results = msg.results;
     $('#scan').disabled = false;

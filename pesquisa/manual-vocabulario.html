@@ -227,11 +227,11 @@
   <div class="peca">
     <h3>glossario.json</h3>
     <p>O que sai do Triador. Só os termos já decididos, com o substituto de cada um.</p>
-    <p class="quem">você publica</p>
+    <p class="quem">você embute no plugin</p>
   </div>
   <div class="peca">
     <h3>Linter</h3>
-    <p>Plugin do Figma. Lê o glossário e aponta os termos descartados nas telas.</p>
+    <p>Plugin do Figma. Carrega o glossário dentro de si e aponta os termos descartados nas telas.</p>
     <p class="quem">quem desenha</p>
   </div>
 </div>
@@ -239,8 +239,8 @@
 <section>
   <h2><span class="marca">Parte 1</span> Você monta, uma vez só</h2>
   <p class="sub">
-    Meia hora, e só se repete quando o time revisar as decisões. Enquanto o glossário não
-    estiver publicado, o linter não tem o que ler — então esta parte vem antes de chamar o time.
+    Meia hora. Os dois últimos passos — embutir e publicar — voltam a cada rodada de triagem,
+    porque o glossário viaja dentro do plugin. É o preço de não depender de nada hospedado.
   </p>
 
   <ol class="passos">
@@ -282,36 +282,18 @@
     </li>
 
     <li>
-      <h4>Publique o arquivo numa URL</h4>
+      <h4>Embuta o glossário no plugin</h4>
       <p>
-        O plugin busca o glossário por HTTP, então ele precisa estar num endereço público.
-        O caminho mais curto é um <strong>gist</strong>:
+        Ponha o <code>glossario.json</code> na pasta do plugin e rode, no terminal, de dentro dela:
       </p>
+      <pre><code>python3 embutir.py</code></pre>
       <p>
-        <a href="https://gist.github.com">gist.github.com</a> → cole o conteúdo do JSON →
-        nome do arquivo <code>glossario.json</code> → <strong>Create public gist</strong> →
-        botão <strong>Raw</strong> → copie a URL.
+        Ele grava o glossário dentro do <code>code.js</code>, valida o JSON e diz quantos termos
+        passaram a valer. Nada é hospedado em lugar nenhum: o plugin não faz requisição de rede.
       </p>
       <p class="nota">
-        <b>Tire o hash da URL.</b> O botão Raw devolve um link com um código longo no meio, que
-        aponta para <em>aquela</em> versão e nunca muda. Apagando esse trecho, a URL passa a
-        servir sempre a versão mais recente — e atualizar o glossário deixa de exigir mexer no plugin.
-      </p>
-      <pre><code>fixa  …/<span style="opacity:.55">a1b2c3d4e5f6…/</span>glossario.json
-viva  …/glossario.json</code></pre>
-    </li>
-
-    <li>
-      <h4>Coloque a URL dentro do plugin</h4>
-      <p>
-        Abra <code>pesquisa/linter-figma/code.js</code> e preencha a linha do topo:
-      </p>
-      <pre><code>const DEFAULT_URL = 'https://gist.githubusercontent.com/…/glossario.json';</code></pre>
-      <p>
-        Assim o plugin já abre apontando para o lugar certo, e ninguém do time precisa colar
-        nada. Se o endereço não for <code>gist.githubusercontent.com</code>,
-        <code>raw.githubusercontent.com</code> ou um <code>github.io</code>, acrescente o domínio
-        em <code>manifest.json</code> → <code>networkAccess.allowedDomains</code>.
+        <b>O arquivo sai do Triador já pronto.</b> Se o caminho for outro, passe junto:
+        <code>python3 embutir.py ~/Downloads/glossario.json</code>
       </p>
     </li>
 
@@ -415,8 +397,12 @@ viva  …/glossario.json</code></pre>
     <li>
       <h4>Rodar</h4>
       <p>
-        A URL do glossário já vem preenchida. Selecione as camadas que quer conferir — ou não
+        Não há nada para configurar. Selecione as camadas que quer conferir — ou não
         selecione nada, e ele varre a página inteira. Depois, <strong>Verificar</strong>.
+      </p>
+      <p class="nota">
+        O cabeçalho do plugin diz quantos termos estão valendo e de quando é o glossário. É por
+        ali que dá para perceber que a versão instalada ficou para trás.
       </p>
     </li>
     <li>
@@ -475,25 +461,18 @@ viva  …/glossario.json</code></pre>
   <h2>Quando der errado</h2>
   <dl class="probs">
     <div>
-      <dt>“Não consegui carregar” ao verificar</dt>
+      <dt>O plugin diz “glossário de exemplo”</dt>
       <dd>
-        A URL não está pública, ou o domínio não está em
-        <code>networkAccess.allowedDomains</code> no <code>manifest.json</code>. Teste a URL
-        numa aba anônima: se você vê o JSON cru, o plugin também vê.
+        O que está embutido ainda é o de teste, com decisões inventadas. Rode o
+        <code>embutir.py</code> com o glossário que saiu do Triador e publique.
       </dd>
     </div>
     <div>
-      <dt>Atualizei o glossário e o plugin mostra o antigo</dt>
+      <dt>Atualizei o glossário e o time continua vendo o antigo</dt>
       <dd>
-        Duas causas. A URL pode ter o hash de versão no meio — tire. Ou o cache do GitHub
-        ainda não virou: costuma levar alguns minutos.
-      </dd>
-    </div>
-    <div>
-      <dt>Mudei o código e o time continua na versão antiga</dt>
-      <dd>
-        Alterar os arquivos na sua máquina mexe só na sua cópia de desenvolvimento. Para o time
-        ver, é preciso publicar de novo pelo <strong>Publish</strong>.
+        Rodar o <code>embutir.py</code> mexe só na sua cópia. Para o time receber, é preciso
+        publicar de novo pelo <strong>Publish</strong> — é o mesmo passo para qualquer mudança
+        no plugin.
       </dd>
     </div>
     <div>

@@ -1,15 +1,58 @@
 // Linter de Vocabulário — thread principal.
 // Varre nós de texto da seleção (ou da página) e compara com o glossário
-// decidido no Triador. A UI cuida da rede; aqui só mexemos no documento.
+// decidido no Triador. O glossário vem embutido: o plugin não faz rede.
+//
+// Para atualizar: exporte o glossario.json no Triador, deixe o arquivo
+// nesta pasta e rode `python3 embutir.py`. Depois, Publish no Figma.
+
+// <<<GLOSSARIO — gerado por embutir.py, não edite à mão
+const GLOSSARY = {
+  "version": 1,
+  "updated": "2026-09-11",
+  "source": "EXEMPLO — não é a decisão do time",
+  "terms": [
+    {
+      "term": "latency",
+      "decision": "traduzir",
+      "prefer": "ping"
+    },
+    {
+      "term": "ndis",
+      "decision": "traduzir",
+      "prefer": "driver de rede"
+    },
+    {
+      "term": "ipv6",
+      "decision": "traduzir",
+      "prefer": "conexão"
+    },
+    {
+      "term": "ping",
+      "decision": "manter"
+    },
+    {
+      "term": "lag",
+      "decision": "manter"
+    },
+    {
+      "term": "fps",
+      "decision": "manter"
+    },
+    {
+      "term": "route",
+      "decision": "decidir",
+      "note": "marketing usa em 33% das strings do portal — decidir por superfície"
+    },
+    {
+      "term": "packet",
+      "decision": "decidir",
+      "note": "aparece como packet loss; decidir se o conceito vira um nome só"
+    }
+  ]
+};
+// GLOSSARIO>>>
 
 figma.showUI(__html__, { width: 420, height: 560, themeColors: true });
-
-const STORE_KEY = 'glossaryUrl';
-
-// Preencha antes de distribuir a pasta ao time: assim ninguém precisa colar
-// a URL na mão. Quem quiser apontar para outro glossário ainda pode trocar
-// no campo — a escolha de cada um fica salva e tem prioridade sobre esta.
-const DEFAULT_URL = '';
 
 function escapeRe(s) {
   return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -37,11 +80,11 @@ function safeReplacement(text, term, prefer) {
   return m[1] + matchCase(m[2], prefer) + m[3];
 }
 
-function findings(node, glossary) {
+function findings(node) {
   const text = node.characters;
   if (!text || !text.trim()) return [];
   const out = [];
-  for (const entry of glossary.terms) {
+  for (const entry of GLOSSARY.terms) {
     if (entry.decision === 'manter') continue;
     const re = new RegExp('\\b' + escapeRe(entry.term) + 's?\\b', 'i');
     if (!re.test(text)) continue;
@@ -83,31 +126,27 @@ async function loadFontsOf(node) {
 
 figma.ui.onmessage = async (msg) => {
   if (msg.type === 'ready') {
-    const url = await figma.clientStorage.getAsync(STORE_KEY);
-    figma.ui.postMessage({ type: 'url', url: url || DEFAULT_URL });
-    return;
-  }
-
-  if (msg.type === 'save-url') {
-    await figma.clientStorage.setAsync(STORE_KEY, msg.url || '');
+    const terms = Array.isArray(GLOSSARY.terms) ? GLOSSARY.terms : [];
+    figma.ui.postMessage({
+      type: 'glossary',
+      updated: GLOSSARY.updated || '',
+      source: GLOSSARY.source || '',
+      total: terms.length,
+      // "manter" não gera apontamento — só estes contam como regra ativa.
+      active: terms.filter((t) => t.decision !== 'manter').length,
+    });
     return;
   }
 
   if (msg.type === 'scan') {
-    const glossary = msg.glossary;
-    if (!glossary || !Array.isArray(glossary.terms) || !glossary.terms.length) {
-      figma.ui.postMessage({ type: 'error', message: 'Glossário vazio ou sem o campo "terms".' });
+    if (!Array.isArray(GLOSSARY.terms) || !GLOSSARY.terms.length) {
+      figma.ui.postMessage({ type: 'error', message: 'O glossário embutido está vazio. Rode embutir.py e publique de novo.' });
       return;
     }
     const { nodes, scope } = scopeNodes();
     const results = [];
-    for (const n of nodes) results.push(...findings(n, glossary));
-    figma.ui.postMessage({
-      type: 'results',
-      results: results,
-      scanned: nodes.length,
-      scope: scope,
-    });
+    for (const n of nodes) results.push(...findings(n));
+    figma.ui.postMessage({ type: 'results', results: results, scanned: nodes.length, scope: scope });
     return;
   }
 
