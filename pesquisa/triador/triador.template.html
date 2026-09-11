@@ -8,7 +8,6 @@
     --keep:#15803D; --keep-bg:#E4F3E9; --keep-line:#9BCFAF;
     --trans:#1D4ED8; --trans-bg:#E5EBFA; --trans-line:#A3B8EE;
     --decide:#B45309; --decide-bg:#FBEFE0; --decide-line:#E5BC8A;
-    --drop:#6B7C87; --drop-bg:#EDF1F3; --drop-line:#C7D2D8;
     --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
     --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   }
@@ -19,7 +18,6 @@
     --keep:#5FD68B; --keep-bg:#132A1D; --keep-line:#2F6B45;
     --trans:#8FB0F7; --trans-bg:#161F3A; --trans-line:#3D5490;
     --decide:#FBBF24; --decide-bg:#2E2312; --decide-line:#7A5C1E;
-    --drop:#7C8F9B; --drop-bg:#1C262C; --drop-line:#3A4850;
   }}
   :root[data-theme="dark"]{
     --bg:#0D1316; --surface:#141C21; --surface-2:#1C262C; --line:#2A373F; --line-soft:#212D34;
@@ -28,7 +26,6 @@
     --keep:#5FD68B; --keep-bg:#132A1D; --keep-line:#2F6B45;
     --trans:#8FB0F7; --trans-bg:#161F3A; --trans-line:#3D5490;
     --decide:#FBBF24; --decide-bg:#2E2312; --decide-line:#7A5C1E;
-    --drop:#7C8F9B; --drop-bg:#1C262C; --drop-line:#3A4850;
   }
   *,*::before,*::after{box-sizing:border-box}
   body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;
@@ -49,7 +46,7 @@
     overflow:hidden;display:flex;border:1px solid var(--line-soft)}
   .prog i{display:block;height:100%}
   .prog i.k{background:var(--keep)} .prog i.t{background:var(--trans)}
-  .prog i.d{background:var(--decide)} .prog i.x{background:var(--drop)}
+  .prog i.d{background:var(--decide)}
   .count{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
 
   .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line)}
@@ -58,6 +55,18 @@
   .tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
   .tab:hover{color:var(--ink)}
   .tab:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:3px}
+
+  .legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:9px;margin-bottom:18px}
+  .lg{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--line);
+    border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+  .lg.keep{border-top-color:var(--keep)}
+  .lg.trans{border-top-color:var(--trans)}
+  .lg.dec{border-top-color:var(--decide)}
+  .lg h3{margin:0;font-family:var(--mono);font-size:.78rem;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase}
+  .lg.keep h3{color:var(--keep)} .lg.trans h3{color:var(--trans)} .lg.dec h3{color:var(--decide)}
+  .lg p{margin:0;font-size:.83rem;line-height:1.45;color:var(--ink-2)}
+  .lg .test{font-size:.76rem;color:var(--ink-3);border-top:1px solid var(--line-soft);padding-top:6px}
 
   .filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
   .chip{appearance:none;font-family:var(--mono);font-size:.73rem;font-weight:500;letter-spacing:.02em;
@@ -72,7 +81,6 @@
   .row[data-dec="manter"]{border-left-color:var(--keep)}
   .row[data-dec="traduzir"]{border-left-color:var(--trans)}
   .row[data-dec="decidir"]{border-left-color:var(--decide)}
-  .row[data-dec="neutro"]{border-left-color:var(--drop)}
 
   .head{display:grid;grid-template-columns:minmax(118px,1.1fr) 78px 128px minmax(150px,1.4fr) auto;
     gap:14px;align-items:center;padding:11px 14px}
@@ -99,7 +107,6 @@
   .act[aria-pressed="true"][data-v="manter"]{background:var(--keep-bg);border-color:var(--keep-line);color:var(--keep)}
   .act[aria-pressed="true"][data-v="traduzir"]{background:var(--trans-bg);border-color:var(--trans-line);color:var(--trans)}
   .act[aria-pressed="true"][data-v="decidir"]{background:var(--decide-bg);border-color:var(--decide-line);color:var(--decide)}
-  .act[aria-pressed="true"][data-v="neutro"]{background:var(--drop-bg);border-color:var(--drop-line);color:var(--drop)}
 
   .detail{border-top:1px solid var(--line-soft);padding:12px 14px;background:var(--surface-2);
     display:flex;flex-direction:column;gap:9px}
@@ -213,6 +220,26 @@
   </div>
 
   <section id="pane-triagem">
+    <div class="legend">
+      <div class="lg keep">
+        <h3>Manter</h3>
+        <p>Vocabulário nativo. A comunidade já usa entre si, e a palavra é a linguagem do
+          objetivo dela.</p>
+        <p class="test">Teste: circula em fórum sem ninguém explicar.</p>
+      </div>
+      <div class="lg trans">
+        <h3>Traduzir</h3>
+        <p>Linguagem da arquitetura. Descreve como o sistema foi construído, não o que a
+          pessoa quer fazer.</p>
+        <p class="test">Teste: se o time reescrevesse o sistema, o termo mudaria junto.</p>
+      </div>
+      <div class="lg dec">
+        <h3>Decidir</h3>
+        <p>As duas coisas ao mesmo tempo: palavra técnica <em>e</em> marcador de pertencimento.
+          Traduzir ganha clareza com quem chega e custa identificação com quem já está.</p>
+        <p class="test">Não escolha um lado: defina em que superfície cada um aparece.</p>
+      </div>
+    </div>
     <div class="filters" id="filters"></div>
     <div class="rows" id="rows" style="margin-top:14px"></div>
   </section>
@@ -265,7 +292,7 @@
 
 <script>
 let DATA = __DATA__;
-const DECS = ["manter","traduzir","decidir","neutro"];
+const DECS = ["manter","traduzir","decidir"];
 
 /* ---------- extração de um registry qualquer ---------- */
 const CURATED = {
@@ -417,14 +444,16 @@ function extractFrom(raw){
     meta: {strings: strings.length, dropped, products, loadedAt: new Date().toISOString()}};
 }
 
-const LBL = {manter:"manter",traduzir:"traduzir",decidir:"decidir",neutro:"neutro"};
+const LBL = {manter:"manter",traduzir:"traduzir",decidir:"decidir"};
 let state = {};   // term -> {d, note}
 let db = null, coll = null;
 
 const $ = s => document.querySelector(s);
 const el = (t, c, txt) => { const n = document.createElement(t); if(c) n.className = c; if(txt!=null) n.textContent = txt; return n; };
 
-function seedFromPre(){ DATA.terms.forEach(t => { if(!state[t.term]) state[t.term] = {d:t.pre, note:"", seeded:true}; }); }
+function seedFromPre(){ DATA.terms.forEach(t => {
+  if(!state[t.term]) state[t.term] = {d: DECS.includes(t.pre) ? t.pre : null, note:"", seeded:true};
+}); }
 
 function bar(t){
   const d = el("div","dist"); const tot = t.total || 1;
@@ -490,13 +519,13 @@ function renderRows(){
 
 function renderProg(){
   const p = $("#prog"); p.textContent = "";
-  const c = {manter:0,traduzir:0,decidir:0,neutro:0,none:0};
-  DATA.terms.forEach(t => { const d = state[t.term]?.d; d ? c[d]++ : c.none++; });
+  const c = {manter:0,traduzir:0,decidir:0,none:0};
+  DATA.terms.forEach(t => { const d = state[t.term]?.d; (d && c[d] !== undefined) ? c[d]++ : c.none++; });
   const tot = DATA.terms.length;
-  [["k",c.manter],["t",c.traduzir],["d",c.decidir],["x",c.neutro]].forEach(([k,n]) => {
+  [["k",c.manter],["t",c.traduzir],["d",c.decidir]].forEach(([k,n]) => {
     if(n>0){ const i = el("i",k); i.style.width = (n/tot*100)+"%"; p.appendChild(i); }
   });
-  $("#count").textContent = `${c.manter} manter · ${c.traduzir} traduzir · ${c.decidir} decidir · ${c.neutro} neutro`;
+  $("#count").textContent = `${c.manter} manter · ${c.traduzir} traduzir · ${c.decidir} decidir · ${c.none} sem decisão`;
 }
 
 function renderPauta(){
@@ -726,7 +755,10 @@ seedFromPre(); buildFilters(); renderRows(); renderGroups(); renderMeta();
       (docs || []).forEach(doc => {
         const d = doc.data ? doc.data() : doc;
         const id = doc.id || d.id;
-        if(id && (d.d || d.note)) state[id] = {d: d.d || null, note: d.note || "", seeded:false};
+        if(id && (d.d || d.note)){
+          const dec = DECS.includes(d.d) ? d.d : null;   // "neutro" foi retirado
+          state[id] = {d: dec, note: d.note || "", seeded:false};
+        }
       });
       renderRows();
     });
