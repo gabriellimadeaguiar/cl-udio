@@ -16,10 +16,17 @@ Precisa do **Figma Desktop** — plugins locais não funcionam no navegador.
 Para distribuir ao time sem cada um importar à mão, é preciso publicar como plugin privado
 da organização — exige plano Organization ou Enterprise.
 
+**Antes de passar a pasta adiante**, preencha `DEFAULT_URL` no topo do `code.js` com a URL
+do glossário do time. Aí o plugin já abre apontando para o lugar certo e ninguém precisa
+colar nada. Quem trocar o campo tem a própria escolha salva, que passa na frente do padrão.
+
+Só **Figma Design**. Em FigJam o texto mora dentro de sticky notes, que não são nós de
+texto — o plugin não enxergaria quase nada, então nem aparece lá.
+
 ## Usar
 
 1. Abra o plugin
-2. Cole a **URL do glossário** (fica salva para as próximas vezes)
+2. Confira a **URL do glossário** (fica salva para as próximas vezes)
 3. Selecione camadas — ou não selecione nada, para varrer a página inteira
 4. **Verificar**
 

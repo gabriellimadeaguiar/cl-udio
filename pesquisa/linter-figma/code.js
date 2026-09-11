@@ -6,6 +6,11 @@ figma.showUI(__html__, { width: 420, height: 560, themeColors: true });
 
 const STORE_KEY = 'glossaryUrl';
 
+// Preencha antes de distribuir a pasta ao time: assim ninguém precisa colar
+// a URL na mão. Quem quiser apontar para outro glossário ainda pode trocar
+// no campo — a escolha de cada um fica salva e tem prioridade sobre esta.
+const DEFAULT_URL = '';
+
 function escapeRe(s) {
   return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -79,7 +84,7 @@ async function loadFontsOf(node) {
 figma.ui.onmessage = async (msg) => {
   if (msg.type === 'ready') {
     const url = await figma.clientStorage.getAsync(STORE_KEY);
-    figma.ui.postMessage({ type: 'url', url: url || '' });
+    figma.ui.postMessage({ type: 'url', url: url || DEFAULT_URL });
     return;
   }
 

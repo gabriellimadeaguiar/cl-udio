@@ -1,0 +1,516 @@
+<title>Manual do Vocabulário</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  :root{
+    --ground:#f4f7f6;
+    --surface:#ffffff;
+    --sunk:#eaf0ef;
+    --ink:#152220;
+    --ink-2:#556664;
+    --ink-3:#829694;
+    --line:#d7e1df;
+    --line-2:#c2d0cd;
+    --accent:#0d6e66;
+    --accent-soft:#dff0ed;
+    --evitar:#1d4ed8;
+    --evitar-bg:#e6ecfb;
+    --evitar-line:#b3c5f2;
+    --decidir:#a35a08;
+    --decidir-bg:#fbeeda;
+    --decidir-line:#e6c491;
+    --manter:#0d6e66;
+    --manter-bg:#dff0ed;
+    --manter-line:#a7d1cb;
+    --display:Archivo,"Helvetica Neue",Arial,sans-serif;
+    --body:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0d1615;
+      --surface:#131f1e;
+      --sunk:#182625;
+      --ink:#e7efed;
+      --ink-2:#9fb2af;
+      --ink-3:#7a8d8a;
+      --line:#273836;
+      --line-2:#334846;
+      --accent:#4ecdc0;
+      --accent-soft:#16302d;
+      --evitar:#9ab6f8;
+      --evitar-bg:#161f38;
+      --evitar-line:#31457a;
+      --decidir:#eab54e;
+      --decidir-bg:#2d2312;
+      --decidir-line:#5e4718;
+      --manter:#4ecdc0;
+      --manter-bg:#16302d;
+      --manter-line:#2a504b;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0d1615;
+    --surface:#131f1e;
+    --sunk:#182625;
+    --ink:#e7efed;
+    --ink-2:#9fb2af;
+    --ink-3:#7a8d8a;
+    --line:#273836;
+    --line-2:#334846;
+    --accent:#4ecdc0;
+    --accent-soft:#16302d;
+    --evitar:#9ab6f8;
+    --evitar-bg:#161f38;
+    --evitar-line:#31457a;
+    --decidir:#eab54e;
+    --decidir-bg:#2d2312;
+    --decidir-line:#5e4718;
+    --manter:#4ecdc0;
+    --manter-bg:#16302d;
+    --manter-line:#2a504b;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  body{
+    margin:0;background:var(--ground);color:var(--ink);
+    font-family:var(--body);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding-inline:20px;padding-block:0 88px}
+
+  /* ---- cabeçalho ---- */
+  header{padding-block:56px 36px;border-bottom:1px solid var(--line)}
+  .eyebrow{
+    font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 14px
+  }
+  h1{
+    font-family:var(--display);font-weight:700;font-size:clamp(2.1rem,6vw,3.1rem);
+    line-height:1.04;letter-spacing:-.022em;margin:0;text-wrap:balance
+  }
+  .lede{font-size:1.0625rem;color:var(--ink-2);max-width:60ch;margin:16px 0 0}
+
+  /* ---- peças ---- */
+  .pecas{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;
+    margin-block:36px}
+  .peca{background:var(--surface);padding:18px 18px 20px;display:flex;flex-direction:column;gap:7px}
+  .peca h3{font-family:var(--display);font-size:.95rem;font-weight:600;margin:0;letter-spacing:-.005em}
+  .peca p{margin:0;font-size:.875rem;color:var(--ink-2);line-height:1.5}
+  .peca .quem{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-3);margin-top:auto;padding-top:6px}
+
+  /* ---- seções ---- */
+  section{padding-block:44px 0}
+  h2{
+    font-family:var(--display);font-weight:600;font-size:1.5rem;letter-spacing:-.015em;
+    margin:0 0 6px;text-wrap:balance;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap
+  }
+  h2 .marca{
+    font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--accent);background:var(--accent-soft);border-radius:4px;padding:3px 8px;
+    position:relative;top:-2px
+  }
+  .sub{color:var(--ink-2);margin:0 0 26px;max-width:62ch;font-size:.95rem}
+  p{max-width:64ch}
+
+  /* ---- passos ---- */
+  ol.passos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+  ol.passos>li{
+    position:relative;padding:0 0 26px 46px;border-left:1px solid var(--line);margin-left:13px
+  }
+  ol.passos>li:last-child{border-left-color:transparent;padding-bottom:4px}
+  ol.passos>li::before{
+    content:counter(passo);counter-increment:passo;
+    position:absolute;left:-14px;top:-2px;width:27px;height:27px;border-radius:50%;
+    background:var(--surface);border:1px solid var(--line-2);color:var(--ink-2);
+    font-family:var(--mono);font-size:12px;font-weight:600;
+    display:flex;align-items:center;justify-content:center
+  }
+  ol.passos{counter-reset:passo}
+  ol.passos h4{
+    font-family:var(--display);font-size:1.0625rem;font-weight:600;margin:0 0 6px;
+    letter-spacing:-.008em;line-height:1.3
+  }
+  ol.passos p{margin:0 0 9px;font-size:.9375rem;color:var(--ink-2)}
+  ol.passos p:last-child{margin-bottom:0}
+  ol.passos strong{color:var(--ink);font-weight:600}
+
+  code{
+    font-family:var(--mono);font-size:.855em;background:var(--sunk);
+    border:1px solid var(--line);border-radius:4px;padding:1.5px 5px;
+    word-break:break-word;color:var(--ink)
+  }
+  pre{
+    font-family:var(--mono);font-size:.8125rem;line-height:1.65;background:var(--sunk);
+    border:1px solid var(--line);border-radius:8px;padding:13px 15px;margin:0 0 10px;
+    overflow-x:auto;color:var(--ink)
+  }
+  pre code{background:none;border:0;padding:0;font-size:1em}
+  a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+
+  /* ---- nota lateral ---- */
+  .nota{
+    border-left:2px solid var(--line-2);padding:2px 0 2px 14px;margin:14px 0 0;
+    font-size:.875rem;color:var(--ink-2)
+  }
+  .nota b{color:var(--ink);font-weight:600}
+
+  /* ---- tabelas ---- */
+  .tablewrap{overflow-x:auto;margin:20px 0 0;border:1px solid var(--line);border-radius:9px;background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-size:.875rem;min-width:420px}
+  th{
+    text-align:left;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--ink-3);padding:11px 15px;border-bottom:1px solid var(--line);
+    white-space:nowrap
+  }
+  td{padding:11px 15px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink-2)}
+  tr:last-child td{border-bottom:0}
+  td.t{font-family:var(--mono);font-size:.8125rem;color:var(--ink);white-space:nowrap}
+  td.corrige{color:var(--ink)}
+
+  .pill{
+    display:inline-block;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.05em;
+    text-transform:uppercase;padding:2.5px 7px;border-radius:3px;white-space:nowrap
+  }
+  .pill.manter{background:var(--manter-bg);color:var(--manter);border:1px solid var(--manter-line)}
+  .pill.evitar{background:var(--evitar-bg);color:var(--evitar);border:1px solid var(--evitar-line)}
+  .pill.decidir{background:var(--decidir-bg);color:var(--decidir);border:1px solid var(--decidir-line)}
+
+  /* ---- limites ---- */
+  .limite{
+    background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    padding:20px 22px;margin-top:22px
+  }
+  .limite h4{font-family:var(--display);font-size:1rem;font-weight:600;margin:0 0 7px;letter-spacing:-.005em}
+  .limite p{margin:0;font-size:.9375rem;color:var(--ink-2)}
+  .limite + .limite{margin-top:12px}
+
+  /* ---- problemas ---- */
+  dl.probs{margin:20px 0 0;display:flex;flex-direction:column;gap:0}
+  dl.probs div{padding:15px 0;border-top:1px solid var(--line)}
+  dl.probs div:last-child{border-bottom:1px solid var(--line)}
+  dt{font-weight:600;font-size:.9375rem;margin:0 0 5px;color:var(--ink)}
+  dd{margin:0;font-size:.9375rem;color:var(--ink-2);max-width:64ch}
+
+  footer{
+    margin-top:52px;padding-top:22px;border-top:1px solid var(--line);
+    font-size:.8125rem;color:var(--ink-3);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap
+  }
+  footer span{font-family:var(--mono);font-size:11px}
+
+  @media (max-width:520px){
+    ol.passos>li{padding-left:34px}
+  }
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">ExitLag · Design System</p>
+  <h1>Manual do Vocabulário</h1>
+  <p class="lede">
+    Duas ferramentas e um arquivo. O time decide quais termos técnicos o produto usa, e o
+    Figma passa a avisar quando um termo descartado aparece no desenho.
+  </p>
+</header>
+
+<div class="pecas">
+  <div class="peca">
+    <h3>Triador</h3>
+    <p>App no navegador. Mostra os 36 termos técnicos que aparecem no produto e recolhe a decisão de cada um.</p>
+    <p class="quem">todo o time</p>
+  </div>
+  <div class="peca">
+    <h3>glossario.json</h3>
+    <p>O que sai do Triador. Só os termos já decididos, com o substituto de cada um.</p>
+    <p class="quem">você publica</p>
+  </div>
+  <div class="peca">
+    <h3>Linter</h3>
+    <p>Plugin do Figma. Lê o glossário e aponta os termos descartados nas telas.</p>
+    <p class="quem">quem desenha</p>
+  </div>
+</div>
+
+<section>
+  <h2><span class="marca">Parte 1</span> Você monta, uma vez só</h2>
+  <p class="sub">
+    Meia hora, e só se repete quando o time revisar as decisões. Enquanto o glossário não
+    estiver publicado, o linter não tem o que ler — então esta parte vem antes de chamar o time.
+  </p>
+
+  <ol class="passos">
+    <li>
+      <h4>Abra o Triador e compartilhe</h4>
+      <p>
+        <a href="https://claude.ai/code/artifact/c06dc16d-431b-4270-96e1-c730e1e38d0d">claude.ai/code/artifact/c06dc16d…</a>
+        — no menu de compartilhar da página, libere para quem você quiser.
+      </p>
+      <p>
+        Quem abre o link já pode triar. <strong>Não precisa de permissão de edição</strong> —
+        essa permissão só governa quem publica uma versão nova do app, não quem registra decisões.
+      </p>
+    </li>
+
+    <li>
+      <h4>Espere a triagem acontecer</h4>
+      <p>
+        As decisões são compartilhadas em tempo real: o que uma pessoa marca, as outras veem.
+        O indicador no topo diz <code>compartilhado</code> quando está sincronizando.
+      </p>
+      <p>
+        Não precisa de consenso em tudo. Termo que gerar discussão vai para
+        <span class="pill decidir">decidir</span> e vira pauta — é esse o output que interessa
+        para a conversa do Design System.
+      </p>
+    </li>
+
+    <li>
+      <h4>Exporte o glossário</h4>
+      <p>
+        Botão <strong>Exportar glossário</strong>, no topo à direita. Baixa um
+        <code>glossario.json</code> só com os termos que alguém decidiu.
+      </p>
+      <p class="nota">
+        <b>Só exporta o que foi decidido.</b> Termo que ninguém tocou fica de fora — o linter
+        não vai reclamar dele. Isso é de propósito: sugestão automática não vira regra.
+      </p>
+    </li>
+
+    <li>
+      <h4>Publique o arquivo numa URL</h4>
+      <p>
+        O plugin busca o glossário por HTTP, então ele precisa estar num endereço público.
+        O caminho mais curto é um <strong>gist</strong>:
+      </p>
+      <p>
+        <a href="https://gist.github.com">gist.github.com</a> → cole o conteúdo do JSON →
+        nome do arquivo <code>glossario.json</code> → <strong>Create public gist</strong> →
+        botão <strong>Raw</strong> → copie a URL.
+      </p>
+      <p class="nota">
+        <b>Tire o hash da URL.</b> O botão Raw devolve um link com um código longo no meio, que
+        aponta para <em>aquela</em> versão e nunca muda. Apagando esse trecho, a URL passa a
+        servir sempre a versão mais recente — e atualizar o glossário deixa de exigir mexer no plugin.
+      </p>
+      <pre><code>fixa  …/<span style="opacity:.55">a1b2c3d4e5f6…/</span>glossario.json
+viva  …/glossario.json</code></pre>
+    </li>
+
+    <li>
+      <h4>Coloque a URL dentro do plugin</h4>
+      <p>
+        Abra <code>pesquisa/linter-figma/code.js</code> e preencha a linha do topo:
+      </p>
+      <pre><code>const DEFAULT_URL = 'https://gist.githubusercontent.com/…/glossario.json';</code></pre>
+      <p>
+        Assim o plugin já abre apontando para o lugar certo, e ninguém do time precisa colar
+        nada. Se o endereço não for <code>gist.githubusercontent.com</code>,
+        <code>raw.githubusercontent.com</code> ou um <code>github.io</code>, acrescente o domínio
+        em <code>manifest.json</code> → <code>networkAccess.allowedDomains</code>.
+      </p>
+    </li>
+
+    <li>
+      <h4>Entregue a pasta ao time</h4>
+      <p>
+        Zipe <code>pesquisa/linter-figma/</code> — os quatro arquivos — e mande no canal do time.
+        Cada pessoa instala uma vez (Parte 3).
+      </p>
+      <p class="nota">
+        Distribuir sem cada um instalar à mão exige publicar como plugin privado da organização,
+        o que só existe nos planos <b>Organization</b> e <b>Enterprise</b> do Figma.
+      </p>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="marca">Parte 2</span> O time tria</h2>
+  <p class="sub">Só navegador. Nada para instalar.</p>
+
+  <ol class="passos">
+    <li>
+      <h4>Abrir o link</h4>
+      <p>Abre em qualquer navegador, inclusive no celular.</p>
+    </li>
+    <li>
+      <h4>Ler a linha do termo antes de decidir</h4>
+      <p>
+        Cada termo mostra quantas vezes aparece, em quais produtos, e três exemplos reais de
+        tela. A coluna do <strong>portal</strong> é o sinal mais útil: se o marketing usa o
+        termo, o público entende o termo.
+      </p>
+    </li>
+    <li>
+      <h4>Escolher uma das três</h4>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th>Decisão</th><th>Quando</th><th>O linter faz</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pill manter">manter</span></td>
+              <td>É o vocabulário do jogador. Trocar afastaria.</td>
+              <td>Ignora.</td>
+            </tr>
+            <tr>
+              <td><span class="pill evitar">traduzir</span></td>
+              <td>Detalhe de implementação vazando para a interface.</td>
+              <td>Aponta e sugere o substituto.</td>
+            </tr>
+            <tr>
+              <td><span class="pill decidir">decidir</span></td>
+              <td>Comunica, mas é técnico. Precisa de conversa.</td>
+              <td>Aponta com a nota. Nunca corrige.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </li>
+    <li>
+      <h4>Preencher “usar no lugar” em tudo que for <span class="pill evitar">traduzir</span></h4>
+      <p>
+        É esse campo que vira a correção de um clique no Figma. Sem ele, o linter só sinaliza
+        e a pessoa fica sem saber o que escrever.
+      </p>
+    </li>
+    <li>
+      <h4>Usar a aba Inconsistências</h4>
+      <p>
+        Ela mostra os conceitos que já têm mais de um nome no produto, e em quais telas cada
+        nome aparece. É o material mais forte para levar à discussão: não é opinião, é o
+        produto se contradizendo.
+      </p>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="marca">Parte 3</span> Quem desenha instala</h2>
+  <p class="sub">Uma vez por pessoa. Precisa do <strong>Figma Desktop</strong> — plugin em desenvolvimento não roda no navegador.</p>
+
+  <ol class="passos">
+    <li>
+      <h4>Descompactar a pasta em algum lugar estável</h4>
+      <p>Se você apagar a pasta, o plugin some do menu. Não deixe em Downloads.</p>
+    </li>
+    <li>
+      <h4>Importar</h4>
+      <p>
+        Menu <strong>Plugins → Development → Import plugin from manifest…</strong> e aponte
+        para o <code>manifest.json</code>.
+      </p>
+    </li>
+    <li>
+      <h4>Rodar</h4>
+      <p>
+        <strong>Plugins → Development → Linter de Vocabulário</strong>. A URL já vem preenchida.
+      </p>
+      <p>
+        Selecione as camadas que quer conferir — ou não selecione nada, e ele varre a
+        página inteira. Depois, <strong>Verificar</strong>.
+      </p>
+    </li>
+    <li>
+      <h4>Resolver a lista</h4>
+      <p>
+        Cada achado tem <strong>Ir até a camada</strong>, que seleciona e centraliza no canvas.
+        Quando a troca é segura, aparece também <strong>Corrigir para “…”</strong>.
+      </p>
+    </li>
+  </ol>
+
+  <h2 style="margin-top:44px;font-size:1.1875rem">O que ele corrige sozinho</h2>
+  <p class="sub" style="margin-bottom:0">
+    A troca automática só acontece quando o texto inteiro é o termo, com sufixo opcional entre
+    parênteses. No meio de uma frase, trocar uma palavra pode quebrar a concordância — aí ele
+    aponta e deixa a decisão com quem escreve.
+  </p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Texto na camada</th><th>O que acontece</th></tr></thead>
+      <tbody>
+        <tr><td class="t">Latency</td><td class="corrige">corrige → <code>Ping</code></td></tr>
+        <tr><td class="t">Latency (ms)</td><td class="corrige">corrige → <code>Ping (ms)</code></td></tr>
+        <tr><td class="t">LATENCY</td><td class="corrige">corrige → <code>PING</code>, preservando a caixa</td></tr>
+        <tr><td class="t">Latency chart</td><td>só sinaliza</td></tr>
+        <tr><td class="t">Verify the game latency without ExitLag</td><td>só sinaliza</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Diga isto ao time junto com o link</h2>
+  <p class="sub">Duas ressalvas que evitam a ferramenta ser lida como mais do que é.</p>
+
+  <div class="limite">
+    <h4>Texto no Figma quase sempre é mock</h4>
+    <p>
+      O que chega ao usuário é a string no sistema de i18n, não a camada do Figma. O linter
+      pega o desvio cedo, no desenho — mas não impede o termo errado de entrar no produto. A
+      alavanca real está na criação da string. Este plugin é complemento disso, não substituto.
+    </p>
+  </div>
+
+  <div class="limite">
+    <h4>O linter não decide nada</h4>
+    <p>
+      Ele só repete o que o time marcou no Triador. Discordou de um apontamento? A conversa é
+      sobre a decisão no Triador, não sobre o plugin. Mudou a decisão, exporte e republique o
+      glossário: todo mundo passa a ver o novo critério na próxima verificação.
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>Quando der errado</h2>
+  <dl class="probs">
+    <div>
+      <dt>“Não consegui carregar” ao verificar</dt>
+      <dd>
+        A URL não está pública, ou o domínio não está em
+        <code>networkAccess.allowedDomains</code> no <code>manifest.json</code>. Teste a URL
+        numa aba anônima: se você vê o JSON cru, o plugin também vê.
+      </dd>
+    </div>
+    <div>
+      <dt>Atualizei o glossário e o plugin mostra o antigo</dt>
+      <dd>
+        Duas causas. A URL pode ter o hash de versão no meio — tire. Ou o cache do GitHub
+        ainda não virou: costuma levar alguns minutos.
+      </dd>
+    </div>
+    <div>
+      <dt>O plugin sumiu do menu</dt>
+      <dd>A pasta foi movida ou apagada. Importe de novo pelo <code>manifest.json</code>.</dd>
+    </div>
+    <div>
+      <dt>Nenhum botão “Corrigir” aparece</dt>
+      <dd>
+        Os termos <span class="pill evitar">traduzir</span> estão sem o campo “usar no lugar”
+        preenchido no Triador, ou os textos estão todos em frase — e em frase ele nunca corrige sozinho.
+      </dd>
+    </div>
+    <div>
+      <dt>O Triador diz “local — decisões não são compartilhadas”</dt>
+      <dd>
+        A sincronização não subiu nessa sessão. O que a pessoa marcar não vai chegar ao resto
+        do time. Recarregue a página antes de triar muita coisa.
+      </dd>
+    </div>
+  </dl>
+</section>
+
+<footer>
+  <span>pesquisa/triador · pesquisa/linter-figma</span>
+  <span>36 termos · 4.716 strings · registry de 09/09</span>
+</footer>
+
+</div>
