@@ -5,15 +5,34 @@ Ferramenta para classificar os termos técnicos do produto em **manter**, **trad
 
 **App:** https://claude.ai/code/artifact/c06dc16d-431b-4270-96e1-c730e1e38d0d
 
-## Como regerar os dados
+## Carregando um registry
+
+O caminho normal é pela própria ferramenta: aba **Fonte** → arraste o `.json`. O arquivo é
+lido no navegador, a extração roda ali, e só o resultado (dezenas de termos, não as milhares
+de strings) é sincronizado para o time.
+
+Formatos aceitos:
+
+| Formato | Exemplo |
+|---|---|
+| Registry por produto | `{"product":{"desktop":{"Tela.chave":{"translations":{"en-US":"Texto"}}}}}` |
+| Objeto plano | `{"Tela.chave":"Texto"}` |
+| Lista | `[{"key":"Tela.chave","text":"Texto","product":"desktop"}]` |
+| Aninhado | Qualquer profundidade — a chave vira o caminho até o texto |
+
+## Regerando os dados embutidos
+
+O app abre com o registry da ExitLag já carregado. Para trocar esse padrão:
 
 ```bash
 python3 extrair.py caminho/para/registry.json
 ```
 
-Gera `terms.json` e `inconsistencies.json`. Para republicar o app, injete os dois em
-`triador.template.html` no lugar do marcador `__DATA__`, como um objeto
-`{"terms": [...], "inconsistencies": [...]}`.
+Gera `terms.json` e `inconsistencies.json`. Injete os dois em `triador.template.html` no
+lugar do marcador `__DATA__`, como `{"terms": [...], "inconsistencies": [...]}`.
+
+O `extrair.py` e a extração em JavaScript dentro do app implementam a mesma lógica —
+verificado contra o registry real: 12.440 strings, 36 termos, 5 grupos nos dois.
 
 ## A heurística de pré-classificação
 

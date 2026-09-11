@@ -134,6 +134,34 @@
   .dot{width:6px;height:6px;border-radius:99px;background:var(--ink-3);flex:none}
   .dot.on{background:var(--keep)} .dot.off{background:var(--decide)}
   .hidden{display:none!important}
+
+  /* ---- fonte de dados ---- */
+  .src{display:flex;flex-direction:column;gap:16px}
+  .meta{background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:14px;
+    display:flex;flex-wrap:wrap;gap:6px 26px;font-family:var(--mono);font-size:.78rem;color:var(--ink-2)}
+  .meta b{color:var(--ink);font-weight:600}
+  .drop{border:1.5px dashed var(--line);border-radius:9px;padding:26px 20px;text-align:center;
+    background:var(--surface);display:flex;flex-direction:column;align-items:center;gap:8px}
+  .drop.over{border-color:var(--accent);background:var(--accent-bg)}
+  .dropTitle{margin:0;font-size:1.02rem;font-weight:600;letter-spacing:-.012em}
+  .dropSub{margin:0;font-size:.88rem;color:var(--ink-2)}
+  .dropSub code{font-family:var(--mono);font-size:.85em}
+  .dropNote{margin:0;font-size:.76rem;color:var(--ink-3);max-width:52ch;line-height:1.45}
+  .res{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:7px;padding:14px;display:flex;flex-direction:column;gap:9px}
+  .res.bad{border-left-color:var(--decide)}
+  .res h4{margin:0;font-size:.95rem;font-weight:600}
+  .res p{margin:0;font-size:.86rem;color:var(--ink-2)}
+  .res .stats{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);
+    display:flex;flex-wrap:wrap;gap:4px 20px;font-variant-numeric:tabular-nums}
+  .res .row2{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+  .fmt{background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:12px 14px}
+  .fmt summary{cursor:pointer;font-size:.86rem;font-weight:600;color:var(--ink-2)}
+  .fmt summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+  .fmtBody{display:flex;flex-direction:column;gap:7px;padding-top:11px}
+  .fmtBody p{margin:0;font-size:.83rem;color:var(--ink-2)}
+  .fmtBody pre{margin:0;font-family:var(--mono);font-size:.73rem;background:var(--surface-2);
+    border:1px solid var(--line-soft);border-radius:5px;padding:8px 10px;overflow-x:auto;color:var(--ink)}
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -153,6 +181,7 @@
     <button class="tab" role="tab" aria-selected="true" data-tab="triagem" id="tab-triagem">Triagem</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="inconsist" id="tab-inconsist">Inconsistências</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="pauta" id="tab-pauta">Pauta</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="fonte" id="tab-fonte">Fonte</button>
   </div>
 
   <section id="pane-triagem">
@@ -169,11 +198,164 @@
   <section id="pane-pauta" class="hidden">
     <div class="out" id="pauta"></div>
   </section>
+
+  <section id="pane-fonte" class="hidden">
+    <div class="src">
+      <div class="meta" id="srcMeta"></div>
+
+      <div class="drop" id="drop">
+        <input type="file" id="file" accept=".json,application/json" hidden>
+        <p class="dropTitle">Carregar um registry de strings</p>
+        <p class="dropSub">Arraste o arquivo <code>.json</code> aqui, ou</p>
+        <button class="btn" id="pick" type="button">Escolher arquivo</button>
+        <p class="dropNote" id="dropNote">O arquivo é lido no seu navegador. Nada é enviado — só o
+          resultado da extração fica salvo para o time.</p>
+      </div>
+
+      <div id="srcResult"></div>
+
+      <details class="fmt">
+        <summary>Formatos aceitos</summary>
+        <div class="fmtBody">
+          <p><b>Registry por produto</b> — o formato da ExitLag:</p>
+          <pre>{"product":{"desktop":{"Tela.chave":{"translations":{"en-US":"Texto"}}}}}</pre>
+          <p><b>Objeto plano</b> — chave e texto:</p>
+          <pre>{"Tela.chave":"Texto","Outra.chave":"Outro texto"}</pre>
+          <p><b>Lista</b> — um objeto por string:</p>
+          <pre>[{"key":"Tela.chave","text":"Texto","product":"desktop"}]</pre>
+          <p class="dropNote">Objetos aninhados em qualquer profundidade também funcionam: a chave
+            vira o caminho até o texto.</p>
+        </div>
+      </details>
+    </div>
+  </section>
 </div>
 
 <script>
-const DATA = __DATA__;
+let DATA = __DATA__;
 const DECS = ["manter","traduzir","decidir","neutro"];
+
+/* ---------- extração de um registry qualquer ---------- */
+const CURATED = {
+  ping:"n", lag:"n", fps:"n", ms:"n", spikes:"n",
+  dns:"i", tcp:"i", udp:"i", ndis:"i", wfp:"i", proxy:"i", driver:"i", drivers:"i", socket:"i",
+  multipath:"i", protocol:"i", ip:"i", tunnel:"i", timeout:"i", mtr:"i", rtt:"i", ipv6:"i", ipv4:"i",
+  firewall:"i", gateway:"i", handshake:"i", nameserver:"i", packets:"i",
+  latency:"g", jitter:"g", packet:"g", route:"g", routes:"g", routing:"g", bandwidth:"g",
+  hop:"g", hops:"g", shaper:"g", throughput:"g", vpn:"g", ram:"g"
+};
+const GROUPS = [
+  ["Medida de atraso", [["ping",/\bping\b/i], ["latency",/\blatency\b/i]]],
+  ["Caminho da conexão", [["route",/\broutes?\b/i], ["routing",/\brouting\b/i], ["path",/\bpaths?\b/i]]],
+  ["Perda de dados", [["packet loss",/packet loss/i], ["lost packets",/lost packets|packets lost/i]]],
+  ["Atraso percebido", [["lag",/\blag\b/i], ["delay",/\bdelay\b/i]]],
+  ["Instabilidade", [["jitter",/\bjitter\b/i], ["instability",/\binstability\b/i], ["spikes",/\bspikes?\b/i]]]
+];
+const PREFERRED_LANG = ["en-US","en","en-GB","pt-BR","pt"];
+
+// Achata qualquer JSON em [{key, text, product}]
+function flatten(json){
+  const out = [];
+  const pushStr = (key, text, product) => {
+    if(typeof text === "string" && text.trim()) out.push({key, text, product: product || "—"});
+  };
+  const pickTranslation = obj => {
+    for(const l of PREFERRED_LANG) if(typeof obj[l] === "string") return obj[l];
+    const first = Object.values(obj).find(v => typeof v === "string");
+    return first ?? null;
+  };
+  const walk = (node, path, product) => {
+    if(node == null) return;
+    if(typeof node === "string"){ pushStr(path, node, product); return; }
+    if(Array.isArray(node)){
+      node.forEach((v, i) => {
+        if(v && typeof v === "object" && !Array.isArray(v) && (v.key || v.id)){
+          const k = v.key || v.id;
+          const t = v.text ?? v.value ?? v.string ?? v.message ??
+                    (v.translations && typeof v.translations === "object" ? pickTranslation(v.translations) : null);
+          if(typeof t === "string") pushStr(k, t, v.product || v.namespace || product);
+          else walk(v, k, v.product || product);
+        } else walk(v, path ? path + "[" + i + "]" : String(i), product);
+      });
+      return;
+    }
+    if(typeof node !== "object") return;
+    if(node.translations && typeof node.translations === "object"){
+      const t = pickTranslation(node.translations);
+      if(typeof t === "string"){ pushStr(path, t, product); return; }
+    }
+    for(const [k, v] of Object.entries(node)){
+      if(k === "translations") continue;
+      walk(v, path ? path + "." + k : k, product);
+    }
+  };
+
+  if(json && typeof json === "object" && json.product && typeof json.product === "object"){
+    for(const [prod, entries] of Object.entries(json.product)) walk(entries, "", prod);
+  } else {
+    walk(json, "", null);
+  }
+  return out;
+}
+
+function extractFrom(strings){
+  const products = [...new Set(strings.map(s => s.product))].filter(p => p !== "—");
+  const portalish = products.find(p => /portal|web|site|market/i.test(p));
+  const terms = [];
+  for(const [term, kind] of Object.entries(CURATED)){
+    const re = new RegExp("\\b" + term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + "s?\\b", "i");
+    const byProd = {}; const samples = []; let total = 0;
+    for(const s of strings){
+      if(!re.test(s.text)) continue;
+      total++; byProd[s.product] = (byProd[s.product] || 0) + 1;
+      if(samples.length < 3 && s.text.length > 10 && s.text.length < 150)
+        samples.push({key: s.key, prod: s.product, text: s.text.replace(/\s+/g," ").slice(0,150)});
+    }
+    if(!total) continue;
+    const portal = portalish ? (byProd[portalish] || 0) : 0;
+    const ratio = portal / total;
+    let pre, why;
+    if(kind === "n"){ pre = "manter"; why = "vocabulário nativo de gaming"; }
+    else if(kind === "i"){
+      pre = "traduzir";
+      why = (portalish && ratio < .05) ? "implementação: marketing não usa" : "termo de implementação";
+    } else {
+      pre = "decidir";
+      why = !portalish ? "termo técnico de domínio adjacente"
+          : ratio >= .30 ? `marketing usa (${Math.round(ratio*100)}% no portal): comunica, mas é técnico`
+          : `técnico e pouco usado no marketing (${Math.round(ratio*100)}% no portal)`;
+    }
+    const ordered = products.length ? products : Object.keys(byProd);
+    terms.push({
+      term, total, pre, why, samples,
+      desktop: byProd[ordered[0]] || 0, mobile: byProd[ordered[1]] || 0, portal: byProd[ordered[2]] || 0,
+      by_product: byProd, portal_ratio: Math.round(ratio*100)/100, key_count: total
+    });
+  }
+  terms.sort((a,b) => b.total - a.total);
+
+  const inconsistencies = [];
+  for(const [group, variants] of GROUPS){
+    const present = [];
+    for(const [vname, re] of variants){
+      const byProd = {}; const labels = []; let count = 0;
+      for(const s of strings){
+        if(!re.test(s.text)) continue;
+        count++; byProd[s.product] = (byProd[s.product] || 0) + 1;
+        if(s.text.trim().length <= 28 && labels.length < 4)
+          labels.push({key: s.key, prod: s.product, text: s.text.trim()});
+      }
+      if(count) present.push({term: vname, count, by_prod: byProd, labels});
+    }
+    if(present.length > 1){
+      present.sort((a,b) => b.count - a.count);
+      inconsistencies.push({group, variants: present});
+    }
+  }
+  return {terms, inconsistencies,
+    meta: {strings: strings.length, products, loadedAt: new Date().toISOString()}};
+}
+
 const LBL = {manter:"manter",traduzir:"traduzir",decidir:"decidir",neutro:"neutro"};
 let state = {};   // term -> {d, note}
 let db = null, coll = null;
@@ -335,7 +517,96 @@ document.querySelectorAll(".tab").forEach(t => {
   };
 });
 
-seedFromPre(); buildFilters(); renderRows(); renderGroups();
+/* ---------- fonte de dados ---------- */
+function renderMeta(){
+  const m = $("#srcMeta"); m.textContent = "";
+  const meta = DATA.meta;
+  const add = (k, v) => { const s = el("span"); s.append(k + " ", el("b", null, String(v))); m.appendChild(s); };
+  add("origem:", meta ? "arquivo carregado" : "registry ExitLag 2026-09-09");
+  add("strings:", meta ? meta.strings.toLocaleString("pt-BR") : "12.440");
+  add("termos:", DATA.terms.length);
+  add("grupos:", DATA.inconsistencies.length);
+  if(meta?.products?.length) add("produtos:", meta.products.join(", "));
+}
+
+function showResult(ok, title, body, extracted){
+  const box = $("#srcResult"); box.textContent = "";
+  const r = el("div", "res" + (ok ? "" : " bad"));
+  r.appendChild(el("h4", null, title));
+  if(body) r.appendChild(el("p", null, body));
+  if(ok && extracted){
+    const st = el("div","stats");
+    st.appendChild(el("span", null, `${extracted.meta.strings.toLocaleString("pt-BR")} strings`));
+    st.appendChild(el("span", null, `${extracted.terms.length} termos técnicos`));
+    st.appendChild(el("span", null, `${extracted.inconsistencies.length} grupos inconsistentes`));
+    if(extracted.meta.products.length) st.appendChild(el("span", null, extracted.meta.products.join(" · ")));
+    r.appendChild(st);
+    const row = el("div","row2");
+    const use = el("button","btn","Usar estes dados");
+    use.onclick = () => applyDataset(extracted, true);
+    const no = el("button","btn ghost","Descartar");
+    no.onclick = () => { $("#srcResult").textContent = ""; };
+    row.append(use, no); r.appendChild(row);
+    r.appendChild(el("p","dropNote","Decisões já tomadas são mantidas para os termos que continuarem existindo."));
+  }
+  box.appendChild(r);
+}
+
+async function applyDataset(ds, persist){
+  DATA = ds;
+  Object.keys(state).forEach(k => { if(state[k]?.seeded) delete state[k]; });
+  seedFromPre(); renderRows(); renderGroups(); renderMeta();
+  $("#srcResult").textContent = "";
+  showResult(true, "Dados aplicados", `${ds.terms.length} termos prontos para triagem.`, null);
+  if(persist && db){
+    try { await db.doc("dataset/current").set(ds); }
+    catch(e){ showResult(false, "Aplicado só para você", "O conjunto é grande demais para sincronizar. Quem abrir a página verá os dados anteriores."); }
+  }
+}
+
+function handleFile(f){
+  if(!f) return;
+  if(f.size > 60 * 1024 * 1024){ showResult(false, "Arquivo grande demais", "O limite é 60 MB."); return; }
+  showResult(true, "Lendo " + f.name + "…", `${(f.size/1048576).toFixed(1)} MB`, null);
+  const fr = new FileReader();
+  fr.onerror = () => showResult(false, "Não consegui ler o arquivo", "Tente novamente ou escolha outro.");
+  fr.onload = () => {
+    let json;
+    try { json = JSON.parse(fr.result); }
+    catch(e){ showResult(false, "JSON inválido", "O arquivo não é um JSON válido: " + e.message); return; }
+    let strings;
+    try { strings = flatten(json); }
+    catch(e){ showResult(false, "Formato não reconhecido", "Veja os formatos aceitos abaixo."); return; }
+    if(!strings.length){
+      showResult(false, "Nenhuma string encontrada", "O arquivo foi lido, mas não achei textos nele. Confira os formatos aceitos abaixo.");
+      return;
+    }
+    const ds = extractFrom(strings);
+    if(!ds.terms.length){
+      showResult(false, `${strings.length} strings lidas, nenhum termo técnico`,
+        "As strings foram encontradas, mas nenhuma contém os termos que a ferramenta procura. Se o produto usa outro vocabulário, a lista de termos precisa ser ajustada no código.");
+      return;
+    }
+    showResult(true, "Arquivo lido", `${f.name} — confira antes de aplicar.`, ds);
+  };
+  fr.readAsText(f);
+}
+
+(function wireUpload(){
+  const drop = $("#drop"), file = $("#file");
+  $("#pick").onclick = () => file.click();
+  file.onchange = () => handleFile(file.files[0]);
+  ["dragenter","dragover"].forEach(ev => drop.addEventListener(ev, e => {
+    e.preventDefault(); drop.classList.add("over");
+  }));
+  ["dragleave","drop"].forEach(ev => drop.addEventListener(ev, e => {
+    e.preventDefault(); if(ev === "dragleave" && drop.contains(e.relatedTarget)) return;
+    drop.classList.remove("over");
+  }));
+  drop.addEventListener("drop", e => handleFile(e.dataTransfer?.files?.[0]));
+})();
+
+seedFromPre(); buildFilters(); renderRows(); renderGroups(); renderMeta();
 
 (async () => {
   db = await (window.claude?.use?.("db") ?? Promise.resolve(null));
@@ -347,6 +618,15 @@ seedFromPre(); buildFilters(); renderRows(); renderGroups();
   coll = db.collection("decisions");
   $("#dot").className = "dot on";
   $("#syncTxt").textContent = "compartilhado";
+  try {
+    const saved = await db.doc("dataset/current").get();
+    const ds = saved && (saved.data ? saved.data() : saved);
+    if(ds && Array.isArray(ds.terms) && ds.terms.length){
+      DATA = {terms: ds.terms, inconsistencies: ds.inconsistencies || [], meta: ds.meta};
+      Object.keys(state).forEach(k => { if(state[k]?.seeded) delete state[k]; });
+      seedFromPre(); renderGroups(); renderMeta();
+    }
+  } catch(e){}
   try {
     coll.onSnapshot(docs => {
       (docs || []).forEach(doc => {
