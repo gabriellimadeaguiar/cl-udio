@@ -7,7 +7,7 @@ Ferramenta para classificar os termos técnicos do produto em **manter**, **trad
 
 ## Carregando um registry
 
-O caminho normal é pela própria ferramenta: aba **Fonte** → arraste o `.json`. O arquivo é
+O caminho normal é pela própria ferramenta: botão **Importar JSON**, no topo à direita → arraste o `.json`. O arquivo é
 lido no navegador, a extração roda ali, e só o resultado (dezenas de termos, não as milhares
 de strings) é sincronizado para o time.
 

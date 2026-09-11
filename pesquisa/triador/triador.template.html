@@ -36,6 +36,10 @@
   .wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
 
   header{padding-block:32px 0;display:flex;flex-direction:column;gap:14px}
+  .hrow{display:flex;gap:18px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+  .htext{display:flex;flex-direction:column;gap:10px;min-width:min(100%,320px);flex:1}
+  .btn.import{flex:none;margin-top:4px}
+  @media (max-width:560px){.btn.import{width:100%}}
   h1{font-size:clamp(1.6rem,3.4vw,2.15rem);font-weight:700;letter-spacing:-.028em;margin:0;text-wrap:balance}
   .lede{color:var(--ink-2);margin:0;max-width:64ch}
   .lede b{color:var(--ink);font-weight:600}
@@ -144,8 +148,19 @@
   .dot.on{background:var(--keep)} .dot.off{background:var(--decide)}
   .hidden{display:none!important}
 
-  /* ---- fonte de dados ---- */
-  .src{display:flex;flex-direction:column;gap:16px}
+  /* ---- importar JSON ---- */
+  dialog{border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);
+    padding:0;max-width:min(680px,calc(100vw - 32px));width:100%;max-height:calc(100vh - 64px);
+    overflow:auto;box-shadow:0 18px 50px rgba(0,0,0,.22)}
+  dialog::backdrop{background:rgba(8,14,18,.55)}
+  .dlgHead{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:16px 18px 0}
+  .dlgHead h2{margin:0;font-size:1.15rem;font-weight:700;letter-spacing:-.018em}
+  .x{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);
+    border-radius:6px;width:30px;height:30px;cursor:pointer;font-size:.85rem;line-height:1;flex:none}
+  .x:hover{color:var(--ink);border-color:var(--ink-3)}
+  .x:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .src{display:flex;flex-direction:column;gap:16px;padding:16px 18px 18px}
   .meta{background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:14px;
     display:flex;flex-wrap:wrap;gap:6px 26px;font-family:var(--mono);font-size:.78rem;color:var(--ink-2)}
   .meta b{color:var(--ink);font-weight:600}
@@ -176,9 +191,14 @@
 
 <div class="wrap">
   <header>
-    <h1>Triador de Vocabulário</h1>
-    <p class="lede">36 termos técnicos extraídos das <b>12.440 strings</b> do registry da ExitLag.
-      Classifique cada um. O que ficar em <b>decidir</b> vira a pauta da discussão do Design System.</p>
+    <div class="hrow">
+      <div class="htext">
+        <h1>Triador de Vocabulário</h1>
+        <p class="lede">Termos técnicos extraídos das strings do produto. Classifique cada um.
+          O que ficar em <b>decidir</b> vira a pauta da discussão do Design System.</p>
+      </div>
+      <button class="btn import" id="openImport" type="button">Importar JSON</button>
+    </div>
     <div class="bar">
       <div class="prog" id="prog" role="img" aria-label="Progresso da triagem"></div>
       <span class="count" id="count">—</span>
@@ -190,7 +210,6 @@
     <button class="tab" role="tab" aria-selected="true" data-tab="triagem" id="tab-triagem">Triagem</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="inconsist" id="tab-inconsist">Inconsistências</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="pauta" id="tab-pauta">Pauta</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="fonte" id="tab-fonte">Fonte</button>
   </div>
 
   <section id="pane-triagem">
@@ -208,7 +227,11 @@
     <div class="out" id="pauta"></div>
   </section>
 
-  <section id="pane-fonte" class="hidden">
+  <dialog id="importDlg">
+    <div class="dlgHead">
+      <h2>Importar JSON</h2>
+      <button class="x" id="closeImport" type="button" aria-label="Fechar">✕</button>
+    </div>
     <div class="src">
       <div class="meta" id="srcMeta"></div>
 
@@ -237,7 +260,7 @@
         </div>
       </details>
     </div>
-  </section>
+  </dialog>
 </div>
 
 <script>
@@ -661,7 +684,10 @@ function handleFile(f){
 }
 
 (function wireUpload(){
-  const drop = $("#drop"), file = $("#file");
+  const drop = $("#drop"), file = $("#file"), dlg = $("#importDlg");
+  $("#openImport").onclick = () => { renderMeta(); dlg.showModal(); };
+  $("#closeImport").onclick = () => dlg.close();
+  dlg.addEventListener("click", e => { if(e.target === dlg) dlg.close(); });
   $("#pick").onclick = () => file.click();
   file.onchange = () => handleFile(file.files[0]);
   ["dragenter","dragover"].forEach(ev => drop.addEventListener(ev, e => {
