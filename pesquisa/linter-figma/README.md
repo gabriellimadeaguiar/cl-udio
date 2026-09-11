@@ -13,8 +13,13 @@ Precisa do **Figma Desktop** — plugins locais não funcionam no navegador.
 3. Aponte para o `manifest.json`
 4. O plugin aparece em **Plugins → Development → Linter de Vocabulário**
 
-Para distribuir ao time sem cada um importar à mão, é preciso publicar como plugin privado
-da organização — exige plano Organization ou Enterprise.
+Isso é só para desenvolver. Para o time, publique como **plugin privado da organização**:
+na lista de Plugins → Development, **Publish**, e escolha a organização em vez da Community.
+Plugin privado não passa pela revisão do Figma. Ao publicar, o Figma grava um `id` no
+`manifest.json` — commite o arquivo depois, é esse id que identifica as versões seguintes.
+
+`icone-128.png` é o ícone do formulário de publicação (fonte em `icone.svg`). Troque pelo do
+Design System quando houver um.
 
 **Antes de passar a pasta adiante**, preencha `DEFAULT_URL` no topo do `code.js` com a URL
 do glossário do time. Aí o plugin já abre apontando para o lugar certo e ninguém precisa

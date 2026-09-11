@@ -316,14 +316,20 @@ viva  …/glossario.json</code></pre>
     </li>
 
     <li>
-      <h4>Entregue a pasta ao time</h4>
+      <h4>Publique como plugin privado da organização</h4>
       <p>
-        Zipe <code>pesquisa/linter-figma/</code> — os quatro arquivos — e mande no canal do time.
-        Cada pessoa instala uma vez (Parte 3).
+        Importe a pasta uma vez no seu Figma Desktop
+        (<code>Cmd + /</code> → <em>Import plugin from manifest…</em>), e então, na lista de
+        <strong>Plugins → Development</strong>, use <strong>Publish</strong> no plugin.
+      </p>
+      <p>
+        No formulário, escolha publicar <strong>para a organização</strong>, não para a
+        Community. Plugin privado não passa pela revisão do Figma — sai no ar na hora.
       </p>
       <p class="nota">
-        Distribuir sem cada um instalar à mão exige publicar como plugin privado da organização,
-        o que só existe nos planos <b>Organization</b> e <b>Enterprise</b> do Figma.
+        <b>O manifesto muda.</b> Ao publicar, o Figma grava um <code>id</code> dentro do seu
+        <code>manifest.json</code>. É esse id que identifica o plugin nas próximas versões —
+        commite o arquivo depois de publicar.
       </p>
     </li>
   </ol>
@@ -392,29 +398,25 @@ viva  …/glossario.json</code></pre>
 </section>
 
 <section>
-  <h2><span class="marca">Parte 3</span> Quem desenha instala</h2>
-  <p class="sub">Uma vez por pessoa. Precisa do <strong>Figma Desktop</strong> — plugin em desenvolvimento não roda no navegador.</p>
+  <h2><span class="marca">Parte 3</span> Quem desenha usa</h2>
+  <p class="sub">
+    Nada para baixar. Como o plugin é publicado na organização, ele já está disponível para
+    todo mundo — funciona no navegador e no desktop.
+  </p>
 
   <ol class="passos">
     <li>
-      <h4>Descompactar a pasta em algum lugar estável</h4>
-      <p>Se você apagar a pasta, o plugin some do menu. Não deixe em Downloads.</p>
-    </li>
-    <li>
-      <h4>Importar</h4>
+      <h4>Achar o plugin</h4>
       <p>
-        Menu <strong>Plugins → Development → Import plugin from manifest…</strong> e aponte
-        para o <code>manifest.json</code>.
+        <code>Cmd + /</code> (ou <code>Ctrl + /</code>) e digitar <strong>Linter</strong>. Ele
+        aparece entre os recursos da organização.
       </p>
     </li>
     <li>
       <h4>Rodar</h4>
       <p>
-        <strong>Plugins → Development → Linter de Vocabulário</strong>. A URL já vem preenchida.
-      </p>
-      <p>
-        Selecione as camadas que quer conferir — ou não selecione nada, e ele varre a
-        página inteira. Depois, <strong>Verificar</strong>.
+        A URL do glossário já vem preenchida. Selecione as camadas que quer conferir — ou não
+        selecione nada, e ele varre a página inteira. Depois, <strong>Verificar</strong>.
       </p>
     </li>
     <li>
@@ -488,8 +490,19 @@ viva  …/glossario.json</code></pre>
       </dd>
     </div>
     <div>
-      <dt>O plugin sumiu do menu</dt>
-      <dd>A pasta foi movida ou apagada. Importe de novo pelo <code>manifest.json</code>.</dd>
+      <dt>Mudei o código e o time continua na versão antiga</dt>
+      <dd>
+        Alterar os arquivos na sua máquina mexe só na sua cópia de desenvolvimento. Para o time
+        ver, é preciso publicar de novo pelo <strong>Publish</strong>.
+      </dd>
+    </div>
+    <div>
+      <dt>O plugin sumiu do meu menu Development</dt>
+      <dd>
+        A pasta local foi movida ou apagada — o Figma guarda o caminho, não os arquivos.
+        Importe de novo pelo <code>manifest.json</code>. Isso vale só para a sua cópia de
+        desenvolvimento; a versão publicada na organização não depende dessa pasta.
+      </dd>
     </div>
     <div>
       <dt>Nenhum botão “Corrigir” aparece</dt>
