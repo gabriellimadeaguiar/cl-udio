@@ -511,9 +511,12 @@ function buildFilters(){
 
 document.querySelectorAll(".tab").forEach(t => {
   t.onclick = () => {
-    document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", String(x===t)));
-    ["triagem","inconsist","pauta"].forEach(p =>
-      $("#pane-"+p).classList.toggle("hidden", p !== t.dataset.tab));
+    const tabs = [...document.querySelectorAll(".tab")];
+    tabs.forEach(x => x.setAttribute("aria-selected", String(x === t)));
+    tabs.forEach(x => {
+      const pane = $("#pane-" + x.dataset.tab);
+      if(pane) pane.classList.toggle("hidden", x !== t);
+    });
   };
 });
 
