@@ -101,6 +101,22 @@
     letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);background:var(--surface-2);
     border:1px solid var(--line);border-radius:3px;padding:2px 5px;flex:none}
   .nomeasure{font-size:.76rem;color:var(--ink-3);line-height:1.35;font-style:italic}
+  .rmbox{margin-top:16px}
+  .rmbox:empty{display:none}
+  .rmhead{appearance:none;font-family:var(--sans);font-size:.78rem;color:var(--ink-3);
+    background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;
+    text-decoration-style:dotted;text-underline-offset:3px}
+  .rmhead:hover{color:var(--ink-2)}
+  .rmhead:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+  .rmlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .rmitem{display:flex;align-items:center;gap:8px;background:var(--surface);
+    border:1px solid var(--line);border-radius:6px;padding:5px 6px 5px 10px}
+  .rmitem .t{font-family:var(--mono);font-size:.8rem;color:var(--ink-2)}
+  .rmitem button{appearance:none;font-family:var(--sans);font-size:.72rem;padding:3px 8px;
+    border-radius:4px;border:1px solid var(--line);background:var(--bg);color:var(--accent);cursor:pointer}
+  .rmitem button:hover{border-color:var(--accent)}
+  .rmitem button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
   .rm{appearance:none;align-self:flex-start;font-family:var(--sans);font-size:.78rem;
     padding:6px 11px;border-radius:5px;border:1px solid var(--line);background:none;
     color:var(--ink-3);cursor:pointer;margin-top:4px}
@@ -343,6 +359,7 @@
     </div>
     <p class="addmsg" id="addMsg" role="status"></p>
     <div class="rows" id="rows" style="margin-top:14px"></div>
+    <div class="rmbox" id="removidos"></div>
   </section>
 
   <section id="pane-quadro" class="hidden">
@@ -565,7 +582,7 @@ function extractFrom(raw){
 
 const LBL = {manter:"manter",traduzir:"traduzir",decidir:"decidir"};
 let state = {};   // term -> {d, note, prefer}
-let db = null, coll = null, collM = null;
+let db = null, coll = null, collM = null, collR = null;
 
 // Strings do registry carregado nesta sessão. Vazio até alguém importar um
 // JSON: por isso um termo acrescentado à mão pode nascer sem medição.
@@ -607,6 +624,11 @@ function shapeManual(term){
       : "não aparece nas strings do registry"};
 }
 
+// Termos tirados da triagem. Um termo do registry volta a cada carregamento,
+// então remover é registrar uma supressão — e ela é sempre reversível.
+let REMOVIDOS = new Set();
+const ativos = () => DATA.terms.filter(t => !REMOVIDOS.has(t.term));
+
 function mergeManuais(){
   const have = new Set(DATA.terms.map(t => t.term.toLowerCase()));
   MANUAIS.forEach(m => { if(!have.has(m.term.toLowerCase())){ DATA.terms.push(m); have.add(m.term.toLowerCase()); } });
@@ -624,7 +646,7 @@ function bar(t){
 function renderRows(){
   const box = $("#rows"); box.textContent = "";
   const active = [...document.querySelectorAll(".chip[aria-pressed='true']")].map(c=>c.dataset.f);
-  DATA.terms.forEach(t => {
+  ativos().forEach(t => {
     const st = state[t.term] || {d:null,note:""};
     if(active.length && !active.includes(st.d)) return;
     const row = el("div","row" + (t.manual ? " manual" : "")); row.dataset.dec = st.d || "";
@@ -678,14 +700,10 @@ function renderRows(){
     ta.onchange = () => setNote(t.term, ta.value);
     det.appendChild(ta);
 
-    if(t.manual){
-      const rm = el("button","rm","Remover termo"); rm.type = "button";
-      rm.onclick = () => {
-        if(confirm(`Remover “${t.term}” da triagem? A decisão registrada nele se perde.`))
-          removeTerm(t.term);
-      };
-      det.appendChild(rm);
-    }
+    const rm = el("button","rm","Remover da triagem"); rm.type = "button";
+    rm.title = "Tira o termo da lista, do quadro e do glossário. Dá para restaurar depois.";
+    rm.onclick = () => removeTerm(t.term);
+    det.appendChild(rm);
     row.appendChild(det);
 
     tgl.onclick = () => {
@@ -695,7 +713,7 @@ function renderRows(){
     };
     box.appendChild(row);
   });
-  renderProg(); renderPauta(); renderBoard();
+  renderProg(); renderPauta(); renderBoard(); renderRemovidos();
 }
 
 /* ---------- quadro ---------- */
@@ -739,7 +757,7 @@ function renderBoard(){
   box.textContent = "";
   COLS.forEach(col => {
     const sec = el("div","col"); sec.dataset.d = col.d || "";
-    const itens = DATA.terms.filter(t => (state[t.term]?.d || null) === col.d);
+    const itens = ativos().filter(t => (state[t.term]?.d || null) === col.d);
 
     const head = el("div","colhead");
     head.appendChild(el("h3", null, col.titulo));
@@ -813,8 +831,9 @@ function renderBoard(){
 function renderProg(){
   const p = $("#prog"); p.textContent = "";
   const c = {manter:0,traduzir:0,decidir:0,none:0};
-  DATA.terms.forEach(t => { const d = state[t.term]?.d; (d && c[d] !== undefined) ? c[d]++ : c.none++; });
-  const tot = DATA.terms.length;
+  const vivos = ativos();
+  vivos.forEach(t => { const d = state[t.term]?.d; (d && c[d] !== undefined) ? c[d]++ : c.none++; });
+  const tot = vivos.length;
   [["k",c.manter],["t",c.traduzir],["d",c.decidir]].forEach(([k,n]) => {
     if(n>0){ const i = el("i",k); i.style.width = (n/tot*100)+"%"; p.appendChild(i); }
   });
@@ -823,7 +842,7 @@ function renderProg(){
 
 function renderPauta(){
   const box = $("#pauta"); box.textContent = "";
-  const items = DATA.terms.filter(t => state[t.term]?.d === "decidir");
+  const items = ativos().filter(t => state[t.term]?.d === "decidir");
   box.appendChild(el("h3", null, items.length ? `${items.length} termos para a mesa do DS` : "Nenhum termo marcado para decisão"));
   if(!items.length){ box.appendChild(el("p","lede","Marque termos como “decidir” na triagem — eles aparecem aqui como pauta.")); return; }
   box.appendChild(el("p","lede","São os termos em que o vocabulário nativo e a linguagem da arquitetura se sobrepõem. Cada um precisa de uma decisão por superfície."));
@@ -929,7 +948,15 @@ async function addTerm(raw){
   if(!/^[\p{L}\p{N}][\p{L}\p{N} .\-/+]*$/u.test(term))
     return addMsg("Use letras, números, espaço, hífen, ponto ou barra.", true);
   const existing = DATA.terms.find(t => t.term.toLowerCase() === term);
-  if(existing) return addMsg(`“${term}” já está na lista.`, true);
+  if(existing){
+    // Estava só escondido: acrescentar de novo é o mesmo que restaurar.
+    if(REMOVIDOS.has(existing.term)){
+      await restoreTerm(existing.term);
+      $("#newTerm").value = "";
+      return addMsg(`“${existing.term}” estava removido e voltou para a triagem.`);
+    }
+    return addMsg(`“${term}” já está na lista.`, true);
+  }
 
   const shaped = shapeManual(term);
   MANUAIS.push(shaped);
@@ -946,13 +973,50 @@ async function addTerm(raw){
   }
 }
 
+// Remover é esconder, não apagar. Um termo do registry seria reconstruído no
+// próximo carregamento de qualquer jeito, e a decisão de tirar da triagem é
+// uma opinião do time — que pode mudar. A decisão já tomada fica guardada.
 async function removeTerm(term){
-  MANUAIS = MANUAIS.filter(m => m.term !== term);
-  DATA.terms = DATA.terms.filter(t => t.term !== term);
-  delete state[term];
-  renderRows(); renderMeta(); addMsg(`“${term}” removido.`);
-  if(collM){ try { await collM.doc(docId(term)).delete(); } catch(e){} }
-  if(coll){ try { await coll.doc(docId(term)).delete(); } catch(e){} }
+  REMOVIDOS.add(term);
+  renderRows(); renderMeta(); addMsg(`“${term}” saiu da triagem. Dá para trazer de volta.`);
+  if(collR){ try { await collR.doc(docId(term)).set({term, ts: Date.now()}); } catch(e){} }
+}
+
+async function restoreTerm(term){
+  REMOVIDOS.delete(term);
+  renderRows(); renderMeta(); addMsg(`“${term}” voltou para a triagem.`);
+  if(collR){ try { await collR.doc(docId(term)).delete(); } catch(e){} }
+}
+
+function renderRemovidos(){
+  const box = $("#removidos");
+  if(!box) return;
+  box.textContent = "";
+  const itens = DATA.terms.filter(t => REMOVIDOS.has(t.term));
+  if(!itens.length) return;
+
+  const head = el("button","rmhead");
+  head.type = "button";
+  head.setAttribute("aria-expanded", String(!!box.dataset.open));
+  head.textContent = `${itens.length} ${itens.length === 1 ? "termo removido" : "termos removidos"}`;
+  head.onclick = () => {
+    if(box.dataset.open) delete box.dataset.open; else box.dataset.open = "1";
+    renderRemovidos();
+  };
+  box.appendChild(head);
+  if(!box.dataset.open) return;
+
+  const ul = el("div","rmlist");
+  itens.forEach(t => {
+    const li = el("div","rmitem");
+    li.appendChild(el("span","t", t.term));
+    const b = el("button", null, "Restaurar");
+    b.type = "button";
+    b.onclick = () => restoreTerm(t.term);
+    li.appendChild(b);
+    ul.appendChild(li);
+  });
+  box.appendChild(ul);
 }
 
 // Quando entra um registry novo, os termos à mão passam a ter números também.
@@ -994,7 +1058,7 @@ function renderMeta(){
   add("origem:", meta ? "arquivo carregado" : "registry ExitLag 2026-09-09");
   add("strings únicas:", meta ? meta.strings.toLocaleString("pt-BR") : "4.719");
   if(meta?.dropped) add("duplicadas ignoradas:", meta.dropped.toLocaleString("pt-BR"));
-  add("termos:", DATA.terms.length);
+  add("termos:", ativos().length);
   add("grupos:", DATA.inconsistencies.length);
   if(meta?.products?.length) add("produtos:", meta.products.join(", "));
 }
@@ -1067,7 +1131,7 @@ function handleFile(f){
 }
 
 function buildGlossary(){
-  const terms = DATA.terms
+  const terms = ativos()
     .filter(t => state[t.term]?.d && !state[t.term]?.seeded)
     .map(t => {
       const st = state[t.term];
@@ -1144,6 +1208,7 @@ seedFromPre(); buildFilters(); renderRows(); renderGroups(); renderMeta();
   }
   coll = db.collection("decisions");
   collM = db.collection("manuais");
+  collR = db.collection("removidos");
   $("#dot").className = "dot on";
   $("#syncTxt").textContent = "compartilhado";
   try {
@@ -1157,6 +1222,14 @@ seedFromPre(); buildFilters(); renderRows(); renderGroups(); renderMeta();
   } catch(e){}
   try {
     // Termos à mão primeiro: as decisões que chegam logo abaixo podem ser deles.
+    collR.onSnapshot(docs => {
+      REMOVIDOS = new Set((docs || [])
+        .map(doc => (doc.data ? doc.data() : doc)?.term)
+        .filter(Boolean));
+      renderRows(); renderMeta();
+    });
+  } catch(e){}
+  try {
     collM.onSnapshot(docs => {
       MANUAIS = (docs || []).map(doc => {
         const d = doc.data ? doc.data() : doc;
