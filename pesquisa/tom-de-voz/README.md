@@ -9,23 +9,32 @@ opções de integração vêm depois, com o mapa na mão.
 
 ## Estado
 
-Aguardando a planilha. O arquivo está no Google Drive
-(`13Pt_diLUJT0asMywX4zHVnAoV_UWh6la`) e o conector está autenticado, mas ainda desligado
-nesta conversa.
+Planilha lida e cruzada com a triagem. O resultado está em [`diagnostico.md`](diagnostico.md).
 
-O link traz `rtpof=true&sd=true`, o que indica um **.xlsx carregado no Drive**, não uma
-planilha nativa do Google — então a leitura é do arquivo binário, não pelos endpoints de
-export do Sheets.
+Em uma linha: as duas foram feitas sobre a mesma base e **chegam à mesma conclusão por
+caminhos diferentes**, mas a planilha opera no nível da frase e deixa o vocabulário
+intacto — 115 strings com termos de implementação saem da revisão sem serem tocadas.
 
 ## Estrutura
 
 | Caminho | O quê |
 |---|---|
-| `planilha/` | Cópia do arquivo e a extração em texto, para o diagnóstico ser conferível |
-| `diagnostico.md` | O diagnóstico. Ainda não escrito. |
+| `planilha/` | O .xlsx e a extração em JSON, para o cruzamento ser refazível |
+| `diagnostico.md` | O diagnóstico, datado de 17/09/2026 |
 
 ## Regra desta frente
 
 Toda afirmação do diagnóstico aponta para aba e coluna da planilha, ou para o termo em
 `../triador/terms.json`. Conflito entre a planilha e a triagem vira pauta, nunca correção
 automática de uma decisão que o time já tomou.
+
+## Por que os dados não estão versionados
+
+Este repositório é público. A planilha carrega as 6.222 strings do produto e as regras
+internas de marca, e a extração em JSON carrega as duas coisas em texto corrido — bem mais
+do que os exemplos soltos que já estão no `terms.json`.
+
+Os arquivos ficam locais, ignorados pelo git. O `diagnostico.md` cita só o necessário para
+cada afirmação ser conferível.
+
+Para refazer o cruzamento, ponha o `.xlsx` em `planilha/` e rode `extrair.py` desta pasta.
