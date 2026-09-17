@@ -9,6 +9,9 @@
     --trans:#1D4ED8; --trans-bg:#E5EBFA; --trans-line:#A3B8EE;
     --decide:#B45309; --decide-bg:#FBEFE0; --decide-line:#E5BC8A;
     --bad:#B91C1C;
+    /* distribuição por produto: nada a ver com decisão. Desktop e mobile são
+       contexto, em neutro; o portal é o critério da triagem, e leva a cor. */
+    --bar-d:#B8C4CE; --bar-m:#6E8290; --bar-p:#A21CAF;
     --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
     --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   }
@@ -20,6 +23,7 @@
     --trans:#8FB0F7; --trans-bg:#161F3A; --trans-line:#3D5490;
     --decide:#FBBF24; --decide-bg:#2E2312; --decide-line:#7A5C1E;
     --bad:#F87171;
+    --bar-d:#3D4C58; --bar-m:#758998; --bar-p:#E879F9;
   }}
   :root[data-theme="dark"]{
     --bg:#0D1316; --surface:#141C21; --surface-2:#1C262C; --line:#2A373F; --line-soft:#212D34;
@@ -29,6 +33,7 @@
     --trans:#8FB0F7; --trans-bg:#161F3A; --trans-line:#3D5490;
     --decide:#FBBF24; --decide-bg:#2E2312; --decide-line:#7A5C1E;
     --bad:#F87171;
+    --bar-d:#3D4C58; --bar-m:#758998; --bar-p:#E879F9;
   }
   *,*::before,*::after{box-sizing:border-box}
   body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;
@@ -179,7 +184,7 @@
 
   .dist{display:flex;height:7px;border-radius:99px;overflow:hidden;background:var(--surface-2);min-width:60px}
   .dist span{display:block}
-  .dist .d{background:var(--accent)} .dist .m{background:var(--ink-3)} .dist .p{background:var(--decide)}
+  .dist .d{background:var(--bar-d)} .dist .m{background:var(--bar-m)} .dist .p{background:var(--bar-p)}
   .why{font-size:.76rem;color:var(--ink-3);line-height:1.35}
 
   .acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
