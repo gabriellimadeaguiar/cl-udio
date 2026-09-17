@@ -45,19 +45,43 @@ def main():
         json.dumps(app, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"{len(fam)} famílias, {len(app)} strings")
 
-    termos = json.loads((TRIADOR / "terms.json").read_text(encoding="utf-8"))
+    voz = cruzar_voz(app, TRIADOR / "terms.json")
+    (TRIADOR / "voz.json").write_text(
+        json.dumps(voz, ensure_ascii=False, indent=1), encoding="utf-8")
+
     print(f"\n{'termo':<12} {'triagem':<9} {'linhas':>7} {'mantém':>7} {'remove':>7}  modo dominante")
+    for v in voz:
+        print(f"{v['term']:<12} {v['triagem']:<9} {v['linhas']:>7} {v['mantem']:>7} "
+              f"{v['linhas']-v['mantem']:>7}  {v['modo']} {v['pct']}%")
+    print(f"\nvoz.json: {len(voz)} termos")
+
+
+def cruzar_voz(app, caminho_terms):
+    """Agrega, por termo, em que modo de voz as strings dele vivem.
+
+    Só o agregado sai daqui — termo, modo dominante, percentual e contagem.
+    As strings e as regras de marca ficam na planilha, que não é versionada.
+    """
+    termos = json.loads(pathlib.Path(caminho_terms).read_text(encoding="utf-8"))
+    out = []
     for t in termos:
         nome = t["term"]
         rx = re.compile(r"\b" + re.escape(nome) + r"s?\b", re.I)
         hits = [a for a in app if rx.search(a.get("Texto atual", ""))]
         if not hits:
             continue
-        mant = sum(1 for a in hits if rx.search(a.get("Sugestão de texto", "")))
-        modo, n = collections.Counter(a.get("Modo da voz", "—") for a in hits).most_common(1)[0]
-        pct = round(n / len(hits) * 100)
-        print(f"{nome:<12} {t['pre']:<9} {len(hits):>7} {mant:>7} {len(hits)-mant:>7}"
-              f"  {modo} {pct}%")
+        modos = collections.Counter(a.get("Modo da voz", "—") for a in hits)
+        modo, n = modos.most_common(1)[0]
+        out.append({
+            "term": nome,
+            "triagem": t["pre"],
+            "modo": modo,
+            "pct": round(n / len(hits) * 100),
+            "linhas": len(hits),
+            # quantas sugestões da planilha preservam o termo: mede a lacuna
+            "mantem": sum(1 for a in hits if rx.search(a.get("Sugestão de texto", ""))),
+        })
+    return out
 
 
 if __name__ == "__main__":

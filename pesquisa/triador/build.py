@@ -21,8 +21,18 @@ def ler(nome):
 
 def carregar():
     """Monta o payload a partir do que o extrair.py deixou na pasta."""
+    terms = ler("terms.json") or []
+
+    # voz.json vem do cruzamento com o brandbook (../tom-de-voz/extrair.py).
+    # É enriquecimento: sem o arquivo o app funciona igual, só sem esse sinal.
+    voz = {v["term"]: v for v in (ler("voz.json") or [])}
+    for t in terms:
+        v = voz.get(t["term"])
+        if v:
+            t["voz"] = {"modo": v["modo"], "pct": v["pct"], "linhas": v["linhas"]}
+
     return {
-        "terms": ler("terms.json") or [],
+        "terms": terms,
         "inconsistencies": ler("inconsistencies.json") or [],
         "meta": ler("meta.json"),
     }

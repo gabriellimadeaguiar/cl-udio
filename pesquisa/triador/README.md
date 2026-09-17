@@ -1,7 +1,7 @@
 # Triador de Vocabulário
 
-Ferramenta para classificar os termos técnicos do produto em **manter**, **traduzir** ou
-**decidir**, e produzir a pauta da discussão do Design System.
+Ferramenta para classificar os termos técnicos do produto em **manter**, **explicar**,
+**traduzir** ou **decidir**, e produzir a pauta da discussão do Design System.
 
 **App:** https://claude.ai/code/artifact/c06dc16d-431b-4270-96e1-c730e1e38d0d
 
@@ -94,4 +94,32 @@ A sugestão é ponto de partida, não veredito — a triagem no app é que decid
 | `terms.json` | 36 termos com frequência, distribuição e exemplos |
 | `inconsistencies.json` | Conceitos com mais de um nome no produto |
 | `meta.json` | Origem e tamanho do registry usado |
+| `voz.json` | Modo de voz de cada termo, vindo do brandbook |
 | `triador.template.html` | Fonte do app, com `__DATA__` como marcador |
+
+## O modo de voz
+
+Cada termo mostra um chip com o **modo de voz** das strings em que aparece, vindo do
+cruzamento com o brandbook da ExitLag (veja [tom de voz](../tom-de-voz/README.md)).
+
+É o segundo sinal da triagem, independente da proporção de uso no portal. Termo que vive
+só em **Destrava** — erro, instrução, configuração — é linguagem de arquitetura; termo que
+puxa para **Eleva** — CTA, ativação, campanha — comunica. **100% num modo só** é o sinal
+mais forte que existe: `ndis`, `dns`, `protocol` e `ipv6` são todos Destrava 100%.
+
+O `voz.json` é gerado por `../tom-de-voz/extrair.py`. É agregado — termo, modo, percentual,
+contagem — então pode ser versionado; a planilha que o origina não pode.
+
+## A decisão "explicar"
+
+O termo fica, porque a comunidade usa, mas **nunca aparece sozinho para público amplo**.
+Vem sempre com o que significa ao lado.
+
+Não é um meio-termo entre manter e traduzir: é a saída que a pesquisa aponta. O melhor
+termo único ainda falha para a maioria das pessoas, e o que funciona é redundância de
+acesso — `Latency (ping)`, que já existe em duas chaves de mobile. O brandbook chegou à
+mesma conclusão sozinho, na família G-037: *"evitar usar o termo sem explicar para
+públicos amplos"*.
+
+O linter aponta esses termos **quando aparecem sozinhos** numa camada, e nunca corrige —
+escrever a explicação é trabalho humano.

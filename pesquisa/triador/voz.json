@@ -1,0 +1,290 @@
+[
+ {
+  "term": "route",
+  "triagem": "decidir",
+  "modo": "Destrava",
+  "pct": 69,
+  "linhas": 139,
+  "mantem": 138
+ },
+ {
+  "term": "ping",
+  "triagem": "manter",
+  "modo": "Destrava",
+  "pct": 68,
+  "linhas": 157,
+  "mantem": 156
+ },
+ {
+  "term": "lag",
+  "triagem": "manter",
+  "modo": "Destrava + Eleva",
+  "pct": 39,
+  "linhas": 98,
+  "mantem": 97
+ },
+ {
+  "term": "routes",
+  "triagem": "decidir",
+  "modo": "Destrava",
+  "pct": 69,
+  "linhas": 84,
+  "mantem": 83
+ },
+ {
+  "term": "latency",
+  "triagem": "decidir",
+  "modo": "Destrava",
+  "pct": 72,
+  "linhas": 71,
+  "mantem": 71
+ },
+ {
+  "term": "packet",
+  "triagem": "decidir",
+  "modo": "Destrava",
+  "pct": 74,
+  "linhas": 65,
+  "mantem": 64
+ },
+ {
+  "term": "dns",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 47,
+  "mantem": 47
+ },
+ {
+  "term": "ms",
+  "triagem": "manter",
+  "modo": "Destrava",
+  "pct": 95,
+  "linhas": 41,
+  "mantem": 41
+ },
+ {
+  "term": "protocol",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 31,
+  "mantem": 31
+ },
+ {
+  "term": "vpn",
+  "triagem": "decidir",
+  "modo": "Destrava",
+  "pct": 68,
+  "linhas": 25,
+  "mantem": 25
+ },
+ {
+  "term": "ipv6",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 21,
+  "mantem": 21
+ },
+ {
+  "term": "ram",
+  "triagem": "decidir",
+  "modo": "Destrava",
+  "pct": 88,
+  "linhas": 25,
+  "mantem": 25
+ },
+ {
+  "term": "fps",
+  "triagem": "manter",
+  "modo": "Eleva",
+  "pct": 65,
+  "linhas": 17,
+  "mantem": 17
+ },
+ {
+  "term": "ndis",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 17,
+  "mantem": 16
+ },
+ {
+  "term": "jitter",
+  "triagem": "decidir",
+  "modo": "Destrava",
+  "pct": 63,
+  "linhas": 27,
+  "mantem": 27
+ },
+ {
+  "term": "routing",
+  "triagem": "decidir",
+  "modo": "Destrava + Eleva",
+  "pct": 82,
+  "linhas": 17,
+  "mantem": 17
+ },
+ {
+  "term": "packets",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 15,
+  "mantem": 15
+ },
+ {
+  "term": "bandwidth",
+  "triagem": "decidir",
+  "modo": "Destrava",
+  "pct": 86,
+  "linhas": 14,
+  "mantem": 14
+ },
+ {
+  "term": "driver",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 14,
+  "mantem": 14
+ },
+ {
+  "term": "ip",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 18,
+  "mantem": 18
+ },
+ {
+  "term": "shaper",
+  "triagem": "decidir",
+  "modo": "Destrava",
+  "pct": 76,
+  "linhas": 17,
+  "mantem": 17
+ },
+ {
+  "term": "multipath",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 75,
+  "linhas": 12,
+  "mantem": 12
+ },
+ {
+  "term": "proxy",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 11,
+  "mantem": 11
+ },
+ {
+  "term": "ipv4",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 13,
+  "mantem": 13
+ },
+ {
+  "term": "spikes",
+  "triagem": "manter",
+  "modo": "Destrava",
+  "pct": 83,
+  "linhas": 12,
+  "mantem": 12
+ },
+ {
+  "term": "tcp",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 9,
+  "mantem": 9
+ },
+ {
+  "term": "udp",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 7,
+  "mantem": 7
+ },
+ {
+  "term": "wfp",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 7,
+  "mantem": 7
+ },
+ {
+  "term": "timeout",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 7,
+  "mantem": 7
+ },
+ {
+  "term": "mtr",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 5,
+  "mantem": 5
+ },
+ {
+  "term": "firewall",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 5,
+  "mantem": 5
+ },
+ {
+  "term": "gateway",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 4,
+  "mantem": 4
+ },
+ {
+  "term": "hop",
+  "triagem": "decidir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 3,
+  "mantem": 3
+ },
+ {
+  "term": "socket",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 1,
+  "mantem": 1
+ },
+ {
+  "term": "tunnel",
+  "triagem": "traduzir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 1,
+  "mantem": 1
+ },
+ {
+  "term": "hops",
+  "triagem": "decidir",
+  "modo": "Destrava",
+  "pct": 100,
+  "linhas": 1,
+  "mantem": 1
+ }
+]
