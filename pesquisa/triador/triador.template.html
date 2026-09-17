@@ -54,9 +54,10 @@
   .count{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);font-variant-numeric:tabular-nums}
   @media (min-width:560px){.count{white-space:nowrap}}
 
-  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line)}
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);flex-wrap:wrap}
   .tab{appearance:none;border:0;background:none;font-family:var(--sans);font-size:.88rem;font-weight:600;
     color:var(--ink-3);padding:9px 15px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  @media (max-width:440px){.tab{padding-inline:11px;font-size:.84rem}}
   .tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
   .tab:hover{color:var(--ink)}
   .tab:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:3px}
@@ -100,6 +101,62 @@
     color:var(--ink-3);cursor:pointer;margin-top:4px}
   .rm:hover{color:var(--bad);border-color:var(--bad)}
   .rm:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* ---------- quadro ---------- */
+  .boardnote{font-size:.82rem;margin-bottom:14px}
+  .narrowonly{display:none;font-size:.86rem;color:var(--ink-2);background:var(--surface);
+    border:1px solid var(--line);border-radius:7px;padding:14px 16px}
+  .board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:start}
+  @media (max-width:860px){
+    .board,.boardnote{display:none}
+    .narrowonly{display:block}
+  }
+  .col{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;
+    display:flex;flex-direction:column;min-height:120px}
+  .col.over{border-color:var(--accent);background:var(--accent-bg)}
+  .colhead{display:flex;align-items:baseline;gap:7px;padding:10px 12px 8px;
+    border-bottom:1px solid var(--line);border-top:2px solid var(--line);
+    border-radius:7px 7px 0 0;flex:none}
+  .col[data-d="manter"] .colhead{border-top-color:var(--keep)}
+  .col[data-d="traduzir"] .colhead{border-top-color:var(--trans)}
+  .col[data-d="decidir"] .colhead{border-top-color:var(--decide)}
+  .colhead h3{font-size:.82rem;font-weight:600;margin:0;letter-spacing:.01em}
+  .col[data-d="manter"] .colhead h3{color:var(--keep)}
+  .col[data-d="traduzir"] .colhead h3{color:var(--trans)}
+  .col[data-d="decidir"] .colhead h3{color:var(--decide)}
+  .colhead .n{font-family:var(--mono);font-size:.72rem;color:var(--ink-3);
+    font-variant-numeric:tabular-nums;margin-left:auto}
+  .colbody{display:flex;flex-direction:column;gap:6px;padding:8px;min-height:64px}
+  .colempty{font-size:.76rem;color:var(--ink-3);text-align:center;padding:14px 6px;line-height:1.4}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:6px;
+    padding:8px 9px;display:flex;flex-direction:column;gap:6px;cursor:grab;
+    touch-action:none;-webkit-user-select:none;user-select:none}
+  .card:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .card.lifted{opacity:.35}
+  .cardtop{display:flex;align-items:baseline;gap:7px}
+  .cardtop .t{font-family:var(--mono);font-size:.84rem;font-weight:600;letter-spacing:-.01em;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cardtop .f{font-family:var(--mono);font-size:.7rem;color:var(--ink-3);margin-left:auto;
+    font-variant-numeric:tabular-nums;flex:none}
+  .card .dist{height:5px}
+  .card .hand{font-family:var(--mono);font-size:.55rem;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line);
+    border-radius:3px;padding:1px 4px;flex:none}
+  /* alternativa ao arrasto: um clique só, como pede a WCAG 2.5.7 */
+  .move{display:none;gap:3px}
+  .card:hover .move,.card:focus-within .move,.card:focus-visible .move{display:flex}
+  .move button{appearance:none;flex:1;min-width:0;font-family:var(--mono);font-size:.62rem;
+    padding:3px 2px;border-radius:4px;border:1px solid var(--line);background:var(--bg);
+    color:var(--ink-2);cursor:pointer;overflow:hidden;text-overflow:ellipsis}
+  .move button:hover{border-color:var(--accent);color:var(--accent)}
+  .move button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+  /* nome próprio: .ghost sozinho pegaria o .btn.ghost do cabeçalho */
+  .cardghost{position:fixed;z-index:50;pointer-events:none;
+    box-shadow:0 8px 24px rgba(0,0,0,.22);transform:rotate(1.5deg);opacity:.96;cursor:grabbing}
+  .cardghost .move{display:none}
+  body.dragging{cursor:grabbing;-webkit-user-select:none;user-select:none}
 
   .rows{display:flex;flex-direction:column;gap:7px}
   .row{background:var(--surface);border:1px solid var(--line);border-radius:7px;
@@ -244,6 +301,7 @@
 
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" aria-selected="true" data-tab="triagem" id="tab-triagem">Triagem</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="quadro" id="tab-quadro">Quadro</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="inconsist" id="tab-inconsist">Inconsistências</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="pauta" id="tab-pauta">Pauta</button>
   </div>
@@ -280,6 +338,14 @@
     </div>
     <p class="addmsg" id="addMsg" role="status"></p>
     <div class="rows" id="rows" style="margin-top:14px"></div>
+  </section>
+
+  <section id="pane-quadro" class="hidden">
+    <p class="lede boardnote">Arraste um card para mudar a decisão. Sem arrastar também dá:
+      passe o mouse no card (ou chegue nele pelo teclado) e use os botões que aparecem.</p>
+    <p class="narrowonly">O quadro precisa de tela larga para as quatro colunas caberem.
+      Num celular, use a aba <b>Triagem</b> — a lista faz a mesma coisa.</p>
+    <div class="board" id="board"></div>
   </section>
 
   <section id="pane-inconsist" class="hidden">
@@ -624,8 +690,120 @@ function renderRows(){
     };
     box.appendChild(row);
   });
-  renderProg(); renderPauta();
+  renderProg(); renderPauta(); renderBoard();
 }
+
+/* ---------- quadro ---------- */
+const COLS = [
+  {d: null,        titulo: "Sem decisão", vazio: "Tudo triado."},
+  {d: "manter",    titulo: "Manter",      vazio: "Arraste aqui o vocabulário nativo."},
+  {d: "traduzir",  titulo: "Traduzir",    vazio: "Arraste aqui a linguagem da arquitetura."},
+  {d: "decidir",   titulo: "Decidir",     vazio: "Arraste aqui o que precisa de conversa."},
+];
+
+function card(t){
+  const st = state[t.term] || {};
+  const c = el("div","card"); c.dataset.term = t.term;
+  c.tabIndex = 0;
+  c.setAttribute("role","group");
+  c.setAttribute("aria-label", t.term + (st.d ? ", " + LBL[st.d] : ", sem decisão"));
+
+  const top = el("div","cardtop");
+  top.appendChild(el("span","t", t.term));
+  if(t.manual) top.appendChild(el("span","hand","à mão"));
+  top.appendChild(el("span","f", t.manual && !t.measured ? "—" : t.total+"×"));
+  c.append(top, bar(t));
+
+  // Alternativa ao arrasto: um clique leva o card para outra coluna.
+  const mv = el("div","move");
+  COLS.forEach(col => {
+    if(col.d === (st.d || null)) return;
+    const b = el("button", null, col.d ? LBL[col.d] : "tirar");
+    b.type = "button";
+    b.title = col.d ? "Mover para " + col.titulo : "Tirar a decisão";
+    b.onclick = e => { e.stopPropagation(); setDec(t.term, col.d); };
+    mv.appendChild(b);
+  });
+  c.appendChild(mv);
+  return c;
+}
+
+function renderBoard(){
+  const box = $("#board");
+  if(!box) return;
+  box.textContent = "";
+  COLS.forEach(col => {
+    const sec = el("div","col"); sec.dataset.d = col.d || "";
+    const itens = DATA.terms.filter(t => (state[t.term]?.d || null) === col.d);
+
+    const head = el("div","colhead");
+    head.appendChild(el("h3", null, col.titulo));
+    const n = el("span","n", String(itens.length));
+    n.setAttribute("aria-label", itens.length + " termos");
+    head.appendChild(n);
+    sec.appendChild(head);
+
+    const body = el("div","colbody");
+    if(!itens.length) body.appendChild(el("p","colempty", col.vazio));
+    else itens.forEach(t => body.appendChild(card(t)));
+    sec.appendChild(body);
+    box.appendChild(sec);
+  });
+}
+
+// Arrasto por Pointer Events, não pela API nativa de drag-and-drop: a nativa
+// não funciona em toque e não deixa controlar o preview.
+(function wireDrag(){
+  let src = null, ghost = null, col = null, x0 = 0, y0 = 0, moving = false;
+
+  function finish(aplicar){
+    if(ghost) ghost.remove();
+    if(src) src.classList.remove("lifted");
+    document.querySelectorAll(".col.over").forEach(c => c.classList.remove("over"));
+    document.body.classList.remove("dragging");
+    const alvo = aplicar && col ? col : null, termo = src?.dataset.term;
+    src = ghost = col = null; moving = false;
+    if(alvo && termo){
+      const d = alvo.dataset.d || null;
+      if((state[termo]?.d || null) !== d) setDec(termo, d);
+    }
+  }
+
+  document.addEventListener("pointerdown", e => {
+    if(e.button !== 0) return;
+    const c = e.target.closest?.(".card");
+    if(!c || e.target.closest(".move")) return;   // os botões têm o clique deles
+    src = c; x0 = e.clientX; y0 = e.clientY; moving = false;
+    c.setPointerCapture?.(e.pointerId);
+  });
+
+  document.addEventListener("pointermove", e => {
+    if(!src) return;
+    if(!moving){
+      if(Math.hypot(e.clientX - x0, e.clientY - y0) < 5) return;   // clique não é arrasto
+      moving = true;
+      const r = src.getBoundingClientRect();
+      ghost = src.cloneNode(true);
+      ghost.className = "card cardghost";
+      ghost.style.width = r.width + "px";
+      document.body.appendChild(ghost);
+      src.classList.add("lifted");
+      document.body.classList.add("dragging");
+    }
+    ghost.style.left = (e.clientX - 90) + "px";
+    ghost.style.top  = (e.clientY - 18) + "px";
+    const sob = document.elementFromPoint(e.clientX, e.clientY)?.closest?.(".col") || null;
+    if(sob !== col){
+      col?.classList.remove("over");
+      col = sob;
+      col?.classList.add("over");
+    }
+  });
+
+  document.addEventListener("pointerup", () => { if(src) finish(moving); });
+  document.addEventListener("pointercancel", () => { if(src) finish(false); });
+  document.addEventListener("keydown", e => { if(e.key === "Escape" && src) finish(false); });
+})();
 
 function renderProg(){
   const p = $("#prog"); p.textContent = "";
