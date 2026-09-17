@@ -101,6 +101,11 @@
     letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);background:var(--surface-2);
     border:1px solid var(--line);border-radius:3px;padding:2px 5px;flex:none}
   .nomeasure{font-size:.76rem;color:var(--ink-3);line-height:1.35;font-style:italic}
+  .pautah{font-size:.86rem;font-weight:600;margin:18px 0 6px;color:var(--ink-2);
+    letter-spacing:.01em}
+  .quando{font-family:var(--mono);font-size:.72rem;color:var(--ink-3);white-space:nowrap;
+    margin-left:4px}
+  .quando.velho{color:var(--decide);font-weight:600}
   .rmbox{margin-top:16px}
   .rmbox:empty{display:none}
   .rmhead{appearance:none;font-family:var(--sans);font-size:.78rem;color:var(--ink-3);
@@ -127,24 +132,34 @@
   .boardnote{font-size:.82rem;margin-bottom:14px}
   .narrowonly{display:none;font-size:.86rem;color:var(--ink-2);background:var(--surface);
     border:1px solid var(--line);border-radius:7px;padding:14px 16px}
-  .board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:start}
+  /* seis colunas: crescem quando cabe, rolam na horizontal quando não cabe */
+  .board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(172px,1fr);
+    gap:10px;align-items:start;overflow-x:auto;padding-bottom:6px}
   @media (max-width:860px){
     .board,.boardnote{display:none}
     .narrowonly{display:block}
   }
   .col{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;
     display:flex;flex-direction:column;min-height:120px}
+  /* o funil é uma sequência de verdade, e o traço contínuo diz isso */
+  .col[data-funil]{background:var(--decide-bg)}
+  .col[data-k="done"]{background:var(--surface-2)}
   .col.over{border-color:var(--accent);background:var(--accent-bg)}
   .colhead{display:flex;align-items:baseline;gap:7px;padding:10px 12px 8px;
     border-bottom:1px solid var(--line);border-top:2px solid var(--line);
     border-radius:7px 7px 0 0;flex:none}
-  .col[data-d="manter"] .colhead{border-top-color:var(--keep)}
-  .col[data-d="traduzir"] .colhead{border-top-color:var(--trans)}
-  .col[data-d="decidir"] .colhead{border-top-color:var(--decide)}
+  .col[data-k="manter"] .colhead{border-top-color:var(--keep)}
+  .col[data-k="traduzir"] .colhead{border-top-color:var(--trans)}
+  .col[data-k="dec"] .colhead,.col[data-k="disc"] .colhead{border-top-color:var(--decide)}
+  .col[data-k="done"] .colhead{border-top-color:var(--ink-3)}
   .colhead h3{font-size:.82rem;font-weight:600;margin:0;letter-spacing:.01em}
-  .col[data-d="manter"] .colhead h3{color:var(--keep)}
-  .col[data-d="traduzir"] .colhead h3{color:var(--trans)}
-  .col[data-d="decidir"] .colhead h3{color:var(--decide)}
+  .col[data-k="manter"] .colhead h3{color:var(--keep)}
+  .col[data-k="traduzir"] .colhead h3{color:var(--trans)}
+  .col[data-k="dec"] .colhead h3,.col[data-k="disc"] .colhead h3{color:var(--decide)}
+  .col[data-k="done"] .colhead h3{color:var(--ink-2)}
+  /* a seta só existe entre as colunas do funil, onde há ordem de verdade */
+  .col[data-k="disc"] .colhead h3::before,
+  .col[data-k="done"] .colhead h3::before{content:"› ";opacity:.55}
   .colhead .n{font-family:var(--mono);font-size:.72rem;color:var(--ink-3);
     font-variant-numeric:tabular-nums;margin-left:auto}
   .colbody{display:flex;flex-direction:column;gap:6px;padding:8px;min-height:64px}
@@ -161,6 +176,8 @@
   .cardtop .f{font-family:var(--mono);font-size:.7rem;color:var(--ink-3);margin-left:auto;
     font-variant-numeric:tabular-nums;flex:none}
   .card .dist{height:5px}
+  .idade{font-size:.66rem;color:var(--ink-3);font-family:var(--mono)}
+  .idade.velho{color:var(--decide);font-weight:600}
   .card .hand{font-family:var(--mono);font-size:.55rem;font-weight:600;letter-spacing:.06em;
     text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line);
     border-radius:3px;padding:1px 4px;flex:none}
@@ -717,19 +734,56 @@ function renderRows(){
 }
 
 /* ---------- quadro ---------- */
+// As três primeiras colunas classificam: o termo cai numa e fica. As três
+// últimas são um funil de verdade — o que precisa de decisão anda de
+// "Decidir" para "Em discussão" e daí para "Decidido". Por isso só elas
+// carregam data: é ali que importa saber o que está parado.
 const COLS = [
-  {d: null,        titulo: "Sem decisão", vazio: "Tudo triado."},
-  {d: "manter",    titulo: "Manter",      vazio: "Arraste aqui o vocabulário nativo."},
-  {d: "traduzir",  titulo: "Traduzir",    vazio: "Arraste aqui a linguagem da arquitetura."},
-  {d: "decidir",   titulo: "Decidir",     vazio: "Arraste aqui o que precisa de conversa."},
+  {k:"none",   d:null,       s:null,        titulo:"Sem decisão",  curto:"tirar",
+   vazio:"Tudo triado."},
+  {k:"manter", d:"manter",   s:null,        titulo:"Manter",       curto:"manter",
+   vazio:"Vocabulário nativo."},
+  {k:"traduzir", d:"traduzir", s:null,        titulo:"Traduzir",     curto:"traduzir",
+   vazio:"Linguagem da arquitetura."},
+  {k:"dec",    d:"decidir",  s:null,        titulo:"Decidir",      curto:"decidir",
+   vazio:"O que precisa de conversa.", funil:true},
+  {k:"disc",   d:"decidir",  s:"discussao", titulo:"Em discussão", curto:"discutindo",
+   vazio:"O que já está na mesa.", funil:true},
+  {k:"done",   d:"decidir",  s:"decidido",  titulo:"Decidido",     curto:"decidido",
+   vazio:"O que o DS fechou.", funil:true},
 ];
+const COL = Object.fromEntries(COLS.map(c => [c.k, c]));
+
+function colKey(term){
+  const st = state[term] || {};
+  if(st.d !== "decidir") return st.d || "none";
+  return st.s === "discussao" ? "disc" : st.s === "decidido" ? "done" : "dec";
+}
+
+// Para onde faz sentido mandar o card a partir de onde ele está. Oferecer as
+// seis colunas sempre encheria o card de botões e esconderia o passo óbvio.
+const SAIDAS = {
+  none:   ["manter","traduzir","dec"],
+  manter: ["traduzir","dec","none"],
+  traduzir: ["manter","dec","none"],
+  dec:    ["disc","manter","traduzir"],
+  disc:   ["done","dec"],
+  done:   ["disc","dec"],
+};
+
+const hoje = () => new Date().toISOString().slice(0,10);
+const diasDesde = iso => {
+  const t = Date.parse(iso + "T00:00:00Z");
+  return Number.isNaN(t) ? null : Math.floor((Date.now() - t) / 86400000);
+};
 
 function card(t){
   const st = state[t.term] || {};
+  const k = colKey(t.term);
   const c = el("div","card"); c.dataset.term = t.term;
   c.tabIndex = 0;
   c.setAttribute("role","group");
-  c.setAttribute("aria-label", t.term + (st.d ? ", " + LBL[st.d] : ", sem decisão"));
+  c.setAttribute("aria-label", t.term + ", " + COL[k].titulo);
 
   const top = el("div","cardtop");
   top.appendChild(el("span","t", t.term));
@@ -737,14 +791,26 @@ function card(t){
   top.appendChild(el("span","f", t.manual && !t.measured ? "—" : t.total+"×"));
   c.append(top, bar(t));
 
+  // No funil, quanto tempo parado é a informação que justifica a coluna.
+  const desde = st.at?.[st.s];
+  if(COL[k].funil && desde){
+    const dias = diasDesde(desde);
+    if(dias !== null){
+      const idade = el("div","idade" + (dias >= 14 ? " velho" : ""),
+        dias === 0 ? "hoje" : dias === 1 ? "há 1 dia" : `há ${dias} dias`);
+      idade.title = COL[k].titulo + " desde " + desde;
+      c.appendChild(idade);
+    }
+  }
+
   // Alternativa ao arrasto: um clique leva o card para outra coluna.
   const mv = el("div","move");
-  COLS.forEach(col => {
-    if(col.d === (st.d || null)) return;
-    const b = el("button", null, col.d ? LBL[col.d] : "tirar");
+  SAIDAS[k].forEach(alvo => {
+    const col = COL[alvo];
+    const b = el("button", null, col.curto);
     b.type = "button";
-    b.title = col.d ? "Mover para " + col.titulo : "Tirar a decisão";
-    b.onclick = e => { e.stopPropagation(); setDec(t.term, col.d); };
+    b.title = alvo === "none" ? "Tirar a decisão" : "Mover para " + col.titulo;
+    b.onclick = e => { e.stopPropagation(); setCol(t.term, col); };
     mv.appendChild(b);
   });
   c.appendChild(mv);
@@ -756,8 +822,9 @@ function renderBoard(){
   if(!box) return;
   box.textContent = "";
   COLS.forEach(col => {
-    const sec = el("div","col"); sec.dataset.d = col.d || "";
-    const itens = ativos().filter(t => (state[t.term]?.d || null) === col.d);
+    const sec = el("div","col"); sec.dataset.k = col.k;
+    if(col.funil) sec.dataset.funil = "1";
+    const itens = ativos().filter(t => colKey(t.term) === col.k);
 
     const head = el("div","colhead");
     head.appendChild(el("h3", null, col.titulo));
@@ -787,8 +854,8 @@ function renderBoard(){
     const alvo = aplicar && col ? col : null, termo = src?.dataset.term;
     src = ghost = col = null; moving = false;
     if(alvo && termo){
-      const d = alvo.dataset.d || null;
-      if((state[termo]?.d || null) !== d) setDec(termo, d);
+      const k = alvo.dataset.k;
+      if(k && colKey(termo) !== k) setCol(termo, COL[k]);
     }
   }
 
@@ -842,29 +909,134 @@ function renderProg(){
 
 function renderPauta(){
   const box = $("#pauta"); box.textContent = "";
-  const items = ativos().filter(t => state[t.term]?.d === "decidir");
-  box.appendChild(el("h3", null, items.length ? `${items.length} termos para a mesa do DS` : "Nenhum termo marcado para decisão"));
-  if(!items.length){ box.appendChild(el("p","lede","Marque termos como “decidir” na triagem — eles aparecem aqui como pauta.")); return; }
-  box.appendChild(el("p","lede","São os termos em que o vocabulário nativo e a linguagem da arquitetura se sobrepõem. Cada um precisa de uma decisão por superfície."));
-  const ul = el("ul");
-  items.forEach(t => {
-    const li = el("li");
-    const code = el("code", null, t.term); li.appendChild(code);
-    li.appendChild(document.createTextNode(` — ${t.total}× no produto (${t.portal} no portal). `));
-    const n = state[t.term]?.note;
-    if(n){ const i = el("i", null, n); li.appendChild(i); }
-    ul.appendChild(li);
-  });
-  box.appendChild(ul);
-  const btn = el("button","btn","Copiar pauta");
-  btn.onclick = () => {
-    const txt = "PAUTA — vocabulário para decisão\n\n" + items.map(t =>
-      `• ${t.term} — ${t.total}x no produto (desktop ${t.desktop}, mobile ${t.mobile}, portal ${t.portal})` +
-      (state[t.term]?.note ? `\n  nota: ${state[t.term].note}` : "")).join("\n");
-    navigator.clipboard?.writeText(txt);
-    btn.textContent = "Copiado"; setTimeout(()=>btn.textContent="Copiar pauta", 1600);
+  const porEstagio = k => ativos().filter(t => colKey(t.term) === k);
+  const dec = porEstagio("dec"), disc = porEstagio("disc"), done = porEstagio("done");
+  const total = dec.length + disc.length + done.length;
+
+  box.appendChild(el("h3", null, total ? `${total} termos na mesa do DS` : "Nenhum termo marcado para decisão"));
+  if(!total){
+    box.appendChild(el("p","lede","Marque termos como “decidir” na triagem — eles aparecem aqui como pauta."));
+    return;
+  }
+  box.appendChild(el("p","lede","São os termos em que o vocabulário nativo e a linguagem da arquitetura "
+    + "se sobrepõem. Cada um precisa de uma decisão por superfície."));
+
+  [["done", done, "Decidido"], ["disc", disc, "Em discussão"], ["dec", dec, "A decidir"]]
+    .forEach(([k, itens, titulo]) => {
+      if(!itens.length) return;
+      box.appendChild(el("h4","pautah", `${titulo} · ${itens.length}`));
+      const ul = el("ul");
+      itens.forEach(t => {
+        const st = state[t.term] || {};
+        const li = el("li");
+        li.appendChild(el("code", null, t.term));
+        li.appendChild(document.createTextNode(` — ${t.total}× no produto (${t.portal} no portal). `));
+        const quando = st.at?.[st.s];
+        if(quando){
+          const dias = diasDesde(quando);
+          const tag = el("span","quando", k === "done"
+            ? `decidido em ${quando}`
+            : dias === null ? quando : dias === 0 ? "entrou hoje" : `parado há ${dias} dias`);
+          if(k === "disc" && dias !== null && dias >= 14) tag.className = "quando velho";
+          li.appendChild(tag);
+        }
+        if(st.prefer) li.appendChild(el("span","quando", "→ " + st.prefer));
+        if(st.note) li.appendChild(el("i", null, " " + st.note));
+        ul.appendChild(li);
+      });
+      box.appendChild(ul);
+    });
+
+  const linha = el("div","row2");
+  const rel = el("button","btn","Baixar relatório");
+  rel.onclick = () => exportarRelatorio(rel);
+  const cp = el("button","btn ghost","Copiar pauta");
+  cp.onclick = async () => {
+    try { await navigator.clipboard.writeText(buildRelatorio()); cp.textContent = "Copiado"; }
+    catch(e){ cp.textContent = "Não consegui copiar"; }
+    setTimeout(() => cp.textContent = "Copiar pauta", 1800);
   };
-  box.appendChild(btn);
+  linha.append(rel, cp);
+  box.appendChild(linha);
+}
+
+/* ---------- relatório datado ---------- */
+function buildRelatorio(){
+  const d = hoje();
+  const vivos = ativos();
+  const porEstagio = k => vivos.filter(t => colKey(t.term) === k);
+  const grupos = COLS.map(c => [c, porEstagio(c.k)]);
+  const linha = t => {
+    const st = state[t.term] || {};
+    let l = `- \`${t.term}\` — ${t.total}× no produto · desktop ${t.desktop}, mobile ${t.mobile}, portal ${t.portal}`;
+    if(st.prefer) l += ` · usar **${st.prefer}**`;
+    const quando = st.at?.[st.s];
+    if(quando){
+      const dias = diasDesde(quando);
+      l += st.s === "decidido" ? ` · decidido em ${quando}`
+         : ` · em discussão desde ${quando}${dias ? ` (${dias} dias)` : ""}`;
+    }
+    if(st.note) l += `\n  - ${st.note}`;
+    return l;
+  };
+
+  const out = [];
+  out.push(`# Triagem de vocabulário — ${d}`, "");
+  out.push(`Retrato de ${d}. Base: ${DATA.meta?.source || "registry ExitLag"}`
+    + (DATA.meta?.strings ? `, ${DATA.meta.strings.toLocaleString("pt-BR")} strings únicas` : "")
+    + `, ${vivos.length} termos em triagem.`, "");
+
+  out.push("## Onde está cada termo", "");
+  out.push("| Estágio | Termos |", "|---|---|");
+  grupos.forEach(([c, itens]) => out.push(`| ${c.titulo} | ${itens.length} |`));
+  out.push("");
+
+  const funil = grupos.filter(([c]) => c.funil);
+  if(funil.some(([,i]) => i.length)){
+    out.push("## Pauta do Design System", "");
+    out.push("Termos em que o vocabulário nativo e a linguagem da arquitetura se sobrepõem.", "");
+    funil.reverse().forEach(([c, itens]) => {
+      if(!itens.length) return;
+      out.push(`### ${c.titulo} · ${itens.length}`, "");
+      itens.forEach(t => out.push(linha(t)));
+      out.push("");
+    });
+  }
+
+  grupos.filter(([c]) => !c.funil && c.k !== "none").forEach(([c, itens]) => {
+    if(!itens.length) return;
+    out.push(`## ${c.titulo} · ${itens.length}`, "");
+    itens.forEach(t => out.push(linha(t)));
+    out.push("");
+  });
+
+  const semDec = porEstagio("none");
+  if(semDec.length){
+    out.push(`## Ainda sem decisão · ${semDec.length}`, "");
+    out.push(semDec.map(t => `\`${t.term}\``).join(", "), "");
+  }
+
+  const fora = DATA.terms.filter(t => REMOVIDOS.has(t.term));
+  if(fora.length){
+    out.push(`## Tirados da triagem · ${fora.length}`, "");
+    out.push("Considerados falso positivo da extração ou fora do escopo de vocabulário.", "");
+    out.push(fora.map(t => `\`${t.term}\``).join(", "), "");
+  }
+  return out.join("\n");
+}
+
+async function exportarRelatorio(btn){
+  const md = buildRelatorio();
+  const nome = `triagem-vocabulario-${hoje()}.md`;
+  const dl = await (window.claude?.use?.("downloads") ?? Promise.resolve(null));
+  if(dl){
+    try { await dl.save({filename: nome, data: md}); btn.textContent = "Relatório baixado"; }
+    catch(e){ btn.textContent = "Download recusado"; }
+  } else {
+    try { await navigator.clipboard.writeText(md); btn.textContent = "Copiado para a área de transferência"; }
+    catch(e){ btn.textContent = "Não consegui gerar"; }
+  }
+  setTimeout(() => btn.textContent = "Baixar relatório", 2600);
 }
 
 function renderGroups(){
@@ -915,7 +1087,21 @@ function renderGroups(){
 }
 
 async function setDec(term, d){
-  state[term] = {...(state[term]||{}), d, seeded:false};
+  const prev = state[term] || {};
+  // Sair de "decidir" zera o estágio do funil; continuar nele preserva.
+  const s = d === "decidir" ? (prev.s || null) : null;
+  state[term] = {...prev, d, s, seeded:false};
+  renderRows();
+  await persist(term);
+}
+
+// Mover no quadro: define classificação e estágio de uma vez, e carimba a
+// data na entrada de cada estágio do funil.
+async function setCol(term, col){
+  const prev = state[term] || {};
+  const at = {...(prev.at || {})};
+  if(col.s && at[col.s] == null) at[col.s] = hoje();
+  state[term] = {...prev, d: col.d, s: col.s, at, seeded:false};
   renderRows();
   await persist(term);
 }
@@ -931,7 +1117,8 @@ async function setPrefer(term, prefer){
 async function persist(term){
   if(!coll) return;
   const st = state[term] || {};
-  try { await coll.doc(docId(term)).set({term, d: st.d||null, note: st.note||"", prefer: st.prefer||"", ts: Date.now()}); }
+  try { await coll.doc(docId(term)).set({term, d: st.d||null, s: st.s||null, at: st.at||{},
+    note: st.note||"", prefer: st.prefer||"", ts: Date.now()}); }
   catch(e){}
 }
 
@@ -1247,7 +1434,9 @@ seedFromPre(); buildFilters(); renderRows(); renderGroups(); renderMeta();
         const id = d.term || doc.id || d.id;
         if(id && (d.d || d.note || d.prefer)){
           const dec = DECS.includes(d.d) ? d.d : null;   // "neutro" foi retirado
-          state[id] = {d: dec, note: d.note || "", prefer: d.prefer || "", seeded:false};
+          const est = dec === "decidir" && ["discussao","decidido"].includes(d.s) ? d.s : null;
+          state[id] = {d: dec, s: est, at: d.at || {},
+            note: d.note || "", prefer: d.prefer || "", seeded:false};
         }
       });
       renderRows();
