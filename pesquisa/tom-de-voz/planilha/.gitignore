@@ -1,6 +1,0 @@
-# Repositório público. A planilha traz as 6.222 strings do produto e as regras
-# internas de marca; a extração traz as duas coisas em texto corrido.
-# Ficam locais até alguém decidir que podem ser publicadas.
-*.xlsx
-familias.json
-aplicacao.json

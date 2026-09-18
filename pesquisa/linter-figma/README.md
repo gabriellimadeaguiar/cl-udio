@@ -111,7 +111,6 @@ O formato é exatamente o que o Triador exporta:
 | Decisão | O que o linter faz |
 |---|---|
 | `manter` | Ignora — é o vocabulário certo |
-| `explicar` | Aponta como **sem explicação**, só quando o termo aparece sozinho. Nunca corrige |
 | `traduzir` | Aponta como **evitar**; sugere `prefer` e corrige se for seguro |
 | `decidir` | Aponta como **em discussão**, com a nota; nunca corrige |
 

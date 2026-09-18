@@ -12,7 +12,6 @@
     /* distribuição por produto: nada a ver com decisão. Desktop e mobile são
        contexto, em neutro; o portal é o critério da triagem, e leva a cor. */
     --bar-d:#B8C4CE; --bar-m:#6E8290; --bar-p:#A21CAF;
-    --explain:#7C3AED; --explain-bg:#F0E9FD; --explain-line:#C9B4F5;
     --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
     --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   }
@@ -25,7 +24,6 @@
     --decide:#FBBF24; --decide-bg:#2E2312; --decide-line:#7A5C1E;
     --bad:#F87171;
     --bar-d:#3D4C58; --bar-m:#758998; --bar-p:#E879F9;
-    --explain:#C4A7FB; --explain-bg:#241A38; --explain-line:#4A3670;
   }}
   :root[data-theme="dark"]{
     --bg:#0D1316; --surface:#141C21; --surface-2:#1C262C; --line:#2A373F; --line-soft:#212D34;
@@ -36,7 +34,6 @@
     --decide:#FBBF24; --decide-bg:#2E2312; --decide-line:#7A5C1E;
     --bad:#F87171;
     --bar-d:#3D4C58; --bar-m:#758998; --bar-p:#E879F9;
-    --explain:#C4A7FB; --explain-bg:#241A38; --explain-line:#4A3670;
   }
   *,*::before,*::after{box-sizing:border-box}
   body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;
@@ -136,7 +133,7 @@
   .narrowonly{display:none;font-size:.86rem;color:var(--ink-2);background:var(--surface);
     border:1px solid var(--line);border-radius:7px;padding:14px 16px}
   /* seis colunas: crescem quando cabe, rolam na horizontal quando não cabe */
-  .board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,1fr);
+  .board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(172px,1fr);
     gap:10px;align-items:start;overflow-x:auto;padding-bottom:6px}
   @media (max-width:860px){
     .board,.boardnote{display:none}
@@ -199,44 +196,17 @@
   .cardghost .move{display:none}
   body.dragging{cursor:grabbing;-webkit-user-select:none;user-select:none}
 
-  /* modo de voz: terceiro eixo na mesma tela, então nada de quarta paleta */
-  .voz{display:inline-flex;align-items:baseline;gap:5px;font-family:var(--mono);
-    font-size:.68rem;color:var(--ink-3);border:1px solid var(--line);border-radius:4px;
-    padding:2px 6px;background:var(--surface-2);white-space:nowrap;
-    overflow:hidden;text-overflow:ellipsis;max-width:100%}
-  /* o nome do modo pode truncar; a porcentagem, nunca — é o número que decide */
-  .voz b{font-weight:inherit;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .voz i{font-style:normal;font-variant-numeric:tabular-nums;opacity:.75;flex:none}
-  .voz.puro{color:var(--ink-2);border-color:var(--line-2);font-weight:600}
-  .card .voz{font-size:.62rem;padding:1px 5px;align-self:flex-start}
-
-  .lg.expl{border-top-color:var(--explain)}
-  .lg.expl h3{color:var(--explain)}
-  .col[data-k="explicar"] .colhead{border-top-color:var(--explain)}
-  .col[data-k="explicar"] .colhead h3{color:var(--explain)}
-  .row[data-dec="explicar"] .act[data-v="explicar"][aria-pressed="true"],
-  .act[data-v="explicar"][aria-pressed="true"]{background:var(--explain-bg);
-    border-color:var(--explain-line);color:var(--explain)}
-
-  /* legenda dos modos de voz, abaixo da legenda das decisões */
-  .modos{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;
-    margin-top:12px}
-  .modo{background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:11px 13px}
-  .modo h4{font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.04em;
-    text-transform:uppercase;margin:0 0 5px;color:var(--ink-2)}
-  .modo p{margin:0;font-size:.78rem;color:var(--ink-3);line-height:1.4}
   .rows{display:flex;flex-direction:column;gap:7px}
   .row{background:var(--surface);border:1px solid var(--line);border-radius:7px;
     border-left:3px solid var(--line);overflow:hidden}
   .row[data-dec="manter"]{border-left-color:var(--keep)}
-  .row[data-dec="explicar"]{border-left-color:var(--explain)}
   .row[data-dec="traduzir"]{border-left-color:var(--trans)}
   .row[data-dec="decidir"]{border-left-color:var(--decide)}
 
-  .head{display:grid;grid-template-columns:minmax(112px,1fr) 70px 104px 116px minmax(140px,1.3fr) auto;
-    gap:12px;align-items:center;padding:11px 14px}
-  @media (max-width:980px){.head{grid-template-columns:1fr auto;gap:8px}
-    .dist,.why,.freq,.voz{grid-column:1/-1}}
+  .head{display:grid;grid-template-columns:minmax(118px,1.1fr) 78px 128px minmax(150px,1.4fr) auto;
+    gap:14px;align-items:center;padding:11px 14px}
+  @media (max-width:820px){.head{grid-template-columns:1fr auto;gap:8px}
+    .dist,.why,.freq{grid-column:1/-1}}
 
   .term{font-family:var(--mono);font-size:.95rem;font-weight:600;letter-spacing:-.01em;
     display:flex;align-items:center;gap:7px;min-width:0}
@@ -382,12 +352,6 @@
           objetivo dela.</p>
         <p class="test">Teste: circula em fórum sem ninguém explicar.</p>
       </div>
-      <div class="lg expl">
-        <h3>Explicar</h3>
-        <p>O termo fica — a comunidade usa — mas nunca aparece sozinho para público amplo.
-          Vem sempre com o que ele significa ao lado.</p>
-        <p class="test">Teste: se a tela não explica, a pessoa precisa sair dali para entender.</p>
-      </div>
       <div class="lg trans">
         <h3>Traduzir</h3>
         <p>Linguagem da arquitetura. Descreve como o sistema foi construído, não o que a
@@ -401,19 +365,6 @@
         <p class="test">Não escolha um lado: defina em que superfície cada um aparece.</p>
       </div>
     </div>
-    <div class="modos">
-      <div class="modo"><h4>Destrava</h4><p>Erro, instrução, permissão, billing,
-        configuração e métrica. O brandbook diz que aqui a voz <b>não é técnica demais</b>.</p></div>
-      <div class="modo"><h4>Conecta</h4><p>Onboarding, gamificação, referral e comunidade.
-        O brandbook diz que aqui a voz <b>não é gamer hardcore</b>.</p></div>
-      <div class="modo"><h4>Eleva</h4><p>CTA, trial, assinatura, upgrade e campanha.
-        Termo que vive aqui é termo que comunica.</p></div>
-      <div class="modo"><h4>Inspira</h4><p>Institucional, credenciais e propósito.</p></div>
-    </div>
-    <p class="lede" style="font-size:.8rem;margin:10px 0 0">O chip em cada termo diz em que
-      modo as strings dele vivem. <b>100% num modo só</b> é o sinal mais forte que existe:
-      o termo não escapa daquele tipo de situação.</p>
-
     <div class="filterbar">
       <div class="filters" id="filters"></div>
       <form class="addterm" id="addTerm">
@@ -484,7 +435,7 @@
 
 <script>
 let DATA = __DATA__;
-const DECS = ["manter","explicar","traduzir","decidir"];
+const DECS = ["manter","traduzir","decidir"];
 
 /* ---------- extração de um registry qualquer ---------- */
 const CURATED = {
@@ -646,7 +597,7 @@ function extractFrom(raw){
     meta: {strings: strings.length, dropped, products, loadedAt: new Date().toISOString()}};
 }
 
-const LBL = {manter:"manter",explicar:"explicar",traduzir:"traduzir",decidir:"decidir"};
+const LBL = {manter:"manter",traduzir:"traduzir",decidir:"decidir"};
 let state = {};   // term -> {d, note, prefer}
 let db = null, coll = null, collM = null, collR = null;
 
@@ -700,17 +651,6 @@ function mergeManuais(){
   MANUAIS.forEach(m => { if(!have.has(m.term.toLowerCase())){ DATA.terms.push(m); have.add(m.term.toLowerCase()); } });
 }
 
-// Modo de voz do brandbook: em que tipo de situação o termo vive. É o segundo
-// sinal da triagem, independente da proporção de uso no portal.
-function vozChip(t){
-  if(!t.voz) return null;
-  const c = el("span","voz" + (t.voz.pct >= 100 ? " puro" : ""));
-  c.append(el("b", null, t.voz.modo), el("i", null, t.voz.pct + "%"));
-  c.title = `${t.voz.modo} em ${t.voz.pct}% das ${t.voz.linhas} strings onde o termo aparece`
-    + (t.voz.pct >= 100 ? " — só aparece nesse tipo de situação" : "");
-  return c;
-}
-
 function bar(t){
   const d = el("div","dist"); const tot = t.total || 1;
   [["d",t.desktop],["m",t.mobile],["p",t.portal]].forEach(([c,n]) => {
@@ -744,8 +684,7 @@ function renderRows(){
       acts.appendChild(b);
     });
 
-    const vz = vozChip(t);
-    head.append(term, freq, bar(t), vz || el("span"), why, acts);
+    head.append(term, freq, bar(t), why, acts);
     row.appendChild(head);
 
     const det = el("div","detail hidden");
@@ -800,19 +739,17 @@ function renderRows(){
 // "Decidir" para "Em discussão" e daí para "Decidido". Por isso só elas
 // carregam data: é ali que importa saber o que está parado.
 const COLS = [
-  {k:"none",     d:null,       s:null,        titulo:"Sem decisão",  curto:"tirar",
+  {k:"none",   d:null,       s:null,        titulo:"Sem decisão",  curto:"tirar",
    vazio:"Tudo triado."},
-  {k:"manter",   d:"manter",   s:null,        titulo:"Manter",       curto:"manter",
+  {k:"manter", d:"manter",   s:null,        titulo:"Manter",       curto:"manter",
    vazio:"Vocabulário nativo."},
-  {k:"explicar", d:"explicar", s:null,        titulo:"Explicar",     curto:"explicar",
-   vazio:"Fica, mas nunca sozinho."},
   {k:"traduzir", d:"traduzir", s:null,        titulo:"Traduzir",     curto:"traduzir",
    vazio:"Linguagem da arquitetura."},
-  {k:"dec",      d:"decidir",  s:null,        titulo:"Decidir",      curto:"decidir",
+  {k:"dec",    d:"decidir",  s:null,        titulo:"Decidir",      curto:"decidir",
    vazio:"O que precisa de conversa.", funil:true},
-  {k:"disc",     d:"decidir",  s:"discussao", titulo:"Em discussão", curto:"discutindo",
+  {k:"disc",   d:"decidir",  s:"discussao", titulo:"Em discussão", curto:"discutindo",
    vazio:"O que já está na mesa.", funil:true},
-  {k:"done",     d:"decidir",  s:"decidido",  titulo:"Decidido",     curto:"decidido",
+  {k:"done",   d:"decidir",  s:"decidido",  titulo:"Decidido",     curto:"decidido",
    vazio:"O que o DS fechou.", funil:true},
 ];
 const COL = Object.fromEntries(COLS.map(c => [c.k, c]));
@@ -826,13 +763,12 @@ function colKey(term){
 // Para onde faz sentido mandar o card a partir de onde ele está. Oferecer as
 // seis colunas sempre encheria o card de botões e esconderia o passo óbvio.
 const SAIDAS = {
-  none:     ["manter","explicar","traduzir"],
-  manter:   ["explicar","traduzir","dec"],
-  explicar: ["manter","traduzir","dec"],
-  traduzir: ["explicar","manter","dec"],
-  dec:      ["disc","explicar","traduzir"],
-  disc:     ["done","dec"],
-  done:     ["disc","dec"],
+  none:   ["manter","traduzir","dec"],
+  manter: ["traduzir","dec","none"],
+  traduzir: ["manter","dec","none"],
+  dec:    ["disc","manter","traduzir"],
+  disc:   ["done","dec"],
+  done:   ["disc","dec"],
 };
 
 const hoje = () => new Date().toISOString().slice(0,10);
@@ -854,8 +790,6 @@ function card(t){
   if(t.manual) top.appendChild(el("span","hand","à mão"));
   top.appendChild(el("span","f", t.manual && !t.measured ? "—" : t.total+"×"));
   c.append(top, bar(t));
-  const vz = vozChip(t);
-  if(vz) c.appendChild(vz);
 
   // No funil, quanto tempo parado é a informação que justifica a coluna.
   const desde = st.at?.[st.s];
@@ -1036,7 +970,6 @@ function buildRelatorio(){
     const st = state[t.term] || {};
     let l = `- \`${t.term}\` — ${t.total}× no produto · desktop ${t.desktop}, mobile ${t.mobile}, portal ${t.portal}`;
     if(st.prefer) l += ` · usar **${st.prefer}**`;
-    if(t.voz) l += ` · voz ${t.voz.modo} ${t.voz.pct}%`;
     const quando = st.at?.[st.s];
     if(quando){
       const dias = diasDesde(quando);

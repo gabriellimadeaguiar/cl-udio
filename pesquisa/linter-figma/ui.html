@@ -13,13 +13,11 @@
     --accent-ink:var(--figma-color-text-onbrand,#fff);
     --warn:#b45309; --warn-bg:#fbefe0; --warn-line:#e5bc8a;
     --err:#1d4ed8; --err-bg:#e5ebfa; --err-line:#a3b8ee;
-    --expl:#7c3aed; --expl-bg:#f0e9fd; --expl-line:#c9b4f5;
     --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   }
   @media (prefers-color-scheme:dark){
     :root{--warn:#fbbf24;--warn-bg:#2e2312;--warn-line:#7a5c1e;
-          --err:#8fb0f7;--err-bg:#161f3a;--err-line:#3d5490;
-          --expl:#c4a7fb;--expl-bg:#241a38;--expl-line:#4a3670}
+          --err:#8fb0f7;--err-bg:#161f3a;--err-line:#3d5490}
   }
   *,*::before,*::after{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-size:12px;line-height:1.45;
@@ -44,8 +42,6 @@
     background:var(--surface);padding:9px 10px;display:flex;flex-direction:column;gap:6px}
   .f.traduzir{border-left-color:var(--err)}
   .f.decidir{border-left-color:var(--warn)}
-  .f.explicar{border-left-color:var(--expl)}
-  .explicar .tag{background:var(--expl-bg);color:var(--expl);border:1px solid var(--expl-line)}
   .f.done{opacity:.5}
   .ftop{display:flex;gap:7px;align-items:baseline;flex-wrap:wrap}
   .tag{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.04em;
@@ -113,8 +109,7 @@ function render(){
 
     const top = document.createElement('div'); top.className = 'ftop';
     const tag = document.createElement('span'); tag.className = 'tag';
-    tag.textContent = r.decision === 'traduzir' ? 'evitar'
-                    : r.decision === 'explicar' ? 'sem explicação' : 'em discussão';
+    tag.textContent = r.decision === 'traduzir' ? 'evitar' : 'em discussão';
     const term = document.createElement('span'); term.className = 'term'; term.textContent = r.term;
     const layer = document.createElement('span'); layer.className = 'layer'; layer.textContent = r.name;
     top.append(tag, term, layer);
@@ -148,10 +143,6 @@ function render(){
     } else if(r.done){
       const ok = document.createElement('span'); ok.className = 'hint'; ok.textContent = 'corrigido';
       acts.appendChild(ok);
-    } else if(r.decision === 'explicar'){
-      const s = document.createElement('span'); s.className = 'hint';
-      s.textContent = 'o termo aparece sozinho — escreva o que ele significa';
-      acts.appendChild(s);
     } else if(r.decision === 'traduzir'){
       const s = document.createElement('span'); s.className = 'hint';
       s.textContent = r.prefer ? 'em frase — troque à mão' : 'sem termo preferido definido';

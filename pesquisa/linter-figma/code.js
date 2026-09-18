@@ -62,13 +62,6 @@ function summary(g, stale) {
   };
 }
 
-// "explicar" só vale a pena apontar quando o termo aparece SOZINHO — um label
-// solto é exatamente o caso sem explicação. Dentro de uma frase, o texto em
-// volta pode muito bem estar explicando, e apontar viraria ruído.
-function sozinho(text, term) {
-  return new RegExp('^\\s*' + escapeRe(term) + '\\s*(?:\\([^)]*\\))?\\s*$', 'i').test(text);
-}
-
 function findings(node) {
   const text = node.characters;
   if (!text || !text.trim()) return [];
@@ -77,7 +70,6 @@ function findings(node) {
     if (entry.decision === 'manter') continue;
     const re = new RegExp('\\b' + escapeRe(entry.term) + 's?\\b', 'i');
     if (!re.test(text)) continue;
-    if (entry.decision === 'explicar' && !sozinho(text, entry.term)) continue;
     const fix = entry.decision === 'traduzir' ? safeReplacement(text, entry.term, entry.prefer) : null;
     out.push({
       id: node.id,
