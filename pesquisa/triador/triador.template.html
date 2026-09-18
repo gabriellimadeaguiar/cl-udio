@@ -513,7 +513,7 @@ function compOf(key, product){
 function dedupe(strings){
   const seen = new Map();
   for(const s of strings){
-    const id = s.product + " " + s.text;
+    const id = s.product + "\u0000" + s.text;
     const legacy = String(s.key).split(".")[0].toLowerCase() !== String(s.product).toLowerCase();
     const prev = seen.get(id);
     if(!prev || (legacy && !prev.legacy)) seen.set(id, {...s, legacy});
