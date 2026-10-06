@@ -1275,18 +1275,6 @@ p { margin: 0; }
 .dk-tbd { display: inline-block; padding: 0 .4em; border: 1.5px dashed var(--doc-faint); border-radius: 6px; color: var(--doc-muted); font-size: 15px; line-height: 1.6; font-weight: 600; letter-spacing: 0; vertical-align: middle; }
 .dk-eq b .dk-tbd { font-size: 22px; }
 .dk-cost-foot { font-size: 14px; line-height: 20px; font-weight: 600; color: var(--doc-muted); }
-/* "Pesa pouco": two cards with the estimated cost, then the three reasons */
-.dk-perf { display: flex; flex-direction: column; gap: 24px; }
-.dk-perf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.dk-perf-grid > div { display: flex; flex-direction: column; gap: 4px; padding: 24px 28px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px var(--doc-line); }
-.dk-perf-grid .nm { font-size: 20px; line-height: 28px; }
-.dk-perf-grid .how { font-size: 15px; line-height: 21px; color: var(--doc-muted); }
-.dk-perf-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--doc-line); }
-.dk-perf-stats p { display: flex; flex-direction: column; gap: 2px; }
-.dk-perf-stats b { font-size: 40px; line-height: 48px; letter-spacing: -1.5px; font-variant-numeric: tabular-nums; color: var(--doc-green); }
-.dk-perf-stats span { font: 500 12px/16px var(--doc-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--doc-muted); }
-.dk-perf-why { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.dk-perf-why li { padding-left: 14px; border-left: 3px solid var(--doc-red); font-size: 16px; line-height: 24px; color: var(--doc-body); }
 .dk-src a { color: var(--doc-ink); font-weight: 500; text-decoration: underline; text-decoration-color: var(--doc-red); text-underline-offset: 2px; }
 .dk-src a:hover { color: var(--doc-red); }
 .dk-src a:focus-visible { outline: 2px solid var(--doc-ink); outline-offset: 2px; border-radius: 2px; }
@@ -1378,7 +1366,7 @@ p { margin: 0; }
   --doc-paper: #fafaf9; --doc-card: #ffffff; --doc-tint: #f1f1ef; --doc-line: #e5e5e2; --doc-line-2: #d4d4d0;
   --doc-ink: #141414; --doc-body: #3f3f3c; --doc-muted: #6b6b66; --doc-faint: #a3a39d;
   --doc-red: #d91c22; --doc-red-strong: #b3131a; --doc-red-soft: #fdeceb;
-  --doc-green: #15803d;   /* only for gains: 3,5s, "App liberado", the low cost of globe and game */
+  --doc-green: #15803d;   /* only for the proposal's gain (3,5s, "App liberado") */
   --doc-font: "Geist", "Inter", system-ui, sans-serif; --doc-mono: "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
 }
 .pc { flex: none; width: 1440px; display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border-radius: 10px; background: var(--doc-paper); color: var(--doc-ink);
@@ -4350,25 +4338,6 @@ p { margin: 0; }
     primeiraArea: null, primeiraAreaPct: null, // first area opened after the map, and its share of sessions
   };
   const mapS = parseFloat(hero.querySelector(".cs-kpis b").textContent);   // the 42s KPI
-  // "Pesa pouco": estimated cost of the globe (C) and the game (E) once ported to Qt/QML.
-  const PERF = [
-    ["C · Globo", "ShaderEffect: a GPU desenha os pontos", [["< 1%", "CPU"], ["~20 KB", "no pacote"], ["2–5 MB", "memória"]]],
-    ["E · Server Stack", "Itens QML simples, sem Canvas", [["1–3%", "CPU"], ["~20 KB", "no pacote"], ["2–5 MB", "memória"]]],
-  ];
-  function perfSlide() {
-    const el = document.createElement("div");
-    el.className = "dk-perf";
-    el.innerHTML = `<div class="dk-perf-grid">${PERF.map(([name, how, stats]) => `
-        <div><b class="nm">${name}</b><span class="how">${how}</span>
-          <div class="dk-perf-stats">${stats.map(([v, l]) => `<p><b>${v}</b><span>${l}</span></p>`).join("")}</div></div>`).join("")}</div>
-      <ul class="dk-perf-why">
-        <li><b>Só roda nos ~42s do map</b> e para quando as rotas ficam prontas.</li>
-        <li><b>Não disputa com o motor</b>: a animação fica na interface.</li>
-        <li><b>Sem dependência nova</b>: sem som, sem QtMultimedia.</li>
-      </ul>
-      <p class="dk-cost-foot">Estimativa por núcleo de CPU, a partir do protótipo web. Validar no hardware-alvo com o QML Profiler.</p>`;
-    return el;
-  }
   function custoSlide() {
     const num = (v, d = 0) => v.toLocaleString("pt-BR", { maximumFractionDigits: d });
     const val = (v, fmt = (x) => x) => v == null ? `<span class="dk-tbd">a preencher</span>` : fmt(v);
@@ -4404,7 +4373,6 @@ p { margin: 0; }
     { k: partOf(0), t: "O custo da espera", build: custoSlide },
     { sec: 1, from: [".cs-grid4"] },
     { sec: 2, from: [".cs-sub", ".cs-sols"] },
-    { k: partOf(2), t: "Globo e jogo pesam pouco", build: perfSlide },
     { sec: 3, from: [".cs-grid3"] },
     { sec: 4, t: "Hipóteses e método", from: [".cs-two"] },
     { sec: 4, t: "Métricas", from: [".cs-table", ".cs-table + .cs-sub"] },
