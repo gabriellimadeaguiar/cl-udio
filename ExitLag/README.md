@@ -14,6 +14,7 @@ ExitLag/
   home-jogos.html  # "ExitLag Palco": catálogo de jogos no palco (refletores, ping com e sem ExitLag, ferramentas no menu lateral)
   vitrine.html     # "ExitLag Vitrine": home com carrossel 3D em WebGPU (reflexos, bloom, feixe volumétrico, rotas com e sem ExitLag)
   vitrine-qml.md   # guia de port da Vitrine para Qt Quick / Qt Quick 3D
+  site.html        # "ExitLag Site": protótipo do site público (exitlag.com/pt) com mapa de rotas em WebGPU fixo atrás da página
   README.md   # este arquivo
 ```
 
