@@ -11,6 +11,7 @@ workflows. Nenhum workflow em `.github/workflows/` é disparado por mudanças aq
 ```
 ExitLag/
   index.html  # protótipo "ExitLag Route Analysis" (app desktop 1440×810), página única
+  home-jogos.html  # nova Home de jogos (carrossel 3D, categorias, última sessão), com os tokens do DS
   README.md   # este arquivo
 ```
 
