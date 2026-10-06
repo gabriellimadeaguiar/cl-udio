@@ -1291,6 +1291,21 @@ p { margin: 0; }
 /* sourced claim under a slide's content */
 .dk-src { display: flex; flex-direction: column; gap: 8px; padding: 20px 24px; border-radius: 16px; background: #efeaff; font-size: 18px; line-height: 28px; }
 .dk-src-refs { font-size: 13px; line-height: 19px; font-weight: 600; color: #6f6a86; }
+/* "O custo da espera": opens × wait = hours, then the supporting numbers */
+.dk-cost { display: flex; flex-direction: column; gap: 20px; }
+.dk-eq { display: grid; grid-template-columns: 1fr auto 1fr auto 1.2fr; align-items: center; gap: 16px; }
+.dk-eq i { font: 800 40px/1 "Nunito", system-ui, sans-serif; font-style: normal; color: #a7a2bb; }
+.dk-eq div, .dk-cost-grid div { display: flex; flex-direction: column; gap: 8px; padding: 24px 28px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1px #ebe6f7; }
+.dk-eq div.total { background: #efeaff; box-shadow: none; }
+.dk-eq span, .dk-cost-grid span { font-size: 15px; line-height: 21px; font-weight: 700; color: #6f6a86; }
+.dk-eq b { font-size: 56px; line-height: 64px; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+.dk-cost-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.dk-cost-grid b { font-size: 32px; line-height: 40px; font-variant-numeric: tabular-nums; }
+.dk-cost-grid em { font-style: normal; font-size: 14px; line-height: 20px; color: #6f6a86; }
+/* a number still waiting on data: clearly a field, never mistaken for a value */
+.dk-tbd { display: inline-block; padding: 0 .4em; border: 2px dashed #b9a8ff; border-radius: 8px; color: #7b61ff; font-size: 15px; line-height: 1.6; font-weight: 800; letter-spacing: 0; vertical-align: middle; }
+.dk-eq b .dk-tbd { font-size: 22px; }
+.dk-cost-foot { font-size: 14px; line-height: 20px; font-weight: 600; color: #6f6a86; }
 .dk-src a { color: #5f45e6; font-weight: 700; text-decoration: underline; text-decoration-color: #b9a8ff; text-underline-offset: 2px; }
 .dk-src a:hover { color: #231f3a; }
 .dk-src a:focus-visible { outline: 2px solid #b9a8ff; outline-offset: 2px; border-radius: 2px; }
@@ -5260,11 +5275,50 @@ p { margin: 0; }
   // Each slide clones blocks from the Intro, so the two tabs never disagree on a number.
   const hero = intro.querySelector(".cs-hero"), secs = [...intro.querySelectorAll(".cs-sec")];
   const secName = (i) => secs[i].querySelector("h2").textContent.replace(/^\d+\.\s*/, "");
+
+  // "O custo da espera": ExitLag telemetry and support numbers. null = still waiting on the data,
+  // shown as a dashed "a preencher" field; fill these in and the slide (and the hours/day) updates.
+  const CUSTO = {
+    periodo: null,            // e.g. "set/2026"
+    aberturasDia: null,       // app opens per day (sessions that run the network map)
+    abandonoPct: null,        // % of sessions closed or minimized before the map reaches 100%
+    mapP50: null, mapP90: null, // network map duration in seconds: median and slowest 10%
+    ticketsMes: null,         // "travado carregando" / "não conecta" tickets per month
+    primeiraArea: null, primeiraAreaPct: null, // first area opened after the map, and its share of sessions
+  };
+  const mapS = parseFloat(hero.querySelector(".cs-kpis b").textContent);   // the 42s KPI
+  function custoSlide() {
+    const num = (v, d = 0) => v.toLocaleString("pt-BR", { maximumFractionDigits: d });
+    const val = (v, fmt = (x) => x) => v == null ? `<span class="dk-tbd">a preencher</span>` : fmt(v);
+    const horas = CUSTO.aberturasDia == null ? null : (CUSTO.aberturasDia * mapS) / 3600;
+    const el = document.createElement("div");
+    el.className = "dk-cost";
+    el.innerHTML = `
+      <div class="dk-eq">
+        <div><span>Aberturas do app por dia</span><b>${val(CUSTO.aberturasDia, (v) => num(v))}</b></div>
+        <i aria-hidden="true">×</i>
+        <div><span>Espera por abertura (network map)</span><b>${num(mapS)}s</b></div>
+        <i aria-hidden="true">=</i>
+        <div class="total"><span>Horas de espera por dia, somando a base</span><b>${val(horas, (v) => num(v) + " h")}</b></div>
+      </div>
+      <div class="dk-cost-grid">
+        <div><span>Abandono durante o map</span><b>${val(CUSTO.abandonoPct, (v) => num(v, 1) + "%")}</b><em>das sessões fecham ou minimizam antes de 100%</em></div>
+        <div><span>Duração do map</span><b>${val(CUSTO.mapP90, (v) => num(v) + "s")}</b><em>nos 10% mais lentos · mediana ${val(CUSTO.mapP50, (v) => num(v) + "s")}</em></div>
+        <div><span>Tickets de suporte</span><b>${val(CUSTO.ticketsMes, (v) => num(v))}</b><em>por mês com "travado carregando" ou "não conecta"</em></div>
+        <div><span>Primeira área aberta</span><b>${val(CUSTO.primeiraArea)}</b><em>depois do map · ${val(CUSTO.primeiraAreaPct, (v) => num(v) + "%")} das sessões</em></div>
+      </div>
+      <p class="dk-cost-foot">${Object.values(CUSTO).includes(null)
+        ? "Campos tracejados aguardam dados de telemetria e suporte da ExitLag."
+        : `Telemetria e suporte da ExitLag${CUSTO.periodo ? `, ${CUSTO.periodo}` : ""}.`}</p>`;
+    return el;
+  }
+
   const SLIDES = [
     { cover: true, from: [hero, ".cs-kicker", "h1", ".cs-lead"] },
     { k: "Resumo", t: "O problema em números", from: [hero, ".cs-kpis"],
       note: `<p><b>42s é 4× o limite de 10s</b> em que o usuário mantém a atenção na tela (Nielsen, 1993), e a partir de <b>4s</b> o desempenho e a intenção de voltar já caem (Galletta et al., 2004).</p>
         <p class="dk-src-refs">Fontes: <a href="https://www.nngroup.com/articles/response-times-3-important-limits/" target="_blank" rel="noopener noreferrer">Nielsen, J. (1993). Response Times: The 3 Important Limits. NN/g</a> · <a href="https://aisel.aisnet.org/jais/vol5/iss1/1" target="_blank" rel="noopener noreferrer">Galletta, D. et al. (2004). Web Site Delays: How Tolerant are Users? JAIS 5(1)</a></p>` },
+    { k: "Resumo", t: "O custo da espera", build: custoSlide },
     { sec: 0, from: [".cs-two"] },
     { sec: 0, t: "Hoje × proposta", from: [".cs-timeline"] },
     { sec: 1, from: [".cs-grid4"] },
@@ -5297,8 +5351,8 @@ p { margin: 0; }
     el.setAttribute("role", "group");
     el.setAttribute("aria-roledescription", "slide");
     el.setAttribute("aria-label", `${i + 1} de ${SLIDES.length}`);
-    const [root, ...sels] = s.sec === undefined ? s.from : [secs[s.sec], ...s.from];
-    const blocks = sels.map((sel) => root.querySelector(sel).cloneNode(true));
+    const [root, ...sels] = s.build ? [] : s.sec === undefined ? s.from : [secs[s.sec], ...s.from];
+    const blocks = s.build ? [s.build()] : sels.map((sel) => root.querySelector(sel).cloneNode(true));
     if (s.cover) el.append(...blocks);
     else {
       const head = document.createElement("div"), k = document.createElement("p"), h = document.createElement("h2"), body = document.createElement("div");
