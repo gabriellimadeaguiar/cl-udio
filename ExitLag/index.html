@@ -1191,11 +1191,10 @@ p { margin: 0; }
 .tl-free { background: #15803d1f; color: #0f6b31; }   /* --doc-green at 12%; darker text keeps 4.5:1 */
 .tl-foot { margin-top: 14px; font-size: 13px; color: var(--doc-muted); font-weight: 600; }
 /* grids of principles / patterns */
-.cs-grid4, .cs-grid3 { display: grid; gap: 16px; }
-.cs-grid4 { grid-template-columns: repeat(4, 1fr); }
+.cs-grid3 { display: grid; gap: 16px; }
 .cs-grid3 { grid-template-columns: repeat(3, 1fr); }
-.cs-grid4 div, .cs-grid3 div { padding: 18px 20px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px var(--doc-line); display: flex; flex-direction: column; gap: 6px; }
-.cs-grid4 span, .cs-grid3 span { font-size: 14px; line-height: 21px; color: var(--doc-body); }
+.cs-grid3 div { padding: 18px 20px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px var(--doc-line); display: flex; flex-direction: column; gap: 6px; }
+.cs-grid3 span { font-size: 14px; line-height: 21px; color: var(--doc-body); }
 /* solutions */
 .cs-sols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
 .cs-sol { display: grid; grid-template-columns: 180px 1fr; gap: 20px; padding: 20px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px var(--doc-line); }
@@ -1285,9 +1284,9 @@ p { margin: 0; }
 .dk-slide .tl-track { height: 56px; }
 .dk-slide .tl-track i { font-size: 15px; }
 .dk-slide .tl-foot { margin-top: 20px; font-size: 16px; line-height: 25px; }
-.dk-slide .cs-grid4 div, .dk-slide .cs-grid3 div { padding: 24px; gap: 10px; }
-.dk-slide .cs-grid4 b, .dk-slide .cs-grid3 b { font-size: 19px; line-height: 26px; }
-.dk-slide .cs-grid4 span, .dk-slide .cs-grid3 span { font-size: 16px; line-height: 25px; }
+.dk-slide .cs-grid3 div { padding: 24px; gap: 10px; }
+.dk-slide .cs-grid3 b { font-size: 19px; line-height: 26px; }
+.dk-slide .cs-grid3 span { font-size: 16px; line-height: 25px; }
 .dk-slide .cs-sub { margin-top: 0; }
 .dk-slide .cs-sols { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-top: 0; }
 .dk-slide .cs-sol, .dk-slide .cs-sol:last-child { grid-column: auto; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 12px; padding: 14px; }
@@ -4239,10 +4238,9 @@ p { margin: 0; }
 
     <section class="cs-sec">
       <h2>2. Objetivo e princípios</h2>
-      <div class="cs-grid4">
+      <div class="cs-grid3">
         <div><b>Liberar o que não depende</b><span>Só Connections, Community Servers, Multi Internet e Traffic Shaper esperam. O resto abre na hora.</span></div>
         <div><b>Visível, explicado, com tempo</b><span>Progresso real com porcentagem, regiões, o que está sendo feito e quanto falta.</span></div>
-        <div><b>Intenção vira fila</b><span>Ligar um jogo durante a análise coloca na fila, e ele conecta sozinho no fim.</span></div>
         <div><b>Marca e acessibilidade</b><span>Tokens da ExitLag, status nunca só por cor (WCAG 1.4.1) e respeito a "reduzir movimento".</span></div>
       </div>
     </section>
@@ -4370,7 +4368,7 @@ p { margin: 0; }
       note: `<p><b>42s é 4× o limite de 10s</b> em que o usuário mantém a atenção na tela (Nielsen, 1993), e a partir de <b>4s</b> o desempenho e a intenção de voltar já caem (Galletta et al., 2004).</p>
         <p class="dk-src-refs">Fontes: <a href="https://www.nngroup.com/articles/response-times-3-important-limits/" target="_blank" rel="noopener noreferrer">Nielsen, J. (1993). Response Times: The 3 Important Limits. NN/g</a> · <a href="https://aisel.aisnet.org/jais/vol5/iss1/1" target="_blank" rel="noopener noreferrer">Galletta, D. et al. (2004). Web Site Delays: How Tolerant are Users? JAIS 5(1)</a></p>` },
     { k: partOf(0), t: "O custo da espera", build: custoSlide },
-    { sec: 1, from: [".cs-grid4"] },
+    { sec: 1, from: [".cs-grid3"] },
     { sec: 2, from: [".cs-sub", ".cs-sols"] },
     { sec: 3, from: [".cs-grid3"] },
     { sec: 4, t: "Hipóteses e método", from: [".cs-two"] },
