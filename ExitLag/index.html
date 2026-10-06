@@ -1280,8 +1280,9 @@ p { margin: 0; }
 .dk-slide .cs-kpis { margin-top: 0; gap: 20px; }
 .dk-slide .cs-kpis div { padding: 32px 28px; gap: 10px; }
 .dk-slide .cs-kpis b { font-size: 72px; line-height: 80px; letter-spacing: -2.5px; }
-/* one emphasis per slide: the 42s wait */
-.dk-slide .cs-kpis div:first-child b { color: var(--doc-red); }
+/* today vs. the proposal: time until the app is usable */
+.dk-slide .cs-kpis div:nth-child(2) b { color: var(--doc-red); }
+.dk-slide .cs-kpis div:nth-child(3) b { color: var(--doc-green); }
 .dk-slide .cs-kpis span { font-size: 17px; line-height: 25px; }
 /* sourced claim under a slide's content */
 .dk-src { display: flex; flex-direction: column; gap: 8px; padding: 20px 24px; border-radius: 0 10px 10px 0; background: var(--doc-tint); border-left: 3px solid var(--doc-red); font-size: 18px; line-height: 28px; }
@@ -1386,11 +1387,12 @@ p { margin: 0; }
 .lg-status { position: absolute; left: 0; right: 0; top: 279px; text-align: center; font-weight: 700; font-size: 17px; line-height: 24px; }
 
 /* ---------- Prototype controls (off-brand on purpose, like the original exp-switch) ---------- */
-/* Prototype identity: sober neutrals, red only for emphasis (kickers, progress, key figures, markers). */
+/* Prototype identity: sober neutrals, red for emphasis (kickers, progress, key figures, markers); green only for the proposal's gain. */
 .stage {
   --doc-paper: #fafaf9; --doc-card: #ffffff; --doc-tint: #f1f1ef; --doc-line: #e5e5e2; --doc-line-2: #d4d4d0;
   --doc-ink: #141414; --doc-body: #3f3f3c; --doc-muted: #6b6b66; --doc-faint: #a3a39d;
   --doc-red: #d91c22; --doc-red-strong: #b3131a; --doc-red-soft: #fdeceb;
+  --doc-green: #15803d;   /* only for the proposal's gain (3,5s) */
   --doc-font: "Geist", "Inter", system-ui, sans-serif; --doc-mono: "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
 }
 .pc { flex: none; width: 1440px; display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border-radius: 10px; background: var(--doc-paper); color: var(--doc-ink);
