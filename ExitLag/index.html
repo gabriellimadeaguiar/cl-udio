@@ -1260,6 +1260,69 @@ p { margin: 0; }
 .cs-table tr.guard td { background: #fffaf2; }
 .cs-table tr.guard td:first-child { color: #a3203a; }
 
+/* ---------- Apresentação tab: the Intro case as 1440×810 slides (same documentation identity) ---------- */
+.deck[hidden] { display: none; }
+.deck-on .app, .deck-on .pc-cap { display: none; }
+.deck { flex: none; width: 1440px; margin: 0 auto 24px; }
+.dk-view { position: relative; width: 1440px; height: 810px; }
+.dk-canvas { position: relative; width: 1440px; height: 810px; border-radius: 24px; overflow: hidden; background: #fffdf8; color: #231f3a;
+  box-shadow: 0 10px 28px -8px #000c; font: 500 17px/27px "Nunito", system-ui, sans-serif; }
+.dk-view:fullscreen { width: 100%; height: 100%; background: #050608; }
+.dk-view:fullscreen .dk-canvas { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(var(--dk-s, 1)); box-shadow: none; }
+.dk-slide { position: absolute; inset: 0; padding: 64px 88px 104px; display: flex; flex-direction: column; gap: 32px; }
+.dk-slide[hidden] { display: none; }
+.dk-slide:not([hidden]) { animation: dkIn 320ms cubic-bezier(.2, 0, 0, 1); }
+@keyframes dkIn { from { opacity: 0; transform: translateX(var(--dk-dir, 24px)); } }
+.dk-slide b { font-weight: 800; }
+.dk-head { display: flex; flex-direction: column; gap: 10px; }
+.dk-k { font: 800 13px/16px "Nunito", system-ui, sans-serif; letter-spacing: .6px; text-transform: uppercase; color: #7b61ff; }
+.dk-head h2 { margin: 0; font: 800 40px/48px "Nunito", system-ui, sans-serif; letter-spacing: -.4px; }
+.dk-body { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 20px; }
+.dk-slide.cover { justify-content: center; gap: 20px; padding-left: 120px; padding-right: 120px; }
+.dk-slide.cover .cs-kicker { font-size: 15px; line-height: 20px; }
+.dk-slide.cover h1 { margin: 0; font: 800 72px/80px "Nunito", system-ui, sans-serif; letter-spacing: -1px; max-width: 1050px; }
+.dk-slide.cover .cs-lead { font-size: 22px; line-height: 34px; max-width: 980px; }
+/* Intro blocks cloned into the slides, enlarged for presenting */
+.dk-slide .cs-kpis { margin-top: 0; gap: 20px; }
+.dk-slide .cs-kpis div { padding: 32px 28px; gap: 10px; }
+.dk-slide .cs-kpis b { font-size: 72px; line-height: 80px; letter-spacing: -1px; }
+.dk-slide .cs-kpis span { font-size: 17px; line-height: 25px; }
+.dk-slide .cs-two { gap: 56px; }
+.dk-slide .cs-list { gap: 14px; }
+.dk-slide .cs-note { padding: 28px; font-size: 19px; line-height: 30px; }
+.dk-slide .cs-timeline { margin-top: 0; padding: 32px; }
+.dk-slide .tl-track { height: 56px; }
+.dk-slide .tl-track i { font-size: 15px; }
+.dk-slide .tl-foot { margin-top: 20px; font-size: 16px; line-height: 25px; }
+.dk-slide .cs-grid4 div, .dk-slide .cs-grid3 div { padding: 24px; gap: 10px; }
+.dk-slide .cs-grid4 b, .dk-slide .cs-grid3 b { font-size: 19px; line-height: 26px; }
+.dk-slide .cs-grid4 span, .dk-slide .cs-grid3 span { font-size: 16px; line-height: 25px; }
+.dk-slide .cs-sub { margin-top: 0; }
+.dk-slide .cs-sols { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-top: 0; }
+.dk-slide .cs-sol, .dk-slide .cs-sol:last-child { grid-column: auto; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 12px; padding: 14px; }
+.dk-slide .cs-thumb svg { width: 100%; }
+.dk-slide .cs-sol-b { flex: 1; font-size: 13px; line-height: 19px; }
+.dk-slide .cs-sol { display: flex; flex-direction: column; }
+.dk-slide .cs-go { margin-top: auto; }
+.dk-slide .cs-sol-t { font-size: 16px; line-height: 22px; }
+.dk-slide .cs-table { margin-top: 0; font-size: 15px; line-height: 22px; }
+.dk-slide .cs-table td, .dk-slide .cs-table th { padding: 10px 16px; }
+/* navigation: inside the slide, so it also shows in full screen */
+.dk-nav { position: absolute; left: 88px; right: 40px; bottom: 28px; display: flex; align-items: center; gap: 8px; font: 700 13px/18px "Nunito", system-ui, sans-serif; color: #6f6a86; }
+.dk-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dk-nav button { height: 36px; min-width: 36px; padding: 0 12px; border-radius: 100px; color: #231f3a; box-shadow: inset 0 0 0 1.5px #ebe6f7; transition: background-color 120ms ease; }
+.dk-nav button:hover { background: #efeaff; }
+.dk-nav button[aria-disabled="true"] { color: #c9c4da; background: none; cursor: default; }
+.dk-nav button:focus-visible { outline: 3px solid #b9a8ff; outline-offset: 2px; }
+.dk-count { min-width: 64px; text-align: center; font-variant-numeric: tabular-nums; }
+.dk-count b { color: #231f3a; }
+.dk-prog { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: #ebe6f7; }
+.dk-prog i { display: block; height: 100%; width: 0; background: #7b61ff; transition: width 320ms cubic-bezier(.2, 0, 0, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .dk-slide:not([hidden]) { animation: none; }
+  .dk-prog i { transition: none; }
+}
+
 /* ---------- LOGIN / authentication (production screen, recreated 1:1 on the 1440×810 frame) ---------- */
 .ra-login {
   position: absolute; inset: 0; z-index: 950; border-radius: 32px; overflow: hidden; color: #fff; font-family: "Nunito", "Segoe UI", system-ui, sans-serif;
@@ -1310,7 +1373,7 @@ p { margin: 0; }
 .pc-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .pc-lbl { padding: 6px 4px 6px 8px; color: #6f6a86; font-weight: 800; }
 .pc-sep { width: 1px; height: 24px; background: #ebe6f7; margin: 0 6px; }
-.pc button { padding: 7px 11px; border-radius: 100px; color: #231f3a; font: inherit; }
+.pc button { padding: 7px 10px; border-radius: 100px; color: #231f3a; font: inherit; }
 .pc button:hover { background: #efeaff; }
 .pc button[aria-pressed="true"] { background: #7b61ff; color: #fff; }
 .pc button.ghost { box-shadow: inset 0 0 0 1.5px #ebe6f7; }
@@ -2980,6 +3043,7 @@ p { margin: 0; }
   app.insertAdjacentHTML("beforebegin", `<div class="pc" role="region" aria-label="Prototype controls">
       <div class="pc-row">
         <button type="button" data-pc="intro" aria-pressed="false">Intro</button>
+        <button type="button" data-pc="deck" aria-pressed="false">Apresentação</button>
         <span class="pc-sep"></span>
         <span class="pc-lbl">Hoje</span>
         <button type="button" data-mode="before">Tela bloqueante</button>
@@ -4621,7 +4685,7 @@ p { margin: 0; }
   Object.assign(GAMES.pitfall, { icon: ICON('<path d="M14 3v10"/><circle cx="14" cy="15" r="2"/><path d="M3 23h7M18 23h7"/><rect x="10" y="22" width="8" height="3" fill="currentColor" opacity=".35"/>') });
 
   /* ---- input: Space starts / retries everywhere; each game declares its own keys and pointer handlers ---- */
-  const prLive = () => isGame() && !block.hidden && login.hidden && !document.body.classList.contains("intro-on");
+  const prLive = () => isGame() && !block.hidden && login.hidden && !document.body.matches(".intro-on, .deck-on");
   document.addEventListener("keydown", (e) => {
     if (!prLive() || PR.state === "left") return;
     if (PR.state === "picking") { if (e.key === "Escape") { e.preventDefault(); closePicker(); } return; }
@@ -5023,7 +5087,8 @@ p { margin: 0; }
     const b = e.target.closest("button");
     if (!b) return;
     if (b.dataset.pc === "intro") return showIntro(true);
-    if (b.dataset.mode) { showIntro(false); return setMode(b.dataset.mode); }
+    if (b.dataset.pc === "deck") return showDeck(true);
+    if (b.dataset.mode) { showIntro(false); showDeck(false); return setMode(b.dataset.mode); }
     if (b.dataset.engine) { RA.engine = b.dataset.engine; paintCaption(); return restart(); }
     if (b.dataset.pc === "restart") return restart();
     if (b.dataset.pc === "login") { RA.login = !RA.login; b.setAttribute("aria-pressed", String(RA.login)); return restart(); }
@@ -5178,6 +5243,7 @@ p { margin: 0; }
   intro.innerHTML = caseHTML;
   $(".pc").after(intro);
   function showIntro(on) {
+    if (on) showDeck(false);
     document.body.classList.toggle("intro-on", on);
     intro.hidden = !on;
     $('.pc [data-pc="intro"]').setAttribute("aria-pressed", String(on));
@@ -5191,6 +5257,112 @@ p { margin: 0; }
     showIntro(false);
     setMode(b.dataset.gotoMode);
   });
+
+  /* ======================= Apresentação tab: the Intro case as slides ======================= */
+  // Each slide clones blocks from the Intro, so the two tabs never disagree on a number.
+  const hero = intro.querySelector(".cs-hero"), secs = [...intro.querySelectorAll(".cs-sec")];
+  const secName = (i) => secs[i].querySelector("h2").textContent.replace(/^\d+\.\s*/, "");
+  const SLIDES = [
+    { cover: true, from: [hero, ".cs-kicker", "h1", ".cs-lead"] },
+    { k: "Resumo", t: "O problema em números", from: [hero, ".cs-kpis"] },
+    { sec: 0, from: [".cs-two"] },
+    { sec: 0, t: "Hoje × proposta", from: [".cs-timeline"] },
+    { sec: 1, from: [".cs-grid4"] },
+    { sec: 2, from: [".cs-sub", ".cs-sols"] },
+    { sec: 3, from: [".cs-grid3"] },
+    { sec: 4, t: "Hipóteses e método", from: [".cs-two"] },
+    { sec: 4, t: "Métricas e metas", from: [".cs-table", ".cs-table + .cs-sub"] },
+    { sec: 5, from: [".cs-grid3", ".cs-sub"] },
+  ];
+  const deck = document.createElement("section");
+  deck.className = "deck";
+  deck.hidden = true;
+  deck.setAttribute("aria-roledescription", "apresentação");
+  deck.setAttribute("aria-label", "Apresentação do case");
+  deck.innerHTML = `<div class="dk-view"><div class="dk-canvas">
+      <div class="dk-nav">
+        <span class="dk-title"></span>
+        <button type="button" data-dk="prev" aria-label="Slide anterior">←</button>
+        <span class="dk-count" aria-live="polite"></span>
+        <button type="button" data-dk="next" aria-label="Próximo slide">→</button>
+        <button type="button" data-dk="full">Tela cheia</button>
+      </div>
+      <div class="dk-prog"><i></i></div>
+    </div></div>`;
+  const dkView = deck.querySelector(".dk-view"), dkCanvas = deck.querySelector(".dk-canvas");
+  const dkq = (k) => deck.querySelector(`[data-dk="${k}"]`);
+  deck.querySelector(".dk-title").textContent = hero.querySelector("h1").textContent;
+  const slideEls = SLIDES.map((s, i) => {
+    const el = document.createElement("div");
+    el.className = "dk-slide" + (s.cover ? " cover" : "");
+    el.setAttribute("role", "group");
+    el.setAttribute("aria-roledescription", "slide");
+    el.setAttribute("aria-label", `${i + 1} de ${SLIDES.length}`);
+    const [root, ...sels] = s.sec === undefined ? s.from : [secs[s.sec], ...s.from];
+    const blocks = sels.map((sel) => root.querySelector(sel).cloneNode(true));
+    if (s.cover) el.append(...blocks);
+    else {
+      const head = document.createElement("div"), k = document.createElement("p"), h = document.createElement("h2"), body = document.createElement("div");
+      head.className = "dk-head"; k.className = "dk-k"; body.className = "dk-body";
+      k.textContent = s.k ?? `Parte ${s.sec + 1} de ${secs.length}` + (s.t ? ` · ${secName(s.sec)}` : "");
+      h.textContent = s.t ?? secName(s.sec);
+      head.append(k, h);
+      body.append(...blocks);
+      el.append(head, body);
+    }
+    el.hidden = true;
+    return el;
+  });
+  dkCanvas.prepend(...slideEls);
+  let dkAt = -1;
+  function dkGo(i) {
+    i = Math.max(0, Math.min(SLIDES.length - 1, i));
+    if (i === dkAt) return;
+    dkCanvas.style.setProperty("--dk-dir", i < dkAt ? "-24px" : "24px");
+    slideEls.forEach((el, n) => { el.hidden = n !== i; });
+    dkAt = i;
+    deck.querySelector(".dk-count").innerHTML = `<b>${i + 1}</b> / ${SLIDES.length}`;
+    deck.querySelector(".dk-prog i").style.width = ((i + 1) / SLIDES.length) * 100 + "%";
+    dkq("prev").setAttribute("aria-disabled", String(i === 0));
+    dkq("next").setAttribute("aria-disabled", String(i === SLIDES.length - 1));
+  }
+  dkGo(0);
+  // Full screen scales the 1440×810 slide to fit; it is offered only where the page may use it (not every embed allows it).
+  const dkFull = () => document.fullscreenElement === dkView;
+  function fitDeck() {
+    dkView.style.setProperty("--dk-s", dkFull() ? Math.min(innerWidth / 1440, innerHeight / 810) : 1);
+    dkq("full").textContent = dkFull() ? "Sair da tela cheia" : "Tela cheia";
+  }
+  dkq("full").hidden = !document.fullscreenEnabled;
+  document.addEventListener("fullscreenchange", fitDeck);
+  addEventListener("resize", fitDeck);
+  function showDeck(on) {
+    if (on) showIntro(false);
+    else if (dkFull()) document.exitFullscreen();
+    document.body.classList.toggle("deck-on", on);
+    deck.hidden = !on;
+    $('.pc [data-pc="deck"]').setAttribute("aria-pressed", String(on));
+    if (!on) return;
+    document.querySelectorAll(".pc [data-mode]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+    $(".stage").scrollTop = 0;
+  }
+  deck.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-dk], [data-goto-mode]");
+    if (!b) return;
+    if (b.dataset.gotoMode) { showDeck(false); showIntro(false); return setMode(b.dataset.gotoMode); }
+    if (b.dataset.dk === "prev") return dkGo(dkAt - 1);
+    if (b.dataset.dk === "next") return dkGo(dkAt + 1);
+    if (b.dataset.dk === "full") return dkFull() ? document.exitFullscreen() : dkView.requestFullscreen().catch(() => {});
+  });
+  // ← → (and Page Up / Down, Space, Home / End) move between slides while the tab is open.
+  document.addEventListener("keydown", (e) => {
+    if (deck.hidden || e.metaKey || e.ctrlKey || e.altKey || e.target.closest("input, textarea, [contenteditable]")) return;
+    const to = { ArrowRight: dkAt + 1, PageDown: dkAt + 1, " ": dkAt + 1, ArrowLeft: dkAt - 1, PageUp: dkAt - 1, Home: 0, End: SLIDES.length - 1 }[e.key];
+    if (to === undefined || (e.key === " " && e.target.closest("button, [role=button], [role=link]"))) return;
+    e.preventDefault();
+    dkGo(to);
+  });
+  intro.after(deck);
 
   setMode("A");
   showIntro(true);
