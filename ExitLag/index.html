@@ -1288,15 +1288,14 @@ p { margin: 0; }
 .dk-slide .cs-grid3 b { font-size: 19px; line-height: 26px; }
 .dk-slide .cs-grid3 span { font-size: 16px; line-height: 25px; }
 .dk-slide .cs-sub { margin-top: 0; }
-.dk-slide .cs-sols { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-top: 0; }
-.dk-slide .cs-sol, .dk-slide .cs-sol:last-child { grid-column: auto; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 12px; padding: 14px; }
+.dk-slide .cs-sols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 0; }
+.dk-slide .cs-sol, .dk-slide .cs-sol:last-child { grid-column: auto; grid-template-columns: 240px minmax(0, 1fr); align-items: start; gap: 22px; padding: 22px; }
 .dk-slide .cs-thumb svg { width: 100%; }
-.dk-slide .cs-sol-b { flex: 1; font-size: 13px; line-height: 19px; }
-.dk-slide .cs-sol { display: flex; flex-direction: column; }
-.dk-slide .cs-go { margin-top: auto; }
+.dk-slide .cs-sol-b { font-size: 16px; line-height: 24px; }
+.dk-slide .cs-go { margin-top: 6px; }
 /* a slide-level link into the prototype */
 .dk-cta .cs-go { margin-top: 8px; padding: 12px 18px; font-size: 15px; line-height: 20px; }
-.dk-slide .cs-sol-t { font-size: 16px; line-height: 22px; }
+.dk-slide .cs-sol-t { font-size: 22px; line-height: 28px; }
 .dk-slide .cs-table { margin-top: 0; font-size: 15px; line-height: 22px; }
 .dk-slide .cs-table td, .dk-slide .cs-table th { padding: 10px 16px; }
 /* navigation: inside the slide, so it also shows in full screen */
@@ -3048,15 +3047,12 @@ p { margin: 0; }
         <button type="button" data-mode="before">Fluxo atual</button>
         <span class="pc-sep"></span>
         <span class="pc-lbl">Proposta</span>
-        <button type="button" data-mode="A">A · Top bar</button>
-        <button type="button" data-mode="B">B · Sidebar</button>
-        <button type="button" data-mode="G">C · Sidebar com globo</button>
-        <button type="button" data-mode="C">D · Card na Home</button>
-        <button type="button" data-mode="F">E · Bloqueante + jogo</button>
+        <button type="button" data-mode="G">Carregamento assíncrono</button>
+        <button type="button" data-mode="F">Carregamento síncrono</button>
         <span class="grow"></span>
         <span class="pc-ref">
           <button type="button" class="ghost" aria-describedby="pc-ref-pop" aria-label="Referências usadas no protótipo">&#9432; Referências</button>
-          <span class="pc-ref-pop" id="pc-ref-pop" role="tooltip"><b>Referências usadas no protótipo</b><p class="pc-ref-grp">Espera e feedback</p><ul><li><a href="https://www.nngroup.com/articles/response-times-3-important-limits/" target="_blank" rel="noopener noreferrer">NN/g — Response Time Limits</a><span>Acima de ~10s: % concluída e liberdade para seguir usando o app (base das opções A–D).</span></li><li><a href="https://www.nngroup.com/articles/progress-indicators/" target="_blank" rel="noopener noreferrer">NN/g — Progress Indicators</a><span>Indicador determinado com % e passo atual em vez de spinner.</span></li><li><a href="https://www.nngroup.com/articles/designing-for-waits-and-interruptions/" target="_blank" rel="noopener noreferrer">NN/g — Designing for Long Waits</a><span>Processo em segundo plano + aviso claro ao terminar (snackbar “Routes ready”).</span></li><li><a href="https://www.columbia.edu/~ww2040/4615S13/Psychology_of_Waiting_Lines.pdf" target="_blank" rel="noopener noreferrer">Maister — The Psychology of Waiting Lines</a><span>Tempo ocupado parece mais curto; espera incerta ou inexplicada parece mais longa (frases, chips, jogos).</span></li></ul><p class="pc-ref-grp">Barra de progresso</p><ul><li><a href="https://chrisharrison.net/projects/progressbars/ProgBarHarrison.pdf" target="_blank" rel="noopener noreferrer">Harrison et al. — Rethinking the Progress Bar</a><span>Progresso que acelera (começa devagar, termina rápido) e sem trava no 99%.</span></li><li><a href="https://www.chrisharrison.net/projects/progressbars2/ProgressBarsHarrison.pdf" target="_blank" rel="noopener noreferrer">Harrison et al. — Faster Progress Bars</a><span>Listras andando para trás, desacelerando: ~11% menos duração percebida.</span></li><li><a href="https://v10.carbondesignsystem.com/patterns/loading-pattern/" target="_blank" rel="noopener noreferrer">Carbon — Loading pattern</a><span>Carregamento progressivo em vez de tela bloqueante.</span></li></ul><p class="pc-ref-grp">Transparência e valor</p><ul><li><a href="https://www.hbs.edu/faculty/Pages/item.aspx?num=40158" target="_blank" rel="noopener noreferrer">Buell &amp; Norton — The Labor Illusion (HBS)</a><span>Mostrar o trabalho aumenta o valor percebido (globo com pings e regiões).</span></li></ul><p class="pc-ref-grp">Globo</p><ul><li><a href="https://github.blog/engineering/engineering-principles/how-we-built-the-github-globe/" target="_blank" rel="noopener noreferrer">GitHub — How we built the GitHub globe</a><span>Arcos de um ponto a outro do mundo.</span></li><li><a href="https://github.com/shuding/cobe" target="_blank" rel="noopener noreferrer">COBE — 5KB WebGL globe</a><span>Globo pontilhado, legível em tamanho pequeno.</span></li><li><a href="https://github.com/keshavkumar143/Latency-globe" target="_blank" rel="noopener noreferrer">Latency globe / PingAtlas</a><span>Ping exibido na chegada; pacote mais rápido em rotas mais rápidas.</span></li><li><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener noreferrer">Natural Earth — 110m land</a><span>Contorno dos continentes (grade de 3°).</span></li></ul><p class="pc-ref-grp">Jogos na espera</p><ul><li><a href="https://www.eff.org/deeplinks/2015/12/loading-screen-game-patent-finally-expires" target="_blank" rel="noopener noreferrer">EFF — Loading screen game patent expires</a><span>Histórico dos jogos em telas de loading (Namco, 1995–2015).</span></li><li><a href="https://dl.acm.org/doi/10.1145/3691573.3691585" target="_blank" rel="noopener noreferrer">ACM — Interactive loading screens</a><span>Loading interativo reduz o tempo percebido vs. barra ou animação passiva.</span></li><li><a href="https://cobble.games/wise-inspiring-smart/game-design/juice-it-or-lose-it" target="_blank" rel="noopener noreferrer">Juice it or lose it (game feel)</a><span>Partículas, tremor de tela, hit-stop, som e combos.</span></li><li><a href="https://www.gamedeveloper.com/design/admiring-the-game-design-in-hyper-casual-games" target="_blank" rel="noopener noreferrer">Game Developer — Hyper-casual design</a><span>Uma mecânica, resposta imediata e acerto perfeito recompensado.</span></li></ul></span>
+          <span class="pc-ref-pop" id="pc-ref-pop" role="tooltip"><b>Referências usadas no protótipo</b><p class="pc-ref-grp">Espera e feedback</p><ul><li><a href="https://www.nngroup.com/articles/response-times-3-important-limits/" target="_blank" rel="noopener noreferrer">NN/g — Response Time Limits</a><span>Acima de ~10s: % concluída e liberdade para seguir usando o app (base do carregamento assíncrono).</span></li><li><a href="https://www.nngroup.com/articles/progress-indicators/" target="_blank" rel="noopener noreferrer">NN/g — Progress Indicators</a><span>Indicador determinado com % e passo atual em vez de spinner.</span></li><li><a href="https://www.nngroup.com/articles/designing-for-waits-and-interruptions/" target="_blank" rel="noopener noreferrer">NN/g — Designing for Long Waits</a><span>Processo em segundo plano + aviso claro ao terminar (snackbar “Routes ready”).</span></li><li><a href="https://www.columbia.edu/~ww2040/4615S13/Psychology_of_Waiting_Lines.pdf" target="_blank" rel="noopener noreferrer">Maister — The Psychology of Waiting Lines</a><span>Tempo ocupado parece mais curto; espera incerta ou inexplicada parece mais longa (frases, chips, jogos).</span></li></ul><p class="pc-ref-grp">Barra de progresso</p><ul><li><a href="https://chrisharrison.net/projects/progressbars/ProgBarHarrison.pdf" target="_blank" rel="noopener noreferrer">Harrison et al. — Rethinking the Progress Bar</a><span>Progresso que acelera (começa devagar, termina rápido) e sem trava no 99%.</span></li><li><a href="https://www.chrisharrison.net/projects/progressbars2/ProgressBarsHarrison.pdf" target="_blank" rel="noopener noreferrer">Harrison et al. — Faster Progress Bars</a><span>Listras andando para trás, desacelerando: ~11% menos duração percebida.</span></li><li><a href="https://v10.carbondesignsystem.com/patterns/loading-pattern/" target="_blank" rel="noopener noreferrer">Carbon — Loading pattern</a><span>Carregamento progressivo em vez de tela bloqueante.</span></li></ul><p class="pc-ref-grp">Transparência e valor</p><ul><li><a href="https://www.hbs.edu/faculty/Pages/item.aspx?num=40158" target="_blank" rel="noopener noreferrer">Buell &amp; Norton — The Labor Illusion (HBS)</a><span>Mostrar o trabalho aumenta o valor percebido (globo com pings e regiões).</span></li></ul><p class="pc-ref-grp">Globo</p><ul><li><a href="https://github.blog/engineering/engineering-principles/how-we-built-the-github-globe/" target="_blank" rel="noopener noreferrer">GitHub — How we built the GitHub globe</a><span>Arcos de um ponto a outro do mundo.</span></li><li><a href="https://github.com/shuding/cobe" target="_blank" rel="noopener noreferrer">COBE — 5KB WebGL globe</a><span>Globo pontilhado, legível em tamanho pequeno.</span></li><li><a href="https://github.com/keshavkumar143/Latency-globe" target="_blank" rel="noopener noreferrer">Latency globe / PingAtlas</a><span>Ping exibido na chegada; pacote mais rápido em rotas mais rápidas.</span></li><li><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener noreferrer">Natural Earth — 110m land</a><span>Contorno dos continentes (grade de 3°).</span></li></ul><p class="pc-ref-grp">Jogos na espera</p><ul><li><a href="https://www.eff.org/deeplinks/2015/12/loading-screen-game-patent-finally-expires" target="_blank" rel="noopener noreferrer">EFF — Loading screen game patent expires</a><span>Histórico dos jogos em telas de loading (Namco, 1995–2015).</span></li><li><a href="https://dl.acm.org/doi/10.1145/3691573.3691585" target="_blank" rel="noopener noreferrer">ACM — Interactive loading screens</a><span>Loading interativo reduz o tempo percebido vs. barra ou animação passiva.</span></li><li><a href="https://cobble.games/wise-inspiring-smart/game-design/juice-it-or-lose-it" target="_blank" rel="noopener noreferrer">Juice it or lose it (game feel)</a><span>Partículas, tremor de tela, hit-stop, som e combos.</span></li><li><a href="https://www.gamedeveloper.com/design/admiring-the-game-design-in-hyper-casual-games" target="_blank" rel="noopener noreferrer">Game Developer — Hyper-casual design</a><span>Uma mecânica, resposta imediata e acerto perfeito recompensado.</span></li></ul></span>
         </span>
         <button type="button" class="ghost" data-pc="speed" title="Velocidade da simulação">1×</button>
         <button type="button" class="ghost" data-pc="login" aria-pressed="true">Login</button>
@@ -3069,8 +3065,8 @@ p { margin: 0; }
     before: "Hoje: login → análise de rotas bloqueante → app. O app inteiro espera os 100%, inclusive Library, PC Boost e Network Analyzer, que não usam rotas. Nada indica quanto falta em tempo, e nenhum jogo conecta antes do fim.",
     A: "O chip fica ao lado do toggle global, onde o usuário já confere se a otimização está ativa. Clique nele para ver os detalhes. Experimente: ligue o Fortnite ou abra Community Servers.",
     B: "O status fica fixo no rodapé da sidebar e aparece em qualquer tela. Ao terminar, o card mostra 'Routes ready' e some.",
-    F: "Mantém a tela bloqueante de hoje e convida a jogar o Server Stack enquanto espera: clique (ou Espaço) para soltar cada servidor na torre. O que passa da borda é cortado e cai; acertos perfeitos encadeiam combos e, a partir de 3 seguidos, o bloco volta a crescer. Quando a análise chega a 100%, o jogo termina e o app abre. Som liga e desliga com M ou no ícone. Ranking simulado.",
-    G: "Mesmo lugar da B, mas o loading vira um globo: sondas saem da sua região até os servidores e mostram o ping quando chegam (rotas mais rápidas, pacotes mais rápidos). Tudo em baixo contraste pra não competir com a navegação. Ao terminar, os servidores ficam verdes e o card some.",
+    F: "Carregamento síncrono: mantém a tela bloqueante de hoje e convida a jogar o Server Stack enquanto espera: clique (ou Espaço) para soltar cada servidor na torre. O que passa da borda é cortado e cai; acertos perfeitos encadeiam combos e, a partir de 3 seguidos, o bloco volta a crescer. Quando a análise chega a 100%, o jogo termina e o app abre. Som liga e desliga com M ou no ícone. Ranking simulado.",
+    G: "Carregamento assíncrono: o app abre logo após o login e o network map roda em segundo plano. O status fica no rodapé da sidebar como um globo: sondas saem da sua região até os servidores e mostram o ping quando chegam (rotas mais rápidas, pacotes mais rápidos). Tudo em baixo contraste pra não competir com a navegação. Ao terminar, os servidores ficam verdes e o card some.",
     C: "Um card no topo da Home reaproveita a linguagem da tela atual (anel + regiões), só que sem bloquear. Fora da Home, o status aparece só nas páginas que dependem das rotas.",
     D: "Um chip compacto na top bar e o status dentro de cada elemento: barra de progresso por jogo, anel nos itens de menu e estado no widget Multi Internet. Quem não depende das rotas não mostra nada.",
   };
@@ -4193,11 +4189,8 @@ p { margin: 0; }
     F: `<svg viewBox="0 0 160 96" aria-hidden="true"><rect x="1" y="1" width="158" height="94" rx="8" fill="#1a1d24"/><rect x="40" y="12" width="80" height="44" rx="5" fill="#20242c"/><path d="M48 46h64" stroke="#555c68"/><rect x="58" y="38" width="6" height="6" fill="#fff"/><path d="M84 46l4-9 4 9z" fill="#f52929"/><rect x="58" y="62" width="44" height="4" rx="2" fill="#313741"/><rect x="58" y="62" width="20" height="4" rx="2" fill="${HL}"/><rect x="34" y="72" width="92" height="12" rx="3" fill="#20242c"/></svg>`,
   };
   const SOLUTIONS = [
-    ["A", "A", "Top bar", "Chip ao lado do toggle global com anel, frases rotativas e porcentagem. O hover mostra as regiões.", "Se o status é encontrado onde o usuário já confere se a otimização está ligada."],
-    ["B", "B", "Sidebar", "Card fixo no rodapé da sidebar, visível em qualquer tela. O hover mostra as regiões.", "Se um status persistente informa sem competir com o conteúdo."],
-    ["G", "C", "Sidebar com globo", "Globo pontilhado com sondas saindo de São Paulo e o ping na chegada. A câmera segue os continentes em análise e, no fim, há um spin-out verde. O globo também aparece nas páginas bloqueadas, com barra.", "Se mostrar o trabalho (labor illusion) aumenta a confiança e encurta a espera percebida."],
-    ["C", "D", "Card na Home", "Card no topo da Home que reaproveita a linguagem da tela atual (anel + regiões), sem bloquear.", "Se a familiaridade com a tela de hoje reduz o estranhamento."],
-    ["F", "E", "Bloqueante + jogo", "Mantém o fluxo de hoje e oferece um jogo opcional, o Server Stack. Quando as rotas ficam prontas, o jogo termina e o app abre.", "Se, quando bloquear é inevitável, ocupar o tempo de forma ativa melhora a experiência."],
+    ["G", "", "Carregamento assíncrono", "O app abre logo após o login e o network map roda em segundo plano. Um globo no rodapé da sidebar mostra o progresso, com sondas saindo de São Paulo e o ping na chegada. Só as páginas que dependem de rotas esperam, com o globo e uma barra.", "Se mostrar o trabalho (labor illusion) aumenta a confiança e encurta a espera percebida."],
+    ["F", "", "Carregamento síncrono", "Mantém o bloqueio de hoje e oferece um jogo opcional, o Server Stack. Quando as rotas ficam prontas, o jogo termina e o app abre.", "Se, quando bloquear é inevitável, ocupar o tempo de forma ativa melhora a experiência."],
   ];
   const caseHTML = `
     <header class="cs-hero">
@@ -4207,7 +4200,7 @@ p { margin: 0; }
       <div class="cs-kpis">
         <div><b>42s</b><span>duração do network map</span></div>
         <div><b>45,5s</b><span>até usar o app hoje (login 3,5s + map 42s)</span></div>
-        <div><b>3,5s</b><span>até usar o app na proposta (A–D)</span></div>
+        <div><b>3,5s</b><span>até usar o app no carregamento assíncrono</span></div>
         <div><b>5 de 9</b><span>áreas do app não dependem de rotas</span></div>
       </div>
     </header>
@@ -4247,13 +4240,13 @@ p { margin: 0; }
 
     <section class="cs-sec">
       <h2>3. Soluções desenhadas</h2>
-      <p class="cs-sub">As cinco opções resolvem o mesmo problema com graus diferentes de presença. Cada card abre a opção no protótipo.</p>
+      <p class="cs-sub">As duas propostas atacam a mesma espera: uma libera o app enquanto o map roda, a outra mantém o bloqueio e ocupa o tempo. Cada card abre a proposta no protótipo.</p>
       <div class="cs-sols">
         ${SOLUTIONS.map(([mode, letter, name, how, tests]) => `
           <article class="cs-sol">
             <div class="cs-thumb">${THUMBS[mode]}</div>
             <div class="cs-sol-b">
-              <p class="cs-sol-t"><span>${letter}</span>${name}</p>
+              <p class="cs-sol-t">${letter ? `<span>${letter}</span>` : ""}${name}</p>
               <p>${how}</p>
               <p class="cs-sol-q"><b>Testa:</b> ${tests}</p>
               <button type="button" class="cs-go" data-goto-mode="${mode}">Ver no protótipo →</button>
@@ -4263,7 +4256,7 @@ p { margin: 0; }
     </section>
 
     <section class="cs-sec">
-      <h2>4. Padrões em todas as opções</h2>
+      <h2>4. Padrões das duas propostas</h2>
       <div class="cs-grid3">
         <div><b>Progresso que acelera</b><span>Começa devagar e termina rápido, com listras andando pra trás, sem trava em 99% e com o mesmo tempo total. A tela de hoje fica linear, como base de comparação (Harrison et al.).</span></div>
         <div><b>Frases rotativas</b><span>A cada 3s, o que está sendo feito e em qual continente: "Pinging S. America", "Checking jitter"…</span></div>
@@ -4280,9 +4273,9 @@ p { margin: 0; }
         <div>
           <p class="cs-h3">Hipóteses</p>
           <ol class="cs-list num">
-            <li><b>H1:</b> nas opções A–D, a espera <b>percebida</b> é menor que hoje, mesmo com o mesmo tempo real.</li>
+            <li><b>H1:</b> no carregamento assíncrono, a espera <b>percebida</b> é menor que hoje, mesmo com o mesmo tempo real.</li>
             <li><b>H2:</b> liberar o app não aumenta a confusão. O usuário entende por que 4 áreas ainda esperam.</li>
-            <li><b>H3:</b> na opção E, o jogo opcional melhora a satisfação sem atrasar a entrada de quem não quer jogar.</li>
+            <li><b>H3:</b> no carregamento síncrono, o jogo opcional melhora a satisfação sem atrasar a entrada de quem não quer jogar.</li>
           </ol>
         </div>
         <div>
@@ -4303,7 +4296,7 @@ p { margin: 0; }
           <tr><td>Uso do app durante o map</td><td>% de sessões com navegação antes de "Routes ready"</td></tr>
           <tr><td>Compreensão do bloqueio</td><td>No teste: "por que Connections ainda espera?"</td></tr>
           <tr><td>Satisfação com a abertura</td><td>CSAT ou SEQ logo após "Routes ready"</td></tr>
-          <tr><td>Engajamento com jogos (E)</td><td>% que joga, partidas por sessão, % que segue jogando após 100%, atraso até abrir o app</td></tr>
+          <tr><td>Engajamento com o jogo (síncrono)</td><td>% que joga, partidas por sessão, % que segue jogando após 100%, atraso até abrir o app</td></tr>
           <tr class="guard"><td>Proteção: duração do map</td><td>Tempo do network map por variante</td></tr>
           <tr class="guard"><td>Proteção: tickets de suporte</td><td>Tickets "travado carregando" ou "não conecta"</td></tr>
         </tbody>
@@ -4466,7 +4459,7 @@ p { margin: 0; }
   });
   $(".pc").after(deck);
 
-  setMode("A");
+  setMode("G");
   showDeck(true);
 })();
 </script>
