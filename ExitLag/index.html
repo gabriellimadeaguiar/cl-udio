@@ -1036,7 +1036,7 @@ p { margin: 0; }
 .rb-legend span { display: inline-flex; align-items: center; gap: 8px; }
 .rb-legend span::before { content: ""; width: 13px; height: 13px; border-radius: 50%; background: #f0444a; }
 
-/* ---------- E · Packet Runner on the blocking screen ---------- */
+/* ---------- E · mini game (Server Stack) on the blocking screen ---------- */
 .rb-tpct { display: none; color: #f0444a; }
 .ra-block.playing .rb-tpct { display: inline; }
 .ra-block.pr-done .rb-tpct { display: none; }
@@ -1118,57 +1118,19 @@ p { margin: 0; }
 .app[data-var="E"] .rp-board .rk { color: var(--stroke); }
 .app[data-var="E"] .rp-btn { margin-top: 6px; }
 
-/* E · routes ready while playing: the bar gives way to the actions, the game keeps running */
-.rb-ready { display: none; align-items: center; gap: 16px; margin-top: 12px; }
-.app[data-var="E"] .ra-block.pr-done .rb-ready { display: flex; }
+/* E · routes ready: the game ends, the title turns green and the app opens */
 .app[data-var="E"] .ra-block.pr-done .rb-bar { display: none; }
 .app[data-var="E"] .ra-block.pr-done .rb-tt { color: var(--success); }
 .app[data-var="E"] .ra-block.pr-done .rb-tpct { display: none; }
-.app[data-var="E"] .ra-block.pr-done.pr-over .rb-ready { visibility: hidden; }   /* the game-over panel already offers both paths */
-.rp-actions { display: flex; gap: 12px; margin-top: 6px; }
 
-/* game shell extras: mute, per-game cursor, tab row break */
+/* game shell extras: mute, tab row break */
 .rb-mute { position: absolute; left: 10px; top: 10px; z-index: 2; width: 26px; height: 26px; border-radius: 4px; display: grid; place-items: center; color: var(--on-surface-variant); }
 .rb-mute:hover { background: #ebeced14; color: var(--on-surface); }
 .rb-mute:focus-visible { outline: 2px solid var(--series1); outline-offset: 1px; }
 .rb-mute[aria-pressed="true"] { color: var(--stroke); }
-.app[data-game="slicer"] .rb-game { cursor: crosshair; touch-action: none; }
-.app[data-game="breaker"] .ra-block.playing:not(.pr-over) .rb-game { cursor: none; }
 .pc-break { flex-basis: 100%; height: 0; }
 
-/* J · game picker + Atari look (pixel score font, scanlines) */
 .rb-panel { z-index: 3; }
-.rb-change { position: absolute; left: 10px; bottom: 8px; z-index: 2; height: 26px; padding: 0 10px; border-radius: 4px; display: none; align-items: center; gap: 6px;
-  font: 500 12px/16px var(--font); color: var(--on-surface-variant); background: #111317cc; }
-.rb-change:hover { background: var(--container-high); color: var(--on-surface); }
-.rb-change:focus-visible { outline: 2px solid var(--series1); outline-offset: 1px; }
-.app[data-j="1"] .ra-block.playing:not(.pr-over) .rb-change { display: inline-flex; }
-.ra-block.atari .rb-game::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit;
-  background: repeating-linear-gradient(to bottom, #0000 0 2px, #00000040 2px 3px), radial-gradient(120% 120% at 50% 50%, #0000 60%, #0000004d 100%); }
-.ra-block.atari .rb-game canvas { image-rendering: pixelated; }
-.rb-picker { display: none; flex-direction: column; gap: 6px; width: 800px; height: 260px; margin-top: 72px; padding: 12px 16px; border-radius: 8px;
-  background: var(--container); box-shadow: var(--shadow-widget); order: -1; font-family: var(--font); }
-.app[data-var="E"] .ra-block.picking .rb-picker { display: flex; }
-.app[data-var="E"] .ra-block.picking .rb-globe, .app[data-var="E"] .ra-block.picking .rb-invite { display: none; }
-.app[data-var="E"] .ra-block.picking .rb-title { margin-top: 16px; }
-.app[data-var="E"] .ra-block.picking .rb-top { order: -2; }
-.pk-head { display: flex; align-items: baseline; justify-content: space-between; height: 22px; }
-.pk-head b { font: 700 14px/20px var(--font); color: var(--on-surface); }
-.pk-head span { font: 500 11px/16px var(--font); color: var(--on-surface-variant); }
-.pk-grp { font: 700 11px/14px var(--font); letter-spacing: .5px; text-transform: uppercase; color: var(--on-surface-variant); }
-.pk-grp.atari { font: 8px/14px "Press Start 2P", ui-monospace, monospace; letter-spacing: 0; color: var(--series1); }
-.pk-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
-.pk-card { height: 72px; padding: 0 10px; border-radius: 6px; background: var(--container-high); box-shadow: inset 0 0 0 1px var(--divider); text-align: left;
-  display: grid; grid-template-columns: 28px 1fr; grid-template-rows: auto auto; column-gap: 8px; row-gap: 2px; align-content: center; color: var(--on-surface);
-  transition: background-color .15s ease, box-shadow .15s ease, transform .15s var(--motion-easing-standard); }
-.pk-card:hover, .pk-card:focus-visible { background: var(--input); box-shadow: inset 0 0 0 1px var(--stroke); transform: translateY(-1px); }
-.pk-card:focus-visible { outline: 2px solid var(--series1); outline-offset: 2px; }
-.pk-card:active { transform: translateY(0) scale(.98); }
-.pk-ic { grid-row: span 2; align-self: center; color: var(--on-surface-variant); }
-.pk-card:hover .pk-ic, .pk-card:focus-visible .pk-ic { color: var(--on-surface); }
-.pk-card.atari .pk-ic { color: var(--series1); }
-.pk-nm { font: 500 13px/16px var(--font); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-.pk-hint { font: 500 11px/14px var(--font); color: var(--on-surface-variant); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Backwards, decelerating ribbing on the progress fill (Harrison et al., "Faster Progress Bars": ~11% shorter perceived duration).
    Stripes move against the direction of progress; each cycle eases out. Stops when the map is done. */
@@ -3046,12 +3008,10 @@ p { margin: 0; }
       <h2 class="rb-title"><span class="rb-tt" data-ra-t="title">Analyzing routes</span><span class="rb-tpct"> · <b data-rb="pct2">0%</b></span></h2>
       <div class="rb-ring"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="glow" cx="50" cy="50" r="46"/><circle class="tr" cx="50" cy="50" r="46"/><circle class="pr" cx="50" cy="50" r="46" pathLength="100"/></svg>
         <div><b class="rb-pct" data-rb="pct">0%</b><span class="rb-sub" data-rb="sub"></span></div></div>
-      <div class="rb-game"><canvas aria-label="Mini game"></canvas><button class="rb-mute" type="button" data-pr="mute"></button><button class="rb-change" type="button" data-pr="change">&#8644; Change game</button><div class="rb-panel" hidden></div></div>
-      <div class="rb-picker" role="dialog" aria-label="Choose a game"></div>
+      <div class="rb-game"><canvas aria-label="Mini game"></canvas><button class="rb-mute" type="button" data-pr="mute"></button><div class="rb-panel" hidden></div></div>
       <div class="rb-bar"><i></i><b></b></div>
       <div class="rb-legend">${REGIONS.map((r) => `<span>${r.name}</span>`).join("")}</div>
       <ul class="rb-chips" data-ra="bchips"></ul>
-      <div class="rb-ready"><button class="btn filled" type="button" data-pr="open">Open ExitLag</button><span class="rp-hint">or keep playing · <kbd>Enter</kbd> opens</span></div>
       <button class="rb-invite" type="button"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4.5v15l12-7.5z"/></svg>Play while you wait<kbd data-pr="hint">Space</kbd></button>
     </div>
     <div class="ra-login" id="ra-login" hidden>
@@ -3093,11 +3053,11 @@ p { margin: 0; }
         <button type="button" data-mode="B">B · Sidebar</button>
         <button type="button" data-mode="C">C · Card na Home</button>
         <button type="button" data-mode="G">D · Sidebar com globo</button>
-        <button type="button" data-mode="J">E · Bloqueante + jogos</button>
+        <button type="button" data-mode="F">E · Bloqueante + jogo</button>
         <span class="grow"></span>
         <span class="pc-ref">
           <button type="button" class="ghost" aria-describedby="pc-ref-pop" aria-label="Referências usadas no protótipo">&#9432; Referências</button>
-          <span class="pc-ref-pop" id="pc-ref-pop" role="tooltip"><b>Referências usadas no protótipo</b><p class="pc-ref-grp">Espera e feedback</p><ul><li><a href="https://www.nngroup.com/articles/response-times-3-important-limits/" target="_blank" rel="noopener noreferrer">NN/g — Response Time Limits</a><span>Acima de ~10s: % concluída e liberdade para seguir usando o app (base das opções A–D).</span></li><li><a href="https://www.nngroup.com/articles/progress-indicators/" target="_blank" rel="noopener noreferrer">NN/g — Progress Indicators</a><span>Indicador determinado com % e passo atual em vez de spinner.</span></li><li><a href="https://www.nngroup.com/articles/designing-for-waits-and-interruptions/" target="_blank" rel="noopener noreferrer">NN/g — Designing for Long Waits</a><span>Processo em segundo plano + aviso claro ao terminar (snackbar “Routes ready”).</span></li><li><a href="https://www.columbia.edu/~ww2040/4615S13/Psychology_of_Waiting_Lines.pdf" target="_blank" rel="noopener noreferrer">Maister — The Psychology of Waiting Lines</a><span>Tempo ocupado parece mais curto; espera incerta ou inexplicada parece mais longa (frases, chips, jogos).</span></li></ul><p class="pc-ref-grp">Barra de progresso</p><ul><li><a href="https://chrisharrison.net/projects/progressbars/ProgBarHarrison.pdf" target="_blank" rel="noopener noreferrer">Harrison et al. — Rethinking the Progress Bar</a><span>Progresso que acelera (começa devagar, termina rápido) e sem trava no 99%.</span></li><li><a href="https://www.chrisharrison.net/projects/progressbars2/ProgressBarsHarrison.pdf" target="_blank" rel="noopener noreferrer">Harrison et al. — Faster Progress Bars</a><span>Listras andando para trás, desacelerando: ~11% menos duração percebida.</span></li><li><a href="https://v10.carbondesignsystem.com/patterns/loading-pattern/" target="_blank" rel="noopener noreferrer">Carbon — Loading pattern</a><span>Carregamento progressivo em vez de tela bloqueante.</span></li></ul><p class="pc-ref-grp">Transparência e valor</p><ul><li><a href="https://www.hbs.edu/faculty/Pages/item.aspx?num=40158" target="_blank" rel="noopener noreferrer">Buell &amp; Norton — The Labor Illusion (HBS)</a><span>Mostrar o trabalho aumenta o valor percebido (globo com pings e regiões).</span></li></ul><p class="pc-ref-grp">Globo</p><ul><li><a href="https://github.blog/engineering/engineering-principles/how-we-built-the-github-globe/" target="_blank" rel="noopener noreferrer">GitHub — How we built the GitHub globe</a><span>Arcos de um ponto a outro do mundo.</span></li><li><a href="https://github.com/shuding/cobe" target="_blank" rel="noopener noreferrer">COBE — 5KB WebGL globe</a><span>Globo pontilhado, legível em tamanho pequeno.</span></li><li><a href="https://github.com/keshavkumar143/Latency-globe" target="_blank" rel="noopener noreferrer">Latency globe / PingAtlas</a><span>Ping exibido na chegada; pacote mais rápido em rotas mais rápidas.</span></li><li><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener noreferrer">Natural Earth — 110m land</a><span>Contorno dos continentes (grade de 3°).</span></li></ul><p class="pc-ref-grp">Jogos na espera</p><ul><li><a href="https://www.eff.org/deeplinks/2015/12/loading-screen-game-patent-finally-expires" target="_blank" rel="noopener noreferrer">EFF — Loading screen game patent expires</a><span>Histórico dos jogos em telas de loading (Namco, 1995–2015).</span></li><li><a href="https://dl.acm.org/doi/10.1145/3691573.3691585" target="_blank" rel="noopener noreferrer">ACM — Interactive loading screens</a><span>Loading interativo reduz o tempo percebido vs. barra ou animação passiva.</span></li><li><a href="https://cobble.games/wise-inspiring-smart/game-design/juice-it-or-lose-it" target="_blank" rel="noopener noreferrer">Juice it or lose it (game feel)</a><span>Partículas, tremor de tela, hit-stop, som e combos.</span></li><li><a href="https://www.gamedeveloper.com/design/admiring-the-game-design-in-hyper-casual-games" target="_blank" rel="noopener noreferrer">Game Developer — Hyper-casual design</a><span>Uma mecânica, resposta imediata e acerto perfeito recompensado.</span></li><li><a href="https://www.consolecodex.com/best/best-atari-games/" target="_blank" rel="noopener noreferrer">Console Codex — Best Atari 2600 games</a><span>Base das releituras de Atari.</span></li></ul></span>
+          <span class="pc-ref-pop" id="pc-ref-pop" role="tooltip"><b>Referências usadas no protótipo</b><p class="pc-ref-grp">Espera e feedback</p><ul><li><a href="https://www.nngroup.com/articles/response-times-3-important-limits/" target="_blank" rel="noopener noreferrer">NN/g — Response Time Limits</a><span>Acima de ~10s: % concluída e liberdade para seguir usando o app (base das opções A–D).</span></li><li><a href="https://www.nngroup.com/articles/progress-indicators/" target="_blank" rel="noopener noreferrer">NN/g — Progress Indicators</a><span>Indicador determinado com % e passo atual em vez de spinner.</span></li><li><a href="https://www.nngroup.com/articles/designing-for-waits-and-interruptions/" target="_blank" rel="noopener noreferrer">NN/g — Designing for Long Waits</a><span>Processo em segundo plano + aviso claro ao terminar (snackbar “Routes ready”).</span></li><li><a href="https://www.columbia.edu/~ww2040/4615S13/Psychology_of_Waiting_Lines.pdf" target="_blank" rel="noopener noreferrer">Maister — The Psychology of Waiting Lines</a><span>Tempo ocupado parece mais curto; espera incerta ou inexplicada parece mais longa (frases, chips, jogos).</span></li></ul><p class="pc-ref-grp">Barra de progresso</p><ul><li><a href="https://chrisharrison.net/projects/progressbars/ProgBarHarrison.pdf" target="_blank" rel="noopener noreferrer">Harrison et al. — Rethinking the Progress Bar</a><span>Progresso que acelera (começa devagar, termina rápido) e sem trava no 99%.</span></li><li><a href="https://www.chrisharrison.net/projects/progressbars2/ProgressBarsHarrison.pdf" target="_blank" rel="noopener noreferrer">Harrison et al. — Faster Progress Bars</a><span>Listras andando para trás, desacelerando: ~11% menos duração percebida.</span></li><li><a href="https://v10.carbondesignsystem.com/patterns/loading-pattern/" target="_blank" rel="noopener noreferrer">Carbon — Loading pattern</a><span>Carregamento progressivo em vez de tela bloqueante.</span></li></ul><p class="pc-ref-grp">Transparência e valor</p><ul><li><a href="https://www.hbs.edu/faculty/Pages/item.aspx?num=40158" target="_blank" rel="noopener noreferrer">Buell &amp; Norton — The Labor Illusion (HBS)</a><span>Mostrar o trabalho aumenta o valor percebido (globo com pings e regiões).</span></li></ul><p class="pc-ref-grp">Globo</p><ul><li><a href="https://github.blog/engineering/engineering-principles/how-we-built-the-github-globe/" target="_blank" rel="noopener noreferrer">GitHub — How we built the GitHub globe</a><span>Arcos de um ponto a outro do mundo.</span></li><li><a href="https://github.com/shuding/cobe" target="_blank" rel="noopener noreferrer">COBE — 5KB WebGL globe</a><span>Globo pontilhado, legível em tamanho pequeno.</span></li><li><a href="https://github.com/keshavkumar143/Latency-globe" target="_blank" rel="noopener noreferrer">Latency globe / PingAtlas</a><span>Ping exibido na chegada; pacote mais rápido em rotas mais rápidas.</span></li><li><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener noreferrer">Natural Earth — 110m land</a><span>Contorno dos continentes (grade de 3°).</span></li></ul><p class="pc-ref-grp">Jogos na espera</p><ul><li><a href="https://www.eff.org/deeplinks/2015/12/loading-screen-game-patent-finally-expires" target="_blank" rel="noopener noreferrer">EFF — Loading screen game patent expires</a><span>Histórico dos jogos em telas de loading (Namco, 1995–2015).</span></li><li><a href="https://dl.acm.org/doi/10.1145/3691573.3691585" target="_blank" rel="noopener noreferrer">ACM — Interactive loading screens</a><span>Loading interativo reduz o tempo percebido vs. barra ou animação passiva.</span></li><li><a href="https://cobble.games/wise-inspiring-smart/game-design/juice-it-or-lose-it" target="_blank" rel="noopener noreferrer">Juice it or lose it (game feel)</a><span>Partículas, tremor de tela, hit-stop, som e combos.</span></li><li><a href="https://www.gamedeveloper.com/design/admiring-the-game-design-in-hyper-casual-games" target="_blank" rel="noopener noreferrer">Game Developer — Hyper-casual design</a><span>Uma mecânica, resposta imediata e acerto perfeito recompensado.</span></li></ul></span>
         </span>
         <button type="button" class="ghost" data-pc="speed" title="Velocidade da simulação">1×</button>
         <button type="button" class="ghost" data-pc="login" aria-pressed="true">Login</button>
@@ -3110,12 +3070,7 @@ p { margin: 0; }
     before: "Hoje: login → análise de rotas bloqueante → app. O app inteiro espera os 100%, inclusive Library, PC Boost e Network Analyzer, que não usam rotas. Nada indica quanto falta em tempo, e nenhum jogo conecta antes do fim.",
     A: "O chip fica ao lado do toggle global, onde o usuário já confere se a otimização está ativa. Clique nele para ver os detalhes. Experimente: ligue o Fortnite ou abra Community Servers.",
     B: "O status fica fixo no rodapé da sidebar e aparece em qualquer tela. Ao terminar, o card mostra 'Routes ready' e some.",
-    E: "Mantém a tela bloqueante de hoje e convida a jogar o Packet Runner enquanto espera. É um botão só (Espaço, ↑ ou clique), os obstáculos são picos de ping, e a velocidade aumenta com o tempo. Em 100% o jogo pausa e oferece 'Open ExitLag', que abre sozinho em 10s. Se a pessoa não jogar, entra como hoje. Ranking global simulado.",
-    F: "Server Stack: clique (ou Espaço) para soltar cada servidor na torre. O que passa da borda é cortado e cai; acertos perfeitos encadeiam combos, a nota sobe a cada acerto e, a partir de 3 seguidos, o bloco volta a crescer. Mesma tela da E; som liga e desliga com M ou no ícone. Ranking simulado.",
-    MP: "Multipath: dois pacotes em duas rotas ao mesmo tempo. A/D (ou W/S) troca a faixa da rota 1, ←/→ a da rota 2, ou clique na rota. Pegue os pings verdes e desvie dos picos vermelhos; deixar passar um ping verde também perde. Prende a atenção e mostra o Multipath na prática. Mesma tela da E; som liga e desliga com M ou no ícone. Ranking simulado.",
-    H: "Lag Slicer: arraste o mouse para cortar picos de lag e pacotes corrompidos, sem cortar os verdes. Três vidas; cortar vários no mesmo gesto vira combo, com rastro da lâmina, partículas e congelamento rápido no impacto. Mesma tela da E; som liga e desliga com M ou no ícone. Ranking simulado.",
-    I: "Packet Breaker: Breakout com a raquete no mouse (ou ←/→). Os tijolos são congestionamentos; o power-up MP (Multipath) divide o pacote em três. Três vidas, sequências sem tocar a raquete multiplicam os pontos, e cada onda fica mais rápida. Mesma tela da E; som liga e desliga com M ou no ícone. Ranking simulado.",
-    J: "Escolha o jogo: o convite abre um seletor com os 10 jogos, em Arcade (Runner, Stack, Multipath, Slicer, Breaker) e Atari classics (Ping Pong, Lag Invaders, Packet Asteroids, Route Raid, Packet Pitfall). Dá pra trocar a qualquer momento pelo ⇄ ou no game over. Os jogos de Atari têm placar em fonte pixel, sprites pixelados e scanlines sutis. Se o seletor estiver aberto quando as rotas ficarem prontas, o app não abre sozinho. A tela usa os tokens do app, com o globo, as frases rotativas e os chips de região; ranking simulado.",
+    F: "Mantém a tela bloqueante de hoje e convida a jogar o Server Stack enquanto espera: clique (ou Espaço) para soltar cada servidor na torre. O que passa da borda é cortado e cai; acertos perfeitos encadeiam combos e, a partir de 3 seguidos, o bloco volta a crescer. Quando a análise chega a 100%, o jogo termina e o app abre. Som liga e desliga com M ou no ícone. Ranking simulado.",
     G: "Mesmo lugar da B, mas o loading vira um globo: sondas saem da sua região até os servidores e mostram o ping quando chegam (rotas mais rápidas, pacotes mais rápidos). Tudo em baixo contraste pra não competir com a navegação. Ao terminar, os servidores ficam verdes e o card some.",
     C: "Um card no topo da Home reaproveita a linguagem da tela atual (anel + regiões), só que sem bloquear. Fora da Home, o status aparece só nas páginas que dependem das rotas.",
     D: "Um chip compacto na top bar e o status dentro de cada elemento: barra de progresso por jogo, anel nos itens de menu e estado no widget Multi Internet. Quem não depende das rotas não mostra nada.",
@@ -3228,7 +3183,7 @@ p { margin: 0; }
     G.raf = requestAnimationFrame(gFrame);
   }
   // End of the analysis (D): spin-out — the globe accelerates, every route lights up and everything turns green.
-  const OUTRO_MS = 2800, GREEN_MS = 600;
+  const OUTRO_MS = 2800, GREEN_MS = 600, FINISH_MS = 700;
   function gDraw(g, now) {
     const om = G.outro ? Math.min(1, (now - G.outro) / GREEN_MS) : 0, oe = G.outro ? Math.pow(Math.min(1, (now - G.outro) / OUTRO_MS), 3) : 0;
     const mix = (a, b) => Math.round(a + (b - a) * om);
@@ -3347,7 +3302,7 @@ p { margin: 0; }
 
   /* ---------- simulation ---------- */
   // E–I keep today's blocking screen and add a mini game (one per tab)
-  const GAME_OF = { E: "runner", F: "stack", MP: "multipath", H: "slicer", I: "breaker", J: "pick" };
+  const GAME_OF = { F: "stack" };   // option E: one game, Server Stack
   const isGame = () => !!GAME_OF[RA.mode];
   const blocking = () => RA.mode === "before" || isGame();
   const regionDone = (id) => RA.done[id] >= cap(id);
@@ -3500,7 +3455,7 @@ p { margin: 0; }
     clearInterval(RA.timer);
     RA.mFull = RA.sim;
     clearInterval(RA.phraseT);
-    if (isGame() && PR.started) return prDone();   // the player decides when to leave (or 10 s)
+    if (isGame() && PR.started) return prFinish();   // the game ends with the map; the app opens
     if (isGame()) { block.querySelector(".rb-tt").textContent = "Routes ready"; G.outro = performance.now(); gStart(); return enterApp(OUTRO_MS); }
     enterApp(500);
   }
@@ -3538,8 +3493,8 @@ p { margin: 0; }
   }
 
 
-  /* ---------- Mini games on today's blocking screen (options E–I) ----------
-     One shell for every game: start · game over · routes ready (the game keeps going) · simulated global ranking ·
+  /* ---------- Mini game on today's blocking screen (option E: Server Stack) ----------
+     Shell: start · game over · routes ready (the game ends and the app opens) · simulated global ranking ·
      juice (particles & trails, screen shake + hit-stop, synthesized sound, combos & floating text).
      Each game only brings init / update / draw / input. */
   const PW = 800, PH = 260;
@@ -3549,7 +3504,7 @@ p { margin: 0; }
   const PR = { state: "idle", started: false, ready: false, score: 0, raf: 0, last: 0, g: null, down: false, overTitle: "" };
   const prBox = block.querySelector(".rb-game"), prPanelEl = prBox.querySelector(".rb-panel"), prCv = prBox.querySelector("canvas");
   const prCtx = (() => { const dpr = Math.min(2, devicePixelRatio || 1); prCv.width = PW * dpr; prCv.height = PH * dpr; const c = prCv.getContext("2d"); c.scale(dpr, dpr); return c; })();
-  const game = () => GAMES[(RA.mode === "J" ? PR.pick : GAME_OF[RA.mode]) || "runner"];
+  const game = () => GAMES.stack;
   const score = (n) => (PR.score += n);
 
   /* ---- juice ---- */
@@ -3662,56 +3617,22 @@ p { margin: 0; }
     if (!kind) { prPanelEl.hidden = true; return; }
     const sc = PR.score, rank = `#${fmtN(prRank(sc))} today`;
     prPanelEl.innerHTML = `<p class="rp-k">${PR.overTitle}</p><p class="rp-score">${fmtN(sc)} pts<span>${rank} · global ranking</span></p>${prBoardHTML(sc)}`
-      + (PR.ready
-        ? `<div class="rp-actions">${RA.mode === "J" ? '<button class="btn outlined" type="button" data-pr="change">Change game</button>' : ""}<button class="btn outlined" type="button" data-pr="retry">Play again</button><button class="btn filled" type="button" data-pr="open">Open ExitLag</button></div><p class="rp-hint"><kbd>Space</kbd> plays again · <kbd>Enter</kbd> opens ExitLag</p>`
-        : (RA.mode === "J" ? '<div class="rp-actions"><button class="btn outlined" type="button" data-pr="change">Change game</button><button class="btn outlined" type="button" data-pr="retry">Play again</button></div>' : "") + `<p class="rp-hint">${game().retry}</p>`);
+      + `<p class="rp-hint">${game().retry}</p>`;
     prPanelEl.hidden = false;
   }
   function prReset() {
     cancelAnimationFrame(PR.raf); PR.raf = 0;
-    Object.assign(PR, { state: "idle", started: false, ready: false, score: 0, g: null, down: false, pick: null });
+    Object.assign(PR, { state: "idle", started: false, ready: false, score: 0, g: null, down: false });
     Object.assign(FX, { parts: [], texts: [], shake: 0, stop: 0 });
-    block.classList.remove("playing", "pr-done", "pr-over", "picking", "atari");
+    block.classList.remove("playing", "pr-done", "pr-over");
     block.querySelector(".rb-tt").textContent = "Analyzing routes";
     prPanelEl.hidden = true;
     prCtx.clearRect(0, 0, PW, PH);
   }
-  // J: the invite opens a picker with every game; the player can come back to it any time (⇄ Change game).
-  const PICK = [["Arcade", ["runner", "stack", "multipath", "slicer", "breaker"]], ["Atari classics", ["pong", "invaders", "asteroids", "raid", "pitfall"]]];
-  const picker = block.querySelector(".rb-picker");
-  function buildPicker() {
-    picker.innerHTML = `<div class="pk-head"><b>Choose a game</b><span>Esc to close</span></div>`
-      + PICK.map(([grp, ids], gi) => `<p class="pk-grp${gi ? " atari" : ""}">${grp}</p><div class="pk-row">${ids.map((id) => `<button class="pk-card${GAMES[id].pixel ? " atari" : ""}" type="button" data-pick="${id}"><span class="pk-ic">${GAMES[id].icon}</span><span class="pk-nm">${GAMES[id].name}</span><span class="pk-hint">${GAMES[id].hint}</span></button>`).join("")}</div>`).join("");
-  }
-  function openPicker() {
-    if (!picker.innerHTML) buildPicker();
-    cancelAnimationFrame(PR.raf); PR.raf = 0;
-    PR.state = "picking"; PR.started = true;
-    prPanel(null);
-    block.classList.remove("playing", "pr-over", "atari");
-    block.classList.add("picking");
-    const cur = picker.querySelector(`[data-pick="${PR.pick || "runner"}"]`);
-    setTimeout(() => cur && cur.focus({ preventScroll: true }), 30);
-  }
-  function closePicker() {
-    if (PR.state !== "picking") return;
-    block.classList.remove("picking");
-    PR.state = "idle";
-    block.querySelector(".rb-invite").focus({ preventScroll: true });
-  }
-  picker.addEventListener("click", (e) => { const b = e.target.closest("[data-pick]"); if (b) { PR.pick = b.dataset.pick; prStart(); } });
-  picker.addEventListener("keydown", (e) => {
-    const cards = [...picker.querySelectorAll(".pk-card")], i = cards.indexOf(document.activeElement);
-    const go = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 5, ArrowUp: -5 }[e.key];
-    if (go != null && i >= 0) { e.preventDefault(); cards[(i + go + cards.length) % cards.length].focus(); }
-  });
-  const prIdle = () => (RA.mode === "J" && !PR.pick ? openPicker() : prStart());
   function prStart() {
     sndUnlock();
     Object.assign(PR, { state: "playing", started: true, score: 0, last: performance.now(), g: game().init(), down: false });
-    app.dataset.game = RA.mode === "J" ? PR.pick : GAME_OF[RA.mode];
-    block.classList.remove("picking");
-    block.classList.toggle("atari", !!game().pixel);
+    app.dataset.game = GAME_OF[RA.mode];
     Object.assign(FX, { parts: [], texts: [], shake: 0, stop: 0 });
     block.classList.add("playing");
     prPanel(null);
@@ -3725,19 +3646,15 @@ p { margin: 0; }
     sfx("hit"); shake(10); hitstop(90);
     setTimeout(() => { if (PR.state === "over") prPanel("over"); }, 420);
   }
-  // Routes ready while playing: nothing stops. The run goes on and the player picks when to open the app.
-  function prDone() {
-    PR.ready = true;
-    block.querySelector(".rb-tt").textContent = "Routes ready";
-    block.classList.add("pr-done");
-    sfx("ready");
-    if (PR.state === "over") prPanel("over");
-  }
-  function prOpen() {
-    if (!PR.ready || PR.state === "left") return;
+  // Routes ready: the game ends with the map and the app opens (a short beat so "Routes ready" registers).
+  function prFinish() {
     cancelAnimationFrame(PR.raf); PR.raf = 0;
     PR.state = "left";
-    enterApp(0);
+    block.querySelector(".rb-tt").textContent = "Routes ready";
+    block.classList.add("pr-done");
+    prPanel(null);
+    sfx("ready");
+    enterApp(FINISH_MS);
   }
   function prLoop(now) {
     PR.raf = 0;
@@ -3759,94 +3676,18 @@ p { margin: 0; }
     fxDraw(c);
     c.restore();
     // HUD (never shakes)
-    const px = game().pixel;
-    c.textBaseline = "top"; c.textAlign = "left"; c.font = px ? PXF(8) : FONT(700, 11); c.fillStyle = C.mute;
-    c.fillText(game().name.toUpperCase(), 44, px ? 18 : 17);
+    c.textBaseline = "top"; c.textAlign = "left"; c.font = FONT(700, 11); c.fillStyle = C.mute;
+    c.fillText(game().name.toUpperCase(), 44, 17);
     if (PR.g && game().hud) game().hud(c, PR.g);
-    c.textAlign = "right"; c.fillStyle = C.fg; c.font = px ? PXF(9) : FONT(500, 13);
+    c.textAlign = "right"; c.fillStyle = C.fg; c.font = FONT(500, 13);
     c.fillText("SCORE " + String(Math.floor(PR.score)).padStart(5, "0"), PW - 18, 14);
-    c.fillStyle = C.mute; c.font = px ? PXF(7) : FONT(500, 11);
-    c.fillText(`#${fmtN(prRank(PR.score))} today`, PW - 18, px ? 32 : 33);
+    c.fillStyle = C.mute; c.font = FONT(500, 11);
+    c.fillText(`#${fmtN(prRank(PR.score))} today`, PW - 18, 33);
   }
-  const hearts = (c, n, x = 170) => { c.textAlign = "left"; c.font = FONT(700, 12); for (let i = 0; i < 3; i++) { c.fillStyle = i < n ? C.red : C.div; c.fillText("♥", x + i * 14, 16); } };
   function comboHud(c, label) { if (!label) return; c.textAlign = "center"; c.font = FONT(700, 11); c.fillStyle = C.cyan; c.fillText(label, PW / 2, 17); }
 
   /* ======================= the games ======================= */
   const GAMES = {};
-
-  /* E · Packet Runner — one button: jump the latency spikes on the ping line (hold = higher jump) */
-  {
-    const GROUND = 214, PX = 120, PS = 16;
-    GAMES.runner = {
-      name: "Packet Runner", hint: "Space", scale: 1, retry: "<kbd>Space</kbd> to retry",
-      keys: [" ", "ArrowUp", "w", "W"],
-      init: () => ({ y: 0, vy: 0, held: false, speed: 340, obs: [], next: 260, off: 0, hist: [], sq: 0, mile: 500 }),
-      key(g, k, down) { down ? this.press(g) : (g.held = false); },
-      down(g) { this.press(g); },
-      up(g) { g.held = false; },
-      press(g) {
-        g.held = true;
-        if (g.y > 0.5) return;
-        g.vy = 720; g.sq = -1;
-        sfx("jump");
-        burst(PX + PS / 2, GROUND, C.mute, 6, 90, 0.35, 2);
-      },
-      update(g, dt) {
-        g.speed = Math.min(760, g.speed + 13 * dt);
-        const air = g.y > 0;
-        g.vy -= 2300 * dt * (g.vy > 0 && !g.held ? 2.1 : 1);
-        g.y = Math.max(0, g.y + g.vy * dt);
-        if (g.y === 0 && g.vy < 0) { g.vy = 0; if (air) { g.sq = 1; sfx("land"); burst(PX + PS / 2, GROUND, C.mute, 5, 70, 0.3, 2); } }
-        g.sq += (0 - g.sq) * Math.min(1, dt * 10);
-        const dx = g.speed * dt;
-        g.off += dx;
-        g.obs.forEach((o) => (o.x -= dx));
-        g.obs = g.obs.filter((o) => o.x + o.w > -10);
-        if ((g.next -= dx) <= 0) {
-          const n = 1 + Math.floor(Math.random() * (g.speed > 520 ? 3 : 2));
-          let x = PW + 20;
-          for (let i = 0; i < n; i++) { const w = rnd(16, 24), h = 22 + Math.random() * (g.speed > 480 ? 26 : 18); g.obs.push({ x, w, h, ms: Math.round(140 + h * 5 + Math.random() * 40) }); x += w + 3; }
-          g.next = rnd(330, 710) * Math.sqrt(g.speed / 340);
-        }
-        score(dx / 8);
-        if (PR.score >= g.mile) { floatText(PX + 60, GROUND - 70, fmtN(g.mile), C.cyan, 16); sfx("pick", 4); g.mile += 500; }
-        g.hist.unshift(g.y); g.hist.length = Math.min(g.hist.length, 18);
-        const bottom = GROUND - g.y;
-        for (const o of g.obs) {
-          const a = Math.max(PX + 2, o.x), b = Math.min(PX + PS - 2, o.x + o.w);
-          if (a >= b) continue;
-          const cx = o.x + o.w / 2, top = Math.max(...[a, b, Math.min(Math.max(cx, a), b)].map((xx) => o.h * (1 - Math.abs(xx - cx) / (o.w / 2))));
-          if (bottom > GROUND - top + 4) {
-            burst(PX + PS / 2, GROUND - g.y - PS / 2, C.red, 26, 280, 0.8, 3);
-            burst(PX + PS / 2, GROUND - g.y - PS / 2, C.fg, 10, 200, 0.6, 2);
-            g.dead = true;
-            return "Lag spike hit!";
-          }
-        }
-      },
-      draw(c, g) {
-        c.strokeStyle = C.stroke; c.lineWidth = 1.5;
-        c.beginPath();
-        for (let x = 0; x <= PW; x += 4) { const y = GROUND + Math.sin((x + g.off) / 23) * 1.2 + Math.sin((x + g.off) / 7) * 0.6; x ? c.lineTo(x, y) : c.moveTo(x, y); }
-        c.stroke();
-        c.font = FONT(500, 10); c.textAlign = "center"; c.textBaseline = "bottom";
-        for (const o of g.obs) {
-          const gr = c.createLinearGradient(0, GROUND - o.h, 0, GROUND);
-          gr.addColorStop(0, "#f52929cc"); gr.addColorStop(1, "#f5292922");
-          c.fillStyle = gr;
-          c.beginPath(); c.moveTo(o.x, GROUND); c.lineTo(o.x + o.w / 2, GROUND - o.h); c.lineTo(o.x + o.w, GROUND); c.closePath(); c.fill();
-          c.strokeStyle = C.red; c.lineWidth = 1.5;
-          c.beginPath(); c.moveTo(o.x, GROUND); c.lineTo(o.x + o.w / 2, GROUND - o.h); c.lineTo(o.x + o.w, GROUND); c.stroke();
-          c.fillStyle = "#f52929b3"; c.fillText(o.ms + " ms", o.x + o.w / 2, GROUND - o.h - 4);
-        }
-        if (g.dead) return;
-        g.hist.forEach((y, i) => { if (i % 3) return; c.fillStyle = `rgba(235,236,237,${(0.16 * (1 - i / 18)).toFixed(3)})`; c.fillRect(PX - i * 3.2, GROUND - y - PS + 3, PS - 6, PS - 6); });
-        const w = PS * (1 + 0.28 * g.sq), h = PS * (1 - 0.28 * g.sq);
-        c.save(); c.shadowColor = "#ebecedaa"; c.shadowBlur = 12; c.fillStyle = C.fg;
-        c.beginPath(); c.roundRect(PX + (PS - w) / 2, GROUND - g.y - h, w, h, 3); c.fill(); c.restore();
-      },
-    };
-  }
 
   /* F · Server Stack — click to drop the sliding server on the tower; overhang is cut, perfect drops chain combos */
   {
@@ -3936,805 +3777,15 @@ p { margin: 0; }
     };
   }
 
-  /* G · Multipath — two packets on two routes at once; take the green pings, dodge the red spikes */
-  {
-    const LANES = [[78, 120], [170, 212]], PX = 150, PS = 14;
-    GAMES.multipath = {
-      name: "Multipath", hint: "A · ←", scale: 0.1, retry: "<kbd>Space</kbd> or click to retry",
-      keys: ["a", "A", "d", "D", "w", "W", "s", "S", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"],
-      init: () => ({ p: [{ lane: 0, y: LANES[0][0], sq: 0, hist: [] }, { lane: 1, y: LANES[1][1], sq: 0, hist: [] }], objs: [], speed: 280, next: [0.5, 1.0], off: 0, streak: 0, dead: "" }),
-      key(g, k, down) { if (!down) return; this.swap(g, /^(a|d|w|s)$/i.test(k) ? 0 : 1); },
-      down(g, x, y) { this.swap(g, y < 145 ? 0 : 1); },
-      swap(g, r) {
-        const p = g.p[r];
-        p.lane ^= 1; p.sq = 1;
-        sfx("swap");
-        burst(PX, p.y, C.mute, 4, 60, 0.25, 2, 0);
-      },
-      update(g, dt) {
-        g.speed = Math.min(560, g.speed + 8 * dt);
-        const dx = g.speed * dt;
-        g.off += dx;
-        g.p.forEach((p, r) => {
-          p.y += (LANES[r][p.lane] - p.y) * Math.min(1, dt * 18);
-          p.sq += (0 - p.sq) * Math.min(1, dt * 10);
-          p.hist.unshift(p.y); p.hist.length = Math.min(p.hist.length, 14);
-        });
-        for (let r = 0; r < 2; r++) {
-          if ((g.next[r] -= dt) > 0) continue;
-          const good = Math.random() < 0.55;
-          g.objs.push({ r, lane: Math.random() < 0.5 ? 0 : 1, x: PW + 20, good, ms: good ? Math.round(rnd(8, 32)) : Math.round(rnd(180, 420)) });
-          g.next[r] = rnd(0.55, 1.05) * Math.pow(280 / g.speed, 0.6);
-        }
-        for (const o of g.objs) {
-          o.x -= dx;
-          const p = g.p[o.r];
-          if (o.done || Math.abs(o.x - PX) > 12 || p.lane !== o.lane) continue;
-          o.done = true;
-          if (o.good) {
-            g.streak++;
-            score(10 + Math.min(g.streak, 20));
-            sfx("pick", g.streak);
-            burst(PX, p.y, C.green, 14, 180, 0.5, 2.5, 0);
-            floatText(PX + 26, p.y - 6, g.streak >= 5 ? `×${g.streak}` : "+" + (10 + Math.min(g.streak, 20)), C.green, g.streak >= 5 ? 15 : 12);
-            if (g.streak % 10 === 0) { shake(3); sfx("power"); }
-          } else {
-            burst(PX, p.y, C.red, 26, 260, 0.7, 3, 0);
-            g.dead = "Lag spike hit!";
-          }
-        }
-        for (const o of g.objs) if (o.good && !o.done && o.x < PX - 22) { o.done = true; o.missed = true; burst(PX - 22, LANES[o.r][o.lane], C.orange, 12, 120, 0.5, 2, 0); g.dead = "Packet lost!"; }
-        g.objs = g.objs.filter((o) => o.x > -30 && !(o.done && !o.missed));
-        if (g.dead) return g.dead;
-      },
-      draw(c, g) {
-        LANES.forEach((ln, r) => {
-          c.fillStyle = "#ebeced06"; c.beginPath(); c.roundRect(14, ln[0] - 20, PW - 28, ln[1] - ln[0] + 40, 8); c.fill();
-          c.font = FONT(700, 10); c.textAlign = "left"; c.textBaseline = "middle"; c.fillStyle = C.stroke;
-          c.fillText(`ROUTE ${r + 1}`, 26, ln[0] - 11);
-          c.strokeStyle = C.div; c.lineWidth = 1; c.setLineDash([10, 10]); c.lineDashOffset = g.off % 20;
-          for (const y of ln) { c.beginPath(); c.moveTo(14, y); c.lineTo(PW - 14, y); c.stroke(); }
-          c.setLineDash([]);
-        });
-        c.textAlign = "center"; c.textBaseline = "bottom"; c.font = FONT(500, 9);
-        for (const o of g.objs) {
-          const y = LANES[o.r][o.lane];
-          if (o.good) {
-            c.fillStyle = "#22eba333"; c.beginPath(); c.arc(o.x, y, 9, 0, Math.PI * 2); c.fill();
-            c.fillStyle = C.green; c.beginPath(); c.arc(o.x, y, 5, 0, Math.PI * 2); c.fill();
-            c.fillStyle = "#22eba3b3"; c.fillText(o.ms + " ms", o.x, y - 11);
-          } else {
-            c.fillStyle = "#f5292955"; c.strokeStyle = C.red; c.lineWidth = 1.5;
-            c.beginPath(); c.moveTo(o.x - 9, y + 8); c.lineTo(o.x, y - 9); c.lineTo(o.x + 9, y + 8); c.closePath(); c.fill(); c.stroke();
-            c.fillStyle = "#f52929b3"; c.fillText(o.ms + " ms", o.x, y - 11);
-          }
-        }
-        if (g.dead) return;
-        g.p.forEach((p) => {
-          p.hist.forEach((y, i) => { if (i % 2) return; c.fillStyle = `rgba(235,236,237,${(0.14 * (1 - i / 14)).toFixed(3)})`; c.fillRect(PX - PS / 2 - i * 4, y - 4, 8, 8); });
-          const w = PS * (1 - 0.25 * p.sq), h = PS * (1 + 0.3 * p.sq);
-          c.save(); c.shadowColor = "#ebecedaa"; c.shadowBlur = 12; c.fillStyle = C.fg;
-          c.beginPath(); c.roundRect(PX - w / 2, p.y - h / 2, w, h, 3); c.fill(); c.restore();
-        });
-      },
-      hud(c, g) { c.textAlign = "left"; c.font = FONT(500, 11); c.fillStyle = C.mute; c.fillText("A / D · ← / →", 150, 17); comboHud(c, g.streak >= 5 ? `STREAK ×${g.streak}` : ""); },
-    };
-  }
-
-  /* H · Lag Slicer — drag to slice lag spikes and corrupted packets; never the green ones; 3 lives */
-  {
-    const GRAV = 620;
-    const shape = (c, o, r) => {
-      if (o.kind === "spike") {
-        c.fillStyle = "#f5292966"; c.strokeStyle = C.red; c.lineWidth = 2;
-        c.beginPath(); c.moveTo(-r, r * 0.8); c.lineTo(0, -r); c.lineTo(r, r * 0.8); c.closePath(); c.fill(); c.stroke();
-      } else if (o.kind === "corrupt") {
-        c.fillStyle = "#ba91f255"; c.strokeStyle = C.violet; c.lineWidth = 2;
-        c.beginPath(); c.roundRect(-r * 0.8, -r * 0.8, r * 1.6, r * 1.6, 4); c.fill(); c.stroke();
-        c.beginPath(); c.moveTo(-r * 0.35, -r * 0.35); c.lineTo(r * 0.35, r * 0.35); c.moveTo(r * 0.35, -r * 0.35); c.lineTo(-r * 0.35, r * 0.35); c.stroke();
-      } else {
-        c.fillStyle = "#22eba344"; c.strokeStyle = C.green; c.lineWidth = 2;
-        c.beginPath(); c.arc(0, 0, r * 0.85, 0, Math.PI * 2); c.fill(); c.stroke();
-        c.beginPath(); c.moveTo(-r * 0.35, 0); c.lineTo(-r * 0.05, r * 0.3); c.lineTo(r * 0.4, -r * 0.3); c.stroke();
-      }
-    };
-    const COLOR = { spike: C.red, corrupt: C.violet, good: C.green };
-    const segDist = (px, py, ax, ay, bx, by) => { const dx = bx - ax, dy = by - ay, l = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / l)); return Math.hypot(px - ax - t * dx, py - ay - t * dy); };
-    GAMES.slicer = {
-      name: "Lag Slicer", hint: "Drag", scale: 0.3, retry: "<kbd>Space</kbd> or click to retry",
-      keys: [],
-      init: () => ({ objs: [], halves: [], blade: [], lives: 3, next: 0.5, t: 0, combo: 0, comboT: 0, dead: "" }),
-      down(g, x, y) { g.blade = [{ x, y, t: performance.now() }]; },
-      up(g) { g.blade = []; },
-      move(g, x, y, pressed) {
-        if (!pressed) return;
-        const now = performance.now(), q = g.blade[g.blade.length - 1];
-        g.blade.push({ x, y, t: now });
-        if (!q || Math.hypot(x - q.x, y - q.y) < 4) return;
-        for (const o of g.objs) {
-          if (o.cut || segDist(o.x, o.y, q.x, q.y, x, y) > o.r + 3) continue;
-          o.cut = true;
-          const ang = Math.atan2(y - q.y, x - q.x);
-          for (const s of [-1, 1]) g.halves.push({ kind: o.kind, x: o.x, y: o.y, r: o.r, rot: ang, side: s, vx: o.vx * 0.5 + Math.cos(ang + Math.PI / 2) * s * 120, vy: o.vy * 0.4 + Math.sin(ang + Math.PI / 2) * s * 120 - 60, vr: s * rnd(2, 5), t: 0 });
-          burst(o.x, o.y, COLOR[o.kind], 18, 240, 0.6, 3);
-          if (o.kind === "good") {
-            g.lives--; g.combo = 0;
-            sfx("miss"); shake(8); hitstop(70);
-            floatText(o.x, o.y - 10, "−1 ♥  that was a good packet", C.orange, 13);
-            if (g.lives <= 0) g.dead = "Out of lives!";
-            continue;
-          }
-          g.combo = g.comboT > 0 ? g.combo + 1 : 1;
-          g.comboT = 0.28;
-          const pts = 10 * g.combo;
-          score(pts);
-          sfx("slice", g.combo);
-          floatText(o.x, o.y - 12, g.combo >= 3 ? `COMBO ×${g.combo}` : "+" + pts, g.combo >= 3 ? C.cyan : C.fg, g.combo >= 3 ? 16 : 13);
-          if (g.combo >= 3) { hitstop(45); shake(4); } else shake(1.5);
-        }
-      },
-      update(g, dt) {
-        g.t += dt;
-        g.comboT -= dt;
-        const now = performance.now();
-        g.blade = g.blade.filter((p) => now - p.t < 140);
-        if ((g.next -= dt) <= 0) {
-          const n = 1 + Math.floor(Math.random() * Math.min(4, 1 + g.t / 10));
-          for (let i = 0; i < n; i++) {
-            const x = rnd(140, 660), roll = Math.random();
-            g.objs.push({ kind: roll < 0.18 ? "good" : roll < 0.6 ? "spike" : "corrupt", x, y: PH + 24, vx: (PW / 2 - x) * rnd(0.15, 0.45), vy: -rnd(430, 540), r: 15, rot: 0, vr: rnd(-3, 3) });
-          }
-          g.next = rnd(0.9, 1.5) * Math.max(0.55, 1 - g.t / 80);
-        }
-        for (const o of g.objs) { o.vy += GRAV * dt; o.x += o.vx * dt; o.y += o.vy * dt; o.rot += o.vr * dt; }
-        for (const o of g.objs) {
-          if (o.cut || o.vy <= 0 || o.y < PH + 30) continue;
-          o.cut = true;
-          if (o.kind !== "good") {
-            g.lives--;
-            sfx("miss"); shake(4);
-            floatText(Math.max(60, Math.min(PW - 60, o.x)), PH - 22, "MISS  −1 ♥", C.orange, 12);
-            if (g.lives <= 0) g.dead = "Out of lives!";
-          }
-        }
-        g.objs = g.objs.filter((o) => !o.cut);
-        for (const h of g.halves) { h.t += dt; h.vy += GRAV * dt; h.x += h.vx * dt; h.y += h.vy * dt; h.rot += h.vr * dt; }
-        g.halves = g.halves.filter((h) => h.y < PH + 40 && h.t < 1.6);
-        if (g.dead) return g.dead;
-      },
-      draw(c, g) {
-        c.textAlign = "center"; c.textBaseline = "bottom"; c.font = FONT(500, 9);
-        for (const o of g.objs) {
-          c.save(); c.translate(o.x, o.y); c.rotate(o.rot); shape(c, o, o.r); c.restore();
-          if (o.kind === "spike") { c.fillStyle = "#f52929b3"; c.fillText(Math.round(200 + o.r * 10) + " ms", o.x, o.y - o.r - 4); }
-        }
-        for (const h of g.halves) {
-          c.save(); c.translate(h.x, h.y); c.rotate(h.rot);
-          c.beginPath(); c.rect(h.side < 0 ? -h.r - 4 : 0, -h.r - 4, h.r + 4, h.r * 2 + 8); c.clip();
-          c.rotate(-h.rot + h.rot); c.globalAlpha = Math.max(0, 1 - h.t / 1.6); shape(c, h, h.r); c.restore();
-        }
-        if (g.blade.length > 1) {
-          c.save(); c.lineCap = "round"; c.shadowColor = "#92e2f2"; c.shadowBlur = 10;
-          for (let i = 1; i < g.blade.length; i++) {
-            const k = i / g.blade.length;
-            c.strokeStyle = `rgba(235,236,237,${(0.25 + 0.75 * k).toFixed(3)})`; c.lineWidth = 1 + 4 * k;
-            c.beginPath(); c.moveTo(g.blade[i - 1].x, g.blade[i - 1].y); c.lineTo(g.blade[i].x, g.blade[i].y); c.stroke();
-          }
-          c.restore();
-        }
-      },
-      hud(c, g) { hearts(c, g.lives, 150); comboHud(c, g.combo >= 3 && g.comboT > 0 ? `COMBO ×${g.combo}` : ""); },
-    };
-  }
-
-  /* I · Packet Breaker — juicy Breakout: paddle on the mouse (or ←/→), bricks are congestion, Multipath splits the packet */
-  {
-    const COLS = 12, ROWS = 5, BW = (PW - 80 - (COLS - 1) * 4) / COLS, BRH = 12, TOP = 56, PY = 236, PH2 = 8, BS = 7;
-    const ROWC = [C.red, C.orange, C.yellow, C.violet, C.cyan];
-    const wave = () => { const b = []; for (let r = 0; r < ROWS; r++) for (let k = 0; k < COLS; k++) b.push({ x: 40 + k * (BW + 4), y: TOP + r * (BRH + 4), r }); return b; };
-    const newBall = (g) => ({ x: g.pad.x, y: PY - 10, vx: 0, vy: 0, stuck: true, trail: [] });
-    GAMES.breaker = {
-      name: "Packet Breaker", hint: "Mouse", scale: 0.45, retry: "<kbd>Space</kbd> or click to retry",
-      keys: [" ", "ArrowLeft", "ArrowRight", "a", "A", "d", "D"],
-      init() { const g = { bricks: wave(), pad: { x: PW / 2, tx: PW / 2, w: 110, sq: 0 }, balls: [], drops: [], lives: 3, streak: 0, wave: 1, speed: 380, dir: 0, dead: "" }; g.balls.push(newBall(g)); return g; },
-      key(g, k, down) {
-        if (k === " ") { if (down) this.launch(g); return; }
-        const d = /^(ArrowLeft|a)$/i.test(k) ? -1 : 1;
-        if (down) g.dir = d; else if (g.dir === d) g.dir = 0;
-      },
-      move(g, x) { g.pad.tx = x; },
-      down(g, x) { g.pad.tx = x; this.launch(g); },
-      launch(g) {
-        for (const b of g.balls) if (b.stuck) { b.stuck = false; const a = rnd(-0.5, 0.5); b.vx = g.speed * Math.sin(a); b.vy = -g.speed * Math.cos(a); sfx("bounce"); }
-      },
-      update(g, dt) {
-        const pad = g.pad;
-        pad.tx = Math.max(pad.w / 2 + 10, Math.min(PW - pad.w / 2 - 10, pad.tx + g.dir * 620 * dt));
-        pad.x += (pad.tx - pad.x) * Math.min(1, dt * 22);
-        pad.sq += (0 - pad.sq) * Math.min(1, dt * 10);
-        g.speed = Math.min(620, g.speed + 4 * dt);
-        for (const b of g.balls) {
-          if (b.stuck) { b.x = pad.x; b.y = PY - 10; continue; }
-          const sp = Math.hypot(b.vx, b.vy) || 1, k = g.speed / sp;
-          b.vx *= k; b.vy *= k;
-          b.x += b.vx * dt; b.y += b.vy * dt;
-          b.trail.unshift([b.x, b.y]); b.trail.length = Math.min(b.trail.length, 10);
-          if (b.x < 14) { b.x = 14; b.vx = Math.abs(b.vx); sfx("tick"); }
-          if (b.x > PW - 14) { b.x = PW - 14; b.vx = -Math.abs(b.vx); sfx("tick"); }
-          if (b.y < 48) { b.y = 48; b.vy = Math.abs(b.vy); sfx("tick"); }
-          if (b.vy > 0 && b.y + BS / 2 >= PY - PH2 / 2 && b.y < PY + PH2 && Math.abs(b.x - pad.x) <= pad.w / 2 + BS / 2) {
-            const rel = Math.max(-1, Math.min(1, (b.x - pad.x) / (pad.w / 2))), ang = rel * 1.05;
-            b.vx = g.speed * Math.sin(ang); b.vy = -g.speed * Math.cos(ang); b.y = PY - PH2 / 2 - BS / 2;
-            pad.sq = 1; g.streak = 0;
-            sfx("bounce"); burst(b.x, PY - 4, C.cyan, 6, 90, 0.3, 2);
-          }
-          for (const br of g.bricks) {
-            if (br.gone || b.x + BS / 2 < br.x || b.x - BS / 2 > br.x + BW || b.y + BS / 2 < br.y || b.y - BS / 2 > br.y + BRH) continue;
-            br.gone = true;
-            const ox = Math.min(b.x + BS / 2 - br.x, br.x + BW - (b.x - BS / 2)), oy = Math.min(b.y + BS / 2 - br.y, br.y + BRH - (b.y - BS / 2));
-            if (ox < oy) b.vx = -b.vx; else b.vy = -b.vy;
-            g.streak++;
-            const pts = 10 * Math.min(g.streak, 8);
-            score(pts);
-            sfx("break", 4 - br.r + Math.min(g.streak, 6));
-            burst(br.x + BW / 2, br.y + BRH / 2, ROWC[br.r], 14, 200, 0.55, 3);
-            floatText(br.x + BW / 2, br.y, g.streak >= 3 ? `+${pts} ×${g.streak}` : "+" + pts, g.streak >= 3 ? C.cyan : C.fg, g.streak >= 3 ? 13 : 11);
-            shake(g.streak >= 4 ? 4 : 2.5); hitstop(g.streak >= 4 ? 45 : 22);
-            if (Math.random() < 0.12) g.drops.push({ x: br.x + BW / 2, y: br.y + BRH, vy: 130 });
-            break;
-          }
-        }
-        for (const d of g.drops) {
-          d.y += d.vy * dt;
-          if (!d.got && d.y >= PY - 8 && d.y <= PY + 8 && Math.abs(d.x - pad.x) <= pad.w / 2 + 10) {
-            d.got = true;
-            const live = g.balls.filter((b) => !b.stuck).slice(0, 2);
-            for (const b of live) for (const s of [-0.45, 0.45]) { if (g.balls.length >= 7) break; const a = Math.atan2(b.vx, -b.vy) + s; g.balls.push({ x: b.x, y: b.y, vx: g.speed * Math.sin(a), vy: -g.speed * Math.cos(a), stuck: false, trail: [] }); }
-            sfx("power"); burst(d.x, PY - 6, C.cyan, 22, 220, 0.6, 3); floatText(d.x, PY - 26, "MULTIPATH ×3", C.cyan, 15); shake(3);
-          }
-        }
-        g.drops = g.drops.filter((d) => !d.got && d.y < PH + 20);
-        const before = g.balls.length;
-        g.balls = g.balls.filter((b) => b.y < PH + 12);
-        if (before && !g.balls.length) {
-          g.lives--;
-          sfx("miss"); shake(6);
-          floatText(pad.x, PY - 24, "−1 ♥", C.orange, 14);
-          if (g.lives <= 0) { g.dead = "Connection dropped!"; return g.dead; }
-          g.balls.push(newBall(g)); g.streak = 0;
-        }
-        g.bricks = g.bricks.filter((br) => !br.gone);
-        if (!g.bricks.length) {
-          g.wave++; g.bricks = wave(); g.speed = Math.min(620, g.speed + 40); g.balls = [newBall(g)];
-          sfx("power"); floatText(PW / 2, 140, `WAVE ${g.wave}`, C.cyan, 20); shake(4);
-        }
-      },
-      draw(c, g) {
-        for (const br of g.bricks) {
-          c.fillStyle = ROWC[br.r]; c.globalAlpha = 0.78;
-          c.beginPath(); c.roundRect(br.x, br.y, BW, BRH, 3); c.fill();
-          c.globalAlpha = 1; c.fillStyle = "#ffffff30"; c.fillRect(br.x + 2, br.y + 1, BW - 4, 2);
-        }
-        for (const d of g.drops) {
-          c.fillStyle = "#92e2f233"; c.strokeStyle = C.cyan; c.lineWidth = 1.5;
-          c.beginPath(); c.roundRect(d.x - 16, d.y - 6, 32, 12, 6); c.fill(); c.stroke();
-          c.fillStyle = C.cyan; c.font = FONT(700, 8); c.textAlign = "center"; c.textBaseline = "middle"; c.fillText("MP", d.x, d.y + 0.5);
-        }
-        for (const b of g.balls) {
-          b.trail.forEach(([x, y], i) => { c.fillStyle = `rgba(235,236,237,${(0.2 * (1 - i / 10)).toFixed(3)})`; c.fillRect(x - 2.5, y - 2.5, 5, 5); });
-          c.save(); c.shadowColor = "#ebecedaa"; c.shadowBlur = 10; c.fillStyle = C.fg; c.fillRect(b.x - BS / 2, b.y - BS / 2, BS, BS); c.restore();
-        }
-        const p = g.pad, w = p.w * (1 + 0.12 * p.sq), h = PH2 * (1 - 0.35 * p.sq);
-        c.save(); c.shadowColor = "#92e2f288"; c.shadowBlur = 12; c.fillStyle = C.fg;
-        c.beginPath(); c.roundRect(p.x - w / 2, PY - h / 2, w, h, 4); c.fill(); c.restore();
-        if (g.balls.some((b) => b.stuck)) { c.textAlign = "center"; c.textBaseline = "bottom"; c.font = FONT(500, 11); c.fillStyle = C.mute; c.fillText("Click or Space to launch", PW / 2, PY - 22); }
-      },
-      hud(c, g) { hearts(c, g.lives, 170); c.textAlign = "left"; c.font = FONT(500, 11); c.fillStyle = C.mute; c.fillText(`WAVE ${g.wave}`, 220, 17); comboHud(c, g.streak >= 3 ? `STREAK ×${g.streak}` : ""); },
-    };
-  }
-
-
-  /* ======================= Atari classics (hybrid look: app tokens + pixel sprites, pixel score font, scanlines) ======================= */
-  const PXF = (s) => `${s}px "Press Start 2P", ui-monospace, monospace`;
-  function sprite(c, rows, x, y, s, color) {
-    c.fillStyle = color;
-    for (let j = 0; j < rows.length; j++) for (let i = 0; i < rows[j].length; i++) if (rows[j][i] !== ".") c.fillRect(Math.round(x + i * s), Math.round(y + j * s), s, s);
-  }
-  const TOPY = 46;   // play area starts under the HUD band
-
-  /* Ping Pong (Pong) — you vs CPU; every return shows its flight time in ms; CPU at 5 ends the match */
-  {
-    const LX = 40, RX = 752, PW8 = 8, PADH = 44, BOT = 252;
-    const serve = (g, dir) => { g.ball = { x: PW / 2, y: rnd(90, 210), vx: dir * 270, vy: rnd(-110, 110), wait: 0.7, trail: [] }; g.speed = 290; g.cpuErr = rnd(-16, 16); g.lastHit = performance.now(); };
-    GAMES.pong = {
-      name: "Ping Pong", hint: "Mouse · W/S", scale: 0.25, pixel: true, retry: "<kbd>Space</kbd> or click for a rematch",
-      keys: ["w", "W", "s", "S", "ArrowUp", "ArrowDown"],
-      init() { const g = { py: 150, pty: 150, cy: 150, dir: 0, you: 0, cpu: 0, rally: 0, sqL: 0, sqR: 0 }; serve(g, 1); return g; },
-      key(g, k, down) { const d = /^(w|ArrowUp)$/i.test(k) ? -1 : 1; if (down) g.dir = d; else if (g.dir === d) g.dir = 0; },
-      move(g, x, y) { g.pty = y; },
-      down(g, x, y) { g.pty = y; },
-      update(g, dt) {
-        g.pty = Math.max(TOPY + PADH / 2, Math.min(BOT - PADH / 2, g.pty + g.dir * 440 * dt));
-        g.py += (g.pty - g.py) * Math.min(1, dt * 20);
-        const b = g.ball;
-        const target = b.vx > 0 ? b.y + g.cpuErr : (TOPY + BOT) / 2, cs = 230 + Math.min(g.rally, 20) * 9;
-        g.cy += Math.max(-cs * dt, Math.min(cs * dt, target - g.cy));
-        g.cy = Math.max(TOPY + PADH / 2, Math.min(BOT - PADH / 2, g.cy));
-        g.sqL += -g.sqL * Math.min(1, dt * 10); g.sqR += -g.sqR * Math.min(1, dt * 10);
-        if (b.wait > 0) { b.wait -= dt; return; }
-        b.x += b.vx * dt; b.y += b.vy * dt;
-        b.trail.unshift([b.x, b.y]); b.trail.length = Math.min(b.trail.length, 8);
-        if (b.y < TOPY + 4) { b.y = TOPY + 4; b.vy = Math.abs(b.vy); sfx("tick"); }
-        if (b.y > BOT - 4) { b.y = BOT - 4; b.vy = -Math.abs(b.vy); sfx("tick"); }
-        const hit = (px, py, side) => {
-          if (Math.abs(b.y - py) > PADH / 2 + 4) return false;
-          const rel = (b.y - py) / (PADH / 2), ang = rel * 0.9;
-          g.speed = Math.min(760, g.speed * 1.06);
-          b.vx = side * g.speed * Math.cos(ang); b.vy = g.speed * Math.sin(ang);
-          b.x = px + side * (PW8 / 2 + 5);
-          const ms = Math.round(performance.now() - g.lastHit); g.lastHit = performance.now();
-          return ms;
-        };
-        if (b.vx < 0 && b.x - 4 <= LX + PW8 / 2 && b.x > LX - 8) {
-          const ms = hit(LX, g.py, 1);
-          if (ms !== false) {
-            g.rally++; g.sqL = 1;
-            score(10 * Math.min(g.rally, 10));
-            sfx("bounce"); sfx("pick", g.rally);
-            burst(LX + 6, b.y, C.cyan, 10, 160, 0.4, 3, 0);
-            floatText(LX + 60, b.y - 10, g.rally >= 5 ? `${ms} ms · RALLY ×${g.rally}` : `${ms} ms`, g.rally >= 5 ? C.cyan : C.fg, 12);
-            shake(1.5);
-          }
-        }
-        if (b.vx > 0 && b.x + 4 >= RX - PW8 / 2 && b.x < RX + 8) {
-          const ms = hit(RX, g.cy, -1);
-          if (ms !== false) { g.sqR = 1; g.cpuErr = rnd(-18 - g.rally, 18 + g.rally); sfx("bounce"); burst(RX - 6, b.y, C.mute, 8, 140, 0.35, 3, 0); floatText(RX - 50, b.y - 10, `${ms} ms`, C.mute, 11); }
-        }
-        if (b.x < -10) {
-          g.cpu++; g.rally = 0;
-          burst(10, b.y, C.red, 24, 260, 0.7, 4, 0); shake(7); hitstop(80); sfx("miss");
-          floatText(PW / 2, 130, `CPU ${g.cpu}`, C.red, 18);
-          if (g.cpu >= 5) return `CPU wins ${g.cpu}–${g.you}`;
-          serve(g, 1);
-        } else if (b.x > PW + 10) {
-          g.you++;
-          score(100);
-          burst(PW - 10, b.y, C.green, 24, 260, 0.7, 4, 0); shake(5); hitstop(60); sfx("power");
-          floatText(PW / 2, 130, "POINT!", C.green, 20);
-          serve(g, -1);
-        }
-      },
-      draw(c, g) {
-        c.fillStyle = C.div;
-        for (let y = TOPY + 4; y < BOT; y += 16) c.fillRect(PW / 2 - 2, y, 4, 8);
-        c.font = PXF(28); c.textAlign = "center"; c.textBaseline = "top"; c.fillStyle = "#ebeced2e";
-        c.fillText(String(g.you), PW / 2 - 70, TOPY + 10); c.fillText(String(g.cpu), PW / 2 + 70, TOPY + 10);
-        const pad = (x, y, sq, col) => { const h = PADH * (1 - 0.18 * sq), w = PW8 * (1 + 0.5 * sq); c.fillStyle = col; c.fillRect(Math.round(x - w / 2), Math.round(y - h / 2), Math.round(w), Math.round(h)); };
-        c.save(); c.shadowColor = "#92e2f266"; c.shadowBlur = 10; pad(LX, g.py, g.sqL, C.fg); c.restore();
-        pad(RX, g.cy, g.sqR, C.mute);
-        const b = g.ball;
-        b.trail.forEach(([x, y], i) => { c.fillStyle = `rgba(235,236,237,${(0.18 * (1 - i / 8)).toFixed(3)})`; c.fillRect(Math.round(x - 3), Math.round(y - 3), 6, 6); });
-        if (b.wait <= 0 || Math.floor(b.wait * 8) % 2) { c.fillStyle = C.fg; c.fillRect(Math.round(b.x - 4), Math.round(b.y - 4), 8, 8); }
-      },
-      hud(c, g) { c.textAlign = "left"; c.font = PXF(8); c.fillStyle = C.fg; c.fillText(`YOU ${g.you}  CPU ${g.cpu}/5`, 190, 18); comboHud(c, g.rally >= 5 ? `RALLY ×${g.rally}` : ""); },
-    };
-  }
-
-  /* Lag Invaders (Space Invaders) — marching rows of lag, shields that erode, a bonus ship */
-  {
-    const SPIKE = [["....X....", "...XXX...", "..XXXXX..", ".XX.X.XX.", "XXXXXXXXX", "..X...X..", ".X.....X."], ["....X....", "...XXX...", "..XXXXX..", ".XX.X.XX.", "XXXXXXXXX", ".X.X.X.X.", "X.......X"]];
-    const CRAB = [["..X...X..", "...X.X...", "..XXXXX..", ".XX.X.XX.", "XXXXXXXXX", "X.XXXXX.X", "X.X...X.X"], ["..X...X..", "X..X.X..X", "X.XXXXX.X", "XXX.X.XXX", "XXXXXXXXX", ".XXXXXXX.", ".X.....X."]];
-    const SHIP = ["....X....", "...XXX...", ".XXXXXXX.", "XXXXXXXXX", "XXXXXXXXX"];
-    const UFO = ["...XXXXX...", ".XXXXXXXXX.", "XX.XX.XX.XX", ".XXXXXXXXX.", "..X.....X.."];
-    const S = 3, COLS = 9, ROWS = 4, DX = 46, DY = 26, PY0 = 236;
-    const makeWave = (w) => { const a = []; for (let r = 0; r < ROWS; r++) for (let k = 0; k < COLS; k++) a.push({ c: k, r, alive: true }); return { list: a, ox: 150, oy: 54 + Math.min(w - 1, 3) * 6, dir: 1, stepT: 0, frame: 0, note: 0 }; };
-    const shields = () => { const s = []; for (let k = 0; k < 4; k++) for (let i = 0; i < 8; i++) for (let j = 0; j < 4; j++) if (!(j === 3 && i > 2 && i < 5)) s.push({ x: 130 + k * 160 + i * 6, y: 196 + j * 6 }); return s; };
-    GAMES.invaders = {
-      name: "Lag Invaders", hint: "←/→ · Space", scale: 0.3, pixel: true, retry: "<kbd>Space</kbd> or click to retry",
-      keys: [" ", "ArrowLeft", "ArrowRight", "a", "A", "d", "D"],
-      init: () => ({ x: PW / 2, tx: PW / 2, dir: 0, shot: null, bombs: [], wave: makeWave(1), w: 1, shields: shields(), lives: 3, inv: 0, ufo: null, ufoT: rnd(8, 14), fireT: 1.2, booms: [] }),
-      key(g, k, down) { if (k === " ") { if (down) this.fire(g); return; } const d = /^(ArrowLeft|a)$/i.test(k) ? -1 : 1; if (down) g.dir = d; else if (g.dir === d) g.dir = 0; },
-      move(g, x) { g.tx = x; },
-      down(g, x) { g.tx = x; this.fire(g); },
-      fire(g) { if (g.shot || g.inv > 0.8) return; g.shot = { x: g.x, y: PY0 - 14 }; sfx("tick"); },
-      pos: (wv, a) => [wv.ox + a.c * DX, wv.oy + a.r * DY],
-      update(g, dt) {
-        g.tx = Math.max(30, Math.min(PW - 30, g.tx + g.dir * 360 * dt));
-        g.x += (g.tx - g.x) * Math.min(1, dt * 18);
-        g.inv = Math.max(0, g.inv - dt);
-        const wv = g.wave, alive = wv.list.filter((a) => a.alive);
-        // march: the fewer left, the faster (and the 4-note bass speeds up with it)
-        wv.stepT -= dt;
-        if (wv.stepT <= 0) {
-          wv.stepT = Math.max(0.05, 0.45 * (alive.length / (COLS * ROWS))) / (1 + (g.w - 1) * 0.15);
-          wv.frame ^= 1;
-          const xs = alive.map((a) => wv.ox + a.c * DX), minX = Math.min(...xs), maxX = Math.max(...xs) + 27;
-          if ((wv.dir > 0 && maxX + 12 > PW - 20) || (wv.dir < 0 && minX - 12 < 20)) { wv.dir *= -1; wv.oy += 10; } else wv.ox += 12 * wv.dir;
-          if (SND.on && SND.ctx) { const f = [98, 87, 78, 73][wv.note++ % 4]; const o = SND.ctx.createOscillator(), gn = SND.ctx.createGain(), t = SND.ctx.currentTime; o.type = "square"; o.frequency.value = f; gn.gain.setValueAtTime(0.03, t); gn.gain.exponentialRampToValueAtTime(0.0001, t + 0.09); o.connect(gn).connect(SND.ctx.destination); o.start(t); o.stop(t + 0.1); }
-        }
-        // their fire
-        g.fireT -= dt;
-        if (g.fireT <= 0 && alive.length) {
-          const cols = [...new Set(alive.map((a) => a.c))], col = cols[Math.floor(Math.random() * cols.length)];
-          const low = alive.filter((a) => a.c === col).sort((p, q) => q.r - p.r)[0], [bx, by] = this.pos(wv, low);
-          g.bombs.push({ x: bx + 13, y: by + 22 });
-          g.fireT = rnd(0.5, 1.2) * (0.4 + alive.length / (COLS * ROWS));
-        }
-        // shot
-        if (g.shot) {
-          g.shot.y -= 560 * dt;
-          if (g.shot.y < TOPY) g.shot = null;
-        }
-        if (g.shot) {
-          for (const a of alive) {
-            const [ax, ay] = this.pos(wv, a);
-            if (g.shot.x < ax - 1 || g.shot.x > ax + 28 || g.shot.y < ay || g.shot.y > ay + 22) continue;
-            a.alive = false; g.shot = null;
-            const pts = a.r === 0 ? 30 : a.r < 2 ? 20 : 10;
-            score(pts);
-            burst(ax + 13, ay + 10, a.r % 2 ? C.violet : C.red, 16, 200, 0.5, 3);
-            g.booms.push({ x: ax + 13, y: ay + 10, t: 0.18 });
-            floatText(ax + 13, ay, "+" + pts, C.fg, 11);
-            sfx("break", 6 - a.r); shake(2); hitstop(20);
-            break;
-          }
-        }
-        if (g.shot && g.ufo && Math.abs(g.shot.x - g.ufo.x) < 18 && Math.abs(g.shot.y - TOPY - 10) < 10) {
-          const pts = [50, 100, 150, 300][Math.floor(Math.random() * 4)];
-          score(pts); burst(g.ufo.x, TOPY + 10, C.cyan, 30, 260, 0.8, 3); floatText(g.ufo.x, TOPY + 22, `BONUS ${pts}`, C.cyan, 15);
-          sfx("power"); shake(5); hitstop(60);
-          g.ufo = null; g.shot = null;
-        }
-        // shields erode under both sides' fire
-        const chip = (p) => { const i = g.shields.findIndex((s) => p.x >= s.x - 1 && p.x <= s.x + 7 && p.y >= s.y - 2 && p.y <= s.y + 8); if (i < 0) return false; burst(g.shields[i].x + 3, g.shields[i].y + 3, C.stroke, 5, 80, 0.3, 2); g.shields.splice(i, 1); return true; };
-        if (g.shot && chip(g.shot)) g.shot = null;
-        for (const bm of g.bombs) {
-          bm.y += 230 * dt;
-          if (chip(bm)) bm.y = PH + 99;
-          else if (g.inv <= 0 && bm.y > PY0 - 12 && bm.y < PY0 + 6 && Math.abs(bm.x - g.x) < 14) {
-            bm.y = PH + 99;
-            g.lives--; g.inv = 1.6;
-            burst(g.x, PY0 - 4, C.red, 26, 260, 0.7, 3); shake(7); hitstop(80); sfx("miss");
-            floatText(g.x, PY0 - 30, "−1 ♥", C.orange, 14);
-            if (g.lives <= 0) return "Packet destroyed!";
-          }
-        }
-        g.bombs = g.bombs.filter((b) => b.y < PH + 10);
-        // bonus ship
-        g.ufoT -= dt;
-        if (!g.ufo && g.ufoT <= 0) { const l = Math.random() < 0.5; g.ufo = { x: l ? -20 : PW + 20, v: l ? 120 : -120 }; g.ufoT = rnd(12, 18); }
-        if (g.ufo) { g.ufo.x += g.ufo.v * dt; if (g.ufo.x < -40 || g.ufo.x > PW + 40) g.ufo = null; }
-        g.booms = g.booms.filter((b) => (b.t -= dt) > 0);
-        // they reach the server line → over; all down → next wave
-        if (alive.length && wv.oy + Math.max(...alive.map((a) => a.r)) * DY + 22 > 190) return "They reached the server!";
-        if (!wv.list.some((a) => a.alive)) { g.w++; g.wave = makeWave(g.w); g.shields = shields(); sfx("power"); floatText(PW / 2, 130, `WAVE ${g.w}`, C.cyan, 20); }
-      },
-      draw(c, g) {
-        const wv = g.wave;
-        for (const a of wv.list) {
-          if (!a.alive) continue;
-          const [x, y] = this.pos(wv, a), crab = a.r % 2 === 1;
-          sprite(c, (crab ? CRAB : SPIKE)[wv.frame], x, y, S, a.r === 0 ? C.cyan : crab ? C.violet : C.red);
-        }
-        for (const b of g.booms) { c.fillStyle = C.fg; c.globalAlpha = b.t / 0.18; c.fillRect(b.x - 10, b.y - 2, 20, 4); c.fillRect(b.x - 2, b.y - 10, 4, 20); c.globalAlpha = 1; }
-        c.fillStyle = C.stroke; for (const s of g.shields) c.fillRect(s.x, s.y, 6, 6);
-        if (g.ufo) sprite(c, UFO, g.ufo.x - 16, TOPY + 2, 3, C.cyan);
-        c.fillStyle = C.fg; if (g.shot) c.fillRect(Math.round(g.shot.x - 1), Math.round(g.shot.y), 3, 10);
-        c.fillStyle = C.red; for (const b of g.bombs) { c.fillRect(Math.round(b.x - 1), Math.round(b.y), 3, 4); c.fillRect(Math.round(b.x + (Math.floor(b.y / 6) % 2 ? 1 : -2)), Math.round(b.y + 4), 3, 4); }
-        if (!(g.inv > 0 && Math.floor(g.inv * 10) % 2)) { c.save(); c.shadowColor = "#ebecedaa"; c.shadowBlur = 8; sprite(c, SHIP, g.x - 13, PY0 - 12, 3, C.fg); c.restore(); }
-        c.fillStyle = C.div; c.fillRect(14, PY0 + 6, PW - 28, 2);
-      },
-      hud(c, g) { hearts(c, g.lives, 180); c.textAlign = "left"; c.font = PXF(8); c.fillStyle = C.mute; c.fillText(`WAVE ${g.w}`, 236, 18); },
-    };
-  }
-
-  /* Packet Asteroids (Asteroids) — vector ship with inertia, screen wrap, congestion rocks that split */
-  {
-    const AREA = [TOPY, PH];
-    const rock = (x, y, size) => { const r = [24, 15, 8][size], n = 9 + Math.floor(Math.random() * 3), pts = []; for (let i = 0; i < n; i++) pts.push(r * rnd(0.72, 1.12)); const a = rnd(0, Math.PI * 2), v = rnd(30, 70) * (1 + size * 0.5); return { x, y, r, size, pts, vx: Math.cos(a) * v, vy: Math.sin(a) * v, rot: 0, vr: rnd(-1, 1) }; };
-    const wrap = (o) => { const h = AREA[1] - AREA[0]; if (o.x < -12) o.x += PW + 24; if (o.x > PW + 12) o.x -= PW + 24; if (o.y < AREA[0] - 12) o.y += h + 24; if (o.y > AREA[1] + 12) o.y -= h + 24; };
-    const spawnWave = (g) => { for (let i = 0; i < 3 + g.w; i++) { let x, y; do { x = rnd(0, PW); y = rnd(AREA[0], AREA[1]); } while (Math.hypot(x - g.s.x, y - g.s.y) < 140); g.rocks.push(rock(x, y, 0)); } };
-    GAMES.asteroids = {
-      name: "Packet Asteroids", hint: "←/→/↑ · Space", scale: 0.35, pixel: true, retry: "<kbd>Space</kbd> or click to retry",
-      keys: [" ", "ArrowLeft", "ArrowRight", "ArrowUp", "a", "A", "d", "D", "w", "W"],
-      init() { const g = { s: { x: PW / 2, y: 153, vx: 0, vy: 0, a: -Math.PI / 2 }, turn: 0, thrust: false, bullets: [], rocks: [], lives: 3, inv: 2, cd: 0, w: 1, mouse: null, firing: false }; spawnWave(g); return g; },
-      key(g, k, down) {
-        if (k === " ") { g.firing = down; if (down) this.fire(g); return; }
-        if (/^(ArrowUp|w)$/i.test(k)) { g.thrust = down; return; }
-        const d = /^(ArrowLeft|a)$/i.test(k) ? -1 : 1; if (down) g.turn = d; else if (g.turn === d) g.turn = 0;
-      },
-      move(g, x, y) { g.mouse = { x, y }; },
-      down(g, x, y) { g.mouse = { x, y }; g.firing = true; this.fire(g); },
-      up(g) { g.firing = false; },
-      fire(g) {
-        if (g.cd > 0 || g.bullets.length >= 6) return;
-        const s = g.s; g.cd = 0.16;
-        g.bullets.push({ x: s.x + Math.cos(s.a) * 12, y: s.y + Math.sin(s.a) * 12, vx: s.vx + Math.cos(s.a) * 480, vy: s.vy + Math.sin(s.a) * 480, t: 0.85 });
-        sfx("tick");
-      },
-      update(g, dt) {
-        const s = g.s;
-        g.cd -= dt; g.inv = Math.max(0, g.inv - dt);
-        if (g.firing && g.cd <= 0) this.fire(g);
-        if (g.turn) s.a += g.turn * 4.2 * dt;
-        else if (g.mouse) { const want = Math.atan2(g.mouse.y - s.y, g.mouse.x - s.x), d = Math.atan2(Math.sin(want - s.a), Math.cos(want - s.a)); s.a += Math.max(-5 * dt, Math.min(5 * dt, d)); }
-        if (g.thrust) {
-          s.vx += Math.cos(s.a) * 280 * dt; s.vy += Math.sin(s.a) * 280 * dt;
-          FX.parts.push({ x: s.x - Math.cos(s.a) * 9, y: s.y - Math.sin(s.a) * 9, vx: -Math.cos(s.a) * 120 + rnd(-30, 30), vy: -Math.sin(s.a) * 120 + rnd(-30, 30), life: 0.25, t: 0, color: Math.random() < 0.5 ? C.orange : C.yellow, size: 2.5, grav: 0 });
-        }
-        const sp = Math.hypot(s.vx, s.vy); if (sp > 330) { s.vx *= 330 / sp; s.vy *= 330 / sp; }
-        s.vx *= Math.pow(0.55, dt); s.vy *= Math.pow(0.55, dt);
-        s.x += s.vx * dt; s.y += s.vy * dt; wrap(s);
-        for (const b of g.bullets) { b.x += b.vx * dt; b.y += b.vy * dt; b.t -= dt; wrap(b); }
-        for (const r of g.rocks) { r.x += r.vx * dt; r.y += r.vy * dt; r.rot += r.vr * dt; wrap(r); }
-        for (const b of g.bullets) {
-          const r = g.rocks.find((o) => !o.dead && Math.hypot(o.x - b.x, o.y - b.y) < o.r);
-          if (!r) continue;
-          b.t = 0; r.dead = true;
-          const pts = [20, 50, 100][r.size];
-          score(pts);
-          burst(r.x, r.y, C.fg, 10 + (2 - r.size) * 6, 160 + (2 - r.size) * 60, 0.6, 2, 0);
-          floatText(r.x, r.y - r.r, "+" + pts, C.fg, 11);
-          sfx("break", r.size * 3); shake(3 - r.size); if (r.size === 0) hitstop(40);
-          if (r.size < 2) for (let i = 0; i < 2; i++) { const n = rock(r.x, r.y, r.size + 1); g.rocks.push(n); }
-        }
-        g.bullets = g.bullets.filter((b) => b.t > 0);
-        g.rocks = g.rocks.filter((r) => !r.dead);
-        if (g.inv <= 0 && g.rocks.some((r) => Math.hypot(r.x - s.x, r.y - s.y) < r.r + 7)) {
-          g.lives--;
-          burst(s.x, s.y, C.red, 30, 260, 0.8, 3, 0); burst(s.x, s.y, C.fg, 12, 200, 0.6, 2, 0);
-          shake(8); hitstop(90); sfx("miss");
-          if (g.lives <= 0) return "Packet destroyed!";
-          Object.assign(s, { x: PW / 2, y: 153, vx: 0, vy: 0, a: -Math.PI / 2 }); g.inv = 2;
-        }
-        if (!g.rocks.length) { g.w++; spawnWave(g); sfx("power"); floatText(PW / 2, 130, `WAVE ${g.w}`, C.cyan, 20); }
-      },
-      draw(c, g) {
-        c.lineJoin = "round";
-        c.save(); c.shadowColor = "#ebeced66"; c.shadowBlur = 6; c.strokeStyle = C.mute; c.lineWidth = 1.5;
-        for (const r of g.rocks) {
-          c.beginPath();
-          r.pts.forEach((d, i) => { const a = r.rot + (i / r.pts.length) * Math.PI * 2, x = r.x + Math.cos(a) * d, y = r.y + Math.sin(a) * d; i ? c.lineTo(x, y) : c.moveTo(x, y); });
-          c.closePath(); c.stroke();
-        }
-        c.restore();
-        c.fillStyle = C.fg; for (const b of g.bullets) c.fillRect(Math.round(b.x - 1.5), Math.round(b.y - 1.5), 3, 3);
-        const s = g.s;
-        if (g.inv > 0 && Math.floor(g.inv * 10) % 2) return;
-        c.save(); c.translate(s.x, s.y); c.rotate(s.a); c.shadowColor = "#92e2f2aa"; c.shadowBlur = 10; c.strokeStyle = C.fg; c.lineWidth = 2;
-        c.beginPath(); c.moveTo(12, 0); c.lineTo(-8, -7); c.lineTo(-4, 0); c.lineTo(-8, 7); c.closePath(); c.stroke(); c.restore();
-      },
-      hud(c, g) { hearts(c, g.lives, 214); c.textAlign = "left"; c.font = PXF(8); c.fillStyle = C.mute; c.fillText(`WAVE ${g.w}`, 270, 18); },
-    };
-  }
-
-  /* Route Raid (River Raid) — side-scrolling corridor; grab bandwidth (fuel), shoot drones and firewalls */
-  {
-    const PXX = 140, COL = 8;
-    const genCols = (g, upTo) => {
-      while (g.cols.length * COL < upTo) {
-        const i = g.cols.length, last = g.cols[i - 1] || { top: 60, bot: 240 };
-        const narrow = Math.min(60, i / 40);
-        let top = last.top + rnd(-6, 6), bot = last.bot + rnd(-6, 6);
-        if (i % 120 < 6) { top = last.top; bot = last.bot; }
-        top = Math.max(TOPY + 4, Math.min(140, top)); bot = Math.min(PH - 6, Math.max(top + 120 - narrow, bot));
-        g.cols.push({ top, bot });
-        if (i > 60 && i % 24 === 0) {
-          const y = rnd(top + 18, bot - 18), r = Math.random();
-          if (r < 0.32) g.things.push({ kind: "fuel", x: i * COL, y, w: 26, h: 18 });
-          else if (r < 0.8) g.things.push({ kind: "drone", x: i * COL, y, y0: y, ph: rnd(0, 6), amp: rnd(10, 30), w: 18, h: 12 });
-        }
-        if (i > 0 && i % 190 === 0) g.things.push({ kind: "gate", x: i * COL, top, bot, hp: 3, w: 10 });
-      }
-    };
-    GAMES.raid = {
-      name: "Route Raid", hint: "↑/↓ · Space", scale: 0.3, pixel: true, retry: "<kbd>Space</kbd> or click to retry",
-      keys: [" ", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "W", "s", "S"],
-      init() { const g = { off: 0, y: 150, ty: 150, dy: 0, boost: 0, cols: [], things: [], shots: [], fuel: 1, lives: 3, inv: 1.5, cd: 0, firing: false, check: 0, beep: 0 }; genCols(g, PW * 3); return g; },
-      key(g, k, down) {
-        if (k === " ") { g.firing = down; return; }
-        if (/^(ArrowUp|w)$/i.test(k)) { if (down) g.dy = -1; else if (g.dy === -1) g.dy = 0; return; }
-        if (/^(ArrowDown|s)$/i.test(k)) { if (down) g.dy = 1; else if (g.dy === 1) g.dy = 0; return; }
-        g.boost = down ? (k === "ArrowRight" ? 1 : -1) : 0;
-      },
-      move(g, x, y) { g.ty = y; g.mouse = true; },
-      down(g, x, y) { g.ty = y; g.firing = true; },
-      up(g) { g.firing = false; },
-      update(g, dt) {
-        const speed = 150 + g.boost * 70 + Math.min(80, g.off / 200);
-        g.off += speed * dt;
-        genCols(g, g.off + PW * 2);
-        if (g.dy) { g.ty += g.dy * 260 * dt; g.mouse = false; }
-        g.ty = Math.max(TOPY + 6, Math.min(PH - 6, g.ty));
-        g.y += (g.ty - g.y) * Math.min(1, dt * 12);
-        g.inv = Math.max(0, g.inv - dt); g.cd -= dt;
-        g.fuel -= dt * 0.055;
-        if (g.firing && g.cd <= 0) { g.shots.push({ x: g.off + PXX + 14, y: g.y }); g.cd = 0.22; sfx("tick"); }
-        for (const s of g.shots) s.x += 520 * dt;
-        g.shots = g.shots.filter((s) => s.x < g.off + PW + 20 && !s.dead);
-        const wx = g.off + PXX, col = g.cols[Math.floor(wx / COL)] || { top: 0, bot: PH };
-        let crash = g.fuel <= 0 ? "Out of bandwidth!" : "";
-        if (!crash && g.inv <= 0 && (g.y - 6 < col.top || g.y + 6 > col.bot)) crash = "Crashed into the route wall!";
-        let refuel = false;
-        for (const t of g.things) {
-          if (t.dead) continue;
-          if (t.kind === "drone") t.y = t.y0 + Math.sin(g.off / 60 + t.ph) * t.amp;
-          for (const s of g.shots) {
-            if (s.dead) continue;
-            const hitT = t.kind === "gate" ? s.x > t.x && s.x < t.x + t.w : s.x > t.x - t.w / 2 && s.x < t.x + t.w / 2 && Math.abs(s.y - t.y) < t.h / 2 + 3;
-            if (!hitT) continue;
-            s.dead = true;
-            if (t.kind === "gate" && --t.hp > 0) { burst(t.x - g.off, s.y, C.red, 8, 120, 0.3, 2); sfx("tick"); shake(1.5); continue; }
-            t.dead = true;
-            const pts = t.kind === "gate" ? 500 : t.kind === "drone" ? 60 : 80;
-            score(pts);
-            const sx = t.x - g.off, sy = t.kind === "gate" ? (t.top + t.bot) / 2 : t.y;
-            burst(sx, sy, t.kind === "fuel" ? C.yellow : C.red, t.kind === "gate" ? 40 : 16, t.kind === "gate" ? 300 : 200, 0.7, 3);
-            floatText(sx, sy - 14, t.kind === "gate" ? "FIREWALL DOWN +500" : "+" + pts, t.kind === "gate" ? C.cyan : C.fg, t.kind === "gate" ? 15 : 11);
-            sfx(t.kind === "gate" ? "power" : "break", 3); shake(t.kind === "gate" ? 6 : 3); hitstop(t.kind === "gate" ? 80 : 25);
-            if (t.kind === "gate") g.check = t.x;
-          }
-          if (t.dead) continue;
-          const sx = t.x - g.off;
-          if (t.kind === "fuel" && Math.abs(sx - PXX) < t.w / 2 + 8 && Math.abs(g.y - t.y) < t.h / 2 + 6) refuel = true;
-          if (!crash && g.inv <= 0 && t.kind === "drone" && Math.abs(sx - PXX) < t.w / 2 + 8 && Math.abs(g.y - t.y) < t.h / 2 + 5) crash = "Hit by a lag drone!";
-          if (!crash && g.inv <= 0 && t.kind === "gate" && PXX + 8 > sx && PXX - 8 < sx + t.w) crash = "Blocked by a firewall!";
-        }
-        if (refuel) { g.fuel = Math.min(1, g.fuel + dt * 0.45); if ((g.beep -= dt) <= 0) { sfx("pick", Math.round(g.fuel * 10)); g.beep = 0.12; } }
-        g.things = g.things.filter((t) => t.x - g.off > -60);
-        if (crash) {
-          g.lives--;
-          burst(PXX, g.y, C.red, 30, 260, 0.8, 3); shake(8); hitstop(90); sfx("miss");
-          if (g.lives <= 0) return crash;
-          floatText(PXX + 40, g.y - 10, "−1 ♥", C.orange, 14);
-          g.off = Math.max(0, g.check - 200); g.fuel = 1; g.inv = 2;
-          const c2 = g.cols[Math.floor((g.off + PXX) / COL)]; g.y = g.ty = (c2.top + c2.bot) / 2;
-          g.things.forEach((t) => { if (t.kind === "gate" && t.x > g.off) { t.dead = false; t.hp = 3; } });
-        }
-      },
-      draw(c, g) {
-        const first = Math.floor(g.off / COL);
-        c.fillStyle = "#20262f";
-        for (let i = first; i < first + PW / COL + 2; i++) {
-          const col = g.cols[i]; if (!col) continue;
-          const x = Math.round(i * COL - g.off);
-          c.fillRect(x, TOPY, COL, Math.round(col.top - TOPY));
-          c.fillRect(x, Math.round(col.bot), COL, PH - Math.round(col.bot));
-        }
-        c.fillStyle = C.div;
-        for (let i = first; i < first + PW / COL + 2; i++) { const col = g.cols[i]; if (!col) continue; const x = Math.round(i * COL - g.off); c.fillRect(x, Math.round(col.top) - 2, COL, 2); c.fillRect(x, Math.round(col.bot), COL, 2); }
-        for (const t of g.things) {
-          if (t.dead) continue;
-          const x = t.x - g.off;
-          if (t.kind === "fuel") { c.fillStyle = "#eed80e33"; c.fillRect(Math.round(x - t.w / 2), Math.round(t.y - t.h / 2), t.w, t.h); c.strokeStyle = C.yellow; c.lineWidth = 1; c.strokeRect(Math.round(x - t.w / 2) + 0.5, Math.round(t.y - t.h / 2) + 0.5, t.w - 1, t.h - 1); c.fillStyle = C.yellow; c.font = PXF(6); c.textAlign = "center"; c.textBaseline = "middle"; c.fillText("BW", x, t.y + 1); }
-          else if (t.kind === "drone") sprite(c, ["X.......X", ".XXXXXXX.", "XX.XXX.XX", ".XXXXXXX.", "..X...X.."], x - 13, t.y - 7, 3, C.red);
-          else { for (let y = t.top; y < t.bot; y += 6) { c.fillStyle = (Math.floor(y / 6) + t.hp) % 2 ? C.red : "#f5292966"; c.fillRect(Math.round(x), Math.round(y), t.w, 5); } }
-        }
-        c.fillStyle = C.fg; for (const s of g.shots) c.fillRect(Math.round(s.x - g.off), Math.round(s.y - 1), 8, 3);
-        if (!(g.inv > 0 && Math.floor(g.inv * 10) % 2)) { c.save(); c.shadowColor = "#ebecedaa"; c.shadowBlur = 8; sprite(c, ["XX.......", "XXXX.....", ".XXXXXXX.", "XXXXXXXXX", ".XXXXXXX.", "XXXX.....", "XX......."], PXX - 13, g.y - 10, 3, C.fg); c.restore(); }
-      },
-      hud(c, g) {
-        hearts(c, g.lives, 170);
-        c.textAlign = "left"; c.font = PXF(8); c.fillStyle = g.fuel < 0.25 ? C.red : C.mute; c.fillText("BW", 230, 18);
-        c.fillStyle = C.div; c.fillRect(256, 17, 120, 8);
-        c.fillStyle = g.fuel < 0.25 ? C.red : C.yellow; c.fillRect(256, 17, Math.round(120 * Math.max(0, g.fuel)), 8);
-      },
-    };
-  }
-
-  /* Packet Pitfall (Pitfall!) — screen by screen: jump rolling lag logs, swing on cables over packet-loss pits, collect bandwidth bars */
-  {
-    const GROUND = 226, SW = PW, PL = ["..XX..", "..XX..", ".XXXX.", "X.XX.X", "..XX..", ".X..X.", "X....X"], PL2 = ["..XX..", "..XX..", ".XXXX.", ".XXXX.", "..XX..", "..XX..", "..XX.."];
-    const kinds = ["logs", "tar", "vine", "holes", "logs", "vine", "tar"];
-    const screen = (n) => ({ n, kind: n === 0 ? "start" : kinds[(n * 5 + 3) % kinds.length], loot: n > 0 && n % 2 === 0 });
-    GAMES.pitfall = {
-      name: "Packet Pitfall", hint: "←/→ · Space", scale: 0.25, pixel: true, retry: "<kbd>Space</kbd> or click to retry",
-      keys: [" ", "ArrowLeft", "ArrowRight", "ArrowDown", "a", "A", "d", "D", "s", "S"],
-      init: () => ({ x: 60, y: 0, vy: 0, dir: 0, face: 1, scr: 0, t: 0, lives: 3, inv: 0, vine: null, logs: [], got: {}, fall: 0, best: 0, step: 0 }),
-      key(g, k, down) {
-        if (k === " ") { if (down) this.jump(g); return; }
-        if (/^(ArrowDown|s)$/i.test(k)) { if (down && g.vine) this.release(g); return; }
-        const d = /^(ArrowLeft|a)$/i.test(k) ? -1 : 1; if (down) { g.dir = d; g.face = d; g.keyDir = d; } else if (g.dir === d) { g.dir = 0; g.keyDir = 0; }
-      },
-      down(g, x) { if (g.vine) return this.release(g); g.dir = 0; if (Math.abs(x - g.x) > 30) { g.dir = x > g.x ? 1 : -1; g.face = g.dir; } this.jump(g); },
-      up(g) { if (!g.keyDir) g.dir = 0; },
-      jump(g) { if (g.vine) return this.release(g); if (g.y > 0 || g.fall) return; g.vy = 430; sfx("jump"); burst(g.x, GROUND, C.mute, 5, 70, 0.3, 2); },
-      release(g) { const v = g.vine; g.vine = null; g.vy = 160; g.vx = v.w * 120 * Math.cos(v.a) ; sfx("swap"); },
-      enter(g, n) {
-        g.scr = n; g.s = screen(n); g.logs = [];
-        if (g.s.kind === "logs") for (let i = 0; i < 1 + (n % 3); i++) g.logs.push({ x: 520 + i * 90, w: 26 });
-      },
-      pit(g) { const k = g.s.kind; if (k === "tar") { const w = 40 + 130 * (0.5 + 0.5 * Math.sin(g.t * 1.4)); return [[400 - w / 2, 400 + w / 2]]; } if (k === "vine") return [[300, 500]]; if (k === "holes") return [[230, 270], [390, 430], [550, 590]]; return []; },
-      update(g, dt) {
-        if (!g.s) this.enter(g, 0);
-        g.t += dt; g.inv = Math.max(0, g.inv - dt);
-        if (g.fall) {
-          g.fall -= dt; g.y -= 260 * dt;
-          if (g.fall <= 0) {
-            g.lives--; shake(6); sfx("miss");
-            if (g.lives <= 0) return g.s.kind === "tar" ? "Swallowed by packet loss!" : "Fell into a packet-loss pit!";
-            g.fall = 0; g.y = 0; g.vy = 0; g.x = 40; g.inv = 1.2; floatText(80, GROUND - 60, "−1 ♥", C.orange, 14);
-          }
-          return;
-        }
-        // swinging cable (vine) over the pit
-        const pivot = { x: 400, y: TOPY + 6 }, len = 128, ang = Math.sin(g.t * 2.1) * 0.85, end = { x: pivot.x + Math.sin(ang) * len, y: pivot.y + Math.cos(ang) * len };
-        g.cable = { pivot, end, ang };
-        if (g.vine) { g.vine.a = ang; g.vine.w = Math.cos(g.t * 2.1) * 2.1 * 0.85; g.x = end.x; g.y = GROUND - end.y - 14; return; }
-        if (g.s.kind === "vine" && g.y > 0 && Math.hypot(g.x - end.x, GROUND - g.y - 14 - end.y) < 18) { g.vine = { a: ang, w: 0 }; g.vx = 0; sfx("pick", 6); burst(end.x, end.y, C.cyan, 8, 90, 0.3, 2, 0); return; }
-        const vx = g.vx != null && g.y > 0 ? g.vx : g.dir * 150;
-        g.x += vx * dt;
-        if (g.y <= 0) g.vx = null;
-        g.vy -= 1150 * dt; g.y = Math.max(0, g.y + g.vy * dt); if (g.y === 0) g.vy = 0;
-        if (g.dir && g.y === 0) g.step += dt;
-        // screens flip at the edges, like the original
-        if (g.x > SW - 8) { this.enter(g, g.scr + 1); g.x = 14; if (g.scr > g.best) { g.best = g.scr; score(10); } }
-        if (g.x < 8) { if (g.scr > 0) { this.enter(g, g.scr - 1); g.x = SW - 16; } else g.x = 8; }
-        // rolling lag logs: take points and knock you back (not a life)
-        for (const l of g.logs) {
-          l.x -= 80 * dt; if (l.x < -30) l.x = SW + 20;
-          if (g.inv <= 0 && g.y < 14 && Math.abs(l.x - g.x) < l.w / 2 + 5) {
-            g.inv = 0.8; PR.score = Math.max(0, PR.score - 50);
-            floatText(g.x, GROUND - 40, "−50 LAG", C.orange, 12); burst(g.x, GROUND - 6, C.orange, 12, 140, 0.4, 2); shake(4); sfx("miss");
-            g.x = Math.max(10, g.x - 30);
-          }
-        }
-        // pits: on the ground over a pit → fall
-        if (g.y === 0 && this.pit(g).some(([a, b]) => g.x > a + 4 && g.x < b - 4)) { g.fall = 0.7; burst(g.x, GROUND, g.s.kind === "tar" ? C.violet : C.stroke, 14, 120, 0.5, 2); sfx("hit"); }
-        // bandwidth bars
-        if (g.s.loot && !g.got[g.scr] && Math.abs(g.x - 700) < 16 && g.y < 20) {
-          g.got[g.scr] = true; score(300);
-          burst(700, GROUND - 10, C.yellow, 26, 220, 0.7, 3); floatText(700, GROUND - 40, "BANDWIDTH +300", C.yellow, 14); sfx("power"); shake(3); hitstop(40);
-        }
-      },
-      draw(c, g) {
-        if (!g.s) return;
-        c.fillStyle = "#ebeced08"; for (let i = 0; i < 9; i++) { const x = 40 + i * 92; c.fillRect(x, TOPY + 8, 10, GROUND - TOPY - 8); c.fillRect(x - 14, TOPY + 30 + (i % 3) * 14, 38, 3); }
-        c.fillStyle = "#20262f"; c.fillRect(0, GROUND, PW, PH - GROUND);
-        c.fillStyle = C.div; c.fillRect(0, GROUND, PW, 2);
-        for (const [a, b] of this.pit(g)) {
-          c.fillStyle = g.s.kind === "tar" ? "#2a1f3a" : "#0b0c0f"; c.fillRect(Math.round(a), GROUND, Math.round(b - a), PH - GROUND);
-          if (g.s.kind === "tar") { c.fillStyle = C.violet; for (let k = 0; k < 4; k++) c.fillRect(Math.round(a + ((g.t * 30 + k * 37) % Math.max(1, b - a))), GROUND + 6 + (k % 2) * 8, 3, 3); }
-        }
-        if (g.s.kind === "vine" && g.cable) { c.strokeStyle = C.cyan; c.lineWidth = 2; c.beginPath(); c.moveTo(g.cable.pivot.x, g.cable.pivot.y); c.lineTo(g.cable.end.x, g.cable.end.y); c.stroke(); c.fillStyle = C.cyan; c.fillRect(Math.round(g.cable.end.x - 3), Math.round(g.cable.end.y - 3), 6, 6); }
-        for (const l of g.logs) { const r = Math.floor(g.t * 8) % 2; c.fillStyle = C.orange; c.fillRect(Math.round(l.x - l.w / 2), GROUND - 14, l.w, 14); c.fillStyle = "#0b0c0f66"; c.fillRect(Math.round(l.x - l.w / 2) + 4 + r * 4, GROUND - 11, 3, 8); c.fillRect(Math.round(l.x + 2 + r * 4), GROUND - 11, 3, 8); }
-        if (g.s.loot && !g.got[g.scr]) { const bob = Math.sin(g.t * 4) * 2; c.fillStyle = C.yellow; c.fillRect(690, GROUND - 16 + bob, 20, 10); c.fillStyle = "#ffffff66"; c.fillRect(692, GROUND - 15 + bob, 10, 2); }
-        if (!(g.inv > 0 && Math.floor(g.inv * 12) % 2)) {
-          const fr = g.y > 0 || Math.floor(g.step * 10) % 2 ? PL : PL2;
-          c.save(); c.shadowColor = "#ebecedaa"; c.shadowBlur = 6;
-          c.translate(Math.round(g.x), 0); if (g.face < 0) c.scale(-1, 1);
-          sprite(c, fr, -9, Math.round(GROUND - g.y - 21), 3, C.fg); c.restore();
-        }
-        c.font = PXF(7); c.textAlign = "right"; c.textBaseline = "top"; c.fillStyle = C.stroke; c.fillText(`SCREEN ${g.scr + 1}`, PW - 18, PH - 20);
-      },
-      hud(c, g) { hearts(c, g.lives, 196); },
-    };
-  }
-
-  /* ---- icons for the game picker ---- */
-  const ICON = (d) => `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
-  Object.assign(GAMES.runner, { icon: ICON('<rect x="4" y="12" width="6" height="6" rx="1" fill="currentColor"/><path d="M3 22h22M16 22l3-7 3 7"/>') });
-  Object.assign(GAMES.stack, { icon: ICON('<rect x="6" y="18" width="16" height="4"/><rect x="7" y="12" width="14" height="4"/><rect x="9" y="6" width="12" height="4"/>') });
-  Object.assign(GAMES.multipath, { icon: ICON('<path d="M3 9h22M3 19h22" stroke-dasharray="3 3"/><rect x="6" y="6" width="5" height="5" fill="currentColor"/><rect x="14" y="16" width="5" height="5" fill="currentColor"/>') });
-  Object.assign(GAMES.slicer, { icon: ICON('<path d="M5 23 23 5"/><path d="M8 8l4 6h-8z"/><rect x="16" y="16" width="7" height="7" rx="1"/>') });
-  Object.assign(GAMES.breaker, { icon: ICON('<path d="M4 6h6M12 6h6M20 6h4M4 10h4M10 10h6M18 10h6"/><rect x="10" y="21" width="9" height="2" fill="currentColor"/><rect x="13" y="15" width="3" height="3" fill="currentColor"/>') });
-  Object.assign(GAMES.pong, { icon: ICON('<path d="M5 8v10M23 10v10"/><rect x="12" y="12" width="4" height="4" fill="currentColor"/><path d="M14 4v2M14 9v2M14 19v2M14 24v1"/>') });
-  Object.assign(GAMES.invaders, { icon: ICON('<path d="M9 5l2 3h6l2-3M7 8h14v6H7zM5 14v4M23 14v4M9 18l-2 3M19 18l2 3"/><rect x="10" y="10" width="2" height="2" fill="currentColor"/><rect x="16" y="10" width="2" height="2" fill="currentColor"/>') });
-  Object.assign(GAMES.asteroids, { icon: ICON('<path d="M5 22l5-12 3 6 5-2"/><path d="M17 5l5 2 1 5-4 3-4-2-1-5z"/>') });
-  Object.assign(GAMES.raid, { icon: ICON('<path d="M3 5h22M3 23h22M3 9c4 0 6 2 8 2s5-2 9-2M3 19c4 0 6-2 8-2s5 2 9 2"/><path d="M8 14h7M11 12l4 2-4 2"/>') });
-  Object.assign(GAMES.pitfall, { icon: ICON('<path d="M14 3v10"/><circle cx="14" cy="15" r="2"/><path d="M3 23h7M18 23h7"/><rect x="10" y="22" width="8" height="3" fill="currentColor" opacity=".35"/>') });
-
   /* ---- input: Space starts / retries everywhere; each game declares its own keys and pointer handlers ---- */
   const prLive = () => isGame() && !block.hidden && login.hidden && !document.body.classList.contains("deck-on");
   document.addEventListener("keydown", (e) => {
     if (!prLive() || PR.state === "left") return;
-    if (PR.state === "picking") { if (e.key === "Escape") { e.preventDefault(); closePicker(); } return; }
-    if (e.key === "Enter" && PR.ready) { e.preventDefault(); return prOpen(); }
     if ((e.key === "m" || e.key === "M") && !e.repeat) { e.preventDefault(); return toggleSound(); }
     if (PR.state === "idle" || PR.state === "over") {
       if (e.key !== " ") return;
       e.preventDefault(); e.stopPropagation();
-      if (!e.repeat) (PR.state === "idle" ? prIdle() : prStart());
+      if (!e.repeat) prStart();
       return;
     }
     const g = game();
@@ -4748,7 +3799,7 @@ p { margin: 0; }
     game().key?.(PR.g, e.key, false);
   }, true);
   const ptr = (e) => { const r = prCv.getBoundingClientRect(); return [(e.clientX - r.left) * PW / r.width, (e.clientY - r.top) * PH / r.height]; };
-  block.querySelector(".rb-invite").addEventListener("click", () => prIdle());
+  block.querySelector(".rb-invite").addEventListener("click", () => prStart());
   prBox.addEventListener("pointerdown", (e) => {
     if (e.target.closest("button")) return;
     e.preventDefault();
@@ -4760,10 +3811,8 @@ p { margin: 0; }
   prBox.addEventListener("pointermove", (e) => { if (PR.state !== "playing") return; const [x, y] = ptr(e); game().move?.(PR.g, x, y, PR.down); });
   addEventListener("pointerup", () => { PR.down = false; if (PR.state === "playing") game().up?.(PR.g); });
   block.addEventListener("click", (e) => {
-    if (e.target.closest('[data-pr="open"]')) prOpen();
-    else if (e.target.closest('[data-pr="retry"]')) prStart();
+    if (e.target.closest('[data-pr="retry"]')) prStart();
     else if (e.target.closest('[data-pr="mute"]')) toggleSound();
-    else if (e.target.closest('[data-pr="change"]')) openPicker();
   });
 
   /* ---------- paint ---------- */
@@ -5111,9 +4160,8 @@ p { margin: 0; }
   function setMode(m) {
     RA.mode = m;
     app.dataset.var = GAME_OF[m] ? "E" : m;
-    app.dataset.game = GAME_OF[m] && m !== "J" ? GAME_OF[m] : "";
-    app.dataset.j = m === "J" ? "1" : "";
-    if (GAME_OF[m]) block.querySelector('[data-pr="hint"]').textContent = m === "J" ? "Space" : game().hint;
+    app.dataset.game = GAME_OF[m] || "";
+    if (GAME_OF[m]) block.querySelector('[data-pr="hint"]').textContent = game().hint;
     document.querySelectorAll(".pc [data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === m)));
     paintCaption();
     restart();
@@ -5143,14 +4191,14 @@ p { margin: 0; }
     B: THUMB(`<rect x="9" y="66" width="28" height="20" rx="4" fill="${HL}"/>`),
     C: THUMB(`<rect x="45" y="26" width="109" height="12" rx="4" fill="${HL}"/>`),
     G: THUMB(`<rect x="9" y="58" width="28" height="28" rx="4" fill="${HL}"/><circle cx="23" cy="70" r="8" fill="none" stroke="#fff" stroke-width="1.5" opacity=".9"/><path d="M17 70h12M23 62v16" stroke="#fff" stroke-width="1" opacity=".6"/>`),
-    J: `<svg viewBox="0 0 160 96" aria-hidden="true"><rect x="1" y="1" width="158" height="94" rx="8" fill="#1a1d24"/><rect x="40" y="12" width="80" height="44" rx="5" fill="#20242c"/><path d="M48 46h64" stroke="#555c68"/><rect x="58" y="38" width="6" height="6" fill="#fff"/><path d="M84 46l4-9 4 9z" fill="#f52929"/><rect x="58" y="62" width="44" height="4" rx="2" fill="#313741"/><rect x="58" y="62" width="20" height="4" rx="2" fill="${HL}"/><rect x="34" y="72" width="92" height="12" rx="3" fill="#20242c"/></svg>`,
+    F: `<svg viewBox="0 0 160 96" aria-hidden="true"><rect x="1" y="1" width="158" height="94" rx="8" fill="#1a1d24"/><rect x="40" y="12" width="80" height="44" rx="5" fill="#20242c"/><path d="M48 46h64" stroke="#555c68"/><rect x="58" y="38" width="6" height="6" fill="#fff"/><path d="M84 46l4-9 4 9z" fill="#f52929"/><rect x="58" y="62" width="44" height="4" rx="2" fill="#313741"/><rect x="58" y="62" width="20" height="4" rx="2" fill="${HL}"/><rect x="34" y="72" width="92" height="12" rx="3" fill="#20242c"/></svg>`,
   };
   const SOLUTIONS = [
     ["A", "A", "Top bar", "Chip ao lado do toggle global com anel, frases rotativas e porcentagem. O hover mostra as regiões.", "Se o status é encontrado onde o usuário já confere se a otimização está ligada."],
     ["B", "B", "Sidebar", "Card fixo no rodapé da sidebar, visível em qualquer tela. O hover mostra as regiões.", "Se um status persistente informa sem competir com o conteúdo."],
     ["C", "C", "Card na Home", "Card no topo da Home que reaproveita a linguagem da tela atual (anel + regiões), sem bloquear.", "Se a familiaridade com a tela de hoje reduz o estranhamento."],
     ["G", "D", "Sidebar com globo", "Globo pontilhado com sondas saindo de São Paulo e o ping na chegada. A câmera segue os continentes em análise e, no fim, há um spin-out verde. O globo também aparece nas páginas bloqueadas, com barra.", "Se mostrar o trabalho (labor illusion) aumenta a confiança e encurta a espera percebida."],
-    ["J", "E", "Bloqueante + jogos", "Mantém o fluxo de hoje e oferece 10 jogos opcionais (Arcade e Atari classics), escolhidos pelo usuário. O jogo continua quando as rotas ficam prontas.", "Se, quando bloquear é inevitável, ocupar o tempo de forma ativa melhora a experiência."],
+    ["F", "E", "Bloqueante + jogo", "Mantém o fluxo de hoje e oferece um jogo opcional, o Server Stack. Quando as rotas ficam prontas, o jogo termina e o app abre.", "Se, quando bloquear é inevitável, ocupar o tempo de forma ativa melhora a experiência."],
   ];
   const caseHTML = `
     <header class="cs-hero">
