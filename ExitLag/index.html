@@ -1287,6 +1287,12 @@ p { margin: 0; }
 .dk-slide .cs-kpis div { padding: 32px 28px; gap: 10px; }
 .dk-slide .cs-kpis b { font-size: 72px; line-height: 80px; letter-spacing: -1px; }
 .dk-slide .cs-kpis span { font-size: 17px; line-height: 25px; }
+/* sourced claim under a slide's content */
+.dk-src { display: flex; flex-direction: column; gap: 8px; padding: 20px 24px; border-radius: 16px; background: #efeaff; font-size: 18px; line-height: 28px; }
+.dk-src-refs { font-size: 13px; line-height: 19px; font-weight: 600; color: #6f6a86; }
+.dk-src a { color: #5f45e6; font-weight: 700; text-decoration: underline; text-decoration-color: #b9a8ff; text-underline-offset: 2px; }
+.dk-src a:hover { color: #231f3a; }
+.dk-src a:focus-visible { outline: 2px solid #b9a8ff; outline-offset: 2px; border-radius: 2px; }
 .dk-slide .cs-two { gap: 56px; }
 .dk-slide .cs-list { gap: 14px; }
 .dk-slide .cs-note { padding: 28px; font-size: 19px; line-height: 30px; }
@@ -5264,7 +5270,9 @@ p { margin: 0; }
   const secName = (i) => secs[i].querySelector("h2").textContent.replace(/^\d+\.\s*/, "");
   const SLIDES = [
     { cover: true, from: [hero, ".cs-kicker", "h1", ".cs-lead"] },
-    { k: "Resumo", t: "O problema em números", from: [hero, ".cs-kpis"] },
+    { k: "Resumo", t: "O problema em números", from: [hero, ".cs-kpis"],
+      note: `<p><b>42s é 4× o limite de 10s</b> em que o usuário mantém a atenção na tela (Nielsen, 1993), e a partir de <b>4s</b> o desempenho e a intenção de voltar já caem (Galletta et al., 2004).</p>
+        <p class="dk-src-refs">Fontes: <a href="https://www.nngroup.com/articles/response-times-3-important-limits/" target="_blank" rel="noopener noreferrer">Nielsen, J. (1993). Response Times: The 3 Important Limits. NN/g</a> · <a href="https://aisel.aisnet.org/jais/vol5/iss1/1" target="_blank" rel="noopener noreferrer">Galletta, D. et al. (2004). Web Site Delays: How Tolerant are Users? JAIS 5(1)</a></p>` },
     { sec: 0, from: [".cs-two"] },
     { sec: 0, t: "Hoje × proposta", from: [".cs-timeline"] },
     { sec: 1, from: [".cs-grid4"] },
@@ -5308,6 +5316,7 @@ p { margin: 0; }
       h.textContent = s.t ?? secName(s.sec);
       head.append(k, h);
       body.append(...blocks);
+      if (s.note) body.insertAdjacentHTML("beforeend", `<div class="dk-src">${s.note}</div>`);
       el.append(head, body);
     }
     el.hidden = true;
