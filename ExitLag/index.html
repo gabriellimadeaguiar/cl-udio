@@ -1256,7 +1256,6 @@ p { margin: 0; }
 .cs-table th { text-align: left; padding: 12px 16px; background: #f4f1fb; font-weight: 800; font-size: 12px; letter-spacing: .5px; text-transform: uppercase; color: #5f45e6; }
 .cs-table td { padding: 12px 16px; border-top: 1px solid #ebe6f7; vertical-align: top; color: #4a4566; }
 .cs-table td:first-child { font-weight: 800; color: #231f3a; width: 26%; }
-.cs-table td:last-child { width: 22%; font-weight: 700; color: #231f3a; }
 .cs-table tr.guard td { background: #fffaf2; }
 .cs-table tr.guard td:first-child { color: #a3203a; }
 
@@ -1313,8 +1312,6 @@ p { margin: 0; }
 .dk-slide .cs-sol-t { font-size: 16px; line-height: 22px; }
 .dk-slide .cs-table { margin-top: 0; font-size: 15px; line-height: 22px; }
 .dk-slide .cs-table td, .dk-slide .cs-table th { padding: 10px 16px; }
-/* the deck shows the metrics without their goals (the Intro keeps the "Meta inicial" column) */
-.dk-slide.no-goals .cs-table :is(th, td):last-child { display: none; }
 /* navigation: inside the slide, so it also shows in full screen */
 .dk-nav { position: absolute; left: 88px; right: 40px; bottom: 28px; display: flex; align-items: center; gap: 8px; font: 700 13px/18px "Nunito", system-ui, sans-serif; color: #6f6a86; }
 .dk-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -5219,29 +5216,20 @@ p { margin: 0; }
         </div>
       </div>
       <table class="cs-table">
-        <thead><tr><th>Métrica</th><th>Como medir</th><th>Meta inicial</th></tr></thead>
+        <thead><tr><th>Métrica</th><th>Como medir</th></tr></thead>
         <tbody>
-          <tr><td>Tempo até a primeira interação</td><td>Telemetria: abertura → primeiro clique útil</td><td>45,5s → ≤4s</td></tr>
-          <tr><td>Espera percebida / real</td><td>"Quanto tempo você acha que esperou?" ÷ tempo real</td><td>≤ 0,8 (hoje como base)</td></tr>
-          <tr><td>Abandono durante o map</td><td>% de sessões que fecham ou minimizam antes de 100%</td><td>−30%</td></tr>
-          <tr><td>Uso do app durante o map</td><td>% de sessões com navegação antes de "Routes ready"</td><td>≥ 40%</td></tr>
-          <tr><td>Compreensão do bloqueio</td><td>No teste: "por que Connections ainda espera?"</td><td>≥ 80% de acerto</td></tr>
-          <tr><td>Satisfação com a abertura</td><td>CSAT ou SEQ logo após "Routes ready"</td><td>+1 ponto vs. hoje</td></tr>
-          <tr><td>Engajamento com jogos (E)</td><td>% que joga, partidas por sessão, % que segue jogando após 100%, atraso até abrir o app</td><td>Explorar (sem meta)</td></tr>
-          <tr class="guard"><td>Proteção: duração do map</td><td>Tempo do network map por variante</td><td>Sem regressão (jogos e globo não podem atrasar a análise)</td></tr>
-          <tr class="guard"><td>Proteção: tickets de suporte</td><td>Tickets "travado carregando" ou "não conecta"</td><td>Sem aumento</td></tr>
+          <tr><td>Tempo até a primeira interação</td><td>Telemetria: abertura → primeiro clique útil</td></tr>
+          <tr><td>Espera percebida / real</td><td>"Quanto tempo você acha que esperou?" ÷ tempo real</td></tr>
+          <tr><td>Abandono durante o map</td><td>% de sessões que fecham ou minimizam antes de 100%</td></tr>
+          <tr><td>Uso do app durante o map</td><td>% de sessões com navegação antes de "Routes ready"</td></tr>
+          <tr><td>Compreensão do bloqueio</td><td>No teste: "por que Connections ainda espera?"</td></tr>
+          <tr><td>Satisfação com a abertura</td><td>CSAT ou SEQ logo após "Routes ready"</td></tr>
+          <tr><td>Engajamento com jogos (E)</td><td>% que joga, partidas por sessão, % que segue jogando após 100%, atraso até abrir o app</td></tr>
+          <tr class="guard"><td>Proteção: duração do map</td><td>Tempo do network map por variante</td></tr>
+          <tr class="guard"><td>Proteção: tickets de suporte</td><td>Tickets "travado carregando" ou "não conecta"</td></tr>
         </tbody>
       </table>
       <p class="cs-sub">O protótipo já mostra três desses números na barra do topo: App liberado, 1º jogo conectado e Análise completa.</p>
-    </section>
-
-    <section class="cs-sec">
-      <h2>6. Próximos passos</h2>
-      <div class="cs-grid3">
-        <div><b>Validar com engenharia</b><span>Rodar o map em paralelo ao login, usar cache + revalidação das rotas da última sessão e emitir eventos de ping reais para o globo.</span></div>
-        <div><b>Testar</b><span>Rodar o teste moderado com Hoje, B e D e escolher 1 ou 2 opções para o A/B.</span></div>
-        <div><b>Portar para Qt/QML</b><span>Indicadores com itens QML, globo com ShaderEffect (sem Canvas por quadro) e jogos começando por 2 ou 3 títulos.</span></div>
-      </div>
       <p class="cs-sub">As fontes estão em <b>ⓘ Referências</b>, no topo.</p>
     </section>`;
 
@@ -5281,10 +5269,8 @@ p { margin: 0; }
     { sec: 2, from: [".cs-sub", ".cs-sols"] },
     { sec: 3, from: [".cs-grid3"] },
     { sec: 4, t: "Hipóteses e método", from: [".cs-two"] },
-    { sec: 4, t: "Métricas", cls: "no-goals", from: [".cs-table", ".cs-table + .cs-sub"] },
+    { sec: 4, t: "Métricas", from: [".cs-table", ".cs-table + .cs-sub"] },
   ];
-  // The deck stops before "Próximos passos", so "Parte N de M" counts only the sections it shows.
-  const parts = Math.max(...SLIDES.map((s) => s.sec ?? -1)) + 1;
   const deck = document.createElement("section");
   deck.className = "deck";
   deck.hidden = true;
@@ -5315,7 +5301,7 @@ p { margin: 0; }
     else {
       const head = document.createElement("div"), k = document.createElement("p"), h = document.createElement("h2"), body = document.createElement("div");
       head.className = "dk-head"; k.className = "dk-k"; body.className = "dk-body";
-      k.textContent = s.k ?? `Parte ${s.sec + 1} de ${parts}` + (s.t ? ` · ${secName(s.sec)}` : "");
+      k.textContent = s.k ?? `Parte ${s.sec + 1} de ${secs.length}` + (s.t ? ` · ${secName(s.sec)}` : "");
       h.textContent = s.t ?? secName(s.sec);
       head.append(k, h);
       body.append(...blocks);
