@@ -1313,6 +1313,8 @@ p { margin: 0; }
 .dk-slide .cs-sol-t { font-size: 16px; line-height: 22px; }
 .dk-slide .cs-table { margin-top: 0; font-size: 15px; line-height: 22px; }
 .dk-slide .cs-table td, .dk-slide .cs-table th { padding: 10px 16px; }
+/* the deck shows the metrics without their goals (the Intro keeps the "Meta inicial" column) */
+.dk-slide.no-goals .cs-table :is(th, td):last-child { display: none; }
 /* navigation: inside the slide, so it also shows in full screen */
 .dk-nav { position: absolute; left: 88px; right: 40px; bottom: 28px; display: flex; align-items: center; gap: 8px; font: 700 13px/18px "Nunito", system-ui, sans-serif; color: #6f6a86; }
 .dk-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -5279,9 +5281,10 @@ p { margin: 0; }
     { sec: 2, from: [".cs-sub", ".cs-sols"] },
     { sec: 3, from: [".cs-grid3"] },
     { sec: 4, t: "Hipóteses e método", from: [".cs-two"] },
-    { sec: 4, t: "Métricas e metas", from: [".cs-table", ".cs-table + .cs-sub"] },
-    { sec: 5, from: [".cs-grid3", ".cs-sub"] },
+    { sec: 4, t: "Métricas", cls: "no-goals", from: [".cs-table", ".cs-table + .cs-sub"] },
   ];
+  // The deck stops before "Próximos passos", so "Parte N de M" counts only the sections it shows.
+  const parts = Math.max(...SLIDES.map((s) => s.sec ?? -1)) + 1;
   const deck = document.createElement("section");
   deck.className = "deck";
   deck.hidden = true;
@@ -5302,7 +5305,7 @@ p { margin: 0; }
   deck.querySelector(".dk-title").textContent = hero.querySelector("h1").textContent;
   const slideEls = SLIDES.map((s, i) => {
     const el = document.createElement("div");
-    el.className = "dk-slide" + (s.cover ? " cover" : "");
+    el.className = ["dk-slide", s.cover && "cover", s.cls].filter(Boolean).join(" ");
     el.setAttribute("role", "group");
     el.setAttribute("aria-roledescription", "slide");
     el.setAttribute("aria-label", `${i + 1} de ${SLIDES.length}`);
@@ -5312,7 +5315,7 @@ p { margin: 0; }
     else {
       const head = document.createElement("div"), k = document.createElement("p"), h = document.createElement("h2"), body = document.createElement("div");
       head.className = "dk-head"; k.className = "dk-k"; body.className = "dk-body";
-      k.textContent = s.k ?? `Parte ${s.sec + 1} de ${secs.length}` + (s.t ? ` · ${secName(s.sec)}` : "");
+      k.textContent = s.k ?? `Parte ${s.sec + 1} de ${parts}` + (s.t ? ` · ${secName(s.sec)}` : "");
       h.textContent = s.t ?? secName(s.sec);
       head.append(k, h);
       body.append(...blocks);
