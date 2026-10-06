@@ -1280,6 +1280,16 @@ p { margin: 0; }
 .dk-slide .cs-kpis { margin-top: 0; gap: 20px; }
 .dk-slide .cs-kpis div { padding: 32px 28px; gap: 10px; }
 .dk-slide .cs-kpis b { font-size: 72px; line-height: 80px; letter-spacing: -2.5px; }
+/* dense: KPIs + timeline + sourced note on one slide */
+.dk-slide.dense { gap: 24px; padding-top: 56px; }
+.dk-slide.dense .dk-body { gap: 16px; }
+.dk-slide.dense .cs-kpis div { padding: 20px 24px; gap: 6px; }
+.dk-slide.dense .cs-kpis b { font-size: 56px; line-height: 60px; letter-spacing: -2px; }
+.dk-slide.dense .cs-kpis span { font-size: 15px; line-height: 21px; }
+.dk-slide.dense .cs-timeline { padding: 20px 24px; }
+.dk-slide.dense .tl-track { height: 44px; }
+.dk-slide.dense .tl-foot { margin-top: 12px; font-size: 14px; line-height: 20px; }
+.dk-slide.dense .dk-src { padding: 14px 20px; gap: 4px; font-size: 15px; line-height: 22px; }
 /* today vs. the proposal: time until the app is usable */
 .dk-slide .cs-kpis div:nth-child(2) b { color: var(--doc-red); }
 .dk-slide .cs-kpis div:nth-child(3) b { color: var(--doc-green); }
@@ -5304,12 +5314,11 @@ p { margin: 0; }
 
   const SLIDES = [
     { cover: true, from: [hero, ".cs-kicker", "h1", ".cs-lead"] },
-    { k: "Resumo", t: "O problema em números", from: [hero, ".cs-kpis"],
+    { k: "Resumo", t: "O problema em números", cls: "dense", from: [hero, ".cs-kpis", secs[0].querySelector(".cs-timeline")],
       note: `<p><b>42s é 4× o limite de 10s</b> em que o usuário mantém a atenção na tela (Nielsen, 1993), e a partir de <b>4s</b> o desempenho e a intenção de voltar já caem (Galletta et al., 2004).</p>
         <p class="dk-src-refs">Fontes: <a href="https://www.nngroup.com/articles/response-times-3-important-limits/" target="_blank" rel="noopener noreferrer">Nielsen, J. (1993). Response Times: The 3 Important Limits. NN/g</a> · <a href="https://aisel.aisnet.org/jais/vol5/iss1/1" target="_blank" rel="noopener noreferrer">Galletta, D. et al. (2004). Web Site Delays: How Tolerant are Users? JAIS 5(1)</a></p>` },
     { k: "Resumo", t: "O custo da espera", build: custoSlide },
     { sec: 0, from: [".cs-two"] },
-    { sec: 0, t: "Hoje × proposta", from: [".cs-timeline"] },
     { sec: 1, from: [".cs-grid4"] },
     { sec: 2, from: [".cs-sub", ".cs-sols"] },
     { sec: 3, from: [".cs-grid3"] },
@@ -5341,7 +5350,8 @@ p { margin: 0; }
     el.setAttribute("aria-roledescription", "slide");
     el.setAttribute("aria-label", `${i + 1} de ${SLIDES.length}`);
     const [root, ...sels] = s.build ? [] : s.sec === undefined ? s.from : [secs[s.sec], ...s.from];
-    const blocks = s.build ? [s.build()] : sels.map((sel) => root.querySelector(sel).cloneNode(true));
+    // a block is a selector inside the slide's root, or an element taken from anywhere in the case
+    const blocks = s.build ? [s.build()] : sels.map((sel) => (typeof sel === "string" ? root.querySelector(sel) : sel).cloneNode(true));
     if (s.cover) el.append(...blocks);
     else {
       const head = document.createElement("div"), k = document.createElement("p"), h = document.createElement("h2"), body = document.createElement("div");
