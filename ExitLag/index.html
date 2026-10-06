@@ -5274,6 +5274,8 @@ p { margin: 0; }
   // Most slides clone blocks from the case above, so the case text stays the single source.
   const hero = intro.querySelector(".cs-hero"), secs = [...intro.querySelectorAll(".cs-sec")];
   const secName = (i) => secs[i].querySelector("h2").textContent.replace(/^\d+\.\s*/, "");
+  // kicker for a slide that belongs to a section but has its own title: "Parte 1 de 5 · Contexto e problema"
+  const partOf = (i) => `Parte ${i + 1} de ${secs.length} · ${secName(i)}`;
 
   // "O custo da espera": ExitLag telemetry and support numbers. null = still waiting on the data,
   // shown as a dashed "a preencher" field; fill these in and the slide (and the hours/day) updates.
@@ -5314,11 +5316,11 @@ p { margin: 0; }
 
   const SLIDES = [
     { cover: true, from: [hero, ".cs-kicker", "h1", ".cs-lead"] },
-    { k: "Resumo", t: "O problema em números", cls: "dense", from: [hero, ".cs-kpis", secs[0].querySelector(".cs-timeline")],
+    { sec: 0, from: [".cs-two"] },
+    { k: partOf(0), t: "O problema em números", cls: "dense", from: [hero, ".cs-kpis", secs[0].querySelector(".cs-timeline")],
       note: `<p><b>42s é 4× o limite de 10s</b> em que o usuário mantém a atenção na tela (Nielsen, 1993), e a partir de <b>4s</b> o desempenho e a intenção de voltar já caem (Galletta et al., 2004).</p>
         <p class="dk-src-refs">Fontes: <a href="https://www.nngroup.com/articles/response-times-3-important-limits/" target="_blank" rel="noopener noreferrer">Nielsen, J. (1993). Response Times: The 3 Important Limits. NN/g</a> · <a href="https://aisel.aisnet.org/jais/vol5/iss1/1" target="_blank" rel="noopener noreferrer">Galletta, D. et al. (2004). Web Site Delays: How Tolerant are Users? JAIS 5(1)</a></p>` },
-    { k: "Resumo", t: "O custo da espera", build: custoSlide },
-    { sec: 0, from: [".cs-two"] },
+    { k: partOf(0), t: "O custo da espera", build: custoSlide },
     { sec: 1, from: [".cs-grid4"] },
     { sec: 2, from: [".cs-sub", ".cs-sols"] },
     { sec: 3, from: [".cs-grid3"] },
@@ -5356,7 +5358,7 @@ p { margin: 0; }
     else {
       const head = document.createElement("div"), k = document.createElement("p"), h = document.createElement("h2"), body = document.createElement("div");
       head.className = "dk-head"; k.className = "dk-k"; body.className = "dk-body";
-      k.textContent = s.k ?? `Parte ${s.sec + 1} de ${secs.length}` + (s.t ? ` · ${secName(s.sec)}` : "");
+      k.textContent = s.k ?? (s.t ? partOf(s.sec) : `Parte ${s.sec + 1} de ${secs.length}`);
       h.textContent = s.t ?? secName(s.sec);
       head.append(k, h);
       body.append(...blocks);
