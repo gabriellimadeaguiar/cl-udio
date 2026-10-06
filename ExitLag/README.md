@@ -12,6 +12,8 @@ workflows. Nenhum workflow em `.github/workflows/` é disparado por mudanças aq
 ExitLag/
   index.html  # protótipo "ExitLag Route Analysis" (app desktop 1440×810), página única
   home-jogos.html  # "ExitLag Palco": catálogo de jogos no palco (refletores, ping com e sem ExitLag, ferramentas no menu lateral)
+  vitrine.html     # "ExitLag Vitrine": home com carrossel 3D em WebGPU (reflexos, bloom, feixe volumétrico, rotas com e sem ExitLag)
+  vitrine-qml.md   # guia de port da Vitrine para Qt Quick / Qt Quick 3D
   README.md   # este arquivo
 ```
 
