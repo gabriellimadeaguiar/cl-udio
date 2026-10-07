@@ -447,6 +447,7 @@ const markers = new THREE.Points(mkGeo, mkMat); markers.frustumCulled = false; g
 
 const frame0 = { yaw: 0, pitch: 0, dist: 4, chord: 1 }, cur = { yaw: 0, pitch: 0, dist: 6 };
 let xlShow = 0, xlStart = -10;
+let scan = null, offY9 = 0; // offY9: a varredura sobe o globo para a barra de status caber embaixo // varredura da biblioteca: ver "Biblioteca" mais abaixo
 let boot = null; // login e carregamento (network map): ver "Login e carregamento" mais abaixo
 
 function rebuild() {
@@ -648,7 +649,7 @@ function fitDist() {
   if (boot) return boot.dist;
   if (isV7() && (away7 || e7 > 0.35)) return 4.8;
   if (isV8() && !isV9()) return 6;
-  if (isV9() && show9) return 5.2; // órbita aberta: o planeta inteiro, com os jogos em volta // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
+  if (isV9() && (show9 || scan)) return 5.2; // órbita aberta: o planeta inteiro, com os jogos em volta // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
   const band = Math.max(140, Math.min(vw - bandSide, vh - bandCut) * 0.8), worldPerPx = 2 * Math.tan(15 * D) / vh;
   // a escala vale na superfície do globo (distância − 1): rotas curtas pedem a câmera bem perto
   const fit = 1 + frame0.chord / (band * worldPerPx);
@@ -785,7 +786,7 @@ syncThumbs8();
 // Com o mouse sobre o globo a órbita abre numa mola (raio cresce com leve overshoot) e as capas entram em cascata a partir do destaque.
 let show9 = false, r9 = 0, v9 = 0, orbR = [1, 1, 0, 0];
 $('pk').addEventListener('pointermove', e => {
-  if (!isV9() || boot) return;
+  if (!isV9() || boot || scan) return;
   const b = canvas.getBoundingClientRect(), k = b.width / vw, [rx, ry, cx, cy] = orbR;
   const dx = (e.clientX - b.left) / k - cx, dy = (e.clientY - b.top) / k - cy, m = show9 ? 70 : 10;
   const inside = (dx / (rx + m)) ** 2 + (dy / (ry + m)) ** 2 < 1;
@@ -821,25 +822,26 @@ function frameV8(dt) {
   if (Math.abs(tgt - off8) > 0.3) { off8 += (tgt - off8) * k; camera.setViewOffset(vw, vh, off8, camOff[1], vw, vh); camera.updateProjectionMatrix(); }
   bandRight = panel8 ? pw : 0;
   $('pkTele').style.top = ($('pkL').offsetTop + $('pkL').offsetHeight) + 'px';
-  tagK += ((v9on && show9 ? 1 : 0) - tagK) * Math.min(1, dt * 8);
+  tagK += ((v9on && (show9 || scan) ? 1 : 0) - tagK) * Math.min(1, dt * 8);
   const n = thumbs.length, step = Math.PI * 2 / n;
   if (v9on) {
     // o destaque vai para a frente (embaixo do globo) numa rotação suave
     a8 += wrapPi(Math.PI / 2 - sel * step - a8) * (reduce ? 1 : 1 - Math.exp(-dt * 5));
     // mola criticamente amortecida, um pouco abaixo do crítico para um leve respiro no fim
-    const tr = show9 ? 1 : 0;
+    const tr = show9 || scan ? 1 : 0;
     if (reduce) { r9 = tr; v9 = 0; } else { v9 += ((tr - r9) * 170 - v9 * 21) * dt; r9 += v9 * dt; }
   } else if (!hover8 && !panel8 && !reduce) a8 += dt * 0.035;
   // V9: a órbita usa o tamanho do planeta inteiro (5,2), para não mudar quando o globo aproxima numa rota curta; o recorte usa o tamanho real
-  const gpR = globePx(), gp = v9on ? globePxAt(5.2) : gpR, cx = vw / 2 - off8, cy = vh / 2 - camOff[1];
-  let ry = Math.min(gp * 1.32, vh / 2 - (v9on ? 128 : 44)), rx = Math.min(Math.max(gp * 1.7, ry * 1.25), (vw - bandRight) / 2 - 44);
+  const gpR = globePx(), gp = v9on ? globePxAt(5.2) : gpR, cx = vw / 2 - off8, cy = vh / 2 - camOff[1] - offY9;
+  let ry = Math.min(gp * 1.32, vh / 2 - (v9on ? 128 + offY9 / 2 : 44)), rx = Math.min(Math.max(gp * 1.7, ry * 1.25), (vw - bandRight) / 2 - 44);
   orbR = [rx, ry, cx, cy];
   if (v9on) { const e0 = Math.min(1, (gp + 64) / ry), e = e0 + (1 - e0) * r9; rx *= e; ry *= e; } // fechada: o destaque fica logo abaixo do globo
-  const now = performance.now(), lab = v9on ? (hov9 >= 0 ? hov9 : sel) : -1;
+  const now = performance.now(), lab = v9on && !scan ? (hov9 >= 0 ? hov9 : sel) : -1;
   thumbs.forEach((t, i) => {
     let a = a8 + i * step, x, y, sc;
     if (v9on) {
-      if (i === sel) tg9[i] = 1; else if (now >= at9[i]) tg9[i] = show9 ? 1 : 0;
+      if (scan) tg9[i] = scan.shown[i] ? 1 : 0; // varredura: cada jogo sai de trás do globo quando é encontrado
+      else if (i === sel) tg9[i] = 1; else if (now >= at9[i]) tg9[i] = show9 ? 1 : 0;
       if (reduce) { p9[i] = tg9[i]; pv9[i] = 0; } else { pv9[i] += ((tg9[i] - p9[i]) * 95 - pv9[i] * 15) * dt; p9[i] = Math.max(0, p9[i] + pv9[i] * dt); }
       const th = i === hov9 ? 1 : 0;
       if (reduce) h9[i] = th; else { hv9[i] += ((th - h9[i]) * 260 - hv9[i] * 24) * dt; h9[i] += hv9[i] * dt; }
@@ -847,13 +849,13 @@ function frameV8(dt) {
       const e = p9[i]; a -= (1 - Math.min(e, 1)) * 0.55;
       const sn = Math.sin(a), d = (sn + 1) / 2;
       x = cx + Math.cos(a) * rx * e; y = cy + sn * ry * e;
-      sc = (0.82 + 0.18 * d) * (i === sel ? 1.18 + 0.5 * Math.max(r9, 0) : 1) * (1 + (i === sel ? 0.15 : 0.42) * h9[i]); // aberta: o jogo do globo cresce para se destacar dos outros
+      sc = (0.82 + 0.18 * d) * (i === sel && !scan ? 1.18 + 0.5 * Math.max(r9, 0) : 1) * (1 + (i === sel ? 0.15 : 0.42) * h9[i]); // aberta: o jogo do globo cresce para se destacar dos outros
       t.style.zIndex = i === hov9 ? 40 : i === sel ? 30 : 10 + Math.round(d * 10);
       t.style.visibility = e < 0.02 ? 'hidden' : '';
       if (t.dataset.tip) delete t.dataset.tip; // o nome vem no rótulo embaixo da capa
       // o disco do globo recorta a capa enquanto ela está atrás dele
       const w = t.offsetWidth, h = t.offsetHeight, r = gpR - 2;
-      if (i !== sel && p9[i] < 0.995 && Math.hypot(Math.max(Math.abs(x - cx) - w * sc / 2, 0), Math.max(Math.abs(y - cy) - h * sc / 2, 0)) < r) {
+      if ((i !== sel || scan) && p9[i] < 0.995 && Math.hypot(Math.max(Math.abs(x - cx) - w * sc / 2, 0), Math.max(Math.abs(y - cy) - h * sc / 2, 0)) < r) {
         const m = `radial-gradient(circle at ${((cx - x) / sc + w / 2).toFixed(1)}px ${((cy - y) / sc + h / 2).toFixed(1)}px, transparent ${(r / sc - 1).toFixed(1)}px, #000 ${(r / sc + 1).toFixed(1)}px)`;
         t.style.webkitMaskImage = m; t.style.maskImage = m;
       } else if (t.style.maskImage) { t.style.webkitMaskImage = ''; t.style.maskImage = ''; }
@@ -925,7 +927,7 @@ $('bootLogin').addEventListener('submit', e => {
 $('bsSkip').addEventListener('click', () => { if (boot && boot.phase === 'scan') boot.t = Math.max(boot.t, 6.2); });
 
 function startBoot() {
-  if (boot) endBoot();
+  if (boot) endBoot(); if (scan) endScan();
   setV('9'); history.replaceState(null, '', '#login');
   vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.boot ? 'true' : 'false'));
   setPanel8(false); setShow9(false); $('app').classList.remove('sb-open');
@@ -970,7 +972,7 @@ function endBoot(keepHash) {
 }
 const BOOT_STEPS = [[0, 'Locating you'], [1.1, 'Mapping server regions'], [2.8, 'Testing every route'], [5.0, 'Choosing the best routes'], [6.2, 'Ready']];
 function frameBoot(dt) {
-  routeGroup.visible = packets.visible = markers.visible = !boot;
+  routeGroup.visible = packets.visible = markers.visible = !boot && !scan;
   if (!boot) return;
   boot.t += dt; const t = boot.t;
   tagA.style.opacity = tagB.style.opacity = 0;
@@ -1020,6 +1022,95 @@ function frameBoot(dt) {
     boot.out += dt;
     if (boot.out > 1.1) { $('app').classList.add('boot-out'); endBoot(); setTimeout(() => $('app').classList.remove('boot-out'), 1200); }
   }
+}
+
+/* ---------- Biblioteca: varredura de jogos (pedido do Gabriel) ----------
+   Estado de carregamento quando o app procura jogos instalados e os adiciona à biblioteca.
+   Sobre o Immersive: um radar gira em volta do globo, o contador no centro sobe, e cada jogo encontrado
+   sai de trás do globo para a órbita (a mesma mola do hover). Embaixo, a pasta sendo lida e os launchers, um por vez.
+   No fim a órbita fecha e a home segue normal, com a rota do jogo em destaque. Launchers, pastas e jogos são simulados. */
+const LAUNCHERS = [
+  ['Steam', 'C:\\Program Files (x86)\\Steam\\steamapps\\common', ['Throne and Liberty Global', 'Counter-Strike 2', 'Dota 2', 'PUBG: Battlegrounds', 'Naruto Shippuden: Ultimate Ninja Storm 4']],
+  ['Epic Games', 'C:\\Program Files\\Epic Games', ['Fortnite', 'Rocket League']],
+  ['Riot Client', 'C:\\Riot Games', ['League of Legends']],
+  ['Battle.net', 'C:\\Program Files (x86)\\Battle.net', ['Overwatch 2']],
+  ['EA app', 'C:\\Program Files\\EA Games', ['Apex Legends']],
+  ['Ubisoft Connect', 'C:\\Program Files (x86)\\Ubisoft\\Ubisoft Game Launcher\\games', ["Tom Clancy's Rainbow Six Siege"]]
+];
+const JUNK = ['_CommonRedist', 'shadercache', 'workshop', 'Binaries\\Win64', 'Content\\Paks', 'Saved\\Config', 'Engine\\Plugins', 'redist', 'logs', 'downloading'];
+const scanEl = document.createElement('div'); scanEl.className = 'scan';
+scanEl.innerHTML = `
+  <div class="scan-radar" aria-hidden="true"><i class="sr-sweep"></i><i class="sr-ring"></i><i class="sr-ring"></i></div>
+  <div class="scan-core" aria-live="polite"><span class="sc-k t-var" id="scK">Scanning your PC</span><span class="sc-n tnum" id="scN">0</span><span class="sc-l" id="scL">games found</span></div>
+  <div class="scan-bar">
+    <div class="sb-r1"><span class="sb-t" id="scT">Looking for game launchers</span><span class="sb-path tnum" id="scPath"></span><span class="sb-p tnum" id="scP">0%</span><button class="link sb-skip" type="button" id="scSkip">Skip</button></div>
+    <div class="bs-bar"><i id="scBar"></i></div>
+    <div class="sb-ls" id="scLs">${LAUNCHERS.map(([n]) => `<span class="sb-l"><i class="dt"></i>${n}<b class="tnum"></b></span>`).join('')}</div>
+  </div>`;
+$('pk').append(scanEl);
+$('scSkip').addEventListener('click', () => { if (scan) scan.t = Math.max(scan.t, scan.end); });
+// ordem de descoberta: launcher por launcher; jogos fora da lista ficam de fora da biblioteca nova
+const SCAN_ORDER = LAUNCHERS.flatMap(([, , gs], li) => gs.map(n => [GAMES.findIndex(g => g.name === n), li])).filter(([i]) => i >= 0);
+const L_DUR = 1.25, L_T0 = 0.9; // cada launcher: 1,25 s; antes, 0,9 s procurando launchers
+function startScan() {
+  if (boot) endBoot(true); if (scan) endScan(true);
+  setV('9'); history.replaceState(null, '', '#scan');
+  vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.scan ? 'true' : 'false'));
+  setPanel8(false); setShow9(false); $('app').classList.remove('sb-open');
+  thumbs.forEach((_, i) => { p9[i] = 0; pv9[i] = 0; tg9[i] = 0; });
+  scan = { t: 0, shown: thumbs.map(() => false), n: 0, end: L_T0 + LAUNCHERS.length * L_DUR + 0.3, done: false, yaw: frame0.yaw };
+  $('app').dataset.scan = 'on';
+  [...$('scLs').children].forEach(el => { el.className = 'sb-l'; el.querySelector('b').textContent = ''; });
+  frame0.dist = fitDist();
+}
+function endScan(keepHash) {
+  if (!scan) return;
+  scan = null; delete $('app').dataset.scan;
+  if (!keepHash && location.hash === '#scan') history.replaceState(null, '', '#v' + $('app').dataset.v);
+  vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.v === $('app').dataset.v ? 'true' : 'false'));
+  rebuild(); frame0.dist = fitDist();
+}
+let scanPathT = 0;
+function frameScan(dt) {
+  if (!scan) { if (offY9 > 0.3) { offY9 += (0 - offY9) * (reduce ? 1 : 1 - Math.exp(-dt * 4)); if (offY9 < 0.3) offY9 = 0; camera.setViewOffset(vw, vh, off8, camOff[1] + offY9, vw, vh); camera.updateProjectionMatrix(); } return; }
+  scan.t += dt; const t = scan.t;
+  // o globo gira devagar enquanto procura
+  frame0.yaw = scan.yaw + t * 0.25; frame0.pitch = 0.25;
+  // radar centrado no globo, um pouco maior que ele
+  offY9 += ((scan ? 56 : 0) - offY9) * (reduce ? 1 : 1 - Math.exp(-dt * 4));
+  camera.setViewOffset(vw, vh, off8, camOff[1] + offY9, vw, vh); camera.updateProjectionMatrix();
+  const gp = globePx(), cx = vw / 2 - off8, cy = vh / 2 - camOff[1] - offY9, rr = gp * 1.22;
+  scanEl.style.setProperty('--cx', cx.toFixed(1) + 'px'); scanEl.style.setProperty('--cy', cy.toFixed(1) + 'px'); scanEl.style.setProperty('--rr', rr.toFixed(1) + 'px');
+  const li = Math.floor((t - L_T0) / L_DUR), lt = (t - L_T0) / L_DUR - li;
+  // jogos do launcher atual aparecem espalhados pela fatia de tempo dele
+  SCAN_ORDER.forEach(([gi, l], k) => {
+    const inL = SCAN_ORDER.filter(([, l2]) => l2 === l), pos = inL.findIndex(([g]) => g === gi);
+    const at = L_T0 + l * L_DUR + L_DUR * (0.25 + 0.6 * (pos + 0.5) / inL.length);
+    if (!scan.shown[gi] && t >= at) { scan.shown[gi] = true; scan.n++; scan.last = gi; scan.lastT = t; }
+  });
+  const done = t >= scan.end;
+  [...$('scLs').children].forEach((el, i) => {
+    const c = 'sb-l' + (done || i < li ? ' done' : i === li ? ' now' : '');
+    if (el.className !== c) el.className = c;
+    const n = SCAN_ORDER.filter(([gi, l]) => l === i && scan.shown[gi]).length;
+    el.querySelector('b').textContent = i < li || done || n ? n : '';
+  });
+  $('scN').textContent = scan.n;
+  const recent = scan.last != null && t - scan.lastT < 0.9;
+  $('scL').textContent = done ? 'games added to your library' : recent ? GAMES[scan.last].name : scan.n === 1 ? 'game found' : 'games found';
+  $('scL').classList.toggle('hit', recent && !done);
+  $('scK').textContent = done ? 'Library ready' : 'Scanning your PC';
+  const pr = clamp(t / scan.end);
+  $('scBar').style.width = (pr * 100).toFixed(1) + '%'; $('scP').textContent = Math.round(pr * 100) + '%';
+  if (done) { $('scT').textContent = `${scan.n} games added. Optimize any of them from the globe.`; $('scPath').textContent = ''; }
+  else if (li < 0) { $('scT').textContent = 'Looking for game launchers'; if (t - scanPathT > 0.09) { scanPathT = t; $('scPath').textContent = ['C:\\Program Files', 'C:\\Program Files (x86)', 'C:\\Users\\Player\\AppData\\Local', 'D:\\Games'][Math.floor(t * 8) % 4]; } }
+  else {
+    const [n, root, gs] = LAUNCHERS[li];
+    $('scT').textContent = `Scanning ${n}`;
+    if (t - scanPathT > 0.08) { scanPathT = t; const g = gs[Math.floor(lt * gs.length * 2) % gs.length]; $('scPath').textContent = `${root}\\${g.replace(/[:']/g, '')}\\${JUNK[Math.floor(Math.random() * JUNK.length)]}`; }
+  }
+  if (done && !scan.done) { scan.done = true; $('app').dataset.scan = 'done'; }
+  if (t >= scan.end + 2.6) endScan();
 }
 
 /* ---------- Loop ---------- */
@@ -1093,7 +1184,7 @@ function frame() {
   if (time - lastS > 0.1) { lastS = time; sample(on); drawChart(); }
   if (time - lastP > 0.25) { lastP = time; paintTele(); }
 
-  frameV7(dt); frameV8(dt); frameBoot(dt);
+  frameV7(dt); frameV8(dt); frameBoot(dt); frameScan(dt);
   scene.updateMatrixWorld();
   placeTags(clamp((age - 0.6) / 0.4));
   composer.render();
@@ -1110,6 +1201,7 @@ function setV(v) {
   if (location.hash !== '#v' + v) history.replaceState(null, '', '#v' + v);
   dispatchEvent(new Event('pk:layout'));
 }
-vchips.forEach(c => c.addEventListener('click', () => { if (c.dataset.boot) return startBoot(); if (boot) endBoot(); setV(c.dataset.v); }));
+vchips.forEach(c => c.addEventListener('click', () => { if (c.dataset.boot) return startBoot(); if (c.dataset.scan) return startScan(); if (boot) endBoot(); if (scan) endScan(); setV(c.dataset.v); }));
 if (/^#v\d+$/.test(location.hash)) setV(location.hash.slice(2));
 if (location.hash === '#login') startBoot();
+if (location.hash === '#scan') startScan();

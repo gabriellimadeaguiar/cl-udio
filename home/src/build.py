@@ -37,6 +37,7 @@ out = out.replace('</style>', '</style>\n<style>\n' + css + '</style>', 1)
 VCHIPS = '''<nav class="vchips" aria-label="Layout version">
     <button class="vchip" type="button" data-boot="1" aria-pressed="false">Login &amp; loading</button>
     <button class="vchip" type="button" data-v="9" aria-pressed="true">Immersive globe</button>
+    <button class="vchip" type="button" data-scan="1" aria-pressed="false">Library scan</button>
   </nav>
   '''
 out = out.replace('<div class="stage">\n  <div class="app" id="app">', '<div class="stage">\n  ' + VCHIPS + '<div class="app" id="app" data-v="9">', 1)
