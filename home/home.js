@@ -747,9 +747,14 @@ $('pk').addEventListener('pointerleave', () => { if (isV9()) setShow9(false); })
 const name9 = document.createElement('div'); name9.className = 'pk-name9'; name9.setAttribute('aria-hidden', 'true'); orbit.append(name9);
 function setShow9(o) {
   show9 = o; $('app').classList.toggle('pk-show9', o);
-  const n = thumbs.length;
-  thumbs.forEach((t, i) => { const d = Math.min((i - sel + n) % n, (sel - i + n) % n); t.style.setProperty('--d', (d * 34) + 'ms'); t.classList.toggle('show', o); });
+  // cascata: abrindo, saem de trás do globo a partir dos vizinhos do destaque; fechando, voltam na ordem inversa
+  const n = thumbs.length, now = performance.now(), dm = Math.floor(n / 2);
+  thumbs.forEach((t, i) => { const d = Math.min((i - sel + n) % n, (sel - i + n) % n); at9[i] = now + (o ? (d - 1) * 60 : (dm - d) * 28); t.classList.toggle('show', o); });
 }
+// estado por capa: p = 0 escondida atrás do globo, 1 na órbita (mola); h = expansão no hover da própria capa
+const p9 = thumbs.map(() => 0), pv9 = thumbs.map(() => 0), tg9 = thumbs.map(() => 0), at9 = thumbs.map(() => 0), h9 = thumbs.map(() => 0), hv9 = thumbs.map(() => 0);
+let hov9 = -1;
+thumbs.forEach((t, i) => { t.addEventListener('pointerenter', () => { hov9 = i; $('app').classList.add('pk-hov9'); }); t.addEventListener('pointerleave', () => { if (hov9 === i) { hov9 = -1; $('app').classList.remove('pk-hov9'); } }); });
 // V9: menu do canto superior esquerdo abre e fecha a sidebar
 const bar9 = document.createElement('div'); bar9.className = 'v9-bar';
 bar9.innerHTML = '<button class="icon-btn v9-menu" type="button" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>';
@@ -780,15 +785,41 @@ function frameV8(dt) {
   let ry = Math.min(gp * 1.32, vh / 2 - (v9on ? 96 : 44)), rx = Math.min(Math.max(gp * 1.7, ry * 1.25), (vw - bandRight) / 2 - 44);
   orbR = [rx, ry, cx, cy];
   if (v9on) { const e0 = Math.min(1, (gp + 64) / ry), e = e0 + (1 - e0) * r9; rx *= e; ry *= e; } // fechada: o destaque fica logo abaixo do globo
+  const now = performance.now(), lab = v9on ? (hov9 >= 0 ? hov9 : show9 ? -1 : sel) : -1;
   thumbs.forEach((t, i) => {
-    const a = a8 + i * step, sn = Math.sin(a), d = (sn + 1) / 2; // d: 0 atrás (em cima), 1 na frente (embaixo)
-    const sc = (0.82 + 0.18 * d) * (t.getAttribute('aria-selected') === 'true' || (v9on && i === sel) ? 1.18 : 1);
-    t.style.transform = `translate(${(cx + Math.cos(a) * rx).toFixed(1)}px, ${(cy + sn * ry).toFixed(1)}px) translate(-50%, -50%) scale(${sc.toFixed(3)})`;
-    t.style.zIndex = 10 + Math.round(d * 10);
+    let a = a8 + i * step, x, y, sc;
+    if (v9on) {
+      if (i === sel) tg9[i] = 1; else if (now >= at9[i]) tg9[i] = show9 ? 1 : 0;
+      if (reduce) { p9[i] = tg9[i]; pv9[i] = 0; } else { pv9[i] += ((tg9[i] - p9[i]) * 95 - pv9[i] * 15) * dt; p9[i] = Math.max(0, p9[i] + pv9[i] * dt); }
+      const th = i === hov9 ? 1 : 0;
+      if (reduce) h9[i] = th; else { hv9[i] += ((th - h9[i]) * 260 - hv9[i] * 24) * dt; h9[i] += hv9[i] * dt; }
+      // sai do centro (escondida pelo disco do globo) girando um pouco até o lugar na órbita
+      const e = p9[i]; a -= (1 - Math.min(e, 1)) * 0.55;
+      const sn = Math.sin(a), d = (sn + 1) / 2;
+      x = cx + Math.cos(a) * rx * e; y = cy + sn * ry * e;
+      sc = (0.82 + 0.18 * d) * (i === sel ? 1.18 : 1) * (1 + 0.42 * h9[i]);
+      t.style.zIndex = i === hov9 ? 40 : 10 + Math.round(d * 10);
+      t.style.visibility = e < 0.02 ? 'hidden' : '';
+      if (t.dataset.tip) delete t.dataset.tip; // o nome vem no rótulo embaixo da capa
+      // o disco do globo recorta a capa enquanto ela está atrás dele
+      const w = t.offsetWidth, h = t.offsetHeight, r = gp - 2;
+      if (i !== sel && p9[i] < 0.995 && Math.hypot(Math.max(Math.abs(x - cx) - w * sc / 2, 0), Math.max(Math.abs(y - cy) - h * sc / 2, 0)) < r) {
+        const m = `radial-gradient(circle at ${((cx - x) / sc + w / 2).toFixed(1)}px ${((cy - y) / sc + h / 2).toFixed(1)}px, transparent ${(r / sc - 1).toFixed(1)}px, #000 ${(r / sc + 1).toFixed(1)}px)`;
+        t.style.webkitMaskImage = m; t.style.maskImage = m;
+      } else if (t.style.maskImage) { t.style.webkitMaskImage = ''; t.style.maskImage = ''; }
+    } else {
+      const sn = Math.sin(a), d = (sn + 1) / 2; // d: 0 atrás (em cima), 1 na frente (embaixo)
+      x = cx + Math.cos(a) * rx; y = cy + sn * ry;
+      sc = (0.82 + 0.18 * d) * (t.getAttribute('aria-selected') === 'true' ? 1.18 : 1);
+      t.style.zIndex = 10 + Math.round(d * 10);
+      if (!t.dataset.tip) t.dataset.tip = GAMES[i].name;
+      if (t.style.maskImage || t.style.visibility) { t.style.webkitMaskImage = ''; t.style.maskImage = ''; t.style.visibility = ''; }
+    }
+    t.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%, -50%) scale(${sc.toFixed(3)})`;
     t.classList.toggle('sel9', i === sel);
-    // V9: nome do jogo em destaque logo abaixo da capa, só fora do hover
-    if (v9on && i === sel) { if (name9.textContent !== GAMES[sel].name) name9.textContent = GAMES[sel].name;
-      name9.style.transform = `translate(${(cx + Math.cos(a) * rx).toFixed(1)}px, ${(cy + sn * ry + t.offsetHeight * sc / 2 + 12).toFixed(1)}px) translateX(-50%)`; }
+    // V9: nome sob a capa: o destaque fora do hover, ou a capa sob o mouse
+    if (i === lab) { if (name9.textContent !== GAMES[i].name) name9.textContent = GAMES[i].name;
+      name9.style.transform = `translate(${x.toFixed(1)}px, ${(y + t.offsetHeight * sc / 2 + 10).toFixed(1)}px) translateX(-50%)`; }
   });
 }
 
