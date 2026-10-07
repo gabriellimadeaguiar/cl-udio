@@ -155,7 +155,7 @@
 .app:is([data-v="8"], [data-v="9"]) .pk-srv .search-list { top: calc(100% + 8px); bottom: auto; }
 .app:is([data-v="8"], [data-v="9"]) .pk-info { position: relative; z-index: 2; }
 .app:is([data-v="8"], [data-v="9"]) .pk-tele { border-radius: 0 0 8px 8px; box-shadow: none; }
-.app:is([data-v="8"], [data-v="9"]) .pk-close8 { display: inline-flex; margin-left: auto; }
+.app:is([data-v="8"], [data-v="9"]) .pk-close8 { display: grid; place-items: center; margin-left: auto; }
 .app:is([data-v="8"], [data-v="9"]):not(.pk-p8) .pk-l, .app:is([data-v="8"], [data-v="9"]):not(.pk-p8) .pk-tele { opacity: 0; pointer-events: none; transform: translateX(24px); }
 .app:is([data-v="8"], [data-v="9"]) .pk-orbit { display: block; position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 .pk-thumb { position: absolute; left: 0; top: 0; width: 52px; height: 68px; padding: 0; border: 0; border-radius: 8px; background: var(--container); box-shadow: 0 16px 30px -12px #000000e6; cursor: pointer; pointer-events: auto; opacity: .78; transition: opacity .2s ease; }

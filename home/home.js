@@ -571,13 +571,14 @@ function project(v) {
   return [(v3.x * 0.5 + 0.5) * vw, (-v3.y * 0.5 + 0.5) * vh, face];
 }
 // Cada rótulo vai para o lado de fora da rota, para os dois nunca se cobrirem.
+let tagK = 0; // V9: some com a órbita aberta, para os nomes dos jogos não sobreporem as etiquetas
 function placeTags(vis) {
   const a = project(vO), b = project(vS), aLeft = a[0] <= b[0];
   const put = (el, p, left, up) => {
     const y = clamp(p[1] + (up ? -40 : 4), headBottom, vh - bandBottom - 36); // fica na faixa livre, sem cobrir cabeçalho nem widget
     const x = clamp(p[0] + (left ? -12 : 12), bandLeft + (left ? 140 : 0), vw - bandRight - (left ? 0 : 140)); // fora dos painéis da versão
     el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)` + (left ? ' translateX(-100%)' : '');
-    el.style.opacity = vis * clamp(p[2] * 4) * (isV7() && e7 > 0 ? 0 : 1);
+    el.style.opacity = vis * clamp(p[2] * 4) * (isV7() && e7 > 0 ? 0 : 1) * (1 - tagK);
   };
   const near = Math.abs(a[1] - b[1]) < 60;
   put(tagA, a, aLeft, near ? a[1] <= b[1] : true); put(tagB, b, !aLeft, near ? b[1] < a[1] : true);
@@ -773,6 +774,7 @@ function frameV8(dt) {
   if (Math.abs(tgt - off8) > 0.3) { off8 += (tgt - off8) * k; camera.setViewOffset(vw, vh, off8, camOff[1], vw, vh); camera.updateProjectionMatrix(); }
   bandRight = panel8 ? pw : 0;
   $('pkTele').style.top = ($('pkL').offsetTop + $('pkL').offsetHeight) + 'px';
+  tagK += ((v9on && show9 ? 1 : 0) - tagK) * Math.min(1, dt * 8);
   const n = thumbs.length, step = Math.PI * 2 / n;
   if (v9on) {
     // o destaque vai para a frente (embaixo do globo) numa rotação suave
