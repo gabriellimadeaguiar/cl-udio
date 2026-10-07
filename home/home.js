@@ -132,6 +132,7 @@ function layout() {
     c.setAttribute('aria-selected', i === sel ? 'true' : 'false');
     c.classList.toggle('on', GAMES[i].state === 'on');
   });
+  if (typeof syncThumbs8 === 'function') syncThumbs8();
 }
 let deckLast = performance.now();
 function deckFrame(now) {
@@ -582,7 +583,8 @@ composer.addPass(bloom);
 let vw = 1, vh = 1, bandCut = 0, bandSide = 0, bandLeft = 0, bandRight = 0, headBottom = 0, bandBottom = 0;
 // Distância da câmera para a rota inteira caber na faixa livre do globo (entre o cabeçalho e o widget).
 function fitDist() {
-  if (isV7() && (away7 || e7 > 0.35)) return 4.8; // V7 na sidebar: o planeta inteiro na vaga
+  if (isV7() && (away7 || e7 > 0.35)) return 4.8;
+  if (isV8()) return 6; // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
   const band = Math.max(140, Math.min(vw - bandSide, vh - bandCut) * 0.8), worldPerPx = 2 * Math.tan(15 * D) / vh;
   // a escala vale na superfície do globo (distância − 1): rotas curtas pedem a câmera bem perto
   return clamp(1 + frame0.chord / (band * worldPerPx), 1.22, 7.5);
@@ -598,7 +600,7 @@ function resize() {
   // V1 e V7 widget embaixo · V4 jogo à direita e barra embaixo · V5 jogo à esquerda e barra embaixo
   const v = $('app').dataset.v, teleW = $('pkTele').offsetWidth + 48, teleH = $('pkTele').offsetHeight + 48, lW = $('pkL').offsetWidth;
   const [sideW, leftW, botH] = v === '4' ? [lW, 0, teleH]
-    : v === '5' ? [0, lW, teleH] : [0, 0, teleH - 24];
+    : v === '5' ? [0, lW, teleH] : v === '8' ? [0, 0, headH] : [0, 0, teleH - 24];
   const offX = Math.round((sideW - leftW) / 2), offY = Math.round((botH - headH) / 2); camOff = [offX, offY];
   bandCut = botH + headH; bandSide = sideW + leftW; bandLeft = leftW; bandRight = sideW; headBottom = headH + 14; bandBottom = botH;
   camera.aspect = vw / vh; camera.setViewOffset(vw, vh, offX, offY, vw, vh); camera.updateProjectionMatrix();
@@ -687,6 +689,46 @@ function dock7() {
   ['position', 'inset', 'left', 'top', 'width', 'height', 'zIndex', 'transform', 'transformOrigin', 'webkitMask', 'mask', 'webkitMaskImage', 'maskImage', 'webkitMaskComposite', 'maskComposite', 'webkitMaskSize', 'maskSize', 'webkitMaskPosition', 'maskPosition', 'webkitMaskRepeat', 'maskRepeat', 'pointerEvents'].forEach(k => canvas.style[k] = '');
 }
 
+/* ---------- V8: globo no centro, jogos em órbita ----------
+   Miniaturas dos jogos giram devagar numa elipse em volta do globo (para no hover); otimizados têm a bolinha verde.
+   Clicar num jogo abre o painel à direita (nome, servidor, Optimize/Stop e Route Monitoring) e o globo desliza para a esquerda. */
+const isV8 = () => $('app').dataset.v === '8';
+let panel8 = false, off8 = 0, a8 = -Math.PI / 2, hover8 = false;
+const orbit = document.createElement('div'); orbit.className = 'pk-orbit'; orbit.setAttribute('role', 'listbox'); orbit.setAttribute('aria-label', 'Games');
+const thumbs = GAMES.map((g, i) => {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'pk-thumb'; b.setAttribute('role', 'option'); b.setAttribute('aria-label', g.name); b.dataset.tip = g.name;
+  b.innerHTML = `<img src="${g.img}" alt="" draggable="false">`;
+  b.addEventListener('click', () => { if (sel === i && panel8) setPanel8(false); else { select(i); setPanel8(true); } });
+  orbit.append(b); return b;
+});
+orbit.addEventListener('pointerenter', () => hover8 = true); orbit.addEventListener('pointerleave', () => hover8 = false);
+$('pk').append(orbit);
+function syncThumbs8() { thumbs.forEach((t, i) => { t.classList.toggle('on', GAMES[i].state === 'on'); t.setAttribute('aria-selected', i === sel && panel8 ? 'true' : 'false'); }); }
+const close8 = document.createElement('button'); close8.type = 'button'; close8.className = 'icon-btn pk-close8'; close8.setAttribute('aria-label', 'Close details');
+close8.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
+close8.addEventListener('click', () => setPanel8(false));
+document.querySelector('.pk-r1').append(close8);
+function setPanel8(o) { panel8 = o; $('app').classList.toggle('pk-p8', o); syncThumbs8(); if (!o) openSrv(false); }
+addEventListener('keydown', e => { if (e.key === 'Escape' && isV8() && panel8) setPanel8(false); });
+syncThumbs8();
+function frameV8(dt) {
+  if (!isV8()) { if (off8 || $('pkTele').style.top) { off8 = 0; bandRight = 0; $('pkTele').style.top = ''; resize(); } return; }
+  const pw = $('pkL').offsetWidth + 32;
+  // o globo e a órbita deslizam para a esquerda quando o painel abre
+  const tgt = panel8 ? pw / 2 : 0, k = reduce ? 1 : 1 - Math.exp(-dt * 6);
+  if (Math.abs(tgt - off8) > 0.3) { off8 += (tgt - off8) * k; camera.setViewOffset(vw, vh, off8, 0, vw, vh); camera.updateProjectionMatrix(); }
+  bandRight = panel8 ? pw : 0;
+  $('pkTele').style.top = ($('pkL').offsetTop + $('pkL').offsetHeight) + 'px';
+  if (!hover8 && !panel8 && !reduce) a8 += dt * 0.035;
+  const gp = globePx(), cx = vw / 2 - off8, cy = vh / 2, ry = Math.min(gp * 1.32, vh / 2 - 44), rx = Math.min(Math.max(gp * 1.7, ry * 1.25), (vw - bandRight) / 2 - 44);
+  thumbs.forEach((t, i) => {
+    const a = a8 + i * Math.PI * 2 / thumbs.length, sn = Math.sin(a), d = (sn + 1) / 2; // d: 0 atrás (em cima), 1 na frente (embaixo)
+    const sc = (0.82 + 0.18 * d) * (t.getAttribute('aria-selected') === 'true' ? 1.18 : 1);
+    t.style.transform = `translate(${(cx + Math.cos(a) * rx).toFixed(1)}px, ${(cy + sn * ry).toFixed(1)}px) translate(-50%, -50%) scale(${sc.toFixed(3)})`;
+    t.style.zIndex = 10 + Math.round(d * 10);
+  });
+}
+
 /* ---------- Loop ---------- */
 let time = 0, lastT = performance.now(), lastS = 0, lastP = 0;
 resize();
@@ -758,7 +800,7 @@ function frame() {
   if (time - lastS > 0.1) { lastS = time; sample(on); drawChart(); }
   if (time - lastP > 0.25) { lastP = time; paintTele(); }
 
-  frameV7(dt);
+  frameV7(dt); frameV8(dt);
   scene.updateMatrixWorld();
   placeTags(clamp((age - 0.6) / 0.4));
   composer.render();

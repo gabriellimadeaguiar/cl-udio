@@ -991,6 +991,39 @@ p { margin: 0; }
 .app[data-v="7"] .sb-globe { display: block; flex: none; width: 160px; height: 160px; margin: auto auto 16px; border-radius: 50%; cursor: pointer; }
 .app[data-v="7"] .sb-globe:focus-visible { outline: 2px solid var(--series1); outline-offset: 4px; }
 .app[data-v="7"]:not(.pk-away) .sb-globe { pointer-events: none; }
+
+/* ---------- V8: globo no centro, jogos em órbita ----------
+   O globo é o elemento principal; as capas em miniatura giram em volta; clicar numa abre o painel do jogo à direita. */
+.pk-orbit, .pk-close8 { display: none; }
+.app[data-v="8"] .pk { display: block; }
+.app[data-v="8"] .pk::after { background: radial-gradient(60% 75% at 50% 50%, transparent 40%, var(--stage) 100%); }
+.app[data-v="8"] .pk-amb.on { opacity: .18; }
+.app[data-v="8"] .pk-r { position: absolute; inset: 0; z-index: auto; display: block; padding: 0; }
+.app[data-v="8"] .pk-r canvas { -webkit-mask: none; mask: none; }
+.app[data-v="8"] .pk-head { position: absolute; left: 24px; right: 24px; top: 24px; z-index: 2; }
+.app[data-v="8"] .pk-deck, .app[data-v="8"] .pk-pg { display: none; }
+.app[data-v="8"] .pk-l, .app[data-v="8"] .pk-tele { position: absolute; right: 16px; width: min(400px, 40%); z-index: 4; background: var(--container); transition: opacity var(--motion-duration-300, .3s) ease, transform var(--motion-duration-300, .3s) ease; }
+.app[data-v="8"] .pk-l { top: 16px; display: block; border-radius: 8px 8px 0 0; }
+.app[data-v="8"] .pk-info { padding: 16px 20px 4px; gap: 12px; }
+.app[data-v="8"] .pk-r1 h3 { font-size: 24px; line-height: 30px; }
+.app[data-v="8"] .pk-r2 .grow { flex: 1; }
+.app[data-v="8"] .pk-srv .search-list { top: calc(100% + 8px); bottom: auto; }
+.app[data-v="8"] .pk-info { position: relative; z-index: 2; }
+.app[data-v="8"] .pk-tele { border-radius: 0 0 8px 8px; box-shadow: none; }
+.app[data-v="8"] .pk-close8 { display: inline-flex; margin-left: auto; }
+.app[data-v="8"]:not(.pk-p8) .pk-l, .app[data-v="8"]:not(.pk-p8) .pk-tele { opacity: 0; pointer-events: none; transform: translateX(24px); }
+.app[data-v="8"] .pk-orbit { display: block; position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.pk-thumb { position: absolute; left: 0; top: 0; width: 52px; height: 68px; padding: 0; border: 0; border-radius: 8px; background: var(--container); box-shadow: 0 16px 30px -12px #000000e6; cursor: pointer; pointer-events: auto; opacity: .78; transition: opacity .2s ease; }
+.pk-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
+.pk-thumb:hover, .pk-thumb[aria-selected="true"] { opacity: 1; }
+.pk-thumb:focus-visible { outline: 2px solid var(--series1); outline-offset: 3px; }
+.pk-thumb.on::after { content: ""; position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 2px #050608b3, 0 0 8px var(--success); animation: pkBlink 1.6s infinite; }
+@media (prefers-reduced-motion: reduce) { .pk-thumb.on::after { animation: none; } .app[data-v="8"] .pk-l, .app[data-v="8"] .pk-tele { transition: none; } }
+.app[data-v="8"] .pk-close8 svg { width: 16px; height: 16px; }
+.app[data-v="8"] .pk-tele .pk-kpis { display: grid; grid-template-columns: 1fr 1fr; row-gap: 12px; }
+.app[data-v="8"] .pk-tele .pk-lanes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.app[data-v="8"] .pk-tele .pk-lane { min-width: 0; }
+.app[data-v="8"] .pk-thumb { width: 60px; height: 80px; }
 </style>
 
 <div class="stage">
@@ -999,6 +1032,7 @@ p { margin: 0; }
     <button class="vchip" type="button" data-v="4" aria-pressed="false">V4 &middot; Swapped</button>
     <button class="vchip" type="button" data-v="5" aria-pressed="false">V5 &middot; Game art</button>
     <button class="vchip" type="button" data-v="7" aria-pressed="false">V7 &middot; Sidebar globe</button>
+    <button class="vchip" type="button" data-v="8" aria-pressed="false">V8 &middot; Globe orbit</button>
   </nav>
   <div class="app" id="app" data-v="1">
     <div class="cz-overlay" aria-hidden="true"></div>
