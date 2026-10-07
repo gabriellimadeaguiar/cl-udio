@@ -604,10 +604,13 @@ let vw = 1, vh = 1, bandCut = 0, bandSide = 0, bandLeft = 0, bandRight = 0, head
 // Distância da câmera para a rota inteira caber na faixa livre do globo (entre o cabeçalho e o widget).
 function fitDist() {
   if (isV7() && (away7 || e7 > 0.35)) return 4.8;
-  if (isV9()) return 5.2; if (isV8()) return 6; // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
+  if (isV8() && !isV9()) return 6;
+  if (isV9() && show9) return 5.2; // órbita aberta: o planeta inteiro, com os jogos em volta // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
   const band = Math.max(140, Math.min(vw - bandSide, vh - bandCut) * 0.8), worldPerPx = 2 * Math.tan(15 * D) / vh;
   // a escala vale na superfície do globo (distância − 1): rotas curtas pedem a câmera bem perto
-  return clamp(1 + frame0.chord / (band * worldPerPx), 1.22, 7.5);
+  const fit = 1 + frame0.chord / (band * worldPerPx);
+  // V9 fechada: rota curta aproxima o globo (até 2,4, para ainda ler como planeta); rota longa fica no planeta inteiro
+  return isV9() ? clamp(fit, 2.4, 5.2) : clamp(fit, 1.22, 7.5);
 }
 // 1 com a câmera longe; menor perto, para pontos e rotas manterem o tamanho na tela
 const zoomK = d => clamp((d - 1) / 3, 0.08, 1);
@@ -633,7 +636,8 @@ addEventListener('pk:layout', () => { resize(); sizeDeck(); });
    A vaga é um link para a Home (o próprio protótipo trata data-goto="Home"). Na volta, o globo voa de volta e o canvas retorna ao palco. */
 const isV7 = () => $('app').dataset.v === '7';
 // raio do globo na tela, em px do canvas (câmera a cur.dist, fov 30°)
-const globePx = () => Math.tan(Math.asin(1 / Math.max(cur.dist, 1.0001))) / Math.tan(15 * D) * vh / 2;
+const globePxAt = d => Math.tan(Math.asin(1 / Math.max(d, 1.0001))) / Math.tan(15 * D) * vh / 2;
+const globePx = () => globePxAt(cur.dist);
 let away7 = false, e7 = 0, fly7 = null, camOff = [0, 0], gpStart7 = 0;
 function frameV7(dt) {
   const inHost = canvas.parentElement === host;
@@ -747,7 +751,7 @@ $('pk').addEventListener('pointermove', e => {
 $('pk').addEventListener('pointerleave', () => { if (isV9()) setShow9(false); });
 const name9 = document.createElement('div'); name9.className = 'pk-name9'; name9.setAttribute('aria-hidden', 'true'); orbit.append(name9);
 function setShow9(o) {
-  show9 = o; $('app').classList.toggle('pk-show9', o);
+  show9 = o; $('app').classList.toggle('pk-show9', o); frame0.dist = fitDist();
   // cascata: abrindo, saem de trás do globo a partir dos vizinhos do destaque; fechando, voltam na ordem inversa
   const n = thumbs.length, now = performance.now(), dm = Math.floor(n / 2);
   thumbs.forEach((t, i) => { const d = Math.min((i - sel + n) % n, (sel - i + n) % n); at9[i] = now + (o ? (d - 1) * 60 : (dm - d) * 28); t.classList.toggle('show', o); });
@@ -783,7 +787,8 @@ function frameV8(dt) {
     const tr = show9 ? 1 : 0;
     if (reduce) { r9 = tr; v9 = 0; } else { v9 += ((tr - r9) * 170 - v9 * 21) * dt; r9 += v9 * dt; }
   } else if (!hover8 && !panel8 && !reduce) a8 += dt * 0.035;
-  const gp = globePx(), cx = vw / 2 - off8, cy = vh / 2 - camOff[1];
+  // V9: a órbita usa o tamanho do planeta inteiro (5,2), para não mudar quando o globo aproxima numa rota curta; o recorte usa o tamanho real
+  const gpR = globePx(), gp = v9on ? globePxAt(5.2) : gpR, cx = vw / 2 - off8, cy = vh / 2 - camOff[1];
   let ry = Math.min(gp * 1.32, vh / 2 - (v9on ? 128 : 44)), rx = Math.min(Math.max(gp * 1.7, ry * 1.25), (vw - bandRight) / 2 - 44);
   orbR = [rx, ry, cx, cy];
   if (v9on) { const e0 = Math.min(1, (gp + 64) / ry), e = e0 + (1 - e0) * r9; rx *= e; ry *= e; } // fechada: o destaque fica logo abaixo do globo
@@ -804,7 +809,7 @@ function frameV8(dt) {
       t.style.visibility = e < 0.02 ? 'hidden' : '';
       if (t.dataset.tip) delete t.dataset.tip; // o nome vem no rótulo embaixo da capa
       // o disco do globo recorta a capa enquanto ela está atrás dele
-      const w = t.offsetWidth, h = t.offsetHeight, r = gp - 2;
+      const w = t.offsetWidth, h = t.offsetHeight, r = gpR - 2;
       if (i !== sel && p9[i] < 0.995 && Math.hypot(Math.max(Math.abs(x - cx) - w * sc / 2, 0), Math.max(Math.abs(y - cy) - h * sc / 2, 0)) < r) {
         const m = `radial-gradient(circle at ${((cx - x) / sc + w / 2).toFixed(1)}px ${((cy - y) / sc + h / 2).toFixed(1)}px, transparent ${(r / sc - 1).toFixed(1)}px, #000 ${(r / sc + 1).toFixed(1)}px)`;
         t.style.webkitMaskImage = m; t.style.maskImage = m;
@@ -837,7 +842,7 @@ function frame() {
 
   // enquadramento suave; o arraste volta sozinho depois de 2,5 s
   if (!gDrag && time - lastDrag > 1.2) { const k = 1 - Math.exp(-dt * 3); dYaw += (0 - dYaw) * k; dPitch += (0 - dPitch) * k; }
-  const kf = reduce ? 1 : 1 - Math.exp(-dt * 2.6);
+  const kf = reduce ? 1 : 1 - Math.exp(-dt * (isV9() && show9 ? 7 : 2.6)); // V9: abrindo a órbita, o globo recua rápido
   cur.yaw += wrapA(frame0.yaw - cur.yaw) * kf; cur.pitch += (frame0.pitch - cur.pitch) * kf; cur.dist += (frame0.dist - cur.dist) * kf;
   globe.rotation.y = cur.yaw + dYaw + (reduce ? 0 : Math.sin(time * 0.15) * 0.03);
   tilt.rotation.x = cur.pitch + dPitch;
