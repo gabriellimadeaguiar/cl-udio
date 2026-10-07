@@ -701,7 +701,8 @@ function placeTags(vis) {
     el.style.opacity = vis * clamp(p[2] * 4) * (isV7() && e7 > 0 ? 0 : 1) * (1 - tagK);
   };
   const near = Math.abs(a[1] - b[1]) < 60;
-  put(tagA, a, aLeft, near ? a[1] <= b[1] : true); put(tagB, b, !aLeft, near ? b[1] < a[1] : true);
+  tagA.style.opacity = 0; // sem a etiqueta "You" no globo da home (pedido do Gabriel); fica só a do servidor
+  put(tagB, b, !aLeft, near ? b[1] < a[1] : true);
 }
 
 /* ---------- Ping da rota no hover (pedido do Gabriel) ----------
@@ -1458,7 +1459,8 @@ function frameNodes() {
   }
   ndGeo.attributes.position.needsUpdate = ndGeo.attributes.aA.needsUpdate = ndGeo.attributes.aF.needsUpdate = ndGeo.attributes.aK.needsUpdate = true;
   // rótulos dos nós da rota mais rápida: Bridge · cidade, Final · cidade
-  const r = routes && routes.xl[fastLane], vis = r && nodes.visible && !boot && !scan && !pmap ? fastShown * (1 - tagK) : 0;
+  // rótulos Bridge/Final retirados a pedido do Gabriel: os nós ficam só como pontos
+  const r = routes && routes.xl[fastLane], vis = 0 * fastShown;
   ndTags.forEach((el, k) => {
     const nd = r && r.nodes[k];
     if (!nd || vis <= 0.01 || r.u.uDraw.value < nd.t) { el.style.opacity = 0; return; }
