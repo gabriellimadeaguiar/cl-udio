@@ -810,33 +810,31 @@ p { margin: 0; }
 .pk { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); /* mesma divisão da .row2 abaixo: a borda cai no meio do gap de 24px */ height: var(--pk-h); border-radius: 8px; overflow: hidden; background: var(--stage); box-shadow: var(--shadow-widget); isolation: isolate; }
 /* luz ambiente: a capa do jogo, desfocada, tinge o palco */
 .pk-amb { position: absolute; inset: -80px; z-index: -2; background: center / cover no-repeat; filter: blur(70px) saturate(1.2); opacity: 0; transition: opacity var(--motion-duration-900) var(--motion-easing-standard); }
-.pk-amb.on { opacity: .22; }
+.pk-amb.on { opacity: .32; }
 .pk::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: radial-gradient(70% 62% at 26% 40%, transparent, #050608b3 80%), linear-gradient(90deg, transparent 30%, #05060880 55%, #050608e6 85%); }
+  background: radial-gradient(38% 58% at 26% 42%, transparent 0%, var(--stage) 92%), linear-gradient(0deg, var(--stage) 0%, transparent 30%), linear-gradient(90deg, transparent 30%, #05060880 55%, #050608e6 85%); }
 
 .pk-l { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr); min-width: 0; }
-.pk-deck { position: relative; perspective: 1200px; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none;
+.pk-deck { position: relative; perspective: var(--P, 800px); perspective-origin: 50% 46%; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none;
   -webkit-mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
 .pk-deck.drag { cursor: grabbing; }
 .pk-deck:focus-visible { outline: 2px solid var(--series1); outline-offset: -2px; }
-/* cone de luz de palco sobre o jogo em destaque */
-.pk-spot { position: absolute; left: 50%; top: -6%; width: 90%; height: 100%; transform: translateX(-50%); pointer-events: none;
-  /* feixe sem bordas: elipse estreita no topo que se abre e some aos poucos, mais um halo largo bem fraco */
-  background: radial-gradient(28% 95% at 50% 0%, #ebeced1c, #ebeced0a 55%, transparent 85%), radial-gradient(60% 70% at 50% 0%, #ebeced0a, transparent 80%);
-  -webkit-mask: linear-gradient(#000 40%, transparent); mask: linear-gradient(#000 40%, transparent); filter: blur(18px);
-  opacity: 0; transition: opacity var(--motion-duration-500) var(--motion-easing-standard); }
-.pk-deck.lit .pk-spot { opacity: 1; }
-.pk-floor { position: absolute; left: 18%; right: 18%; bottom: 4%; height: 60px; pointer-events: none; border-radius: 50%; background: radial-gradient(closest-side, #ebeced1f, transparent); }
+/* anel 3D e piso (referência): reflexo das capas e um brilho fraco no chão logo abaixo */
+.pk-ring { position: absolute; left: 50%; top: calc(50% - 16px); width: 0; height: 0; transform-style: preserve-3d; transform: translateZ(var(--R)); }
+.pk-floor { position: absolute; left: 0; right: 0; top: calc(50% - 16px + var(--ph) / 2 + 10px); height: 120px; pointer-events: none; background: radial-gradient(50% 60% at 50% 0%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 70%); }
 /* capa no formato da Wikipedia (caixa do jogo, retrato). Arte em paisagem fica inteira sobre ela mesma desfocada. */
-.pk-card { position: absolute; left: 50%; top: 47%; height: 82%; aspect-ratio: 3 / 4; border-radius: 8px; overflow: hidden; cursor: pointer; background: var(--container-high);
-  will-change: transform, opacity; -webkit-box-reflect: below 6px linear-gradient(transparent 76%, #ffffff26);
-  transition: transform var(--motion-duration-500) var(--motion-easing-standard), opacity var(--motion-duration-500) var(--motion-easing-standard), filter var(--motion-duration-500) var(--motion-easing-standard), box-shadow var(--motion-duration-500); }
-.pk-deck.drag .pk-card { transition: none; }
+.pk-card { position: absolute; left: calc(var(--pw) / -2); top: calc(var(--ph) / -2); width: var(--pw); height: var(--ph); border-radius: 8px; overflow: hidden; cursor: pointer; background: var(--container-high);
+  backface-visibility: hidden; will-change: transform;
+  box-shadow: 0 0 0 1px #ffffff14, 0 30px 60px -30px #000000e6;
+  -webkit-box-reflect: below 10px linear-gradient(transparent 86%, #ffffff1a);
+  transition: box-shadow var(--motion-duration-300) var(--motion-easing-standard); }
 .pk-card .bg { position: absolute; inset: -20%; background: center / cover no-repeat; filter: blur(22px) saturate(1.3); opacity: .7; }
 .pk-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; }
 .pk-card.wide img { object-fit: contain; }
 .pk-card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px #ebeced14; pointer-events: none; }
-.pk-card[aria-selected="true"] { box-shadow: 0 32px 64px -24px #000000cc; }
+.pk-card[aria-selected="true"] { cursor: default; box-shadow: 0 0 0 2px #ebecedbf, 0 40px 80px -30px #000000e6; }
+.pk-card.on { box-shadow: 0 0 0 1px #ffffff14, 0 0 56px -12px color-mix(in srgb, var(--success) 45%, transparent), 0 30px 60px -30px #000000e6; }
+.pk-card.on[aria-selected="true"] { box-shadow: 0 0 70px -8px color-mix(in srgb, var(--success) 55%, transparent), 0 40px 80px -30px #000000e6; }
 /* stroke / optimized do card-app: 2px, gradiente success → #242627 */
 .pk-card.on::after { padding: 2px; box-shadow: none; background: linear-gradient(to bottom right, var(--success) 0%, #242627 100%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
@@ -911,7 +909,7 @@ p { margin: 0; }
 
 /* Feedback do protótipo de origem: fora desta página */
 .fb-card, .fb-layer, .fb-bar { display: none !important; }
-@media (prefers-reduced-motion: reduce) { .pk-card, .pk-amb, .pk-spot { transition: none !important; } .live-dot { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .pk-card, .pk-amb { transition: none !important; } .live-dot { animation: none; } }
 </style>
 
 <div class="stage">
@@ -968,7 +966,7 @@ p { margin: 0; }
             <div class="pk-amb" id="pkAmbA"></div><div class="pk-amb" id="pkAmbB"></div>
             <div class="pk-l">
               <div class="pk-deck" id="pkDeck" role="listbox" tabindex="0" aria-label="Games">
-                <div class="pk-spot"></div><div class="pk-floor"></div>
+                <div class="pk-floor"></div>
               </div>
               <div class="pk-info">
                 <div class="pk-r1">

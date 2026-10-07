@@ -91,6 +91,10 @@ GAMES.forEach(pickRegion);
 
 /* ---------- Palco: carrossel ---------- */
 const deck = $('pkDeck');
+// Sala 360° (referência do Gabriel): as capas formam uma parede curva ao redor da câmera; o anel gira até o jogo ficar de frente.
+const ring = document.createElement('div'); ring.className = 'pk-ring'; deck.appendChild(ring);
+const SLOTS = 14, STEP = 2 * Math.PI / SLOTS, GAP = 16;
+let R = 500, pitch = 240, camV = 0, dragCam = 0;
 let N = GAMES.length, moved = false;
 function makeCard(g, i) {
   const b = document.createElement('div');
@@ -100,39 +104,59 @@ function makeCard(g, i) {
   const fit = () => b.classList.toggle('wide', im.naturalWidth / im.naturalHeight > 1.05);
   if (im.complete) fit(); else im.addEventListener('load', fit);
   b.addEventListener('click', () => { if (!moved) select(i); });
-  deck.appendChild(b);
+  ring.appendChild(b);
   return b;
 }
 const cards = GAMES.map(makeCard);
 $('pkTotal').textContent = N;
-let sel = 0, frac = 0;
+let sel = 0;
 const wrapK = k => ((k % N) + N + N / 2) % N - N / 2;
+// tamanho da capa (3:4, caixa do jogo) e raio do anel a partir do espaço do palco
+function sizeDeck() {
+  const W = deck.clientWidth, H = deck.clientHeight;
+  if (!W || !H) return;
+  const ph = Math.round(Math.min(H * 0.72, W * 0.5 / 0.75)), pw = Math.round(ph * 0.75);
+  R = (pw / 2 + GAP / 2) / Math.tan(Math.PI / SLOTS); pitch = pw + GAP;
+  deck.style.setProperty('--pw', pw + 'px'); deck.style.setProperty('--ph', ph + 'px');
+  deck.style.setProperty('--R', R.toFixed(1) + 'px'); deck.style.setProperty('--P', (R * 1.5).toFixed(1) + 'px');
+}
+new ResizeObserver(sizeDeck).observe(deck); sizeDeck();
+// estado (seleção e otimizado); a posição é desenhada quadro a quadro em deckFrame
 function layout() {
   cards.forEach((c, i) => {
-    const k = wrapK(i - sel - frac), a = Math.abs(k);
-    const x = k * 62 - Math.sign(k) * Math.max(0, a - 1) * 8, z = -a * 170, ry = -Math.sign(k) * Math.min(a, 1.3) * 24, sc = 1 - Math.min(a, 2.5) * 0.07;
-    c.style.transform = `translate(-50%, -50%) translateX(${x}%) translateZ(${z}px) rotateY(${ry}deg) scale(${sc})`;
-    c.style.opacity = a > 3.2 ? 0 : clamp(1.15 - a * 0.33);
-    c.style.filter = `brightness(${1 - Math.min(a, 2.5) * 0.26}) saturate(${1 - Math.min(a, 2.5) * 0.2})`;
-    c.style.zIndex = String(20 - Math.round(a * 2));
-    c.style.pointerEvents = a > 3.2 ? 'none' : '';
     c.setAttribute('aria-selected', i === sel ? 'true' : 'false');
     c.classList.toggle('on', GAMES[i].state === 'on');
   });
 }
+let deckLast = performance.now();
+function deckFrame(now) {
+  const dt = Math.min(0.05, (now - deckLast) / 1000); deckLast = now;
+  const dragging = dragX !== null && moved;
+  if (!dragging) { const d = wrapK(sel - camV); camV += reduce || Math.abs(d) < 0.0005 ? d : d * Math.min(1, dt * 5.5); }
+  cards.forEach((c, i) => {
+    const th = wrapK(i - camV) * STEP, a = Math.abs(th);
+    if (a > 1.95) { c.style.visibility = 'hidden'; return; }
+    c.style.visibility = '';
+    const lift = i === sel && !dragging ? 18 * (1 - Math.min(1, Math.abs(wrapK(sel - camV)) * 2)) : 0;
+    c.style.transform = `rotateY(${(-th).toFixed(4)}rad) translateZ(${(-R + lift).toFixed(1)}px)`;
+    c.style.filter = a < 0.08 ? '' : `brightness(${Math.max(0.38, 1 - 0.42 * a).toFixed(3)}) saturate(${Math.max(0.6, 1 - 0.25 * a).toFixed(3)})`;
+  });
+  requestAnimationFrame(deckFrame);
+}
+requestAnimationFrame(deckFrame);
 // Arrasta com mouse ou dedo; roda horizontal do trackpad; setas do teclado.
-let dragX = null, cardW = 1;
-deck.addEventListener('pointerdown', e => { dragX = e.clientX; moved = false; cardW = cards[sel].offsetWidth * 0.62; });
+let dragX = null;
+deck.addEventListener('pointerdown', e => { dragX = e.clientX; moved = false; dragCam = camV; });
 addEventListener('pointermove', e => {
   if (dragX === null) return;
   const dx = e.clientX - dragX;
   if (!moved && Math.abs(dx) > 6) { moved = true; deck.classList.add('drag'); }
-  if (moved) { frac = -dx / cardW; layout(); }
+  if (moved) camV = dragCam - dx / pitch;
 });
 addEventListener('pointerup', () => {
   if (dragX === null) return;
   dragX = null; deck.classList.remove('drag');
-  if (moved) { const step = Math.round(frac + Math.sign(frac) * 0.2); frac = 0; select(sel + step); setTimeout(() => { moved = false; }, 0); }
+  if (moved) { const v = Math.round(camV); select(v); setTimeout(() => { moved = false; }, 0); }
 });
 let wheelAcc = 0, wheelT = 0;
 deck.addEventListener('wheel', e => {
@@ -170,10 +194,9 @@ function paintInfo() {
 }
 function select(i) {
   i = ((i % N) + N) % N;
-  const changed = i !== sel; sel = i; frac = 0;
+  const changed = i !== sel; sel = i;
   openSrv(false); layout(); paintInfo();
   ambI ^= 1; ambs[ambI].style.backgroundImage = `url('${GAMES[sel].img}')`; ambs[ambI].classList.add('on'); ambs[ambI ^ 1].classList.remove('on');
-  deck.classList.remove('lit'); requestAnimationFrame(() => requestAnimationFrame(() => deck.classList.add('lit')));
   if (changed || !routes) rebuild();
 }
 
