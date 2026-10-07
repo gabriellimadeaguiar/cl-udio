@@ -821,7 +821,7 @@ function frameV8(dt) {
     t.classList.toggle('sel9', i === sel);
     // V9: nome sob a capa: o destaque fora do hover, ou a capa sob o mouse
     if (i === lab) { if (name9.textContent !== GAMES[i].name) name9.textContent = GAMES[i].name;
-      name9.style.transform = `translate(${x.toFixed(1)}px, ${(y + t.offsetHeight * sc / 2 + 10).toFixed(1)}px) translateX(-50%)`; }
+      name9.style.transform = `translate(${x.toFixed(1)}px, ${(y + t.offsetHeight * sc / 2 + 8).toFixed(1)}px) translateX(-50%)`; }
   });
 }
 
