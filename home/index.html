@@ -820,8 +820,10 @@ p { margin: 0; }
 .pk-deck.drag { cursor: grabbing; }
 .pk-deck:focus-visible { outline: 2px solid var(--series1); outline-offset: -2px; }
 /* cone de luz de palco sobre o jogo em destaque */
-.pk-spot { position: absolute; left: 50%; top: -4%; width: 70%; height: 100%; transform: translateX(-50%); pointer-events: none;
-  background: radial-gradient(50% 100% at 50% 0%, #ebeced24, transparent 72%); clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%); filter: blur(10px);
+.pk-spot { position: absolute; left: 50%; top: -6%; width: 90%; height: 100%; transform: translateX(-50%); pointer-events: none;
+  /* feixe sem bordas: elipse estreita no topo que se abre e some aos poucos, mais um halo largo bem fraco */
+  background: radial-gradient(28% 95% at 50% 0%, #ebeced1c, #ebeced0a 55%, transparent 85%), radial-gradient(60% 70% at 50% 0%, #ebeced0a, transparent 80%);
+  -webkit-mask: linear-gradient(#000 40%, transparent); mask: linear-gradient(#000 40%, transparent); filter: blur(18px);
   opacity: 0; transition: opacity var(--motion-duration-500) var(--motion-easing-standard); }
 .pk-deck.lit .pk-spot { opacity: 1; }
 .pk-floor { position: absolute; left: 18%; right: 18%; bottom: 4%; height: 60px; pointer-events: none; border-radius: 50%; background: radial-gradient(closest-side, #ebeced1f, transparent); }
