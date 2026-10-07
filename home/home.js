@@ -782,10 +782,10 @@ function frameV8(dt) {
     if (reduce) { r9 = tr; v9 = 0; } else { v9 += ((tr - r9) * 170 - v9 * 21) * dt; r9 += v9 * dt; }
   } else if (!hover8 && !panel8 && !reduce) a8 += dt * 0.035;
   const gp = globePx(), cx = vw / 2 - off8, cy = vh / 2 - camOff[1];
-  let ry = Math.min(gp * 1.32, vh / 2 - (v9on ? 96 : 44)), rx = Math.min(Math.max(gp * 1.7, ry * 1.25), (vw - bandRight) / 2 - 44);
+  let ry = Math.min(gp * 1.32, vh / 2 - (v9on ? 128 : 44)), rx = Math.min(Math.max(gp * 1.7, ry * 1.25), (vw - bandRight) / 2 - 44);
   orbR = [rx, ry, cx, cy];
   if (v9on) { const e0 = Math.min(1, (gp + 64) / ry), e = e0 + (1 - e0) * r9; rx *= e; ry *= e; } // fechada: o destaque fica logo abaixo do globo
-  const now = performance.now(), lab = v9on ? (hov9 >= 0 ? hov9 : show9 ? -1 : sel) : -1;
+  const now = performance.now(), lab = v9on ? (hov9 >= 0 ? hov9 : sel) : -1;
   thumbs.forEach((t, i) => {
     let a = a8 + i * step, x, y, sc;
     if (v9on) {
@@ -797,8 +797,8 @@ function frameV8(dt) {
       const e = p9[i]; a -= (1 - Math.min(e, 1)) * 0.55;
       const sn = Math.sin(a), d = (sn + 1) / 2;
       x = cx + Math.cos(a) * rx * e; y = cy + sn * ry * e;
-      sc = (0.82 + 0.18 * d) * (i === sel ? 1.18 : 1) * (1 + 0.42 * h9[i]);
-      t.style.zIndex = i === hov9 ? 40 : 10 + Math.round(d * 10);
+      sc = (0.82 + 0.18 * d) * (i === sel ? 1.18 + 0.5 * Math.max(r9, 0) : 1) * (1 + (i === sel ? 0.15 : 0.42) * h9[i]); // aberta: o jogo do globo cresce para se destacar dos outros
+      t.style.zIndex = i === hov9 ? 40 : i === sel ? 30 : 10 + Math.round(d * 10);
       t.style.visibility = e < 0.02 ? 'hidden' : '';
       if (t.dataset.tip) delete t.dataset.tip; // o nome vem no rótulo embaixo da capa
       // o disco do globo recorta a capa enquanto ela está atrás dele
