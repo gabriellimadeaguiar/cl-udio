@@ -129,37 +129,7 @@
 .vchip:disabled { opacity: .45; cursor: default; }
 .vchip:focus-visible { outline: 2px solid var(--series1); outline-offset: 2px; }
 
-.app[data-v="5"] .pk-tele { position: absolute; left: 24px; right: 24px; bottom: 24px; display: grid; column-gap: 32px; row-gap: 10px; }
 
-/* ---------- V5: arte de fundo ----------
-   A arte do jogo preenche o palco; o globo flutua à direita; KPIs e rotas numa barra embaixo; capas em miniatura. */
-.app[data-v="5"] .pk { display: block; }
-.app[data-v="5"] .pk-amb { inset: 0; filter: none; background-size: cover; background-position: center 30%; }
-.app[data-v="5"] .pk-amb.on { opacity: .55; }
-.app[data-v="5"] .pk::after { background: linear-gradient(90deg, var(--stage) 0%, #050608cc 30%, transparent 60%), linear-gradient(0deg, var(--stage) 0%, transparent 45%); }
-.app[data-v="5"] .pk-r { position: absolute; inset: 0; z-index: 0; display: block; }
-.app[data-v="5"] .pk-r canvas { -webkit-mask: radial-gradient(30% 48% at 73% 36%, #000 62%, transparent 100%); mask: radial-gradient(30% 48% at 73% 36%, #000 62%, transparent 100%); }
-.app[data-v="5"] .pk-head { position: absolute; left: 24px; right: 24px; top: 24px; }
-.app[data-v="5"] .pk-l { position: absolute; left: 0; top: 64px; width: 46%; bottom: 140px; z-index: 1; grid-template-rows: auto minmax(0, 1fr); }
-.app[data-v="5"] .pk-info { order: -1; padding: 16px 24px 0; gap: 16px; }
-.app[data-v="5"] .pk-r1 h3 { font-size: 36px; line-height: 44px; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.app[data-v="5"] .pk-pg { display: none; }
-.app[data-v="5"] .pk-r2 .grow { display: none; }
-.app[data-v="5"] .pk-deck { -webkit-mask: linear-gradient(90deg, #000 80%, transparent); mask: linear-gradient(90deg, #000 80%, transparent); }
-.app[data-v="5"] .pk-tele { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: center; background: color-mix(in srgb, var(--container) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-.app[data-v="5"] .pk-tele .w-head, .app[data-v="5"] .pk-tele .chart-wrap, .app[data-v="5"] .pk-tele .pk-log { display: none; }
-.app[data-v="5"] .pk-tele .pk-lanes { display: grid; grid-template-columns: 1fr 1fr; }
-.app[data-v="5"] .pk-tele .pk-lane { min-width: 0; }
-/* V5: o carrossel tem altura fixa; o título (até 2 linhas, maior) cresce para cima sem encolher as capas (pedido do Gabriel) */
-.app[data-v="5"] .pk-l { grid-template-rows: minmax(0, 1fr) 190px; }
-.app[data-v="5"] .pk-info { order: 0; grid-row: 1; align-self: end; padding: 0 24px 16px; }
-.app[data-v="5"] .pk-deck { grid-row: 2; }
-.app[data-v="5"] .pk-r1 h3 { font-size: 40px; line-height: 44px; }
-/* V5: o seletor fica no alto do palco; a lista abre para baixo, por cima das capas (para cima ela era cortada pelo palco) */
-.app[data-v="5"] .pk-info { position: relative; z-index: 2; }
-.app[data-v="5"] .pk-srv .search-list { top: calc(100% + 8px); bottom: auto; }
-/* V5: o brilho da capa selecionada passava do topo do carrossel e era cortado. O carrossel ganha 56 px de folga em cima (sob a linha do servidor), sem mudar o tamanho das capas. */
-.app[data-v="5"] .pk-deck { --padT: 56px; --oy: 28px; margin-top: -56px; }
 
 /* ---------- V7: globo na sidebar fora da home ---------- */
 .sb-globe { display: none; }

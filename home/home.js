@@ -123,7 +123,7 @@ function sizeDeck() {
   const ph = Math.round(Math.min(H * 0.72, W * 0.5 / 0.75)), pw = Math.round(ph * 0.75);
   R = (pw / 2 + GAP / 2) / Math.tan(Math.PI / SLOTS); pitch = pw + GAP;
   deck.style.setProperty('--pw', pw + 'px'); deck.style.setProperty('--ph', ph + 'px');
-  deck.style.setProperty('--R', R.toFixed(1) + 'px'); deck.style.setProperty('--P', (R * ($('app').dataset.v === '5' ? 3 : 1.5)).toFixed(1) + 'px'); // V5: faixa baixa, perspectiva mais longa para as laterais não crescerem
+  deck.style.setProperty('--R', R.toFixed(1) + 'px'); deck.style.setProperty('--P', (R * 1.5).toFixed(1) + 'px');
 }
 new ResizeObserver(sizeDeck).observe(deck); sizeDeck();
 // estado (seleção e otimizado); a posição é desenhada quadro a quadro em deckFrame
@@ -616,9 +616,9 @@ function resize() {
   renderer.setSize(vw, vh, false); composer.setSize(vw, vh); composer.setPixelRatio(PR); bloom.resolution.set(vw / 2, vh / 2);
   const headH = host.querySelector('.pk-head').offsetHeight + 24;
   // Área livre do globo em cada versão: o que cobre o canvas à esquerda, à direita e embaixo.
-  // V1 e V7 widget embaixo · V5 jogo à esquerda e barra embaixo
+  // V7: widget embaixo · V9: só o cabeçalho
   const v = $('app').dataset.v, teleW = $('pkTele').offsetWidth + 48, teleH = $('pkTele').offsetHeight + 48, lW = $('pkL').offsetWidth;
-  const [sideW, leftW, botH] = v === '5' ? [0, lW, teleH] : v === '9' ? [0, 0, headH] : v === '8' ? [0, 0, headH] : [0, 0, teleH - 24];
+  const [sideW, leftW, botH] = v === '9' ? [0, 0, headH] : v === '8' ? [0, 0, headH] : [0, 0, teleH - 24];
   const offX = Math.round((sideW - leftW) / 2), offY = Math.round((botH - headH) / 2); camOff = [offX, offY];
   bandCut = botH + headH; bandSide = sideW + leftW; bandLeft = leftW; bandRight = sideW; headBottom = headH + 14; bandBottom = botH;
   camera.aspect = vw / vh; camera.setViewOffset(vw, vh, offX, offY, vw, vh); camera.updateProjectionMatrix();
