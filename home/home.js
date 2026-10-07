@@ -123,7 +123,7 @@ function sizeDeck() {
   const ph = Math.round(Math.min(H * 0.72, W * 0.5 / 0.75)), pw = Math.round(ph * 0.75);
   R = (pw / 2 + GAP / 2) / Math.tan(Math.PI / SLOTS); pitch = pw + GAP;
   deck.style.setProperty('--pw', pw + 'px'); deck.style.setProperty('--ph', ph + 'px');
-  deck.style.setProperty('--R', R.toFixed(1) + 'px'); deck.style.setProperty('--P', (R * (['5', '10'].includes($('app').dataset.v) ? 3 : 1.5)).toFixed(1) + 'px'); // V5: faixa baixa, perspectiva mais longa para as laterais não crescerem
+  deck.style.setProperty('--R', R.toFixed(1) + 'px'); deck.style.setProperty('--P', (R * ($('app').dataset.v === '5' ? 3 : 1.5)).toFixed(1) + 'px'); // V5: faixa baixa, perspectiva mais longa para as laterais não crescerem
 }
 new ResizeObserver(sizeDeck).observe(deck); sizeDeck();
 // estado (seleção e otimizado); a posição é desenhada quadro a quadro em deckFrame
@@ -603,8 +603,7 @@ let vw = 1, vh = 1, bandCut = 0, bandSide = 0, bandLeft = 0, bandRight = 0, head
 // Distância da câmera para a rota inteira caber na faixa livre do globo (entre o cabeçalho e o widget).
 function fitDist() {
   if (isV7() && (away7 || e7 > 0.35)) return 4.8;
-  if (isV9()) return 5.2;
-  if ($('app').dataset.v === '10') { const t = (vh - bandCut) / 2 * 0.9 * Math.tan(15 * D) / (vh / 2); return 1 / Math.sin(Math.atan(t)); } // V10: o planeta inteiro acima do nome if (isV8()) return 6; // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
+  if (isV9()) return 5.2; if (isV8()) return 6; // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
   const band = Math.max(140, Math.min(vw - bandSide, vh - bandCut) * 0.8), worldPerPx = 2 * Math.tan(15 * D) / vh;
   // a escala vale na superfície do globo (distância − 1): rotas curtas pedem a câmera bem perto
   return clamp(1 + frame0.chord / (band * worldPerPx), 1.22, 7.5);
@@ -620,10 +619,9 @@ function resize() {
   // V1 e V7 widget embaixo · V4 jogo à direita e barra embaixo · V5 jogo à esquerda e barra embaixo
   const v = $('app').dataset.v, teleW = $('pkTele').offsetWidth + 48, teleH = $('pkTele').offsetHeight + 48, lW = $('pkL').offsetWidth;
   const [sideW, leftW, botH] = v === '4' ? [lW, 0, teleH]
-    : v === '5' ? [0, lW, teleH] : v === '10' ? [0, 0, $('pkL').offsetHeight + 8] : v === '9' ? [0, 0, headH] : v === '8' ? [0, 0, headH] : [0, 0, teleH - 24];
-  const hH = v === '10' ? 16 : headH; // V10: o cabeçalho fica no canto, não disputa o centro
-  const offX = Math.round((sideW - leftW) / 2), offY = Math.round((botH - hH) / 2); camOff = [offX, offY];
-  bandCut = botH + hH; bandSide = sideW + leftW; bandLeft = leftW; bandRight = sideW; headBottom = headH + 14; bandBottom = botH;
+    : v === '5' ? [0, lW, teleH] : v === '9' ? [0, 0, headH] : v === '8' ? [0, 0, headH] : [0, 0, teleH - 24];
+  const offX = Math.round((sideW - leftW) / 2), offY = Math.round((botH - headH) / 2); camOff = [offX, offY];
+  bandCut = botH + headH; bandSide = sideW + leftW; bandLeft = leftW; bandRight = sideW; headBottom = headH + 14; bandBottom = botH;
   camera.aspect = vw / vh; camera.setViewOffset(vw, vh, offX, offY, vw, vh); camera.updateProjectionMatrix();
   frame0.dist = fitDist();
 }
@@ -713,13 +711,16 @@ function dock7() {
 /* ---------- V8: globo no centro, jogos em órbita ----------
    Miniaturas dos jogos giram devagar numa elipse em volta do globo (para no hover); otimizados têm a bolinha verde.
    Clicar num jogo abre o painel à direita (nome, servidor, Optimize/Stop e Route Monitoring) e o globo desliza para a esquerda. */
+const ICONS = { 'Fortnite': 'fortnite.png', 'Dota 2': 'dota-2.png', 'Overwatch 2': 'overwatch-2.png' };
 const isV8 = () => ['8', '9'].includes($('app').dataset.v); // a V9 reaproveita a órbita da V8
 const isV9 = () => $('app').dataset.v === '9';
 let panel8 = false, off8 = 0, a8 = -Math.PI / 2, hover8 = false;
 const orbit = document.createElement('div'); orbit.className = 'pk-orbit'; orbit.setAttribute('role', 'listbox'); orbit.setAttribute('aria-label', 'Games');
 const thumbs = GAMES.map((g, i) => {
   const b = document.createElement('button'); b.type = 'button'; b.className = 'pk-thumb'; b.setAttribute('role', 'option'); b.setAttribute('aria-label', g.name); b.dataset.tip = g.name;
-  b.innerHTML = `<img src="${g.img}" alt="" draggable="false">`;
+  // ícone oficial quando há (Wikipedia); nos demais, recorte quadrado da arte da capa
+  const ic = ICONS[g.name]; if (!ic) b.classList.add('crop');
+  b.innerHTML = `<img src="${ic ? 'assets/icons/' + ic : g.img}" alt="" draggable="false">`;
   b.addEventListener('click', () => { if (sel === i && panel8) setPanel8(false); else { select(i); setPanel8(true); } });
   orbit.append(b); return b;
 });
@@ -822,13 +823,6 @@ function frameV8(dt) {
       name9.style.transform = `translate(${x.toFixed(1)}px, ${(y + t.offsetHeight * sc / 2 + 10).toFixed(1)}px) translateX(-50%)`; }
   });
 }
-
-/* ---------- V10: globo no topo, nome e botões no centro, carrossel embaixo ----------
-   O Route Monitoring começa recolhido, só com o ping; o botão do cabeçalho expande os detalhes. */
-const tx10 = document.createElement('button'); tx10.type = 'button'; tx10.className = 'icon-btn pk-tx10'; tx10.setAttribute('aria-label', 'Show route details'); tx10.setAttribute('aria-expanded', 'false');
-tx10.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m4 6 4 4 4-4"/></svg>';
-$('pkTele').querySelector('.w-head').append(tx10);
-tx10.addEventListener('click', () => { const o = !$('pkTele').classList.contains('open10'); $('pkTele').classList.toggle('open10', o); tx10.setAttribute('aria-expanded', o); tx10.setAttribute('aria-label', o ? 'Hide route details' : 'Show route details'); });
 
 /* ---------- Loop ---------- */
 let time = 0, lastT = performance.now(), lastS = 0, lastP = 0;
