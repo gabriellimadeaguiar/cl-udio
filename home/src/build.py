@@ -36,11 +36,10 @@ out = out.replace('</style>', '</style>\n<style>\n' + css + '</style>', 1)
 # chips de versão acima do app, fora da interface (pedido do Gabriel); a versão fica em data-v no .app
 VCHIPS = '''<nav class="vchips" aria-label="Layout version">
     <button class="vchip" type="button" data-boot="1" aria-pressed="false">Login &amp; loading</button>
-    <button class="vchip" type="button" data-v="7" aria-pressed="true">Persistent globe</button>
-    <button class="vchip" type="button" data-v="9" aria-pressed="false">Immersive globe</button>
+    <button class="vchip" type="button" data-v="9" aria-pressed="true">Immersive globe</button>
   </nav>
   '''
-out = out.replace('<div class="stage">\n  <div class="app" id="app">', '<div class="stage">\n  ' + VCHIPS + '<div class="app" id="app" data-v="7">', 1)
+out = out.replace('<div class="stage">\n  <div class="app" id="app">', '<div class="stage">\n  ' + VCHIPS + '<div class="app" id="app" data-v="9">', 1)
 assert 'class="vchips"' in out
 # V7: vaga do globo na sidebar, abaixo das opções e acima da versão; clicar nela volta para a Home (pedido do Gabriel)
 out = out.replace('<div class="version">home | 1.0</div>', '<div class="sb-globe" id="sbGlobe" role="link" tabindex="0" data-goto="Home" aria-label="Live routes. Back to Home" data-tip="Back to Home"></div>\n      <div class="version">home | 1.0</div>', 1)
