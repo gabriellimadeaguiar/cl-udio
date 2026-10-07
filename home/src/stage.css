@@ -28,11 +28,7 @@
 .pk-card.wide img { object-fit: contain; }
 .pk-card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px #ebeced14; pointer-events: none; }
 .pk-card[aria-selected="true"] { cursor: default; box-shadow: 0 0 0 2px #ebecedbf, 0 40px 80px -30px #000000e6; }
-/* otimizado: só o contorno verde fino (::after); sem brilho verde em volta, pedido do Gabriel */
-.pk-card.on[aria-selected="true"] { box-shadow: 0 40px 80px -30px #000000e6; }
-/* stroke / optimized do card-app: gradiente success → #242627; 1px (Gabriel achou 2px largo demais) */
-.pk-card.on::after { padding: 1px; box-shadow: none; background: linear-gradient(to bottom right, var(--success) 0%, #242627 100%);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+/* otimizado: sem marcação na capa (sem brilho e sem contorno verde, pedido do Gabriel); o estado aparece no botão e no Route Monitoring */
 
 .pk-info { min-width: 0; display: flex; flex-direction: column; gap: 16px; padding: 0 24px 24px; }
 .pk-r1, .pk-r2 { display: flex; align-items: center; gap: 16px; }
