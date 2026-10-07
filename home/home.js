@@ -1150,18 +1150,26 @@ let offK = 0, offPrev = 0;
 const RIM0 = C.rim.clone(), ORANGE = new THREE.Color('#eb8322');
 const landCol = C.dim.clone(), svCol = C.route.clone();
 landMat.uniforms.uCol.value = landCol; svMat.uniforms.uCol.value = svCol;
+// ligar a ExitLag: o globo acende em verde (borda, atmosfera, continentes) e um anel corre para fora; depois volta ao azul e para
+const GREEN = C.route.clone(); let onT = -10;
+const onRing = document.createElement('div'); onRing.className = 'pk-onring'; onRing.setAttribute('aria-hidden', 'true'); $('pk').append(onRing);
 function frameOff(dt) {
   const off = $('app').classList.contains('el-off') ? 1 : 0;
   // desligar a ExitLag para as conexões ativas (como diz o diálogo do protótipo)
   if (off && !offPrev) { GAMES.forEach(g => { if (g.state === 'on' || g.state === 'testing') g.state = 'off'; }); xlShow = 0; fail = null; logMsg(IDLE); paintCta(); layout(); }
+  if (!off && offPrev) { onT = time; offK = 0; if (!reduce) { const gp = globePx(); onRing.style.cssText = `left:${(vw / 2 - off8).toFixed(1)}px; top:${(vh / 2 - camOff[1] - offY9).toFixed(1)}px; width:${(gp * 2).toFixed(1)}px; height:${(gp * 2).toFixed(1)}px`; onRing.classList.remove('go'); void onRing.offsetWidth; onRing.classList.add('go'); } }
   if (off !== offPrev) paintCta();
   offPrev = off;
-  if (offK === off) return;
-  offK += (off - offK) * (reduce ? 1 : 1 - Math.exp(-dt * 3)); if (Math.abs(off - offK) < 0.002) offK = off;
-  C.rim.copy(RIM0).lerp(ORANGE, 0.55 * offK);
-  landCol.copy(C.dim).lerp(ORANGE, 0.32 * offK);
+  const pt = time - onT, p = reduce ? 0 : pt < 0.35 ? ease(pt / 0.35) : Math.max(0, 1 - (pt - 0.35) / 1.6) ** 1.6;
+  if (offK === off && p === 0 && !onT0) return;
+  onT0 = p > 0;
+  if (offK !== off) { offK += (off - offK) * (reduce ? 1 : 1 - Math.exp(-dt * 3)); if (Math.abs(off - offK) < 0.002) offK = off; }
+  C.rim.copy(RIM0).lerp(ORANGE, 0.55 * offK).lerp(GREEN, 0.75 * p);
+  landCol.copy(C.dim).lerp(ORANGE, 0.32 * offK).lerp(GREEN, 0.45 * p);
   svCol.copy(C.route).lerp(ORANGE, offK);
+  bloom.strength = 0.8 + 0.5 * p;
 }
+let onT0 = false;
 
 /* ---------- Loop ---------- */
 let time = 0, lastT = performance.now(), lastS = 0, lastP = 0;

@@ -1205,6 +1205,11 @@ p { margin: 0; }
 .pk-offinfo > span { display: flex; flex-direction: column; }
 .pk-offinfo b { font-weight: 500; font-size: 14px; line-height: 20px; letter-spacing: .25px; color: var(--on-surface); }
 .pk-cta[hidden] { display: none !important; }
+
+/* Ligar a ExitLag: anel verde que sai do globo, uma vez */
+.pk-onring { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 1; pointer-events: none; border-radius: 50%; transform: translate(-50%, -50%); opacity: 0; border: 2px solid var(--success); box-shadow: 0 0 32px 4px #22eba366, inset 0 0 32px 4px #22eba333; }
+.pk-onring.go { animation: onRing 1.4s cubic-bezier(.22, 1, .36, 1) forwards; }
+@keyframes onRing { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.96); } 18% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.45); } }
 </style>
 
 <div class="stage">
