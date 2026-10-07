@@ -958,12 +958,71 @@ p { margin: 0; }
 .app[data-v="2"] .pk-deck { -webkit-mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
 .app[data-v="2"] .pk-pg { display: none; }
 .app[data-v="2"] .pk-ring { top: calc(50% - 6px); }
+
+/* ---------- V3: empilhado ----------
+   Carrossel em largura total em cima; globo e Route Monitoring lado a lado embaixo. Palco mais alto para caber os dois andares. */
+.app[data-v="3"] .pk { height: 660px; grid-template-columns: minmax(0, 1fr); grid-template-rows: 320px minmax(0, 1fr); }
+.app[data-v="3"] .pk::after { background: radial-gradient(70% 60% at 50% 30%, transparent 30%, var(--stage) 100%); }
+.app[data-v="3"] .pk-l { grid-row: 1; }
+.app[data-v="3"] .pk-info { flex-direction: row; align-items: center; padding: 0 24px 16px; }
+.app[data-v="3"] .pk-r1 { flex: 1; min-width: 0; }
+.app[data-v="3"] .pk-r1 h3 { font-size: 28px; line-height: 36px; }
+.app[data-v="3"] .pk-r2 .grow { display: none; }
+.app[data-v="3"] .pk-r { grid-row: 2; display: block; border-top: 1px solid var(--divider); }
+.app[data-v="3"] .pk-r canvas { -webkit-mask: none; mask: none; }
+.app[data-v="3"] .pk-head { position: absolute; left: 24px; right: calc(50% + 12px); top: 24px; }
+.app[data-v="3"] .pk-tele { position: absolute; top: 24px; bottom: 24px; right: 24px; width: calc(50% - 36px); justify-content: space-between; }
+
+/* ---------- V4: invertido ----------
+   Globo grande à esquerda, jogo (capas, título, servidor, Optimize) à direita, Route Monitoring numa barra larga embaixo. */
+.app[data-v="4"] .pk { display: block; }
+.app[data-v="4"] .pk::after { background: linear-gradient(90deg, transparent 50%, #050608b3 75%); }
+.app[data-v="4"] .pk-r { position: absolute; inset: 0; z-index: 0; display: block; }
+.app[data-v="4"] .pk-r canvas { -webkit-mask: linear-gradient(90deg, #000 48%, transparent 64%); mask: linear-gradient(90deg, #000 48%, transparent 64%); }
+.app[data-v="4"] .pk-head { position: absolute; left: 24px; right: calc(40% + 24px); top: 24px; }
+.app[data-v="4"] .pk-l { position: absolute; right: 0; top: 0; width: 40%; bottom: 200px; z-index: 1; }
+.app[data-v="4"] .pk-info { padding: 0 24px 16px; gap: 12px; }
+.app[data-v="4"] .pk-r1 h3 { font-size: 26px; line-height: 32px; }
+.app[data-v="4"] .pk-r2 .grow { flex: 1; }
+.app[data-v="4"] .pk-tele, .app[data-v="5"] .pk-tele { position: absolute; left: 24px; right: 24px; bottom: 24px; display: grid; column-gap: 32px; row-gap: 10px; }
+.app[data-v="4"] .pk-tele { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); grid-template-areas: "head head" "kpis chart" "kpis lanes" "kpis log"; }
+.app[data-v="4"] .pk-tele .w-head { grid-area: head; }
+.app[data-v="4"] .pk-tele .pk-kpis { grid-area: kpis; align-self: center; }
+.app[data-v="4"] .pk-tele .chart-wrap { grid-area: chart; }
+.app[data-v="4"] .pk-tele .pk-lanes { grid-area: lanes; }
+.app[data-v="4"] .pk-tele .pk-log { grid-area: log; min-height: 0; }
+
+/* ---------- V5: arte de fundo ----------
+   A arte do jogo preenche o palco; o globo flutua à direita; KPIs e rotas numa barra embaixo; capas em miniatura. */
+.app[data-v="5"] .pk { display: block; }
+.app[data-v="5"] .pk-amb { inset: 0; filter: none; background-size: cover; background-position: center 30%; }
+.app[data-v="5"] .pk-amb.on { opacity: .55; }
+.app[data-v="5"] .pk::after { background: linear-gradient(90deg, var(--stage) 0%, #050608cc 30%, transparent 60%), linear-gradient(0deg, var(--stage) 0%, transparent 45%); }
+.app[data-v="5"] .pk-r { position: absolute; inset: 0; z-index: 0; display: block; }
+.app[data-v="5"] .pk-r canvas { -webkit-mask: radial-gradient(30% 48% at 73% 36%, #000 62%, transparent 100%); mask: radial-gradient(30% 48% at 73% 36%, #000 62%, transparent 100%); }
+.app[data-v="5"] .pk-head { position: absolute; left: 24px; right: 24px; top: 24px; }
+.app[data-v="5"] .pk-l { position: absolute; left: 0; top: 64px; width: 46%; bottom: 140px; z-index: 1; grid-template-rows: auto minmax(0, 1fr); }
+.app[data-v="5"] .pk-info { order: -1; padding: 16px 24px 0; gap: 16px; }
+.app[data-v="5"] .pk-r1 h3 { font-size: 36px; line-height: 44px; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.app[data-v="5"] .pk-pg { display: none; }
+.app[data-v="5"] .pk-r2 .grow { display: none; }
+.app[data-v="5"] .pk-deck { -webkit-mask: linear-gradient(90deg, #000 80%, transparent); mask: linear-gradient(90deg, #000 80%, transparent); }
+.app[data-v="5"] .pk-tele { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: center; background: color-mix(in srgb, var(--container) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.app[data-v="5"] .pk-tele .w-head, .app[data-v="5"] .pk-tele .chart-wrap, .app[data-v="5"] .pk-tele .pk-log { display: none; }
+.app[data-v="5"] .pk-tele .pk-lanes { display: grid; grid-template-columns: 1fr 1fr; }
+.app[data-v="5"] .pk-tele .pk-lane { min-width: 0; }
+.app[data-v="4"] .pk-pg { display: none; }
+.app[data-v="4"] .pk-tele .pk-lanes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.app[data-v="4"] .pk-tele .pk-lane { min-width: 0; padding: 0 6px; }
 </style>
 
 <div class="stage">
   <nav class="vchips" aria-label="Layout version">
     <button class="vchip" type="button" data-v="1" aria-pressed="true">V1 &middot; Stage + globe</button>
     <button class="vchip" type="button" data-v="2" aria-pressed="false">V2 &middot; Globe hero</button>
+    <button class="vchip" type="button" data-v="3" aria-pressed="false">V3 &middot; Stacked</button>
+    <button class="vchip" type="button" data-v="4" aria-pressed="false">V4 &middot; Swapped</button>
+    <button class="vchip" type="button" data-v="5" aria-pressed="false">V5 &middot; Game art</button>
   </nav>
   <div class="app" id="app" data-v="1">
     <div class="cz-overlay" aria-hidden="true"></div>

@@ -123,7 +123,7 @@ function sizeDeck() {
   const ph = Math.round(Math.min(H * 0.72, W * 0.5 / 0.75)), pw = Math.round(ph * 0.75);
   R = (pw / 2 + GAP / 2) / Math.tan(Math.PI / SLOTS); pitch = pw + GAP;
   deck.style.setProperty('--pw', pw + 'px'); deck.style.setProperty('--ph', ph + 'px');
-  deck.style.setProperty('--R', R.toFixed(1) + 'px'); deck.style.setProperty('--P', (R * ($('app').dataset.v === '2' ? 3 : 1.5)).toFixed(1) + 'px'); // V2: faixa baixa, perspectiva mais longa para as laterais não crescerem
+  deck.style.setProperty('--R', R.toFixed(1) + 'px'); deck.style.setProperty('--P', (R * (/[25]/.test($('app').dataset.v) ? 3 : 1.5)).toFixed(1) + 'px'); // V2: faixa baixa, perspectiva mais longa para as laterais não crescerem
 }
 new ResizeObserver(sizeDeck).observe(deck); sizeDeck();
 // estado (seleção e otimizado); a posição é desenhada quadro a quadro em deckFrame
@@ -555,7 +555,7 @@ function placeTags(vis) {
   const a = project(vO), b = project(vS), aLeft = a[0] <= b[0];
   const put = (el, p, left, up) => {
     const y = clamp(p[1] + (up ? -40 : 4), headBottom, vh - bandBottom - 36); // fica na faixa livre, sem cobrir cabeçalho nem widget
-    const x = Math.min(p[0] + (left ? -12 : 12), vw - bandSide - (left ? 0 : 140)); // na V2, longe do painel da direita
+    const x = clamp(p[0] + (left ? -12 : 12), bandLeft + (left ? 140 : 0), vw - bandRight - (left ? 0 : 140)); // fora dos painéis da versão
     el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)` + (left ? ' translateX(-100%)' : '');
     el.style.opacity = vis * clamp(p[2] * 4);
   };
@@ -579,7 +579,7 @@ const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.8, 0.5, 0.3);
 composer.addPass(bloom);
-let vw = 1, vh = 1, bandCut = 0, bandSide = 0, headBottom = 0, bandBottom = 0;
+let vw = 1, vh = 1, bandCut = 0, bandSide = 0, bandLeft = 0, bandRight = 0, headBottom = 0, bandBottom = 0;
 // Distância da câmera para a rota inteira caber na faixa livre do globo (entre o cabeçalho e o widget).
 function fitDist() {
   const band = Math.max(140, Math.min(vw - bandSide, vh - bandCut) * 0.8), worldPerPx = 2 * Math.tan(15 * D) / vh;
@@ -592,11 +592,13 @@ function resize() {
   vw = host.clientWidth; vh = host.clientHeight;
   renderer.setSize(vw, vh, false); composer.setSize(vw, vh); composer.setPixelRatio(PR); bloom.resolution.set(vw / 2, vh / 2);
   const headH = host.querySelector('.pk-head').offsetHeight + 24;
-  // V1: o widget fica embaixo do globo. V2 (globo herói): widget no painel da direita e a faixa de jogos embaixo.
-  const v2 = $('app').dataset.v === '2';
-  const sideW = v2 ? $('pkTele').offsetWidth + 48 : 0, botH = v2 ? $('pkL').offsetHeight : $('pkTele').offsetHeight + 24;
-  const offX = Math.round(sideW / 2), offY = Math.round((botH - headH) / 2);
-  bandCut = botH + headH; bandSide = sideW; headBottom = headH + 14; bandBottom = botH;
+  // Área livre do globo em cada versão: o que cobre o canvas à esquerda, à direita e embaixo.
+  // V1 widget embaixo · V2 painel à direita e faixa de jogos embaixo · V3 widget na metade direita · V4 jogo à direita e barra embaixo · V5 jogo à esquerda e barra embaixo
+  const v = $('app').dataset.v, teleW = $('pkTele').offsetWidth + 48, teleH = $('pkTele').offsetHeight + 48, lW = $('pkL').offsetWidth;
+  const [sideW, leftW, botH] = v === '2' ? [teleW, 0, $('pkL').offsetHeight] : v === '3' ? [teleW, 0, 24] : v === '4' ? [lW, 0, teleH]
+    : v === '5' ? [0, lW, teleH] : [0, 0, teleH - 24];
+  const offX = Math.round((sideW - leftW) / 2), offY = Math.round((botH - headH) / 2);
+  bandCut = botH + headH; bandSide = sideW + leftW; bandLeft = leftW; bandRight = sideW; headBottom = headH + 14; bandBottom = botH;
   camera.aspect = vw / vh; camera.setViewOffset(vw, vh, offX, offY, vw, vh); camera.updateProjectionMatrix();
   frame0.dist = fitDist();
 }
