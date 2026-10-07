@@ -227,3 +227,5 @@
 /* Immersive: painel em grade de 24 px (xl) por fora, 16 px (lg) entre blocos, 12 px (md) dentro dos blocos */
 .app[data-v="9"] .pk-tele { padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-xl); gap: var(--spacing-lg); border-top: 1px solid var(--divider); }
 .app[data-v="9"] .pk-tele .pk-kpis { column-gap: var(--spacing-lg); row-gap: var(--spacing-lg); }
+/* Immersive: o painel do jogo fica acima do Route Monitoring, para a lista de servidores abrir por cima dele */
+.app:is([data-v="8"], [data-v="9"]) .pk-l { z-index: 5; }
