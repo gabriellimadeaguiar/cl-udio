@@ -39,6 +39,7 @@ VCHIPS = '''<nav class="vchips" aria-label="Flows: login, library scan, home; pa
     <button class="vchip" type="button" data-scan="1" aria-pressed="false">Library scan</button><span class="vsep" aria-hidden="true"></span>
     <button class="vchip" type="button" data-v="9" aria-pressed="true">Home</button><span class="vdiv" aria-hidden="true"></span>
     <button class="vchip" type="button" data-passive="1" aria-pressed="false">Passive network map</button>
+    <button class="vchip" type="button" data-comet="1" aria-pressed="false">Comet</button>
   </nav>
   '''
 out = out.replace('<div class="stage">\n  <div class="app" id="app">', '<div class="stage">\n  ' + VCHIPS + '<div class="app" id="app" data-v="9">', 1)
