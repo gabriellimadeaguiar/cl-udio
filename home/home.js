@@ -409,7 +409,7 @@ function smoothPath(a, b, w, lateral, lift, n = 200) {
 }
 let routeR = 1; // espessura relativa das rotas: afina quando a câmera chega perto
 function makeRoute(pts, color, radius, speed, gain = 1, group = routeGroup) {
-  radius *= routeR;
+  radius *= routeR * 0.5; // metade da espessura original (pedido do Gabriel)
   const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal');
   const uniforms = { uCol: { value: color }, uBad: { value: C.bad }, uDraw: { value: 0 }, uOp: { value: 0 }, uFail: { value: 0 }, uTime: { value: 0 }, uSpeed: { value: speed }, uGain: { value: gain } };
   for (const halo of [0, 1]) {
