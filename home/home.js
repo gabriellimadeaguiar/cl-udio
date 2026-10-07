@@ -701,15 +701,23 @@ function frameV7(dt) {
   // na ida a home já sumiu: o globo sai recortado em círculo desde o primeiro quadro (sem o fundo do canvas);
   // na volta o círculo se abre até o quadro inteiro para encaixar no palco
   // na volta o círculo só se abre no último quarto, quando o canvas já está sobre o palco (antes ele mostrava o quadro escuro no meio do caminho)
-  const open = away ? 0 : clamp(1 - e7 / 0.25) ** 2, R1 = gp * 1.12;
-  const rad = R1 + (Math.hypot(fly7.w, fly7.h) - R1) * open, soft = 2 + 16 * (1 - e) + 70 * open;
+  // borda do círculo em degradê, rente ao globo: sem anel escuro do fundo do canvas em volta dele na sidebar
+  const open = away ? 0 : clamp(1 - e7 / 0.25) ** 2, R1 = gp * 0.98;
+  const rad = R1 + (Math.hypot(fly7.w, fly7.h) - R1) * open, soft = gp * 0.14 + 70 * open;
   // furo no lugar do Route Monitoring: no palco o widget fica por cima do globo; em voo o canvas está acima de tudo,
   // então o recorte tira a área do widget (convertida para o espaço do canvas, antes do transform)
   const t = $('pkTele').getBoundingClientRect(), cx0 = a.left + fly7.x, cy0 = a.top + fly7.y;
   const loc = (X, Y) => [(X - cx0 - tx - px) / s + px, (Y - cy0 - ty - py) / s + py];
   const [hx, hy] = loc(t.left, t.top), [hx2, hy2] = loc(t.right, t.bottom), hw = t.width ? hx2 - hx : 0, hh = t.width ? hy2 - hy : 0;
-  const m = `radial-gradient(circle at ${px.toFixed(1)}px ${py.toFixed(1)}px, #000 ${rad.toFixed(1)}px, transparent ${(rad + soft).toFixed(1)}px), linear-gradient(90deg, rgba(0,0,0,${e.toFixed(3)}), #000 28%), linear-gradient(#000, #000)`;
-  Object.assign(canvas.style, { webkitMask: m, mask: m,
+  const circle = `radial-gradient(circle at ${px.toFixed(1)}px ${py.toFixed(1)}px, #000 ${rad.toFixed(1)}px, transparent ${(rad + soft).toFixed(1)}px)`;
+  // Longe do palco basta o círculo, numa camada só: máscara de várias camadas com composição não funciona em todo navegador
+  // (no app do Gabriel ela era ignorada e o quadro escuro do canvas aparecia em volta do globo na sidebar)
+  if (away || !t.width || e7 > 0.4) {
+    ['webkitMaskSize', 'maskSize', 'webkitMaskPosition', 'maskPosition', 'webkitMaskRepeat', 'maskRepeat', 'webkitMaskComposite', 'maskComposite'].forEach(k => canvas.style[k] = '');
+    canvas.style.webkitMaskImage = canvas.style.maskImage = circle; return;
+  }
+  const m = `${circle}, linear-gradient(90deg, rgba(0,0,0,${e.toFixed(3)}), #000 28%), linear-gradient(#000, #000)`;
+  Object.assign(canvas.style, { webkitMaskImage: m, maskImage: m,
     webkitMaskSize: `auto, auto, ${hw.toFixed(1)}px ${hh.toFixed(1)}px`, maskSize: `auto, auto, ${hw.toFixed(1)}px ${hh.toFixed(1)}px`,
     webkitMaskPosition: `0 0, 0 0, ${hx.toFixed(1)}px ${hy.toFixed(1)}px`, maskPosition: `0 0, 0 0, ${hx.toFixed(1)}px ${hy.toFixed(1)}px`,
     webkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
@@ -723,7 +731,7 @@ function viewOff7(away) {
 }
 function dock7() {
   host.prepend(canvas); e7 = 0;
-  ['position', 'inset', 'left', 'top', 'width', 'height', 'zIndex', 'transform', 'transformOrigin', 'webkitMask', 'mask', 'webkitMaskComposite', 'maskComposite', 'webkitMaskSize', 'maskSize', 'webkitMaskPosition', 'maskPosition', 'webkitMaskRepeat', 'maskRepeat', 'pointerEvents'].forEach(k => canvas.style[k] = '');
+  ['position', 'inset', 'left', 'top', 'width', 'height', 'zIndex', 'transform', 'transformOrigin', 'webkitMask', 'mask', 'webkitMaskImage', 'maskImage', 'webkitMaskComposite', 'maskComposite', 'webkitMaskSize', 'maskSize', 'webkitMaskPosition', 'maskPosition', 'webkitMaskRepeat', 'maskRepeat', 'pointerEvents'].forEach(k => canvas.style[k] = '');
 }
 
 /* ---------- Loop ---------- */
