@@ -1119,6 +1119,14 @@ p { margin: 0; }
 .pk-rtip .dt { width: 8px; height: 8px; border-radius: 100px; background: var(--success); flex: none; }
 .pk-rtip.isp .dt { background: #eb8322; }
 .pk-rtip.bad .dt { background: var(--primary); }
+
+/* Busca da topbar: só o icon-button da lupa; o campo abre no hover ou no clique (pedido do Gabriel) e segue aberto com foco, texto ou lista */
+.topbar .search { width: 40px; overflow: hidden; background: transparent; cursor: pointer;
+  transition: width var(--motion-duration-300) var(--motion-easing-standard), background-color var(--motion-duration-100) var(--motion-easing-standard); }
+.topbar .search input { opacity: 0; transition: opacity var(--motion-duration-200) var(--motion-easing-standard); cursor: pointer; }
+.topbar .search:is(:hover, :focus-within, :has(input:not(:placeholder-shown))), .topbar .search-wrap.open .search { width: 240px; background: var(--input); cursor: text; }
+.topbar .search:is(:hover, :focus-within, :has(input:not(:placeholder-shown))) input, .topbar .search-wrap.open .search input { opacity: 1; cursor: text; }
+.topbar .search:focus-within { background: #3b4252; }
 </style>
 
 <div class="stage">
