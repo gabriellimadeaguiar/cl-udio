@@ -76,14 +76,28 @@ body { background: var(--color-background); color: var(--color-on-surface); font
 main { position: relative; z-index: 2; pointer-events: none; }
 .ch { min-height: 100vh; min-height: 100svh; display: flex; align-items: center; padding-inline: var(--gutter); box-sizing: border-box; }
 .ch > div { max-width: 32rem; display: grid; gap: var(--spacing-xl); pointer-events: auto; }
-.eyebrow { font: 500 .75rem/1rem var(--font-plain); letter-spacing: .14em; text-transform: uppercase; color: var(--color-on-surface-variant); display: flex; gap: var(--spacing-md); align-items: center; margin: 0; }
-.eyebrow b { width: 6px; height: 6px; border-radius: var(--corner-radius-full); background: var(--color-indicator-on-active); }
 h1, h2 { font-family: var(--font-display); font-weight: 600; font-stretch: 100%; margin: 0; text-wrap: balance; color: var(--color-on-surface); }
 h1 { font-size: var(--display-large); line-height: 1.03; letter-spacing: -.01em; }
 h2 { font-size: var(--headline-large); line-height: 1.1; letter-spacing: -.005em; }
-.kicker { font: 600 clamp(1rem, 1.6vw, 1.25rem)/1.2 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--color-on-surface); margin: 0; }
 .platforms { display: flex; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap; margin: 0; font: 400 .875rem/1.25rem var(--font-plain); color: var(--color-on-surface-variant); }
-.platforms .badge { color: var(--color-on-surface); background: var(--color-surface-container-high); }
+.platforms .badge { color: var(--color-on-surface); background: var(--color-surface-container-high); display: inline-flex; align-items: center; gap: var(--spacing-xs); }
+svg.os { width: 12px; height: 12px; flex: none; display: block; }
+.plats svg.os { width: 14px; height: 14px; color: var(--color-on-surface-variant); }
+.plats b > svg.os + svg.os { margin-left: -2px; }
+/* jogos suportados: duas faixas em loop, sentidos opostos */
+.games > div { max-width: 40rem; }
+.mq { display: grid; gap: var(--spacing-sm); -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+.mq-row { overflow: hidden; }
+.mq-track { display: flex; width: max-content; animation: mq var(--mq-dur, 48s) linear infinite; }
+.mq-row.rev .mq-track { animation-direction: reverse; }
+.mq:hover .mq-track { animation-play-state: paused; }
+.mq ul { list-style: none; margin: 0; padding: 0 var(--spacing-sm) 0 0; display: flex; gap: var(--spacing-sm); }
+.game { display: flex; align-items: center; gap: var(--spacing-sm); height: 44px; box-sizing: border-box; padding: 0 var(--spacing-lg); white-space: nowrap;
+  background: var(--color-surface-container); border: 1px solid var(--color-outline-variant); border-radius: var(--corner-radius-small);
+  font: 600 1.0625rem/1 var(--font-display); color: var(--color-on-surface); transition: border-color var(--motion-duration-quick) var(--motion-easing-standard), background-color var(--motion-duration-quick); }
+.game:hover { border-color: var(--color-outline); background: var(--color-surface-container-high); }
+.game svg.os { color: var(--color-on-surface-variant); }
+@keyframes mq { to { transform: translateX(-50%); } }
 .lead { font-size: 1.125rem; line-height: 1.75rem; color: var(--color-on-surface-variant); max-width: 30rem; margin: 0; }
 .note { font: 400 .75rem/1rem var(--font-plain); letter-spacing: .04em; color: var(--color-on-surface-variant); margin: 0; }
 .row { display: flex; gap: var(--spacing-lg); align-items: center; flex-wrap: wrap; }
@@ -141,7 +155,7 @@ h2 { font-size: var(--headline-large); line-height: 1.1; letter-spacing: -.005em
   .stats { gap: var(--spacing-md); }
   .plats li { grid-template-columns: 1fr; gap: var(--spacing-xs); }
 }
-@media (prefers-reduced-motion: reduce) { .cta, .ping, .lang button { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .cta, .ping, .lang button, .game { transition: none; } .mq-track { animation: none; } .mq { -webkit-mask-image: none; mask-image: none; } .mq-row { overflow: visible; } .mq-track { width: auto; } .mq ul { flex-wrap: wrap; padding: 0; } .mq ul[aria-hidden] { display: none; } }
 </style>
 
 <canvas id="gl" aria-hidden="true"></canvas>
@@ -196,13 +210,12 @@ h2 { font-size: var(--headline-large); line-height: 1.1; letter-spacing: -.005em
         <a class="cta" data-href href="https://www.exitlag.com/pt/lp/trial" target="_blank" rel="noopener"><span data-i="cta">Testar grátis por 3 dias</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <p class="note" data-i="n0">Sem cartão de crédito.</p>
       </div>
-      <p class="platforms"><span data-i="avail">Disponível para</span> <span class="badge">PC</span><span class="badge">iOS</span><span class="badge">Android</span></p>
+      <p class="platforms"><span data-i="avail">Disponível para</span> <span class="badge"><svg class="os" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M0 0h11.4v11.4H0zM12.6 0H24v11.4H12.6zM0 12.6h11.4V24H0zM12.6 12.6H24V24H12.6z"/></svg>PC</span><span class="badge"><svg class="os" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>iOS</span><span class="badge"><svg class="os" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z"/></svg>Android</span></p>
     </div>
   </section>
 
   <section class="ch">
     <div>
-      <p class="eyebrow"><b></b><span data-i="e1">O problema</span></p>
       <h2 data-i="h1">A rota da sua operadora não foi feita para jogar.</h2>
       <p class="lead" data-i="p1">Ela dá voltas, passa por trechos congestionados e oscila no meio do round. Na tela, isso vira tiro que não registra e personagem que teleporta.</p>
     </div>
@@ -210,7 +223,6 @@ h2 { font-size: var(--headline-large); line-height: 1.1; letter-spacing: -.005em
 
   <section class="ch">
     <div>
-      <p class="eyebrow"><b></b><span data-i="e2">Multipath</span></p>
       <h2 data-i="h2">Um pacote. Várias rotas. Ao mesmo tempo.</h2>
       <p class="lead" data-i="p2">A ExitLag duplica o tráfego do jogo pela própria rede e manda cada cópia por um caminho diferente. Vale a que chegar primeiro.</p>
       <p class="notvpn" data-i="v2">Não é VPN. Seu IP e sua navegação ficam como estão; só o jogo passa pela ExitLag.</p>
@@ -219,7 +231,6 @@ h2 { font-size: var(--headline-large); line-height: 1.1; letter-spacing: -.005em
 
   <section class="ch">
     <div>
-      <p class="eyebrow"><b></b><span data-i="e3">Estabilidade</span></p>
       <h2 data-i="h3">Se uma rota oscila, outra já entregou.</h2>
       <p class="lead" data-i="p3">A troca acontece sem você perceber. O ping não pula, e a partida continua decidida pela sua mira.</p>
     </div>
@@ -227,7 +238,6 @@ h2 { font-size: var(--headline-large); line-height: 1.1; letter-spacing: -.005em
 
   <section class="ch">
     <div>
-      <p class="eyebrow"><b></b><span data-i="e4">Rede global</span></p>
       <h2 data-i="h4">Uma rede inteira trabalhando pela sua conexão.</h2>
       <div class="stats">
         <div><strong>+1.500</strong><span data-i="s1">servidores pelo mundo</span></div>
@@ -237,13 +247,22 @@ h2 { font-size: var(--headline-large); line-height: 1.1; letter-spacing: -.005em
     </div>
   </section>
 
+
+  <section class="ch games">
+    <div>
+      <h2 data-i="h7">Quase 1.800 jogos. O seu está na lista.</h2>
+      <p class="lead" data-i="p7">Escolha o jogo no app e a ExitLag ajusta as rotas para o servidor dele.</p>
+      <div class="mq" id="games"></div>
+      <p class="note" data-i="n7">Alguns dos jogos suportados no PC e no celular.</p>
+    </div>
+  </section>
+
   <section class="ch">
     <div>
-      <p class="eyebrow"><b></b><span data-i="e5">Onde jogar</span></p>
       <h2 data-i="h5">No PC, no iOS e no Android.</h2>
       <ul class="plats">
-        <li><b>PC</b><span data-i="pc">Valorant, CS2, League of Legends, Fortnite e quase 1.800 jogos.</span></li>
-        <li><b data-i="mob">iOS e Android</b><span data-i="mobd">Free Fire, Roblox, CoD Mobile e outros, no mesmo plano.</span></li>
+        <li><b><svg class="os" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M0 0h11.4v11.4H0zM12.6 0H24v11.4H12.6zM0 12.6h11.4V24H0zM12.6 12.6H24V24H12.6z"/></svg>PC</b><span data-i="pc">Valorant, CS2, League of Legends, Fortnite e quase 1.800 jogos.</span></li>
+        <li><b><svg class="os" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg><svg class="os" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z"/></svg><span data-i="mob">iOS e Android</span></b><span data-i="mobd">Free Fire, Roblox, CoD Mobile e outros, no mesmo plano.</span></li>
         <li><b>Router <span class="badge">BETA</span></b><span data-i="rtd">A ExitLag direto no roteador. Em teste com os primeiros jogadores.</span></li>
       </ul>
     </div>
@@ -251,7 +270,6 @@ h2 { font-size: var(--headline-large); line-height: 1.1; letter-spacing: -.005em
 
   <section class="ch">
     <div>
-      <p class="eyebrow"><b></b><span data-i="e6">3 dias grátis</span></p>
       <h2 data-i="h6">Jogue a próxima partida sem lag.</h2>
       <p class="lead" data-i="p6">Instale, escolha o jogo e veja o ping estabilizar. Se não fizer diferença, é só não assinar.</p>
       <div class="row">
@@ -292,6 +310,7 @@ const T = {
     e5: 'Onde jogar', h5: 'No PC, no iOS e no Android.',
     pc: 'Valorant, CS2, League of Legends, Fortnite e quase 1.800 jogos.', mob: 'iOS e Android',
     mobd: 'Free Fire, Roblox, CoD Mobile e outros no celular, no mesmo plano.', rtd: 'A ExitLag direto no roteador. Em teste com os primeiros jogadores.',
+    h7: 'Quase 1.800 jogos. O seu está na lista.', p7: 'Escolha o jogo no app e a ExitLag ajusta as rotas para o servidor dele.', n7: 'Alguns dos jogos suportados no PC e no celular.',
     e6: '3 dias grátis', h6: 'Jogue a próxima partida sem lag.',
     p6: 'Instale, escolha o jogo e veja o ping estabilizar. Se não fizer diferença, é só não assinar.',
     href: 'https://www.exitlag.com/pt/lp/trial', html: 'pt-BR'
@@ -313,11 +332,25 @@ const T = {
     e5: 'Where to play', h5: 'On PC, iOS and Android.',
     pc: 'Valorant, CS2, League of Legends, Fortnite and almost 1,800 games.', mob: 'iOS and Android',
     mobd: 'Free Fire, Roblox, CoD Mobile and more on your phone, on the same plan.', rtd: 'ExitLag right on your router. Testing with the first players.',
+    h7: 'Almost 1,800 games. Yours is on the list.', p7: 'Pick your game in the app and ExitLag tunes the routes to its server.', n7: 'A few of the games supported on PC and mobile.',
     e6: '3 days free', h6: 'Play your next match without lag.',
     p6: 'Install it, pick your game and watch your ping settle. If it makes no difference, just don’t subscribe.',
     href: 'https://www.exitlag.com/', html: 'en'
   }
 };
+
+/* ---------- Jogos suportados ---------- */
+{
+  const ICO = { ios: 'M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701', pc: 'M0 0h11.4v11.4H0zM12.6 0H24v11.4H12.6zM0 12.6h11.4V24H0zM12.6 12.6H24V24H12.6z', mob: 'M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z' };
+  const rows = [
+    [['Valorant','pc'],['Counter-Strike 2','pc'],['League of Legends','pc'],['Fortnite','pc'],['Apex Legends','pc'],['Call of Duty: Warzone','pc'],['Dota 2','pc'],['Rainbow Six Siege','pc'],['PUBG: Battlegrounds','pc'],['Overwatch 2','pc'],['Marvel Rivals','pc'],['Rocket League','pc']],
+    [['Free Fire','mob'],['Roblox','mob'],['Call of Duty: Mobile','mob'],['Mobile Legends','mob'],['Genshin Impact','pc'],['Lost Ark','pc'],['World of Warcraft','pc'],['Path of Exile 2','pc'],['EA Sports FC','pc'],['Tibia','pc'],['Deadlock','pc'],['The Finals','pc']]
+  ];
+  const box = document.getElementById('games');
+  const svg = d => '<svg class="os" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="' + d + '"/></svg>';
+  const list = (r, hidden) => '<ul' + (hidden ? ' aria-hidden="true"' : '') + '>' + r.map(([n, k]) => '<li class="game">' + (k === 'mob' ? svg(ICO.ios) : '') + svg(ICO[k]) + n + '</li>').join('') + '</ul>';
+  box.innerHTML = rows.map((r, i) => '<div class="mq-row' + (i ? ' rev' : '') + '"><div class="mq-track" style="--mq-dur:' + (52 + i * 8) + 's">' + list(r) + list(r, true) + '</div></div>').join('');
+}
 let lang = 'pt';
 try { const s = localStorage.getItem('xl-lang'); if (s && T[s]) lang = s; else if (!navigator.language.toLowerCase().startsWith('pt')) lang = 'en'; } catch { }
 function applyLang(l) {
@@ -583,7 +616,9 @@ const K = {
   lat: [-6, 0, 0, 0, 14, 6, -2].map(d => clamp(midLat + d, -60, 60)),
   dist: [near + 1.2, near + 0.4, near, near, 5.4, 5.2, near + 0.9]
 };
+const CH = [0, 1, 2, 3, 4, 4.5, 5, 6];
 function state(p) {
+  { const u = clamp(p) * (CH.length - 1), i = Math.min(CH.length - 2, Math.floor(u)); p = (CH[i] + (CH[i + 1] - CH[i]) * (u - i)) / 6; }
   return {
     lon: track(K.lon, p), lat: track(K.lat, p), dist: track(K.dist, p),
     spin: Math.PI * 2 * ramp(p, 0.56, 0.8),
