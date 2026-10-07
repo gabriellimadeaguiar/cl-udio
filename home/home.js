@@ -1313,6 +1313,7 @@ function startPmap() {
   // ordem de teste: das mais perto para as mais longe, como um analisador faria
   const order = [...arcs].sort((a, b) => a.ms - b.ms);
   order.forEach((a, o) => { a.t0 = 0.8 + o * 0.32; a.tt = 3 + (o + 1) * PM_STEP; });
+  lastCont = null; lastTested = 0;
   pmap = { t: 0, arcs, best: order.slice(0, 3).map(a => a.k), done: false };
   $('app').dataset.pmap = 'on'; lockNav(true); paintCta();
   history.replaceState(null, '', '#passive');
@@ -1322,18 +1323,57 @@ function endPmap() {
   if (!pmap) return;
   const wasBusy = !pmap.done;
   pmGroup.children.forEach(m => { m.geometry.dispose(); m.material.dispose(); }); pmGroup.clear();
+  tilt.scale.set(1, 1, 1); tilt.rotation.y = 0; ball.visible = false;
   pmap = null; delete $('app').dataset.pmap; lockNav(false); paintCta();
   if (wasBusy) promo.armed = true; // saiu antes do fim (Skip ou outra versão): o mapa conta como pronto
   rebuild(); frame0.dist = fitDist();
 }
 let pmPaintT = 0;
+/* ---------- Globo brincalhão durante o mapa passivo (pedido do Gabriel: entreter enquanto mede) ----------
+   - Procurando você: o globo balança de um lado para o outro, como quem olha em volta.
+   - A cada continente ele gira até ficar de frente para a rota e chega com um "boing" de gelatina.
+   - Uma bolinha de pacote joga pingue-pongue entre você e o continente, e muda de jeito conforme a métrica:
+     ping vai e volta rápido; jitter treme no caminho; perda de pacote às vezes estoura no meio e renasce em você;
+     hops pula de estação em estação; estabilidade desliza calma, respirando.
+   - Continente medido: o globo dá um pulinho. Melhores escolhidas: um giro de comemoração antes de voltar a você. */
+const ball = new THREE.Mesh(new THREE.SphereGeometry(0.014, 16, 12), new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, depthWrite: false }));
+ball.visible = false; globe.add(ball);
+const bTmp = new THREE.Vector3(), bN = new THREE.Vector3();
+let jelly = { t: -10, a: 0 }, lastCont = null, lastTested = 0;
+const boing = a => { jelly = { t: time, a }; };
+function framePlay(dt, t, chosen) {
+  const now = pmap.arcs.find(a => t >= a.tt - PM_STEP && t < a.tt);
+  // câmera: em você enquanto localiza; depois, de frente para o meio do caminho até o continente medido
+  let yaw = (-origin[1] - 90) * D, pitch = clamp(origin[0], -40, 40) * D * 0.8;
+  if (now && !reduce) { const c = CONTS[now.k].c, [la, lo] = toLL(vO.clone().add(toV(c[0], c[1]))); yaw = (-lo - 90) * D; pitch = clamp(la, -45, 45) * D * 0.8; }
+  if (t < 3 && !reduce) yaw += Math.sin(t * 5) * 0.18 * clamp(1 - t / 3) * clamp(t * 2); // olhando em volta
+  tilt.rotation.y = chosen && !reduce ? ease(clamp((t - (PM_DONE - 0.6)) / 1.6)) * Math.PI * 2 : 0; // giro de comemoração (uma volta inteira)
+  frame0.yaw = yaw; frame0.pitch = pitch; frame0.dist = FULL9;
+  if (now && now.k !== lastCont) { lastCont = now.k; boing(0.05); } // chegou num continente
+  const tested = pmap.arcs.filter(a => t >= a.tt).length; if (tested > lastTested) { lastTested = tested; boing(0.035); } // continente medido
+  // gelatina: estica de um lado, achata do outro, e assenta
+  const je = time - jelly.t, j = reduce ? 0 : jelly.a * Math.exp(-je * 4.5) * Math.sin(je * 22);
+  tilt.scale.set(1 + j, 1 - j, 1 + j);
+  // bolinha de pacote
+  if (!now || reduce || pmap.done) { ball.visible = false; return; }
+  const m = metricAt(now, t - (now.tt - PM_STEP), PM_STEP)[0], tri = x => 1 - Math.abs(1 - 2 * (x % 1));
+  let u = tri(time * 0.55), lift = 0, sc = 1, a = 1;
+  if (m === 'Measuring ping') u = tri(time * 0.9);
+  else if (m === 'Tracing the hops') { const n = 6, x = (time * 1.4) % (n * 2), k = Math.floor(x), f = x - k, p = k < n ? (k + ease(f)) / n : (2 * n - k - ease(f)) / n; u = p; lift = Math.sin(Math.PI * f) * 0.05; }
+  else if (m === 'Checking packet loss') { const cyc = time * 0.5, f = cyc % 1, lost = Math.sin(Math.floor(cyc) * 7.3) > 0.2; u = f; if (lost && f > 0.55) { sc = Math.max(0, 1 - (f - 0.55) * 8) * (1 + 2 * clamp((f - 0.55) * 8)); a = Math.max(0, 1 - (f - 0.55) * 6); } }
+  else if (m === 'Testing route stability') { u = 0.5 - 0.5 * Math.cos(time * 0.9); sc = 1 + 0.25 * Math.sin(time * 3); }
+  now.curve.getPointAt(clamp(u), bTmp); bN.copy(bTmp).normalize();
+  if (lift) bTmp.addScaledVector(bN, lift);
+  if (m === 'Evaluating jitter') bTmp.add(new THREE.Vector3((Math.random() - 0.5) * 0.02, (Math.random() - 0.5) * 0.02, (Math.random() - 0.5) * 0.02));
+  ball.position.copy(bTmp); ball.scale.setScalar(sc * (1 + 0.6 * Math.max(0, 1 - Math.min(u, 1 - u) * 12))); // incha um pouco ao bater nas pontas
+  ball.material.opacity = a; ball.visible = a > 0.02;
+}
 function framePmap(dt) {
   pmGroup.visible = !!pmap;
   if (!pmap) return;
   pmap.t += dt * (window.PK_SCANX || 1); const t = pmap.t;
-  // o globo para em você e mostra o planeta inteiro enquanto mede; o painel de detalhes ainda empurra para a esquerda
-  frame0.yaw = (-origin[1] - 90) * D; frame0.pitch = clamp(origin[0], -40, 40) * D * 0.8; frame0.dist = FULL9;
   const chosen = t >= PM_DONE - 0.6;
+  framePlay(dt, t, chosen);
   pmap.arcs.forEach(a => {
     const isBest = pmap.best.includes(a.k), tested = t >= a.tt;
     a.u.uTime.value = time;
