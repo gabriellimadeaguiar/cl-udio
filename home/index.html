@@ -1034,10 +1034,87 @@ p { margin: 0; }
 .app[data-v="9"] .pk-tele .pk-kpis { column-gap: var(--spacing-lg); row-gap: var(--spacing-lg); }
 /* Immersive: o painel do jogo fica acima do Route Monitoring, para a lista de servidores abrir por cima dele */
 .app:is([data-v="8"], [data-v="9"]) .pk-l { z-index: 5; }
+
+/* ---------- Login e carregamento (network map) ----------
+   Sobre o globo do Immersive: o formulário e o mapa ocupam a coluna da esquerda, o globo gira à direita.
+   Durante o fluxo a interface da home some; no fim ela entra por cima do globo já centrado. */
+.boot { display: none; }
+.app[data-boot] .boot { display: block; position: absolute; inset: 0; z-index: 20; pointer-events: none; }
+.app[data-boot] .boot::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #030407 0, #030407e6 22%, #03040700 50%); transition: opacity .8s ease; }
+.app[data-boot="out"] .boot::before { opacity: 0; }
+.app[data-boot] :is(.sidebar, .topbar, .v9-bar, .pk-orbit, .pk-head, .pk-l, .pk-tele, .pk-tag:not(.boot-tag)) { opacity: 0 !important; pointer-events: none !important; }
+.app.boot-out :is(.topbar, .v9-bar, .pk-orbit, .pk-head) { animation: bootIn .8s cubic-bezier(.22, 1, .36, 1) both; }
+.app.boot-out .v9-bar { animation-delay: .05s; } .app.boot-out .topbar { animation-delay: .1s; } .app.boot-out .pk-head { animation-delay: .2s; }
+@keyframes bootIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.boot-win { position: absolute; top: var(--spacing-xl); right: var(--spacing-xl); pointer-events: auto; }
+.boot-login, .boot-scan { position: absolute; left: 96px; top: 50%; width: 360px; display: flex; flex-direction: column; pointer-events: auto;
+  transition: opacity .5s ease, transform .7s cubic-bezier(.22, 1, .36, 1); }
+.boot-login { gap: var(--spacing-xl); transform: translateY(-50%); }
+.app[data-boot]:not([data-boot="login"]) .boot-login { opacity: 0; transform: translate(-24px, -50%); pointer-events: none; visibility: hidden; transition: opacity .4s ease, transform .5s ease, visibility 0s .5s; }
+.boot-scan { gap: var(--spacing-lg); transform: translate(24px, -50%); opacity: 0; visibility: hidden; }
+.app[data-boot="scan"] .boot-scan { opacity: 1; visibility: visible; transform: translateY(-50%); transition-delay: .25s; }
+.app[data-boot="out"] .boot-scan { opacity: 0; transform: translate(-24px, -50%); }
+.bl-brand .logo { width: 105px; height: 24px; }
+.bl-head, .bs-head { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+.bl-head h1, .bs-head h2 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 44px; letter-spacing: 0; color: var(--on-surface); text-wrap: balance; }
+.bs-head h2 { font-size: 32px; line-height: 40px; }
+.bl-head p, .bs-head p { font-size: 14px; line-height: 20px; letter-spacing: .25px; min-height: 20px; }
+.bl-fields { display: flex; flex-direction: column; gap: var(--spacing-lg); }
+.bf { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+.bf-l { font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: .5px; color: var(--on-surface-variant); }
+/* mesmo visual do input-search: só a cor do container muda no hover e no foco */
+.bf-in { height: 40px; display: flex; align-items: center; gap: var(--spacing-sm); padding: 0 var(--spacing-xs) 0 var(--spacing-md); background: var(--input); border-radius: 4px; transition: background-color var(--motion-duration-100) var(--motion-easing-standard); }
+.bf-in:hover, .bf-in:focus-within { background: #3b4252; }
+.bf-in:focus-within { box-shadow: inset 0 0 0 1px var(--stroke); }
+.bf-in input { flex: 1; min-width: 0; height: 100%; background: none; border: 0; outline: 0; color: var(--on-surface); font: inherit; font-size: 14px; letter-spacing: .25px; padding: 0; }
+.bf-eye { width: 32px; height: 32px; color: var(--on-surface-variant); }
+.bf-eye svg { width: 20px; height: 20px; }
+.bf-eye[aria-pressed="true"] { color: var(--on-surface); }
+.bf-err { font-size: 12px; line-height: 16px; color: var(--primary); }
+.bl-row { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-lg); font-size: 14px; line-height: 20px; }
+.bl-rem { display: inline-flex; align-items: center; gap: var(--spacing-sm); }
+.bl-go { width: 100%; }
+.bl-or { display: flex; align-items: center; gap: var(--spacing-md); font-size: 12px; line-height: 16px; letter-spacing: .4px; color: var(--on-surface-variant); }
+.bl-or::before, .bl-or::after { content: ""; flex: 1; height: 1px; background: var(--divider); }
+.bl-social { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-sm); }
+.bl-new { font-size: 14px; line-height: 20px; }
+.bl-new .link { color: var(--on-surface); }
+.bs-badge { align-self: flex-start; }
+.bs-bar { height: 4px; border-radius: 100px; background: var(--input); overflow: hidden; }
+.bs-bar i { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--on-surface); transition: width .2s linear; }
+.bs-steps { list-style: none; display: flex; flex-direction: column; gap: var(--spacing-sm); font-size: 14px; line-height: 20px; color: var(--on-surface-variant); counter-reset: bs; }
+.bs-steps li { display: flex; align-items: center; gap: var(--spacing-md); transition: color .3s ease; }
+.bs-steps li::before { content: ""; width: 8px; height: 8px; margin: 0 4px; border-radius: 100px; border: 1px solid var(--stroke); flex: none; transition: background-color .3s ease, border-color .3s ease; }
+.bs-steps li.now { color: var(--on-surface); }
+.bs-steps li.now::before { border-color: var(--on-surface); animation: bsPulse 1s ease-in-out infinite; }
+.bs-steps li.done { color: var(--on-surface); }
+.bs-steps li.done::before { background: var(--success); border-color: var(--success); }
+@keyframes bsPulse { 50% { box-shadow: 0 0 0 4px #ebeced26; } }
+.bs-list { display: flex; flex-direction: column; gap: var(--spacing-xs); padding-top: var(--spacing-sm); border-top: 1px solid var(--divider); }
+.bs-row { display: grid; grid-template-columns: 16px 1fr auto 64px; align-items: center; gap: var(--spacing-sm); height: 24px; font-size: 12px; line-height: 16px; letter-spacing: .4px; opacity: .35; transition: opacity .3s ease; }
+.bs-row .bs-n { color: var(--on-surface); font-weight: 500; }
+.bs-row .bs-ms { text-align: right; color: var(--on-surface-variant); }
+.bs-row .dt { width: 6px; height: 6px; margin-left: 4px; border-radius: 100px; background: var(--stroke); }
+.bs-row.testing, .bs-row.ok { opacity: 1; }
+.bs-row.testing .dt { background: var(--on-surface); animation: bsBlink .5s steps(2) infinite; }
+.bs-row.ok .bs-ms { color: var(--on-surface); }
+.bs-row.best { opacity: 1; }
+.bs-row.best .dt { background: var(--success); box-shadow: 0 0 6px var(--success); }
+.bs-row.best .bs-ms { color: var(--success); }
+.bs-row.dim { opacity: .4; }
+@keyframes bsBlink { 50% { opacity: .2; } }
+.bs-skip { align-self: flex-start; font-size: 12px; color: var(--on-surface-variant); }
+.boot-tag { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .boot-login, .boot-scan, .app.boot-out * { transition: none !important; animation: none !important; } }
+.boot :is(h1, h2, p, ol) { margin: 0; padding: 0; }
+.boot .link { color: var(--on-surface); }
+.boot .bl-row .link, .boot .bs-skip { color: var(--on-surface-variant); }
+.boot .bl-row .link:hover, .boot .bs-skip:hover { color: var(--on-surface); }
 </style>
 
 <div class="stage">
   <nav class="vchips" aria-label="Layout version">
+    <button class="vchip" type="button" data-boot="1" aria-pressed="false">Login &amp; loading</button>
     <button class="vchip" type="button" data-v="7" aria-pressed="true">Persistent globe</button>
     <button class="vchip" type="button" data-v="9" aria-pressed="false">Immersive globe</button>
   </nav>

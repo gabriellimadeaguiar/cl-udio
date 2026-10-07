@@ -35,6 +35,7 @@ out = out[:k] + stage.strip() + '\n\n          ' + out[j:]
 out = out.replace('</style>', '</style>\n<style>\n' + css + '</style>', 1)
 # chips de versão acima do app, fora da interface (pedido do Gabriel); a versão fica em data-v no .app
 VCHIPS = '''<nav class="vchips" aria-label="Layout version">
+    <button class="vchip" type="button" data-boot="1" aria-pressed="false">Login &amp; loading</button>
     <button class="vchip" type="button" data-v="7" aria-pressed="true">Persistent globe</button>
     <button class="vchip" type="button" data-v="9" aria-pressed="false">Immersive globe</button>
   </nav>

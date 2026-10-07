@@ -408,13 +408,13 @@ function smoothPath(a, b, w, lateral, lift, n = 200) {
   return pts;
 }
 let routeR = 1; // espessura relativa das rotas: afina quando a câmera chega perto
-function makeRoute(pts, color, radius, speed, gain = 1) {
+function makeRoute(pts, color, radius, speed, gain = 1, group = routeGroup) {
   radius *= routeR;
   const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal');
   const uniforms = { uCol: { value: color }, uBad: { value: C.bad }, uDraw: { value: 0 }, uOp: { value: 0 }, uFail: { value: 0 }, uTime: { value: 0 }, uSpeed: { value: speed }, uGain: { value: gain } };
   for (const halo of [0, 1]) {
     const mat = new THREE.ShaderMaterial({ uniforms: { ...uniforms, uHalo: { value: halo } }, vertexShader: routeVS, fragmentShader: routeFS, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
-    routeGroup.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 300, halo ? radius * 4.5 : radius, 10, false), mat));
+    group.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 300, halo ? radius * 4.5 : radius, 10, false), mat));
   }
   return { curve, u: uniforms, len: curve.getLength() };
 }
@@ -447,6 +447,7 @@ const markers = new THREE.Points(mkGeo, mkMat); markers.frustumCulled = false; g
 
 const frame0 = { yaw: 0, pitch: 0, dist: 4, chord: 1 }, cur = { yaw: 0, pitch: 0, dist: 6 };
 let xlShow = 0, xlStart = -10;
+let boot = null; // login e carregamento (network map): ver "Login e carregamento" mais abaixo
 
 function rebuild() {
   const g = GAMES[sel], sv = REGIONS[g.region].c;
@@ -603,6 +604,7 @@ composer.addPass(bloom);
 let vw = 1, vh = 1, bandCut = 0, bandSide = 0, bandLeft = 0, bandRight = 0, headBottom = 0, bandBottom = 0;
 // Distância da câmera para a rota inteira caber na faixa livre do globo (entre o cabeçalho e o widget).
 function fitDist() {
+  if (boot) return boot.dist;
   if (isV7() && (away7 || e7 > 0.35)) return 4.8;
   if (isV8() && !isV9()) return 6;
   if (isV9() && show9) return 5.2; // órbita aberta: o planeta inteiro, com os jogos em volta // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
@@ -742,7 +744,7 @@ syncThumbs8();
 // Com o mouse sobre o globo a órbita abre numa mola (raio cresce com leve overshoot) e as capas entram em cascata a partir do destaque.
 let show9 = false, r9 = 0, v9 = 0, orbR = [1, 1, 0, 0];
 $('pk').addEventListener('pointermove', e => {
-  if (!isV9()) return;
+  if (!isV9() || boot) return;
   const b = canvas.getBoundingClientRect(), k = b.width / vw, [rx, ry, cx, cy] = orbR;
   const dx = (e.clientX - b.left) / k - cx, dy = (e.clientY - b.top) / k - cy, m = show9 ? 70 : 10;
   const inside = (dx / (rx + m)) ** 2 + (dy / (ry + m)) ** 2 < 1;
@@ -830,6 +832,155 @@ function frameV8(dt) {
   });
 }
 
+/* ---------- Login e carregamento (network map) ----------
+   Pedido do Gabriel: uma versão do login e do carregamento com a análise de rotas.
+   Login sobre o mesmo globo do Immersive, girando devagar à direita; ao entrar, o formulário dá lugar ao network map:
+   localiza você, traça rotas até as regiões de servidores, mede o ping de cada uma e escolhe as melhores.
+   No fim o globo volta ao centro e a home do Immersive entra por cima, já com a rota do jogo em destaque. */
+const EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const bootEl = document.createElement('div'); bootEl.className = 'boot'; bootEl.setAttribute('aria-live', 'polite');
+bootEl.innerHTML = `
+  <div class="boot-win"></div>
+  <form class="boot-login" id="bootLogin" novalidate aria-labelledby="bootT">
+    <div class="bl-brand"></div>
+    <div class="bl-head"><h1 id="bootT">Welcome back</h1><p class="t-var">Sign in to keep your games stable.</p></div>
+    <div class="bl-fields">
+      <label class="bf"><span class="bf-l">Email</span><span class="bf-in"><input type="email" id="bootEmail" value="player@email.com" autocomplete="username" required></span></label>
+      <label class="bf"><span class="bf-l">Password</span><span class="bf-in"><input type="password" id="bootPass" value="exitlag-demo" autocomplete="current-password" required><button class="icon-btn bf-eye" type="button" id="bootEye" aria-label="Show password" aria-pressed="false">${EYE}</button></span></label>
+      <p class="bf-err" id="bootErr" hidden>Enter your email and password.</p>
+    </div>
+    <div class="bl-row"><span class="bl-rem"><button class="toggle on" type="button" role="switch" aria-checked="true" id="bootRem" aria-labelledby="bootRemL"><i></i></button><span id="bootRemL">Remember me</span></span><a class="link" href="#" id="bootForgot">Forgot password?</a></div>
+    <button class="btn filled bl-go" type="submit">Sign in</button>
+    <div class="bl-or"><span>or continue with</span></div>
+    <div class="bl-social"><button class="btn outlined" type="button" data-sso>Google</button><button class="btn outlined" type="button" data-sso>Discord</button><button class="btn outlined" type="button" data-sso>Steam</button></div>
+    <p class="bl-new t-var">New to ExitLag? <a class="link" href="#" id="bootTrial">Start your free trial</a></p>
+  </form>
+  <section class="boot-scan" aria-labelledby="bsT">
+    <span class="badge neutral bs-badge"><span class="live-dot"></span>Network map</span>
+    <div class="bs-head"><h2 id="bsT">Locating you</h2><p class="t-var" id="bsSub"></p></div>
+    <div class="bs-bar" role="progressbar" aria-label="Route analysis" aria-valuemin="0" aria-valuemax="100"><i id="bsBar"></i></div>
+    <ol class="bs-steps" id="bsSteps"><li>Locate you</li><li>Map server regions</li><li>Test every route</li><li>Choose the best routes</li></ol>
+    <div class="bs-list" id="bsList" role="list"></div>
+    <button class="link bs-skip" type="button" id="bsSkip">Skip</button>
+  </section>
+  <div class="pk-tag boot-tag" id="bootTag"></div>`;
+$('app').append(bootEl);
+{ // marca e controles da janela vêm do próprio protótipo
+  const lg = document.querySelector('.sidebar .logo'); if (lg) bootEl.querySelector('.bl-brand').append(lg.cloneNode(true));
+  const win = document.querySelectorAll('.topbar .btn-group'); if (win.length) bootEl.querySelector('.boot-win').append(win[win.length - 1].cloneNode(true));
+}
+const bootRows = Object.entries(REGIONS);
+$('bsList').innerHTML = bootRows.map(([k, r]) => `<div class="bs-row" role="listitem" data-r="${k}"><i class="dt"></i><span class="bs-n">${r.n}</span><span class="t-var">${r.c[2]}</span><span class="bs-ms tnum">–</span></div>`).join('');
+const bootGroup = new THREE.Group(); globe.add(bootGroup);
+$('bootEye').addEventListener('click', e => { const b = e.currentTarget, show = b.getAttribute('aria-pressed') !== 'true'; $('bootPass').type = show ? 'text' : 'password'; b.setAttribute('aria-pressed', show); b.setAttribute('aria-label', show ? 'Hide password' : 'Show password'); });
+$('bootRem').addEventListener('click', e => { const t = e.currentTarget, on = !t.classList.contains('on'); t.classList.toggle('on', on); t.setAttribute('aria-checked', on); });
+['bootForgot', 'bootTrial'].forEach(id => $(id).addEventListener('click', e => e.preventDefault()));
+bootEl.querySelectorAll('[data-sso]').forEach(b => b.addEventListener('click', () => scanBoot()));
+$('bootLogin').addEventListener('submit', e => {
+  e.preventDefault();
+  const ok = /.+@.+\..+/.test($('bootEmail').value) && $('bootPass').value.length > 0;
+  $('bootErr').hidden = ok; if (ok) scanBoot();
+});
+$('bsSkip').addEventListener('click', () => { if (boot && boot.phase === 'scan') boot.t = Math.max(boot.t, 6.2); });
+
+function startBoot() {
+  if (boot) endBoot();
+  setV('9'); history.replaceState(null, '', '#login');
+  vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.boot ? 'true' : 'false'));
+  setPanel8(false); setShow9(false); $('app').classList.remove('sb-open');
+  // globo à direita, girando devagar, centrado em você
+  const [lat, lon] = [origin[0], origin[1]];
+  boot = { phase: 'login', t: 0, dist: 5.2, off: 0, yaw0: (-lon - 90) * D + 0.6, pitch: clamp(lat, -40, 40) * D * 0.6, arcs: [], best: [] };
+  $('app').dataset.boot = 'login'; $('app').classList.remove('boot-out');
+  $('bootErr').hidden = true; $('bsBar').style.width = '0%';
+  [...$('bsSteps').children].forEach(li => li.className = '');
+  [...$('bsList').children].forEach(r => { r.className = 'bs-row'; r.querySelector('.bs-ms').textContent = '–'; });
+  $('bsList').style.order = ''; bootRows.forEach((_, i) => $('bsList').children[i].style.order = i);
+  frame0.dist = boot.dist;
+  setTimeout(() => $('bootEmail').focus({ preventScroll: true }), 400);
+}
+function scanBoot() {
+  if (!boot || boot.phase !== 'login') return;
+  boot.phase = 'scan'; boot.t = 0; $('app').dataset.boot = 'scan';
+  $('bsSub').textContent = '';
+  // uma rota (arco) até cada região de servidores; o ping simulado é o mesmo da home (distância), com um pequeno sorteio
+  const saveR = routeR; routeR = (4.4 - 1) / 2;
+  boot.arcs = bootRows.map(([k, r], i) => {
+    let v = toV(r.c[0], r.c[1]), w = vO.angleTo(v);
+    if (w < 0.03) { v = toV(r.c[0] + 1.2, r.c[1] + 1.4); w = vO.angleTo(v); }
+    const side = (i % 2 ? 1 : -1) * 0.12; // arcos baixos e levemente curvos, alternando o lado, para não virarem raios saindo do globo
+    const a = makeRoute(smoothPath(vO, v, w, u => side * Math.sin(Math.PI * u), 0.3), C.dim.clone(), 0.0026, 0.5 + i * 0.03, 0.6, bootGroup);
+    return { ...a, k, ms: estPing(k) + Math.round(Math.random() * 6), w };
+  });
+  routeR = saveR;
+  // as melhores: as 3 de menor ping
+  boot.best = [...boot.arcs].sort((a, b) => a.ms - b.ms).slice(0, 3).map(a => a.k);
+  boot.dist = 4.4; frame0.dist = boot.dist;
+}
+// sai do fluxo: limpa as rotas do mapa e devolve o globo à home
+function endBoot(keepHash) {
+  if (!boot) return;
+  bootGroup.children.forEach(m => { m.geometry.dispose(); m.material.dispose(); }); bootGroup.clear();
+  boot = null; delete $('app').dataset.boot;
+  camera.setViewOffset(vw, vh, off8, camOff[1], vw, vh); camera.updateProjectionMatrix();
+  if (!keepHash && location.hash === '#login') history.replaceState(null, '', '#v' + $('app').dataset.v);
+  vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.v === $('app').dataset.v ? 'true' : 'false'));
+  rebuild(); frame0.dist = fitDist();
+}
+const BOOT_STEPS = [[0, 'Locating you'], [1.1, 'Mapping server regions'], [2.8, 'Testing every route'], [5.0, 'Choosing the best routes'], [6.2, 'Ready']];
+function frameBoot(dt) {
+  routeGroup.visible = packets.visible = markers.visible = !boot;
+  if (!boot) return;
+  boot.t += dt; const t = boot.t;
+  tagA.style.opacity = tagB.style.opacity = 0;
+  // globo à direita no login e no mapa; no fim volta ao centro
+  const offT = boot.phase === 'out' ? 0 : -Math.round(vw * 0.15);
+  boot.off += (offT - boot.off) * (reduce ? 1 : 1 - Math.exp(-dt * 3));
+  camera.setViewOffset(vw, vh, off8 + boot.off, camOff[1], vw, vh); camera.updateProjectionMatrix();
+  // rótulo "você" na sua cidade
+  const tg = $('bootTag'), p = project(vO);
+  tg.innerHTML = `${origin[2]}<span class="t-var">You</span>`;
+  tg.style.transform = `translate(${Math.round(p[0] + 12)}px, ${Math.round(p[1] - 40)}px)`;
+  tg.style.opacity = boot.phase === 'scan' ? clamp(p[2] * 4) * clamp((t - 0.4) / 0.4) : 0;
+  if (boot.phase === 'login') {
+    frame0.yaw = boot.yaw0 + (reduce ? 0 : Math.sin(time * 0.05) * 0.5); frame0.pitch = boot.pitch;
+    return;
+  }
+  // mapa: o globo para em você e afasta um pouco enquanto as rotas são medidas
+  frame0.yaw = (-origin[1] - 90) * D; frame0.pitch = clamp(origin[0], -55, 55) * D;
+  const st = BOOT_STEPS.filter(([s]) => t >= s).length - 1;
+  if (boot.phase === 'scan') {
+    if ($('bsT').textContent !== BOOT_STEPS[st][1]) $('bsT').textContent = BOOT_STEPS[st][1];
+    const sub = st === 0 ? `${origin[2]} · finding your ISP route` : st === 1 ? '1,500+ servers in 10 regions' : st === 2 ? 'Sending test packets on each route' : st === 3 ? 'Comparing ping, jitter and packet loss' : `${boot.best.length} best routes are ready`;
+    if ($('bsSub').textContent !== sub) $('bsSub').textContent = sub;
+    [...$('bsSteps').children].forEach((li, i) => li.className = i < st ? 'done' : i === st ? 'now' : '');
+    const pr = clamp(t / 6.2); $('bsBar').style.width = (pr * 100).toFixed(1) + '%'; $('bsBar').parentElement.setAttribute('aria-valuenow', Math.round(pr * 100));
+  }
+  const rows = $('bsList').children;
+  boot.arcs.forEach((a, i) => {
+    const t0 = 1.1 + i * 0.13, tt = 2.8 + i * 0.2, isBest = boot.best.includes(a.k), row = rows[i];
+    a.u.uTime.value = time;
+    a.u.uDraw.value = reduce ? (t > t0 ? 1 : 0) : ease(clamp((t - t0) / 0.7));
+    // traçada em cinza; medida, a melhor acende em verde e as outras recuam
+    const tested = t >= tt, chosen = t >= 5.0;
+    a.u.uCol.value.lerp(tested && isBest ? C.route : C.dim, Math.min(1, dt * 6));
+    const fade = boot.phase === 'out' ? clamp(1 - boot.out / 0.6) : 1;
+    a.u.uOp.value = (t < t0 ? 0 : chosen ? (isBest ? 1 : 0.18) : tested ? 0.8 : 0.6) * fade;
+    a.u.uGain.value = chosen && isBest ? (a.k === boot.best[0] ? 1 : 0.55) : 0.5;
+    if (boot.phase !== 'scan') return;
+    const ms = row.querySelector('.bs-ms');
+    if (t >= t0 && !tested) { row.className = 'bs-row testing'; ms.textContent = Math.round(a.ms * (0.6 + Math.random() * 0.9)) + ' ms'; }
+    else if (tested) { const c = 'bs-row ' + (chosen ? (isBest ? 'best' : 'dim') : 'ok'); if (row.className !== c) { row.className = c; ms.textContent = a.ms + ' ms'; } }
+  });
+  // escolhidas: a lista reordena pelo ping, as melhores em cima
+  if (boot.phase === 'scan' && t >= 5.0 && !boot.sorted) { boot.sorted = true; [...boot.arcs].sort((a, b) => a.ms - b.ms).forEach((a, o) => rows[boot.arcs.indexOf(a)].style.order = o); }
+  if (boot.phase === 'scan' && t >= 7.0) { boot.phase = 'out'; boot.out = 0; $('app').dataset.boot = 'out'; }
+  if (boot.phase === 'out') {
+    boot.out += dt;
+    if (boot.out > 1.1) { $('app').classList.add('boot-out'); endBoot(); setTimeout(() => $('app').classList.remove('boot-out'), 1200); }
+  }
+}
+
 /* ---------- Loop ---------- */
 let time = 0, lastT = performance.now(), lastS = 0, lastP = 0;
 resize();
@@ -901,7 +1052,7 @@ function frame() {
   if (time - lastS > 0.1) { lastS = time; sample(on); drawChart(); }
   if (time - lastP > 0.25) { lastP = time; paintTele(); }
 
-  frameV7(dt); frameV8(dt);
+  frameV7(dt); frameV8(dt); frameBoot(dt);
   scene.updateMatrixWorld();
   placeTags(clamp((age - 0.6) / 0.4));
   composer.render();
@@ -918,5 +1069,6 @@ function setV(v) {
   if (location.hash !== '#v' + v) history.replaceState(null, '', '#v' + v);
   dispatchEvent(new Event('pk:layout'));
 }
-vchips.forEach(c => c.addEventListener('click', () => setV(c.dataset.v)));
+vchips.forEach(c => c.addEventListener('click', () => { if (c.dataset.boot) return startBoot(); if (boot) endBoot(); setV(c.dataset.v); }));
 if (/^#v\d+$/.test(location.hash)) setV(location.hash.slice(2));
+if (location.hash === '#login') startBoot();
