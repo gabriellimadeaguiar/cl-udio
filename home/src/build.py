@@ -1,0 +1,37 @@
+# Monta home/index.html a partir do protótipo da home atual (src/prototype.html, como publicado)
+# trocando a fileira de card-app pelo palco (src/stage.html + src/stage.css) e anexando o globo (home.js).
+import re, pathlib
+H = pathlib.Path(__file__).resolve().parent.parent
+src = (H / 'src/prototype.html').read_text()
+stage = (H / 'src/stage.html').read_text()
+css = (H / 'src/stage.css').read_text()
+
+def img_in(block_start, block_end, nth=0):
+    seg = src[src.index(block_start):]
+    seg = seg[:seg.index(block_end)]
+    return re.findall(r'src="(data:image/[^"]+)"', seg)[nth]
+
+PREV = img_in('data-bn="prev"', '</button>')
+NEXT = img_in('data-bn="next"', '</button>')
+MON = img_in('<template id="w-monitor">', '</h4>')
+stage = stage.replace('{{PREV}}', PREV).replace('{{NEXT}}', NEXT).replace('{{MON}}', MON)
+
+out = src.replace('<title>ExitLag Home Customize</title>', '<title>ExitLag Home Desktop</title>', 1)
+i = out.index('<div class="apps">'); j = out.index('<div class="row2">', i)
+k = out.rfind('<!--', 0, i)
+out = out[:k] + stage.strip() + '\n\n          ' + out[j:]
+out = out.replace('</style>', '</style>\n<style>\n' + css + '</style>', 1)
+# Sem a ferramenta de feedback do protótipo de origem: não pede o nome ao abrir
+out = out.replace('function askName() {', 'function askName() { return;', 1)
+# Anek Latin com pesos 600/700 para o título do jogo
+out = out.replace('family=Anek+Latin:wght@700', 'family=Anek+Latin:wght@600;700', 1)
+out += '''
+<script src="land.js"></script>
+<script type="importmap">{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
+} }</script>
+<script type="module" src="home.js"></script>
+'''
+(H / 'index.html').write_text(out)
+print('ok', len(out))
