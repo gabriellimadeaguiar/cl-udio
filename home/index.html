@@ -1261,6 +1261,10 @@ p { margin: 0; }
 @media (prefers-reduced-motion: reduce) { .pk-promo { transition: none; } }
 .app[data-pmap] .pk-head { opacity: 0; pointer-events: none; transition: opacity .3s ease; }
 .app[data-v="9"].pk-p8:has(.pk-promo.in) .pk-tele .pk-log { display: none; } /* a oferta usa o lugar do log de rotas */
+/* legenda de baixo (Live, trajeto, ExitLag/ISP) fora do globo, pedido do Gabriel */
+.app .pk-head { display: none !important; }
+.pk-tag-node { padding: 2px var(--spacing-xs); font-size: 11px; line-height: 14px; font-weight: 500; background: #20242dd9; box-shadow: none; color: var(--on-surface-variant); }
+.app[data-boot] .pk-tag-node { opacity: 0 !important; }
 </style>
 
 <div class="stage">

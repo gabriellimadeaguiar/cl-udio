@@ -390,7 +390,7 @@ globe.add(new THREE.Points(svGeo, svMat));
 
 /* ---------- Rotas ---------- */
 const routeVS = `varying vec2 vUv; varying vec3 vN; varying vec3 vV; void main(){ vUv = uv; vec4 mv = modelViewMatrix*vec4(position,1.); vN = normalize(normalMatrix*normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix*mv; }`;
-const routeFS = `uniform vec3 uCol; uniform vec3 uBad; uniform float uDraw; uniform float uOp; uniform float uFail; uniform float uTime; uniform float uSpeed; uniform float uHalo; uniform float uGain;
+const routeFS = `uniform vec3 uCol; uniform vec3 uBad; uniform float uDraw; uniform float uOp; uniform float uFail; uniform float uTime; uniform float uSpeed; uniform float uHalo; uniform float uGain; uniform float uT0; uniform float uT1; uniform float uLen;
 varying vec2 vUv; varying vec3 vN; varying vec3 vV;
 void main(){ float x = vUv.x; if(x>uDraw || uOp<=0.) discard;
   float edge = abs(dot(vN, vV));
@@ -400,8 +400,12 @@ void main(){ float x = vUv.x; if(x>uDraw || uOp<=0.) discard;
   float pulse = pow(1.-fract(uTime*uSpeed - x*2.), 8.);
   float flick = mix(1., .3+.7*step(.45, fract(sin(floor(uTime*12.)*91.7)*43758.5)), uFail);
   vec3 col = mix(uCol, uBad, uFail);
-  float a = uOp*shape*(.55 + .7*head + .6*pulse)*flick*(1.-.4*uFail)*mix(1., ends, .7)*uGain;
-  gl_FragColor = vec4(col*(1.+.8*pulse+.6*head), a); }`;
+  // túnel ExitLag: entre a bridge e a final a rota vira um túnel, com anéis correndo para a frente; as pontas (acesso) ficam mais finas
+  float tun = step(.001, uT1), inT = tun*step(uT0, x)*step(x, uT1);
+  float ring = inT*pow(.5 + .5*sin(x*uLen*95. - uTime*7.), 18.);
+  float a = uOp*shape*(.55 + .7*head + .6*pulse)*flick*(1.-.4*uFail)*mix(1., ends, .7)*uGain*mix(1., .5, tun*(1.-inT));
+  a += uOp*uGain*ring*(uHalo > .5 ? .45 : .7)*flick;
+  gl_FragColor = vec4(col*(1.+.8*pulse+.6*head+.5*ring), a); }`;
 const routeGroup = new THREE.Group(); globe.add(routeGroup);
 const MAXL = 4;
 // Faixas laterais das rotas ExitLag, de 2 a 4 rotas por jogo.
@@ -422,16 +426,35 @@ function smoothPath(a, b, w, lateral, lift, n = 200) {
   return pts;
 }
 let routeR = 1; // espessura relativa das rotas: afina quando a câmera chega perto
-function makeRoute(pts, color, radius, speed, gain = 1, group = routeGroup) {
+function makeRoute(pts, color, radius, speed, gain = 1, group = routeGroup, tun = null) {
   radius *= routeR * 0.5; // metade da espessura original (pedido do Gabriel)
   const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal');
-  const uniforms = { uCol: { value: color }, uBad: { value: C.bad }, uDraw: { value: 0 }, uOp: { value: 0 }, uFail: { value: 0 }, uTime: { value: 0 }, uSpeed: { value: speed }, uGain: { value: gain } };
+  const uniforms = { uCol: { value: color }, uBad: { value: C.bad }, uDraw: { value: 0 }, uOp: { value: 0 }, uFail: { value: 0 }, uTime: { value: 0 }, uSpeed: { value: speed }, uGain: { value: gain }, uT0: { value: tun ? tun[0] : 0 }, uT1: { value: tun ? tun[1] : 0 }, uLen: { value: 1 } };
   for (const halo of [0, 1]) {
     const mat = new THREE.ShaderMaterial({ uniforms: { ...uniforms, uHalo: { value: halo } }, vertexShader: routeVS, fragmentShader: routeFS, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
     group.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 300, halo ? radius * 4.5 : radius, 10, false), mat));
   }
-  return { curve, u: uniforms, len: curve.getLength() };
+  const len = curve.getLength(); uniforms.uLen.value = len;
+  return { curve, u: uniforms, len };
 }
+// Rota ExitLag de verdade (pedido do Gabriel): você entra numa bridge perto de você, o tráfego segue num túnel até
+// uma final perto do servidor do jogo, e só então sai para o jogo. O desenho quebra nesses dois nós em vez de ser uma curva só.
+function tunnelPath(a, b, w, lat, lift, rnd) {
+  const side = new THREE.Vector3().crossVectors(a, b).normalize(), sw = Math.sin(w);
+  const at = (f, k) => a.clone().multiplyScalar(Math.sin((1 - f) * w) / sw).add(b.clone().multiplyScalar(Math.sin(f * w) / sw)).addScaledVector(side, lat * k * Math.sin(Math.PI * f) * w).normalize();
+  // os nós ficam perto das pontas (bridge na sua região, final na região do servidor); o túnel entre eles abre para o lado da faixa
+  const fb = 0.05 + 0.04 * rnd(), ff = 0.91 + 0.04 * rnd(), B = at(fb, 0.3), F = at(ff, 0.3);
+  const seg = (p, q, h, n, lt = 0) => { const ws = Math.max(p.angleTo(q), 1e-4), ss = Math.sin(ws), out = [];
+    for (let i = 0; i <= n; i++) { const u = i / n; out.push(p.clone().multiplyScalar(Math.sin((1 - u) * ws) / ss).add(q.clone().multiplyScalar(Math.sin(u * ws) / ss)).addScaledVector(side, lt * Math.sin(Math.PI * u) * ws).normalize().multiplyScalar(1.006 + (0.02 + ws * 0.2) * h * Math.sin(Math.PI * u))); }
+    return out; };
+  const s1 = seg(a, B, 0.12, 24), s2 = seg(B, F, lift, 160, lat * 0.75), s3 = seg(F, b, 0.12, 24);
+  const pts = [...s1, ...s2.slice(1), ...s3.slice(1)];
+  // posição dos nós ao longo da rota (comprimento de arco), para o túnel do shader, os pacotes e os marcadores
+  let L = 0; const cum = [0]; for (let i = 1; i < pts.length; i++) { L += pts[i].distanceTo(pts[i - 1]); cum.push(L); }
+  const iB = s1.length - 1, iF = iB + s2.length - 1;
+  return { pts, t0: cum[iB] / L, t1: cum[iF] / L, B, F };
+}
+const nearCity = v => { let best = null, bd = 1e9; for (const c of Object.values(CITIES)) { const d = v.angleTo(toV(c[0], c[1])) * 6371; if (d < bd) { bd = d; best = c; } } return bd < 1400 ? best[3] : ''; };
 function clearRoutes() { routeGroup.children.forEach(m => { m.geometry.dispose(); m.material.dispose(); }); routeGroup.clear(); }
 
 // Pacotes que correm pelas rotas. O mesmo pacote sai por todas as rotas ExitLag ao mesmo tempo.
@@ -480,13 +503,13 @@ function rebuild() {
   routeR = Math.max((frame0.dist - 1) / 2, 0.12); // largura constante na tela (~2,5 px), perto ou longe: fina demais vira pontilhado
   routes = {
     isp: makeRoute(smoothPath(vO, vS, w, u => 0.62 * Math.sin(Math.PI * u) + 0.16 * Math.sin(3 * Math.PI * u), 0.35), C.isp, 0.0032, 0.35),
-    cand: CANDS.map(([lat, lift], k) => makeRoute(smoothPath(vO, vS, w, u => lat * Math.sin(Math.PI * u), lift), C.dim, 0.0024, 0.6 + k * 0.03, 0.5)),
+    cand: CANDS.map(([lat, lift], k) => { const t = tunnelPath(vO, vS, w, lat, lift, seeded(g.name + k)); return makeRoute(t.pts, C.dim, 0.0024, 0.6 + k * 0.03, 0.5, routeGroup, [t.t0, t.t1]); }),
     xl: []
   };
   // ping simulado de cada candidata (desvio maior custa mais, mais um sorteio fixo por jogo e servidor); as melhores em ordem: Route 1 é a mais rápida
   const rnd = seeded(g.name + g.region);
   routes.pick = CANDS.map(([lat], k) => [k, Math.abs(lat) * 0.6 + rnd()]).sort((a, b) => a[1] - b[1]).slice(0, g.lanes).map(([k]) => k);
-  routes.xl = routes.pick.map((k, i) => { const [lat, lift] = CANDS[k]; return makeRoute(smoothPath(vO, vS, w, u => lat * Math.sin(Math.PI * u), lift), C.route, 0.0032, 0.8 + i * 0.05, 0.42); });
+  routes.xl = routes.pick.map((k, i) => { const [lat, lift] = CANDS[k], t = tunnelPath(vO, vS, w, lat, lift, seeded(g.name + k)); return { ...makeRoute(t.pts, C.route, 0.0032, 0.8 + i * 0.05, 0.42, routeGroup, [t.t0, t.t1]), t0: t.t0, t1: t.t1, B: t.B, F: t.F, bc: nearCity(t.B), fc: nearCity(t.F) }; });
   vO.clone().multiplyScalar(1.006).toArray(mkPos, 0); vS.clone().multiplyScalar(1.006).toArray(mkPos, 3);
   mkGeo.attributes.position.needsUpdate = true;
   const [mLat, mLon] = toLL(vO.clone().add(vS));
@@ -611,7 +634,6 @@ const hitPts = (r, n = 48) => { const out = [], d = r.u.uDraw.value; for (let k 
 function routeAt(px, py) {
   if (!routes || boot || pmap || gDrag || (isV7() && (away7 || e7 > 0))) return null;
   const cands = [];
-  if (routes.isp.u.uOp.value > 0) cands.push(['isp', 0, routes.isp]);
   if (xlShow) routes.xl.forEach((r, i) => cands.push(['xl', i, r]));
   let best = null, bd = 14 * 14; // até 14 px da linha
   for (const [kind, i, r] of cands) for (const [x, y] of hitPts(r)) { const d = (x - px) ** 2 + (y - py) ** 2; if (d < bd) { bd = d; best = { kind, i, x: px, y: py }; } }
@@ -1318,6 +1340,53 @@ function frameOff(dt) {
 }
 let onT0 = false;
 
+/* ---------- Nós do túnel: bridges e finals ----------
+   Cada rota ExitLag mostra dois nós: a bridge (entrada, perto de você) e a final (saída, perto do servidor).
+   Acendem quando a rota passa por eles ao ser traçada; a rota mais rápida ganha rótulos com a cidade de cada nó. */
+const NODEN = MAXL * 2, ndPos = new Float32Array(NODEN * 3), ndA = new Float32Array(NODEN), ndF = new Float32Array(NODEN), ndK = new Float32Array(NODEN);
+const ndGeo = new THREE.BufferGeometry();
+ndGeo.setAttribute('position', new THREE.BufferAttribute(ndPos, 3).setUsage(THREE.DynamicDrawUsage));
+ndGeo.setAttribute('aA', new THREE.BufferAttribute(ndA, 1).setUsage(THREE.DynamicDrawUsage));
+ndGeo.setAttribute('aF', new THREE.BufferAttribute(ndF, 1).setUsage(THREE.DynamicDrawUsage));
+ndGeo.setAttribute('aK', new THREE.BufferAttribute(ndK, 1));
+for (let i = 0; i < NODEN; i++) ndK[i] = i % 2;
+const ndMat = new THREE.ShaderMaterial({
+  uniforms: { uSize: { value: 60 }, uPR: { value: PR }, uCol: { value: C.route }, uTime: { value: 0 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+  vertexShader: `uniform float uSize; uniform float uPR; attribute float aA; attribute float aF; attribute float aK; varying float vA; varying float vF; varying float vK; void main(){ vA=aA; vF=aF; vK=aK; vec4 mv = modelViewMatrix*vec4(position,1.); gl_PointSize = uSize*(1.+.6*aF)*uPR/(-mv.z); gl_Position = projectionMatrix*mv; }`,
+  // bridge: anel com um ponto no meio; final: losango cheio. O clarão (vF) é a rota passando pelo nó.
+  fragmentShader: `uniform vec3 uCol; uniform float uTime; varying float vA; varying float vF; varying float vK; void main(){ if(vA<=0.) discard; vec2 p = gl_PointCoord-.5; float d = length(p);
+    float br = smoothstep(.035,.0,abs(d-.22)) + smoothstep(.08,.05,d);
+    float fi = smoothstep(.2,.17,abs(p.x)+abs(p.y)) * (.55+.45*smoothstep(.12,.0,abs(p.x)+abs(p.y)-.06)) + smoothstep(.03,.0,abs(abs(p.x)+abs(p.y)-.3))*.6;
+    float shape = mix(br, fi, vK); float glow = smoothstep(.5,.0,d)*.5*vF;
+    gl_FragColor = vec4(mix(uCol, vec3(1.), .35*vF+.15), (shape*(.75+.25*sin(uTime*3.+vK*2.)) + glow)*vA); }`
+});
+const nodes = new THREE.Points(ndGeo, ndMat); nodes.frustumCulled = false; globe.add(nodes);
+const tagBr = document.createElement('div'), tagFi = document.createElement('div');
+tagBr.className = tagFi.className = 'pk-tag pk-tag-node'; host.append(tagBr, tagFi);
+function frameNodes() {
+  ndMat.uniforms.uTime.value = time;
+  nodes.visible = routeGroup.visible;
+  let fastShown = 0;
+  for (let i = 0; i < MAXL; i++) {
+    const r = routes && routes.xl[i];
+    if (!r) { ndA[2 * i] = ndA[2 * i + 1] = 0; continue; }
+    r.B.clone().multiplyScalar(1.007).toArray(ndPos, 6 * i); r.F.clone().multiplyScalar(1.007).toArray(ndPos, 6 * i + 3);
+    const d = r.u.uDraw.value, op = r.u.uOp.value * Math.min(1, r.u.uGain.value * 1.6);
+    [r.t0, r.t1].forEach((t, k) => { const n = 2 * i + k; ndA[n] = d >= t ? op : 0; ndF[n] = d >= t && d < 1 ? clamp(1 - (d - t) * 4) : 0; });
+    if (i === fastLane && GAMES[sel].state === 'on') fastShown = op;
+  }
+  ndGeo.attributes.position.needsUpdate = ndGeo.attributes.aA.needsUpdate = ndGeo.attributes.aF.needsUpdate = true;
+  // rótulos da rota mais rápida: Bridge · cidade, Final · cidade
+  const r = routes && routes.xl[fastLane], vis = r && nodes.visible && !boot && !scan && !pmap ? fastShown * (1 - tagK) : 0;
+  [[tagBr, r && r.B, 'Bridge', r && r.bc, vO, r && r.t0], [tagFi, r && r.F, 'Final', r && r.fc, vS, r && r.t1]].forEach(([el, v, nm, c, end, t]) => {
+    if (!v || vis <= 0.01 || r.u.uDraw.value < t) { el.style.opacity = 0; return; }
+    const h = `${nm}${c ? ` · ${c}` : ''}`; if (el.textContent !== h) el.textContent = h;
+    // o rótulo vai para o lado oposto ao da etiqueta da ponta (You / Game server), para não encostar nela
+    const p = project(v), left = p[0] < project(end)[0] + 4; el.style.transform = `translate(${Math.round(p[0] + (left ? -10 : 10))}px, ${Math.round(p[1] - 7)}px)` + (left ? ' translateX(-100%)' : '');
+    el.style.opacity = vis * clamp(p[2] * 4);
+  });
+}
+
 /* ---------- Loop ---------- */
 let time = 0, lastT = performance.now(), lastS = 0, lastP = 0;
 resize();
@@ -1343,7 +1412,7 @@ function frame() {
   const age = time - buildT, xa = time - xlStart;
   if (routes) {
     routes.isp.u.uDraw.value = reduce ? 1 : ease(clamp((age - 0.35) / 0.9));
-    routes.isp.u.uOp.value = on ? 0.55 : 1; routes.isp.u.uTime.value = time;
+    routes.isp.u.uOp.value = 0; routes.isp.u.uTime.value = time; // linha da operadora fora do globo: confundia (pedido do Gabriel); ela segue só na telemetria
     const testing = g.state === 'testing';
     // teste: as candidatas cinza se espalham, depois somem e as 4 escolhidas acendem em verde sobre elas
     routes.cand.forEach((r, k) => {
@@ -1372,14 +1441,15 @@ function frame() {
   let j = 0;
   const putPk = (route, u, col, a) => { route.curve.getPointAt(clamp(u), v3); v3.toArray(pkPos, j * 3); col.toArray(pkCol, j * 3); pkA[j] = a; j++; };
   if (routes) {
-    const iD = routes.isp.u.uDraw.value;
-    for (let i = 0; i < PK; i++) {
-      const cyc = time * 0.16 + i / PK, u = cyc % 1, lost = Math.sin(Math.floor(cyc) * 12.9 + i * 78.2) > 0.6;
-      putPk(routes.isp, u, lost && u > 0.5 ? C.bad : C.isp, u < iD ? (on ? 0.5 : 1) * (lost && u > 0.55 ? clamp(1 - (u - 0.55) * 8) : 1) : 0);
-    }
     routes.xl.forEach((r, ri) => {
       const sp = 0.42 * (routes.xl[0].len / r.len), draw = r.u.uDraw.value;
-      for (let i = 0; i < PK; i++) { const u = (time * sp + i / PK) % 1; putPk(r, u, C.route, u < draw && offK < 0.5 ? (fail && fail.lane === ri ? 1 - fail.k : 1) * (on && ri === fastLane ? 0.9 : on ? 0.3 : 0.55) : 0); }
+      for (let i = 0; i < PK; i++) {
+        // o pacote segura um instante em cada nó (encapsula na bridge, desencapsula na final) e acende ao passar
+        let u = (time * sp + i / PK) % 1; const hold = 0.035;
+        const warp = x => x < r.t0 ? x : x < r.t0 + hold ? r.t0 : x < r.t1 + hold ? x - hold : x < r.t1 + 2 * hold ? r.t1 : x - 2 * hold;
+        u = warp(u * (1 + 2 * hold)); const nodeK = Math.max(Math.exp(-(((u - r.t0) / 0.012) ** 2)), Math.exp(-(((u - r.t1) / 0.012) ** 2)));
+        putPk(r, u, nodeK > 0.5 ? C.fog : C.route, u < draw && offK < 0.5 ? (fail && fail.lane === ri ? 1 - fail.k : 1) * (on && ri === fastLane ? 0.9 : on ? 0.3 : 0.55) * (1 + nodeK) : 0);
+      }
     });
   }
   while (j < packetsN) pkA[j++] = 0;
@@ -1389,7 +1459,7 @@ function frame() {
   if (time - lastS > 0.1) { lastS = time; sample(on); drawChart(); }
   if (time - lastP > 0.25) { lastP = time; paintTele(); }
 
-  frameV7(dt); frameV8(dt); frameBoot(dt); frameScan(dt); framePmap(dt); frameOff(dt);
+  frameNodes(); frameV7(dt); frameV8(dt); frameBoot(dt); frameScan(dt); framePmap(dt); frameOff(dt);
   scene.updateMatrixWorld();
   placeTags(pmap ? 0 : clamp((age - 0.6) / 0.4));
   composer.render();
