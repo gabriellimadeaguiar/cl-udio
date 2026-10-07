@@ -585,6 +585,47 @@ function placeTags(vis) {
   put(tagA, a, aLeft, near ? a[1] <= b[1] : true); put(tagB, b, !aLeft, near ? b[1] < a[1] : true);
 }
 
+/* ---------- Ping da rota no hover (pedido do Gabriel) ----------
+   Passar o mouse numa rota do globo mostra o ping dela; nas rotas ExitLag a rota também acende, como no chip do Route Monitoring. */
+const rtip = document.createElement('div'); rtip.className = 'pk-tag pk-rtip'; host.append(rtip);
+let rHover = null; // { kind: 'xl' | 'isp', i, x, y }
+const hitPts = (r, n = 48) => { const out = [], d = r.u.uDraw.value; for (let k = 0; k <= n; k++) { const u = k / n; if (u > d) break; r.curve.getPointAt(u, v3); const p = project(v3.clone().multiplyScalar(1 / 1.02)); if (p[2] > -0.05) out.push(p); } return out; };
+function routeAt(px, py) {
+  if (!routes || boot || gDrag || (isV7() && (away7 || e7 > 0))) return null;
+  const cands = [];
+  if (routes.isp.u.uOp.value > 0) cands.push(['isp', 0, routes.isp]);
+  if (xlShow) routes.xl.forEach((r, i) => cands.push(['xl', i, r]));
+  let best = null, bd = 14 * 14; // até 14 px da linha
+  for (const [kind, i, r] of cands) for (const [x, y] of hitPts(r)) { const d = (x - px) ** 2 + (y - py) ** 2; if (d < bd) { bd = d; best = { kind, i, x: px, y: py }; } }
+  return best;
+}
+function paintRtip() {
+  if (!rHover) { rtip.style.opacity = 0; return; }
+  const on = GAMES[sel].state === 'on', isp = rHover.kind === 'isp';
+  const ms = isp ? Math.round(avg(hist.isp)) : Math.round(laneEma[rHover.i] || baseXl * (1 + rHover.i * 0.035));
+  const down = !isp && on && fail && fail.lane === rHover.i && fail.k > 0.3;
+  const name = isp ? 'ISP route' : `ExitLag · Route ${rHover.i + 1}`;
+  const note = isp ? (on ? 'Without ExitLag' : 'Your current route') : down ? 'Unstable' : on && rHover.i === fastLane ? 'Fastest now' : on ? 'Backup in parallel' : 'Testing';
+  rtip.className = 'pk-tag pk-rtip ' + (isp ? 'isp' : down ? 'bad' : 'xl');
+  rtip.innerHTML = `<span class="rt-v"><i class="dt"></i>${name}<b class="tnum">${down ? '–' : ms + ' ms'}</b></span><span class="t-var">${note}</span>`;
+  const x = clamp(rHover.x + 14, 8, vw - rtip.offsetWidth - 8), y = clamp(rHover.y - rtip.offsetHeight - 10, 8, vh - rtip.offsetHeight - 8);
+  rtip.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`; rtip.style.opacity = 1;
+}
+let rtipLane = false; // o hover do globo só limpa o destaque que ele mesmo acendeu (os chips também usam hoverLane)
+function setRHover(h) {
+  rHover = h;
+  if (h && h.kind === 'xl') { hoverLane = h.i; rtipLane = true; } else if (rtipLane) { hoverLane = -1; rtipLane = false; }
+  canvas.style.cursor = h ? 'pointer' : '';
+  paintRtip();
+}
+canvas.addEventListener('pointermove', e => {
+  if (e.buttons) return;
+  const b = canvas.getBoundingClientRect();
+  setRHover(routeAt((e.clientX - b.left) * vw / b.width, (e.clientY - b.top) * vh / b.height));
+});
+canvas.addEventListener('pointerleave', () => setRHover(null));
+setInterval(() => { if (rHover) paintRtip(); }, 250); // o ping muda ao vivo enquanto o mouse está parado na rota
+
 /* ---------- Arrastar o globo ---------- */
 let gDrag = null, dYaw = 0, dPitch = 0, lastDrag = -10;
 canvas.addEventListener('pointerdown', e => { gDrag = [e.clientX, e.clientY, dYaw, dPitch]; canvas.setPointerCapture(e.pointerId); canvas.classList.add('drag'); });

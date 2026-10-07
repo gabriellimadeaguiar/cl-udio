@@ -306,3 +306,11 @@
 .boot .link { color: var(--on-surface); }
 .boot .bl-row .link, .boot .bs-skip { color: var(--on-surface-variant); }
 .boot .bl-row .link:hover, .boot .bs-skip:hover { color: var(--on-surface); }
+
+/* Ping da rota no hover do globo */
+.pk-rtip { z-index: 3; opacity: 0; transition: opacity .15s ease; gap: 2px; padding: var(--spacing-sm) var(--spacing-md); }
+.pk-rtip .rt-v { display: flex; align-items: center; gap: var(--spacing-sm); white-space: nowrap; }
+.pk-rtip .rt-v b { font-weight: 500; margin-left: var(--spacing-xs); }
+.pk-rtip .dt { width: 8px; height: 8px; border-radius: 100px; background: var(--success); flex: none; }
+.pk-rtip.isp .dt { background: #eb8322; }
+.pk-rtip.bad .dt { background: var(--primary); }
