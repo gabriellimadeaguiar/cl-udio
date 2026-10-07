@@ -286,6 +286,7 @@ function paintCta() {
   st.className = 'badge ' + (g.state === 'on' ? 'success' : off ? 'warning' : 'neutral');
   st.textContent = g.state === 'on' ? 'Optimized' : g.state === 'testing' ? 'Testing routes' : off ? 'ExitLag off' : busy ? 'Waiting for map' : 'Not optimized';
   $('pkLgXl').classList.toggle('off', g.state !== 'on');
+  $('pkTele').classList.toggle('pk-idle', g.state === 'off'); // sem otimizar não há medição: some o bloco de números e rotas (pedido do Gabriel)
   layout();
 }
 function toggleOpt() {

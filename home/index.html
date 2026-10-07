@@ -1267,6 +1267,8 @@ p { margin: 0; }
 .app[data-boot] .pk-tag-node { opacity: 0 !important; }
 /* mapa passivo rodando: sem o jogo em destaque nem a órbita (pedido do Gabriel) */
 .app[data-pmap="on"] :is(.pk-orbit, .pk-name9) { opacity: 0 !important; pointer-events: none !important; transition: opacity .3s ease; }
+/* jogo não otimizado: Route Monitoring fica só com o título, o estado e a mensagem */
+.pk-tele.pk-idle :is(.pk-kpis, .chart-wrap, .pk-lanes) { display: none !important; }
 </style>
 
 <div class="stage">
