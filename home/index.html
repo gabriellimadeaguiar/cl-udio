@@ -1265,11 +1265,6 @@ p { margin: 0; }
 .app .pk-head { display: none !important; }
 .pk-tag-node { padding: 2px var(--spacing-xs); font-size: 11px; line-height: 14px; font-weight: 500; background: #20242dd9; box-shadow: none; color: var(--on-surface-variant); }
 .app[data-boot] .pk-tag-node { opacity: 0 !important; }
-/* versão Comet: cometa com rosto passando pelo céu do Immersive, atrás dos painéis */
-.pk-comet { position: absolute; left: 0; top: 0; z-index: 1; width: 0; height: 0; pointer-events: none; opacity: 0; }
-.pk-comet img { position: absolute; left: -24px; top: -24px; width: 48px; height: 48px; border-radius: 50%; box-shadow: 0 0 0 2px #ffffffcc, 0 0 18px 6px #9fd8ff99, 0 0 48px 16px #6f8fb866; }
-.pk-comet .cm-tail { position: absolute; left: 0; top: -10px; width: 260px; height: 20px; transform-origin: 0 50%; transform: rotate(calc(var(--ang, 0deg) + 180deg)); border-radius: 100px;
-  background: linear-gradient(90deg, #ffffffcc, #9fd8ff66 18%, #6f8fb822 55%, transparent); filter: blur(3px); clip-path: polygon(0 0, 100% 45%, 100% 55%, 0 100%); }
 </style>
 
 <div class="stage">
@@ -1278,7 +1273,6 @@ p { margin: 0; }
     <button class="vchip" type="button" data-scan="1" aria-pressed="false">Library scan</button><span class="vsep" aria-hidden="true"></span>
     <button class="vchip" type="button" data-v="9" aria-pressed="true">Home</button><span class="vdiv" aria-hidden="true"></span>
     <button class="vchip" type="button" data-passive="1" aria-pressed="false">Passive network map</button>
-    <button class="vchip" type="button" data-comet="1" aria-pressed="false">Comet</button>
   </nav>
   <div class="app" id="app" data-v="9">
     <div class="cz-overlay" aria-hidden="true"></div>

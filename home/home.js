@@ -1458,27 +1458,6 @@ function frameNodes() {
   });
 }
 
-/* ---------- Cometa (pedido do Gabriel, versão separada "Comet") ----------
-   Na versão Comet, a cada 10 s um cometa com o rosto de um amigo dele (foto enviada por ele, com consentimento) cruza o céu
-   estrelado da home, por trás dos painéis, num ângulo sorteado. Fora dessa versão não aparece. */
-const comet = document.createElement('div'); comet.className = 'pk-comet'; comet.setAttribute('aria-hidden', 'true');
-comet.innerHTML = '<i class="cm-tail"></i><img src="assets/comet-face.png" alt="" draggable="false">';
-$('pk').append(comet);
-const cometOn = () => $('app').classList.contains('comet');
-function flyComet() {
-  if (reduce || !cometOn() || !isV9() || boot || scan || document.hidden) return;
-  const W = $('pk').clientWidth, H = $('pk').clientHeight, y0 = H * (0.05 + 0.35 * Math.random()), y1 = y0 + H * (0.25 + 0.35 * Math.random());
-  const ltr = Math.random() < 0.5, x0 = ltr ? -160 : W + 160, x1 = ltr ? W + 160 : -160;
-  comet.style.setProperty('--ang', Math.atan2(y1 - y0, x1 - x0) * 180 / Math.PI + 'deg');
-  comet.animate([{ transform: `translate(${x0}px, ${y0}px)`, opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1, offset: 0.9 }, { transform: `translate(${x1}px, ${y1}px)`, opacity: 0 }],
-    { duration: 2600, easing: 'cubic-bezier(.3, 0, .7, 1)' });
-}
-let cometT = 0;
-function setComet(on) {
-  $('app').classList.toggle('comet', on); clearInterval(cometT);
-  if (on) { cometT = setInterval(flyComet, 10000); setTimeout(flyComet, 1200); }
-}
-
 /* ---------- Loop ---------- */
 let time = 0, lastT = performance.now(), lastS = 0, lastP = 0;
 resize();
@@ -1568,9 +1547,8 @@ function setV(v) {
   if (location.hash !== '#v' + v) history.replaceState(null, '', '#v' + v);
   dispatchEvent(new Event('pk:layout'));
 }
-vchips.forEach(c => c.addEventListener('click', () => { setComet(!!c.dataset.comet); if (c.dataset.comet) { if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap(); setV('9'); c.setAttribute('aria-pressed', 'true'); vchips.forEach(o => o !== c && o.setAttribute('aria-pressed', 'false')); history.replaceState(null, '', '#comet'); return; } if (c.dataset.boot) return startBoot(); if (c.dataset.passive) return startBoot(true); if (c.dataset.scan) return startScan(); if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap(); setV(c.dataset.v); }));
+vchips.forEach(c => c.addEventListener('click', () => { if (c.dataset.boot) return startBoot(); if (c.dataset.passive) return startBoot(true); if (c.dataset.scan) return startScan(); if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap(); setV(c.dataset.v); }));
 if (/^#v\d+$/.test(location.hash)) setV(location.hash.slice(2));
 if (location.hash === '#login') startBoot();
 if (location.hash === '#scan') startScan();
 if (location.hash === '#passive') startBoot(true);
-if (location.hash === '#comet') vchips.find(c => c.dataset.comet)?.click();
