@@ -744,8 +744,9 @@ $('pk').addEventListener('pointermove', e => {
   if (inside !== show9) setShow9(inside);
 });
 $('pk').addEventListener('pointerleave', () => { if (isV9()) setShow9(false); });
+const name9 = document.createElement('div'); name9.className = 'pk-name9'; name9.setAttribute('aria-hidden', 'true'); orbit.append(name9);
 function setShow9(o) {
-  show9 = o;
+  show9 = o; $('app').classList.toggle('pk-show9', o);
   const n = thumbs.length;
   thumbs.forEach((t, i) => { const d = Math.min((i - sel + n) % n, (sel - i + n) % n); t.style.setProperty('--d', (d * 34) + 'ms'); t.classList.toggle('show', o); });
 }
@@ -785,6 +786,9 @@ function frameV8(dt) {
     t.style.transform = `translate(${(cx + Math.cos(a) * rx).toFixed(1)}px, ${(cy + sn * ry).toFixed(1)}px) translate(-50%, -50%) scale(${sc.toFixed(3)})`;
     t.style.zIndex = 10 + Math.round(d * 10);
     t.classList.toggle('sel9', i === sel);
+    // V9: nome do jogo em destaque logo abaixo da capa, só fora do hover
+    if (v9on && i === sel) { if (name9.textContent !== GAMES[sel].name) name9.textContent = GAMES[sel].name;
+      name9.style.transform = `translate(${(cx + Math.cos(a) * rx).toFixed(1)}px, ${(cy + sn * ry + t.offsetHeight * sc / 2 + 12).toFixed(1)}px) translateX(-50%)`; }
   });
 }
 

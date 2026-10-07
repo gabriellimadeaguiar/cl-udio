@@ -298,3 +298,6 @@
 .app[data-v="10"] .pk-tele.open10 > :not(.w-head) { animation: tx10In .4s cubic-bezier(.22, 1, .36, 1) both; }
 @keyframes tx10In { from { opacity: 0; transform: translateY(-6px); } }
 @media (prefers-reduced-motion: reduce) { .app[data-v="10"] .pk-tele.open10 > * { animation: none; } }
+.pk-name9 { display: none; }
+.app[data-v="9"] .pk-name9 { display: block; position: absolute; left: 0; top: 0; z-index: 30; font: 500 16px/24px var(--font-title, inherit); letter-spacing: .15px; white-space: nowrap; color: var(--on-surface); text-shadow: 0 2px 12px #000; pointer-events: none; transition: opacity .3s ease, filter .3s ease; }
+.app[data-v="9"].pk-show9 .pk-name9, .app[data-v="9"].pk-p8 .pk-name9 { opacity: 0; filter: blur(4px); }
