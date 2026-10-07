@@ -1063,7 +1063,9 @@ p { margin: 0; }
 .app[data-v="9"].sb-open .sidebar .nav-item:nth-child(8) { transition-delay: 210ms; } .app[data-v="9"].sb-open .sidebar .nav-item:nth-child(9) { transition-delay: 240ms; }
 /* capas: escondidas fora do hover (menos o destaque); entram em cascata com mola, saem juntas e rápido */
 /* capas: posição, saída de trás do globo e expansão no hover vêm do JS (molas por capa) */
-.app[data-v="9"] .pk-thumb { transition: none; opacity: 1; }
+.app[data-v="9"] .pk-thumb { transition: opacity .3s ease; opacity: 1; }
+/* fora de foco: levemente apagadas; o jogo do globo e a capa sob o mouse ficam inteiras */
+.app[data-v="9"] .pk-thumb:not(.sel9):not(:hover) { opacity: .55; }
 .app[data-v="9"] .pk-thumb:not(.show):not(.sel9) { pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .app[data-v="9"] .pk-thumb, .app[data-v="9"] .sidebar, .app[data-v="9"] .sidebar .nav-item, .v9-menu i { transition: none !important; } }
 
