@@ -835,8 +835,8 @@ p { margin: 0; }
 .pk-card[aria-selected="true"] { cursor: default; box-shadow: 0 0 0 2px #ebecedbf, 0 40px 80px -30px #000000e6; }
 .pk-card.on { box-shadow: 0 0 0 1px #ffffff14, 0 0 56px -12px color-mix(in srgb, var(--success) 45%, transparent), 0 30px 60px -30px #000000e6; }
 .pk-card.on[aria-selected="true"] { box-shadow: 0 0 70px -8px color-mix(in srgb, var(--success) 55%, transparent), 0 40px 80px -30px #000000e6; }
-/* stroke / optimized do card-app: 2px, gradiente success → #242627 */
-.pk-card.on::after { padding: 2px; box-shadow: none; background: linear-gradient(to bottom right, var(--success) 0%, #242627 100%);
+/* stroke / optimized do card-app: gradiente success → #242627; 1px (Gabriel achou 2px largo demais) */
+.pk-card.on::after { padding: 1px; box-shadow: none; background: linear-gradient(to bottom right, var(--success) 0%, #242627 100%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
 
 .pk-info { min-width: 0; display: flex; flex-direction: column; gap: 16px; padding: 0 24px 24px; }
