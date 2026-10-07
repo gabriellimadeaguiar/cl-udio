@@ -308,6 +308,25 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
 const tilt = new THREE.Group(), globe = new THREE.Group();
 tilt.add(globe); scene.add(tilt);
+// Céu estrelado (V9): um único Points com cintilação no shader; tamanho fixo em px, sem textura
+const stars = (() => {
+  const N = 2600, pos = new Float32Array(N * 3), seed = new Float32Array(N * 2);
+  for (let i = 0; i < N; i++) {
+    const u = Math.random() * 2 - 1, t = Math.random() * Math.PI * 2, r = 40 + Math.random() * 20, s = Math.sqrt(1 - u * u);
+    pos.set([Math.cos(t) * s * r, u * r, Math.sin(t) * s * r - 20], i * 3); seed.set([Math.random(), Math.pow(Math.random(), 3)], i * 2);
+  }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 2));
+  const m = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: { uTime: { value: 0 }, uPR: { value: PR }, uOp: { value: 0 } },
+    vertexShader: `attribute vec2 aSeed; uniform float uTime, uPR; varying float vA;
+      void main() { vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mv;
+        float tw = 0.55 + 0.45 * sin(uTime * (0.6 + aSeed.x * 1.8) + aSeed.x * 40.0);
+        vA = (0.3 + 0.7 * aSeed.y) * tw; gl_PointSize = (1.0 + aSeed.y * 1.8) * uPR; }`,
+    fragmentShader: `uniform float uOp; varying float vA;
+      void main() { float d = length(gl_PointCoord - 0.5); if (d > 0.5) discard; gl_FragColor = vec4(vec3(0.82, 0.88, 1.0), vA * uOp * (1.0 - smoothstep(0.15, 0.5, d))); }` });
+  const p = new THREE.Points(g, m); p.renderOrder = -1; p.frustumCulled = false; p.visible = false; return p;
+})();
+scene.add(stars);
 const C = { fog: new THREE.Color('#ebeced'), dim: new THREE.Color('#878d97'), route: new THREE.Color('#22eba3'), isp: new THREE.Color('#eb8322'), bad: new THREE.Color('#f52929'),
   deep: new THREE.Color('#07080b'), rim: new THREE.Color('#6f8fb8') };
 
@@ -584,7 +603,7 @@ let vw = 1, vh = 1, bandCut = 0, bandSide = 0, bandLeft = 0, bandRight = 0, head
 // Distância da câmera para a rota inteira caber na faixa livre do globo (entre o cabeçalho e o widget).
 function fitDist() {
   if (isV7() && (away7 || e7 > 0.35)) return 4.8;
-  if (isV8()) return 6; // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
+  if (isV9()) return 5.2; if (isV8()) return 6; // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
   const band = Math.max(140, Math.min(vw - bandSide, vh - bandCut) * 0.8), worldPerPx = 2 * Math.tan(15 * D) / vh;
   // a escala vale na superfície do globo (distância − 1): rotas curtas pedem a câmera bem perto
   return clamp(1 + frame0.chord / (band * worldPerPx), 1.22, 7.5);
@@ -600,7 +619,7 @@ function resize() {
   // V1 e V7 widget embaixo · V4 jogo à direita e barra embaixo · V5 jogo à esquerda e barra embaixo
   const v = $('app').dataset.v, teleW = $('pkTele').offsetWidth + 48, teleH = $('pkTele').offsetHeight + 48, lW = $('pkL').offsetWidth;
   const [sideW, leftW, botH] = v === '4' ? [lW, 0, teleH]
-    : v === '5' ? [0, lW, teleH] : v === '8' ? [0, 0, headH] : [0, 0, teleH - 24];
+    : v === '5' ? [0, lW, teleH] : v === '9' ? [0, 0, headH] : v === '8' ? [0, 0, headH] : [0, 0, teleH - 24];
   const offX = Math.round((sideW - leftW) / 2), offY = Math.round((botH - headH) / 2); camOff = [offX, offY];
   bandCut = botH + headH; bandSide = sideW + leftW; bandLeft = leftW; bandRight = sideW; headBottom = headH + 14; bandBottom = botH;
   camera.aspect = vw / vh; camera.setViewOffset(vw, vh, offX, offY, vw, vh); camera.updateProjectionMatrix();
@@ -692,7 +711,8 @@ function dock7() {
 /* ---------- V8: globo no centro, jogos em órbita ----------
    Miniaturas dos jogos giram devagar numa elipse em volta do globo (para no hover); otimizados têm a bolinha verde.
    Clicar num jogo abre o painel à direita (nome, servidor, Optimize/Stop e Route Monitoring) e o globo desliza para a esquerda. */
-const isV8 = () => $('app').dataset.v === '8';
+const isV8 = () => ['8', '9'].includes($('app').dataset.v); // a V9 reaproveita a órbita da V8
+const isV9 = () => $('app').dataset.v === '9';
 let panel8 = false, off8 = 0, a8 = -Math.PI / 2, hover8 = false;
 const orbit = document.createElement('div'); orbit.className = 'pk-orbit'; orbit.setAttribute('role', 'listbox'); orbit.setAttribute('aria-label', 'Games');
 const thumbs = GAMES.map((g, i) => {
@@ -711,21 +731,58 @@ document.querySelector('.pk-r1').append(close8);
 function setPanel8(o) { panel8 = o; $('app').classList.toggle('pk-p8', o); syncThumbs8(); if (!o) openSrv(false); }
 addEventListener('keydown', e => { if (e.key === 'Escape' && isV8() && panel8) setPanel8(false); });
 syncThumbs8();
+// V9: as capas ficam escondidas; só a do jogo em destaque aparece, parada na frente do globo.
+// Com o mouse sobre o globo a órbita abre numa mola (raio cresce com leve overshoot) e as capas entram em cascata a partir do destaque.
+let show9 = false, r9 = 0, v9 = 0, orbR = [1, 1, 0, 0];
+$('pk').addEventListener('pointermove', e => {
+  if (!isV9()) return;
+  const b = canvas.getBoundingClientRect(), k = b.width / vw, [rx, ry, cx, cy] = orbR;
+  const dx = (e.clientX - b.left) / k - cx, dy = (e.clientY - b.top) / k - cy, m = show9 ? 70 : 10;
+  const inside = (dx / (rx + m)) ** 2 + (dy / (ry + m)) ** 2 < 1;
+  if (inside !== show9) setShow9(inside);
+});
+$('pk').addEventListener('pointerleave', () => { if (isV9()) setShow9(false); });
+function setShow9(o) {
+  show9 = o;
+  const n = thumbs.length;
+  thumbs.forEach((t, i) => { const d = Math.min((i - sel + n) % n, (sel - i + n) % n); t.style.setProperty('--d', (d * 34) + 'ms'); t.classList.toggle('show', o); });
+}
+// V9: menu do canto superior esquerdo abre e fecha a sidebar
+const bar9 = document.createElement('div'); bar9.className = 'v9-bar';
+bar9.innerHTML = '<button class="icon-btn v9-menu" type="button" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>';
+const logo9 = document.querySelector('.sidebar .logo'); if (logo9) bar9.append(logo9.cloneNode(true));
+$('app').append(bar9);
+const menu9 = bar9.querySelector('.v9-menu');
+menu9.addEventListener('click', () => { const o = !$('app').classList.contains('sb-open'); $('app').classList.toggle('sb-open', o); menu9.setAttribute('aria-expanded', o); });
+const wrapPi = a => Math.atan2(Math.sin(a), Math.cos(a));
 function frameV8(dt) {
+  const st = stars.material.uniforms, v9on = isV9();
+  stars.visible = v9on || st.uOp.value > 0.01; st.uOp.value += ((v9on ? 1 : 0) - st.uOp.value) * Math.min(1, dt * 2.5); st.uTime.value += dt;
   if (!isV8()) { if (off8 || $('pkTele').style.top) { off8 = 0; bandRight = 0; $('pkTele').style.top = ''; resize(); } return; }
-  const pw = $('pkL').offsetWidth + 32;
+  const pw = $('pkL').offsetWidth + (v9on ? 48 : 32);
   // o globo e a órbita deslizam para a esquerda quando o painel abre
   const tgt = panel8 ? pw / 2 : 0, k = reduce ? 1 : 1 - Math.exp(-dt * 6);
-  if (Math.abs(tgt - off8) > 0.3) { off8 += (tgt - off8) * k; camera.setViewOffset(vw, vh, off8, 0, vw, vh); camera.updateProjectionMatrix(); }
+  if (Math.abs(tgt - off8) > 0.3) { off8 += (tgt - off8) * k; camera.setViewOffset(vw, vh, off8, camOff[1], vw, vh); camera.updateProjectionMatrix(); }
   bandRight = panel8 ? pw : 0;
   $('pkTele').style.top = ($('pkL').offsetTop + $('pkL').offsetHeight) + 'px';
-  if (!hover8 && !panel8 && !reduce) a8 += dt * 0.035;
-  const gp = globePx(), cx = vw / 2 - off8, cy = vh / 2, ry = Math.min(gp * 1.32, vh / 2 - 44), rx = Math.min(Math.max(gp * 1.7, ry * 1.25), (vw - bandRight) / 2 - 44);
+  const n = thumbs.length, step = Math.PI * 2 / n;
+  if (v9on) {
+    // o destaque vai para a frente (embaixo do globo) numa rotação suave
+    a8 += wrapPi(Math.PI / 2 - sel * step - a8) * (reduce ? 1 : 1 - Math.exp(-dt * 5));
+    // mola criticamente amortecida, um pouco abaixo do crítico para um leve respiro no fim
+    const tr = show9 ? 1 : 0;
+    if (reduce) { r9 = tr; v9 = 0; } else { v9 += ((tr - r9) * 170 - v9 * 21) * dt; r9 += v9 * dt; }
+  } else if (!hover8 && !panel8 && !reduce) a8 += dt * 0.035;
+  const gp = globePx(), cx = vw / 2 - off8, cy = vh / 2 - camOff[1];
+  let ry = Math.min(gp * 1.32, vh / 2 - (v9on ? 96 : 44)), rx = Math.min(Math.max(gp * 1.7, ry * 1.25), (vw - bandRight) / 2 - 44);
+  orbR = [rx, ry, cx, cy];
+  if (v9on) { const e0 = Math.min(1, (gp + 64) / ry), e = e0 + (1 - e0) * r9; rx *= e; ry *= e; } // fechada: o destaque fica logo abaixo do globo
   thumbs.forEach((t, i) => {
-    const a = a8 + i * Math.PI * 2 / thumbs.length, sn = Math.sin(a), d = (sn + 1) / 2; // d: 0 atrás (em cima), 1 na frente (embaixo)
-    const sc = (0.82 + 0.18 * d) * (t.getAttribute('aria-selected') === 'true' ? 1.18 : 1);
+    const a = a8 + i * step, sn = Math.sin(a), d = (sn + 1) / 2; // d: 0 atrás (em cima), 1 na frente (embaixo)
+    const sc = (0.82 + 0.18 * d) * (t.getAttribute('aria-selected') === 'true' || (v9on && i === sel) ? 1.18 : 1);
     t.style.transform = `translate(${(cx + Math.cos(a) * rx).toFixed(1)}px, ${(cy + sn * ry).toFixed(1)}px) translate(-50%, -50%) scale(${sc.toFixed(3)})`;
     t.style.zIndex = 10 + Math.round(d * 10);
+    t.classList.toggle('sel9', i === sel);
   });
 }
 
@@ -818,4 +875,4 @@ function setV(v) {
   dispatchEvent(new Event('pk:layout'));
 }
 vchips.forEach(c => c.addEventListener('click', () => setV(c.dataset.v)));
-if (/^#v\d$/.test(location.hash)) setV(location.hash.slice(2));
+if (/^#v\d+$/.test(location.hash)) setV(location.hash.slice(2));
