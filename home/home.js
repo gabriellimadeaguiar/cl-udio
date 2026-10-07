@@ -660,12 +660,13 @@ function frameV6(dt) {
    Saindo da home o canvas sai do palco (que some junto com a home) e voa até a vaga redonda da sidebar, acima da versão.
    A vaga é um link para a Home (o próprio protótipo trata data-goto="Home"). Na volta, o globo voa de volta e o canvas retorna ao palco. */
 const isV7 = () => $('app').dataset.v === '7';
-let away7 = false, e7 = 0, fly7 = null, camOff = [0, 0];
+let away7 = false, e7 = 0, fly7 = null, camOff = [0, 0], gpStart7 = 0;
 function frameV7(dt) {
   const inHost = canvas.parentElement === host;
   if (!isV7()) { if (!inHost) dock7(); if (away7) { away7 = false; $('app').classList.remove('pk-away'); resize(); } e7 = 0; return; }
   const away = $('view-home').hidden;
   if (away !== away7) {
+    if (away) gpStart7 = globePx() * 1.06; // tamanho do globo na tela ao sair da home
     away7 = away; frame0.dist = fitDist();
     if (away) viewOff7(true);
     $('app').classList.toggle('pk-away', away); $('sbGlobe').tabIndex = away ? 0 : -1;
@@ -682,20 +683,26 @@ function frameV7(dt) {
     Object.assign(canvas.style, { position: 'absolute', inset: 'auto', width: fly7.w + 'px', height: fly7.h + 'px', zIndex: 6, pointerEvents: 'none' });
   }
   // duração fixa (0,7 s) com entrada e saída suaves, em vez de aproximação exponencial que arrasta no fim e encaixa num pulo
-  e7 = clamp(e7 + (away ? 1 : -1) * (reduce ? 1 : dt / 0.7));
+  e7 = clamp(e7 + (away ? 1 : -1) * (reduce ? 1 : dt / (window.PK_FLY || 0.7))); // PK_FLY: só para testar em câmera lenta
   if (!away && e7 <= 0.35 && frame0.dist === 4.8) { frame0.dist = fitDist(); viewOff7(false); } // último terço da volta: já entra o enquadramento da rota
   if (!away && e7 === 0) return dock7();
   canvas.style.left = fly7.x + 'px'; canvas.style.top = fly7.y + 'px';
   const sl = $('sbGlobe').getBoundingClientRect(), off = viewOn7 ? camOff : [0, 0];
   const px = fly7.w / 2 - off[0], py = fly7.h / 2 - off[1], gp = globePx() * 1.06;
   const e = e7 < 0.5 ? 4 * e7 ** 3 : 1 - (-2 * e7 + 2) ** 3 / 2;
-  const s = 1 + ((sl.width / 2) / gp - 1) * e;
+  // ida: o raio do globo na tela vai direto do tamanho da home ao da vaga, mesmo com a câmera se afastando ao mesmo tempo
+  // (antes ele inchava no começo); volta: escala 1 no fim, para encaixar sem pulo
+  const s = away && gpStart7 ? (gpStart7 + (sl.width / 2 - gpStart7) * e) / gp : 1 + ((sl.width / 2) / gp - 1) * e;
   const tx = (sl.left - a.left + sl.width / 2 - (fly7.x + px)) * e, ty = (sl.top - a.top + sl.height / 2 - (fly7.y + py)) * e;
   canvas.style.transformOrigin = `${px.toFixed(1)}px ${py.toFixed(1)}px`;
   canvas.style.transform = `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) scale(${s.toFixed(4)})`;
   // recorte: círculo na sidebar; perto do palco ele se abre até o quadro inteiro e soma o degradê da esquerda da V1,
   // para o encaixe final não trocar de máscara num pulo
-  const R0 = Math.hypot(fly7.w, fly7.h), rad = gp + (R0 - gp) * (1 - e) ** 2, soft = 1 + 90 * (1 - e);
+  // na ida a home já sumiu: o globo sai recortado em círculo desde o primeiro quadro (sem o fundo do canvas);
+  // na volta o círculo se abre até o quadro inteiro para encaixar no palco
+  // na volta o círculo só se abre no último quarto, quando o canvas já está sobre o palco (antes ele mostrava o quadro escuro no meio do caminho)
+  const open = away ? 0 : clamp(1 - e7 / 0.25) ** 2, R1 = gp * 1.12;
+  const rad = R1 + (Math.hypot(fly7.w, fly7.h) - R1) * open, soft = 2 + 16 * (1 - e) + 70 * open;
   // furo no lugar do Route Monitoring: no palco o widget fica por cima do globo; em voo o canvas está acima de tudo,
   // então o recorte tira a área do widget (convertida para o espaço do canvas, antes do transform)
   const t = $('pkTele').getBoundingClientRect(), cx0 = a.left + fly7.x, cy0 = a.top + fly7.y;
