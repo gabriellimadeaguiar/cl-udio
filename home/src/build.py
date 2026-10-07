@@ -36,8 +36,6 @@ out = out.replace('</style>', '</style>\n<style>\n' + css + '</style>', 1)
 # chips de versão acima do app, fora da interface (pedido do Gabriel); a versão fica em data-v no .app
 VCHIPS = '''<nav class="vchips" aria-label="Layout version">
     <button class="vchip" type="button" data-v="1" aria-pressed="true">V1 &middot; Stage + globe</button>
-    <button class="vchip" type="button" data-v="2" aria-pressed="false">V2 &middot; Globe hero</button>
-    <button class="vchip" type="button" data-v="3" aria-pressed="false">V3 &middot; Stacked</button>
     <button class="vchip" type="button" data-v="4" aria-pressed="false">V4 &middot; Swapped</button>
     <button class="vchip" type="button" data-v="5" aria-pressed="false">V5 &middot; Game art</button>
   </nav>

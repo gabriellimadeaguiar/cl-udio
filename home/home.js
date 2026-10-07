@@ -118,12 +118,12 @@ let sel = 0;
 const wrapK = k => ((k % N) + N + N / 2) % N - N / 2;
 // tamanho da capa (3:4, caixa do jogo) e raio do anel a partir do espaço do palco
 function sizeDeck() {
-  const W = deck.clientWidth, H = deck.clientHeight;
+  const W = deck.clientWidth, H = deck.clientHeight - (parseFloat(getComputedStyle(deck).getPropertyValue('--padT')) || 0); // --padT: folga para o brilho, fora da conta da capa
   if (!W || !H) return;
   const ph = Math.round(Math.min(H * 0.72, W * 0.5 / 0.75)), pw = Math.round(ph * 0.75);
   R = (pw / 2 + GAP / 2) / Math.tan(Math.PI / SLOTS); pitch = pw + GAP;
   deck.style.setProperty('--pw', pw + 'px'); deck.style.setProperty('--ph', ph + 'px');
-  deck.style.setProperty('--R', R.toFixed(1) + 'px'); deck.style.setProperty('--P', (R * (/[25]/.test($('app').dataset.v) ? 3 : 1.5)).toFixed(1) + 'px'); // V2: faixa baixa, perspectiva mais longa para as laterais não crescerem
+  deck.style.setProperty('--R', R.toFixed(1) + 'px'); deck.style.setProperty('--P', (R * ($('app').dataset.v === '5' ? 3 : 1.5)).toFixed(1) + 'px'); // V5: faixa baixa, perspectiva mais longa para as laterais não crescerem
 }
 new ResizeObserver(sizeDeck).observe(deck); sizeDeck();
 // estado (seleção e otimizado); a posição é desenhada quadro a quadro em deckFrame
@@ -593,9 +593,9 @@ function resize() {
   renderer.setSize(vw, vh, false); composer.setSize(vw, vh); composer.setPixelRatio(PR); bloom.resolution.set(vw / 2, vh / 2);
   const headH = host.querySelector('.pk-head').offsetHeight + 24;
   // Área livre do globo em cada versão: o que cobre o canvas à esquerda, à direita e embaixo.
-  // V1 widget embaixo · V2 painel à direita e faixa de jogos embaixo · V3 widget na metade direita · V4 jogo à direita e barra embaixo · V5 jogo à esquerda e barra embaixo
+  // V1 widget embaixo · V4 jogo à direita e barra embaixo · V5 jogo à esquerda e barra embaixo
   const v = $('app').dataset.v, teleW = $('pkTele').offsetWidth + 48, teleH = $('pkTele').offsetHeight + 48, lW = $('pkL').offsetWidth;
-  const [sideW, leftW, botH] = v === '2' ? [teleW, 0, $('pkL').offsetHeight] : v === '3' ? [teleW, 0, 24] : v === '4' ? [lW, 0, teleH]
+  const [sideW, leftW, botH] = v === '4' ? [lW, 0, teleH]
     : v === '5' ? [0, lW, teleH] : [0, 0, teleH - 24];
   const offX = Math.round((sideW - leftW) / 2), offY = Math.round((botH - headH) / 2);
   bandCut = botH + headH; bandSide = sideW + leftW; bandLeft = leftW; bandRight = sideW; headBottom = headH + 14; bandBottom = botH;

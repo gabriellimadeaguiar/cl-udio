@@ -820,8 +820,8 @@ p { margin: 0; }
 .pk-deck.drag { cursor: grabbing; }
 .pk-deck:focus-visible { outline: 2px solid var(--series1); outline-offset: -2px; }
 /* anel 3D e piso (referência): reflexo das capas e um brilho fraco no chão logo abaixo */
-.pk-ring { position: absolute; left: 50%; top: calc(50% - 16px); width: 0; height: 0; transform-style: preserve-3d; transform: translateZ(var(--R)); }
-.pk-floor { position: absolute; left: 0; right: 0; top: calc(50% - 16px + var(--ph) / 2 + 10px); height: 120px; pointer-events: none; background: radial-gradient(50% 60% at 50% 0%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 70%); }
+.pk-ring { position: absolute; left: 50%; top: calc(50% - 16px + var(--oy, 0px)); width: 0; height: 0; transform-style: preserve-3d; transform: translateZ(var(--R)); }
+.pk-floor { position: absolute; left: 0; right: 0; top: calc(50% - 16px + var(--oy, 0px) + var(--ph) / 2 + 10px); height: 120px; pointer-events: none; background: radial-gradient(50% 60% at 50% 0%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 70%); }
 /* capa no formato da Wikipedia (caixa do jogo, retrato). Arte em paisagem fica inteira sobre ela mesma desfocada. */
 .pk-card { position: absolute; left: calc(var(--pw) / -2); top: calc(var(--ph) / -2); width: var(--pw); height: var(--ph); border-radius: 8px; overflow: hidden; cursor: pointer; background: var(--container-high);
   backface-visibility: hidden; will-change: transform;
@@ -937,42 +937,6 @@ p { margin: 0; }
 .vchip:disabled { opacity: .45; cursor: default; }
 .vchip:focus-visible { outline: 2px solid var(--series1); outline-offset: 2px; }
 
-/* ---------- V2: globo herói ----------
-   O globo ocupa o palco inteiro; Route Monitoring vira painel à direita; jogos numa faixa embaixo, com título, servidor e CTA numa linha acima das capas. */
-.app[data-v="2"] .pk { display: block; }
-.app[data-v="2"] .pk::after { background: linear-gradient(0deg, var(--stage) 0%, #050608d9 22%, transparent 48%), radial-gradient(60% 70% at 32% 40%, transparent 40%, #05060899 100%); }
-.app[data-v="2"] .pk-amb.on { opacity: .2; }
-.app[data-v="2"] .pk-r { position: absolute; inset: 0; z-index: 0; display: block; }
-.app[data-v="2"] .pk-r canvas { -webkit-mask: none; mask: none; }
-.app[data-v="2"] .pk-head { position: absolute; left: 24px; right: 24px; top: 24px; }
-.app[data-v="2"] .pk-tele { position: absolute; top: 72px; right: 24px; width: 352px; background: color-mix(in srgb, var(--container) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-.app[data-v="2"] .pk-kpis { grid-template-columns: 1fr 1fr; row-gap: 12px; }
-.app[data-v="2"] .pk-lanes { display: grid; grid-template-columns: 1fr 1fr; }
-.app[data-v="2"] .pk-lane { min-width: 0; }
-.app[data-v="2"] .pk-l { position: absolute; left: 0; bottom: 0; width: calc(100% - 400px); height: 224px; z-index: 1; grid-template-rows: auto minmax(0, 1fr); }
-.app[data-v="2"] .pk-info { order: -1; flex-direction: row; align-items: center; padding: 0 24px; }
-.app[data-v="2"] .pk-r1 { flex: 1; min-width: 0; }
-.app[data-v="2"] .pk-r1 h3 { font-size: 24px; line-height: 32px; }
-.app[data-v="2"] .pk-r2 .grow { display: none; }
-.app[data-v="2"] .pk-cta { min-width: 136px; }
-.app[data-v="2"] .pk-deck { -webkit-mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
-.app[data-v="2"] .pk-pg { display: none; }
-.app[data-v="2"] .pk-ring { top: calc(50% - 6px); }
-
-/* ---------- V3: empilhado ----------
-   Carrossel em largura total em cima; globo e Route Monitoring lado a lado embaixo. Palco mais alto para caber os dois andares. */
-.app[data-v="3"] .pk { height: 660px; grid-template-columns: minmax(0, 1fr); grid-template-rows: 320px minmax(0, 1fr); }
-.app[data-v="3"] .pk::after { background: radial-gradient(70% 60% at 50% 30%, transparent 30%, var(--stage) 100%); }
-.app[data-v="3"] .pk-l { grid-row: 1; }
-.app[data-v="3"] .pk-info { flex-direction: row; align-items: center; padding: 0 24px 16px; }
-.app[data-v="3"] .pk-r1 { flex: 1; min-width: 0; }
-.app[data-v="3"] .pk-r1 h3 { font-size: 28px; line-height: 36px; }
-.app[data-v="3"] .pk-r2 .grow { display: none; }
-.app[data-v="3"] .pk-r { grid-row: 2; display: block; border-top: 1px solid var(--divider); }
-.app[data-v="3"] .pk-r canvas { -webkit-mask: none; mask: none; }
-.app[data-v="3"] .pk-head { position: absolute; left: 24px; right: calc(50% + 12px); top: 24px; }
-.app[data-v="3"] .pk-tele { position: absolute; top: 24px; bottom: 24px; right: 24px; width: calc(50% - 36px); justify-content: space-between; }
-
 /* ---------- V4: invertido ----------
    Globo grande à esquerda, jogo (capas, título, servidor, Optimize) à direita, Route Monitoring numa barra larga embaixo. */
 .app[data-v="4"] .pk { display: block; }
@@ -1022,13 +986,13 @@ p { margin: 0; }
 /* V5: o seletor fica no alto do palco; a lista abre para baixo, por cima das capas (para cima ela era cortada pelo palco) */
 .app[data-v="5"] .pk-info { position: relative; z-index: 2; }
 .app[data-v="5"] .pk-srv .search-list { top: calc(100% + 8px); bottom: auto; }
+/* V5: o brilho da capa selecionada passava do topo do carrossel e era cortado. O carrossel ganha 56 px de folga em cima (sob a linha do servidor), sem mudar o tamanho das capas. */
+.app[data-v="5"] .pk-deck { --padT: 56px; --oy: 28px; margin-top: -56px; }
 </style>
 
 <div class="stage">
   <nav class="vchips" aria-label="Layout version">
     <button class="vchip" type="button" data-v="1" aria-pressed="true">V1 &middot; Stage + globe</button>
-    <button class="vchip" type="button" data-v="2" aria-pressed="false">V2 &middot; Globe hero</button>
-    <button class="vchip" type="button" data-v="3" aria-pressed="false">V3 &middot; Stacked</button>
     <button class="vchip" type="button" data-v="4" aria-pressed="false">V4 &middot; Swapped</button>
     <button class="vchip" type="button" data-v="5" aria-pressed="false">V5 &middot; Game art</button>
   </nav>
