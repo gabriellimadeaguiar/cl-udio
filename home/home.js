@@ -449,7 +449,14 @@ function rebuild() {
   hist.isp.length = hist.xl.length = 0; win.length = 0;
   for (let i = 0; i < HN; i++) sample(false);
   $('pkRoute').innerHTML = `${origin[3]} → ${sv[3]}<span class="t-var">${Math.round(routeKm).toLocaleString('en-US')} km</span>`;
-  $('pkLanes').innerHTML = Array.from({ length: g.lanes }, (_, i) => `<span class="badge neutral tnum"><span>Route ${i + 1}</span><span>–</span></span>`).join('');
+  // um chip por rota: estado com ponto + texto (não só cor), ping suavizado, e passar o mouse acende a rota no globo
+  $('pkLanes').innerHTML = Array.from({ length: g.lanes }, (_, i) => `<span class="pk-lane idle" data-i="${i}" tabindex="0" data-tip=""><i class="dt"></i><span class="nm">Route ${i + 1}</span><span class="v tnum">–</span></span>`).join('');
+  laneEma.fill(0); fastLane = 0;
+  $('pkLanes').querySelectorAll('.pk-lane').forEach(el => {
+    const i = +el.dataset.i;
+    el.addEventListener('pointerenter', () => { hoverLane = i; }); el.addEventListener('pointerleave', () => { hoverLane = -1; });
+    el.addEventListener('focus', () => { hoverLane = i; }); el.addEventListener('blur', () => { hoverLane = -1; });
+  });
   tagA.innerHTML = `${origin[2]}<span class="t-var">You</span>`;
   tagB.innerHTML = `${sv[2]} · ${sv[3]}<span class="t-var">Game server</span>`;
   logMsg(g.state === 'on' ? onMsg(g) : IDLE);
@@ -460,7 +467,8 @@ function rebuild() {
 // ExitLag: o mesmo pacote vai por todas as rotas; vale o que chega primeiro, então o pico de uma rota não aparece no resultado.
 let baseXl = 40, baseIsp = 74, spike = 0, fail = null, nextFail = 0;
 const HN = 140, hist = { isp: [], xl: [] }, win = [];
-const laneNow = [0, 0, 0, 0];
+const laneNow = [0, 0, 0, 0], laneEma = [0, 0, 0, 0];
+let fastLane = 0, hoverLane = -1;
 function sample(on) {
   const L = GAMES[sel].lanes;
   spike = Math.max(0, spike - 1);
@@ -498,10 +506,19 @@ function paintTele() {
   $('kRoutes').textContent = on ? (failing ? L - 1 : L) : 1;
   $('kRoutesOf').textContent = on ? '/' + L : '';
   $('kRoutesVs').textContent = on ? 'in parallel' : 'ISP only';
+  // rota mais rápida com histerese (troca só com 2 ms de vantagem), para o destaque não pular a cada leitura
+  for (let i = 0; i < L; i++) laneEma[i] = laneEma[i] ? laneEma[i] * 0.7 + laneNow[i] * 0.3 : laneNow[i];
+  const down = i => on && fail && fail.lane === i && fail.k > 0.3;
+  let best = -1; for (let i = 0; i < L; i++) if (!down(i) && (best < 0 || laneEma[i] < laneEma[best])) best = i;
+  if (down(fastLane) || fastLane >= L || (best >= 0 && laneEma[best] < laneEma[fastLane] - 2)) fastLane = Math.max(0, best);
   [...$('pkLanes').children].forEach((el, i) => {
-    const bad = on && fail && fail.lane === i && fail.k > 0.3;
-    el.className = 'badge tnum ' + (bad ? 'bad' : on ? 'success' : 'neutral');
-    el.lastElementChild.textContent = on ? Math.round(laneNow[i]) + ' ms' : (g.state === 'testing' ? '…' : '–');
+    const st = !on ? 'idle' : down(i) ? 'bad' : i === fastLane ? 'fast' : 'ok';
+    el.className = 'pk-lane ' + st;
+    el.querySelector('.v').textContent = st === 'bad' ? 'Unstable' : on ? Math.round(laneEma[i]) + ' ms' : (g.state === 'testing' ? 'Testing' : 'Standby');
+    el.dataset.tip = st === 'fast' ? `Route ${i + 1} is the fastest now: its packets arrive first.`
+      : st === 'ok' ? `Route ${i + 1} sends the same packets in parallel, as a backup.`
+      : st === 'bad' ? `Route ${i + 1} is unstable. The other routes carry your game until it recovers.`
+      : 'Optimize to send your game through this route.';
   });
   if (on) { const ct = $('pkCtaT'); if (ct) ct.textContent = fmtDur(time - g.since); }
 }
@@ -600,6 +617,7 @@ function frame() {
       r.u.uDraw.value = xlShow ? (reduce ? 1 : ease(clamp((xa - i * 0.3) / 0.8))) : 0;
       r.u.uOp.value = xlShow; r.u.uTime.value = time;
       r.u.uFail.value = fail && fail.lane === i ? fail.k : 0;
+      r.u.uGain.value = hoverLane < 0 ? 0.42 : hoverLane === i ? 0.95 : 0.12;
     });
   }
   // uma rota oscila de tempos em tempos: entra, segura, sai
