@@ -1345,6 +1345,9 @@ function framePmap(dt) {
   if (!pmap.done && t >= PM_DONE) {
     pmap.done = true; $('app').dataset.pmap = 'done'; lockNav(false); paintCta();
     promo.armed = true; promoCheck(); // mapa pronto: se os detalhes de um jogo já estão abertos, a oferta entra agora
+    // fim do mapa (pedido do Gabriel): o globo pulsa, os jogos abrem em órbita por um instante e fecham, ficando só o destaque
+    pulseGlobe();
+    setTimeout(() => { if (!pmap || panel8) return; setShow9(true); setTimeout(() => { if (!panel8) setShow9(false); }, 1700); }, 450);
   }
   if (time - pmPaintT > 0.1 || pmap.done) {
     pmPaintT = time;
@@ -1420,7 +1423,7 @@ function frameOff(dt) {
   const off = $('app').classList.contains('el-off') ? 1 : 0;
   // desligar a ExitLag para as conexões ativas (como diz o diálogo do protótipo)
   if (off && !offPrev) { GAMES.forEach(g => { if (g.state === 'on' || g.state === 'testing') g.state = 'off'; }); xlShow = 0; fail = null; logMsg(IDLE); paintCta(); layout(); }
-  if (!off && offPrev) { onT = time; offK = 0; if (!reduce) { const gp = globePx(); onRing.style.cssText = `left:${(vw / 2 - off8).toFixed(1)}px; top:${(vh / 2 - camOff[1] - offY9).toFixed(1)}px; width:${(gp * 2).toFixed(1)}px; height:${(gp * 2).toFixed(1)}px`; onRing.classList.remove('go'); void onRing.offsetWidth; onRing.classList.add('go'); } }
+  if (!off && offPrev) { offK = 0; pulseGlobe(); }
   if (off !== offPrev) paintCta();
   offPrev = off;
   const pt = time - onT, p = reduce ? 0 : pt < 0.35 ? ease(pt / 0.35) : Math.max(0, 1 - (pt - 0.35) / 1.6) ** 1.6;
@@ -1433,6 +1436,12 @@ function frameOff(dt) {
   bloom.strength = 0.8 + 0.5 * p;
 }
 let onT0 = false;
+// pulso verde do globo com o anel correndo para fora: ao ligar a ExitLag e quando o network map termina
+function pulseGlobe() {
+  onT = time; if (reduce) return;
+  const gp = globePx(); onRing.style.cssText = `left:${(vw / 2 - off8).toFixed(1)}px; top:${(vh / 2 - camOff[1] - offY9).toFixed(1)}px; width:${(gp * 2).toFixed(1)}px; height:${(gp * 2).toFixed(1)}px`;
+  onRing.classList.remove('go'); void onRing.offsetWidth; onRing.classList.add('go');
+}
 
 /* ---------- Nós do túnel: bridges e finals ----------
    Cada rota ExitLag mostra dois nós: a bridge (entrada, perto de você) e a final (saída, perto do servidor).
