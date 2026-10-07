@@ -1,5 +1,5 @@
           <!-- Fileira original de card-app, vazia: o script do protótipo ainda a procura -->
-          <div class="apps" hidden style="display:none"><div class="card-add"></div></div>
+          <div class="apps" hidden style="display:none"><div class="card-add"><img src="{{ADD}}" alt=""></div></div>
           <!-- Palco: jogos em carrossel com o globo de rotas ao lado do jogo em destaque -->
           <div class="pk" id="pk" aria-label="Games stage">
             <div class="pk-amb" id="pkAmbA"></div><div class="pk-amb" id="pkAmbB"></div>
@@ -52,4 +52,13 @@
                 <div class="pk-log"><span class="tnum" id="pkLogT"></span><span id="pkLog"></span></div>
               </div>
             </div>
+          </div>
+          <!-- Dialog "Add game or app": comp / modal dialog do protótipo, com o input-search e itens da search-list. O script o leva para junto do #md-overlay. -->
+          <div class="modal dialog pk-add" id="pkAdd" role="dialog" aria-modal="true" aria-labelledby="pkAddT" hidden>
+            <div class="md-body">
+              <div class="md-head"><h3 id="pkAddT">Add game or app</h3></div>
+              <label class="search"><img id="pkAddIco" src="" alt=""><input type="search" id="pkAddIn" placeholder="Search games" aria-label="Search games" autocomplete="off"></label>
+              <div class="sl-scroll pk-add-list" id="pkAddList" role="listbox" aria-label="Games you can add"></div>
+            </div>
+            <div class="md-foot"><button class="btn outlined" type="button" id="pkAddCancel">Cancel</button></div>
           </div>

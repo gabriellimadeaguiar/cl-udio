@@ -35,6 +35,17 @@ const GAMES = [
   { name: 'Rocket League', img: A + 'box-rocket-league.jpg', lanes: 2, regions: ['br', 'nae', 'euw', 'oce'] },
   { name: 'Naruto Shippuden: Ultimate Ninja Storm 4', img: A + 'box-naruto-storm-4.jpg', lanes: 2, regions: ['nae', 'euw', 'jp'] }
 ];
+// Catálogo para "Add game or app": jogos que ainda não estão no palco (capas da Wikipedia, dados simulados).
+const CATALOG = [
+  { name: 'Escape from Tarkov', img: A + 'box-tarkov.jpg', lanes: 3, regions: ['nae', 'naw', 'euw', 'eun', 'sea'] },
+  { name: 'Destiny 2', img: A + 'box-destiny-2.jpg', lanes: 3, regions: ['nae', 'naw', 'euw', 'jp'] },
+  { name: 'World of Warcraft', img: A + 'box-wow.jpg', lanes: 4, regions: ['br', 'nae', 'naw', 'euw', 'kr', 'oce'] },
+  { name: 'Path of Exile 2', img: A + 'box-poe2.jpg', lanes: 2, regions: ['br', 'nae', 'euw', 'sea', 'oce'] },
+  { name: 'Dead by Daylight', img: A + 'box-dead-by-daylight.jpg', lanes: 2, regions: ['br', 'nae', 'euw', 'jp', 'oce'] },
+  { name: 'Elden Ring', img: A + 'box-elden-ring.jpg', lanes: 2, regions: ['nae', 'euw', 'jp'] },
+  { name: 'Warframe', img: A + 'box-warframe.jpg', lanes: 3, regions: ['nae', 'euw', 'sea'] },
+  { name: 'Ark: Survival Evolved', img: A + 'box-ark.jpg', lanes: 2, regions: ['br', 'nae', 'euw', 'oce'] }
+];
 GAMES.forEach(g => { g.state = g.state || 'off'; });
 
 const D = Math.PI / 180;
@@ -72,15 +83,16 @@ function findOrigin() {
 const origin = findOrigin();
 const vO = toV(origin[0], origin[1]);
 // Região inicial: a mais próxima a pelo menos ~1.700 km (mesma regra da landing), para a rota ter o que mostrar.
-GAMES.forEach(g => {
+function pickRegion(g) {
   const by = g.regions.map(r => [r, vO.angleTo(toV(REGIONS[r].c[0], REGIONS[r].c[1]))]).sort((a, b) => a[1] - b[1]);
   g.region = (by.find(([, a]) => a > 0.27) || by[0])[0];
-});
+}
+GAMES.forEach(pickRegion);
 
 /* ---------- Palco: carrossel ---------- */
-const deck = $('pkDeck'), N = GAMES.length;
-let moved = false;
-const cards = GAMES.map((g, i) => {
+const deck = $('pkDeck');
+let N = GAMES.length, moved = false;
+function makeCard(g, i) {
   const b = document.createElement('div');
   b.className = 'pk-card'; b.setAttribute('role', 'option'); b.setAttribute('aria-label', g.name);
   b.innerHTML = `<span class="bg" style="background-image:url('${g.img}')"></span><img src="${g.img}" alt="" draggable="false">`;
@@ -88,14 +100,21 @@ const cards = GAMES.map((g, i) => {
   const fit = () => b.classList.toggle('wide', im.naturalWidth / im.naturalHeight > 1.05);
   if (im.complete) fit(); else im.addEventListener('load', fit);
   b.addEventListener('click', () => { if (!moved) select(i); });
-  deck.appendChild(b);
+  deck.insertBefore(b, addCard);
   return b;
-});
+}
+// card-add do protótipo ("Add game or app") como mais uma posição do carrossel, entre o último e o primeiro jogo
+const addCard = document.createElement('div');
+addCard.className = 'pk-card pk-add-card card-add'; addCard.tabIndex = -1; addCard.setAttribute('role', 'button');
+addCard.innerHTML = `<img src="${document.querySelector('.card-add img')?.src || ''}" alt=""><span>Add game or app</span>`;
+addCard.addEventListener('click', () => { if (!moved) openAdd(); });
+deck.appendChild(addCard);
+const cards = GAMES.map(makeCard);
 $('pkTotal').textContent = N;
 let sel = 0, frac = 0;
-const wrapK = k => ((k % N) + N + N / 2) % N - N / 2;
+const wrapK = k => { const M = N + 1; return ((k % M) + M + M / 2) % M - M / 2; };
 function layout() {
-  cards.forEach((c, i) => {
+  [...cards, addCard].forEach((c, i) => {
     const k = wrapK(i - sel - frac), a = Math.abs(k);
     const x = k * 62 - Math.sign(k) * Math.max(0, a - 1) * 8, z = -a * 170, ry = -Math.sign(k) * Math.min(a, 1.3) * 24, sc = 1 - Math.min(a, 2.5) * 0.07;
     c.style.transform = `translate(-50%, -50%) translateX(${x}%) translateZ(${z}px) rotateY(${ry}deg) scale(${sc})`;
@@ -103,6 +122,7 @@ function layout() {
     c.style.filter = `brightness(${1 - Math.min(a, 2.5) * 0.26}) saturate(${1 - Math.min(a, 2.5) * 0.2})`;
     c.style.zIndex = String(20 - Math.round(a * 2));
     c.style.pointerEvents = a > 3.2 ? 'none' : '';
+    if (c === addCard) return;
     c.setAttribute('aria-selected', i === sel ? 'true' : 'false');
     c.classList.toggle('on', GAMES[i].state === 'on');
   });
@@ -119,7 +139,7 @@ addEventListener('pointermove', e => {
 addEventListener('pointerup', () => {
   if (dragX === null) return;
   dragX = null; deck.classList.remove('drag');
-  if (moved) { const step = Math.round(frac + Math.sign(frac) * 0.2); frac = 0; select(sel + step); setTimeout(() => { moved = false; }, 0); }
+  if (moved) { let step = Math.round(frac + Math.sign(frac) * 0.2); if (wrapK(sel + step - N) === 0) step += Math.sign(step); frac = 0; select(sel + step); setTimeout(() => { moved = false; }, 0); }
 });
 let wheelAcc = 0, wheelT = 0;
 deck.addEventListener('wheel', e => {
@@ -132,6 +152,7 @@ deck.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') { select(sel + 1); e.preventDefault(); }
   if (e.key === 'ArrowLeft') { select(sel - 1); e.preventDefault(); }
   if (e.key === 'Enter' || e.key === ' ') { toggleOpt(); e.preventDefault(); }
+  if (e.key === '+') { openAdd(); e.preventDefault(); }
 });
 $('pkPrev').addEventListener('click', () => select(sel - 1));
 $('pkNext').addEventListener('click', () => select(sel + 1));
@@ -162,6 +183,51 @@ function select(i) {
   deck.classList.remove('lit'); requestAnimationFrame(() => requestAnimationFrame(() => deck.classList.add('lit')));
   if (changed || !routes) rebuild();
 }
+
+/* ---------- Adicionar jogo: dialog do protótipo com o input-search e a search-list ---------- */
+const addMd = $('pkAdd'), addIn = $('pkAddIn'), addList = $('pkAddList'), mdOv = $('md-overlay');
+mdOv.after(addMd); // o dialog vive junto do overlay do app, por cima de tudo
+const srchIcon = document.querySelector('.search-wrap .search img');
+if (srchIcon) $('pkAddIco').src = srchIcon.src;
+let addReturn = null;
+function renderAdd() {
+  const q = addIn.value.trim().toLowerCase();
+  const hits = CATALOG.filter(g => g.name.toLowerCase().includes(q));
+  addList.innerHTML = hits.length
+    ? hits.map(g => `<div class="sl-item" role="option" tabindex="-1" aria-selected="false" data-name="${g.name}"><span class="thumb-md" style="background-image:url('${g.img}')"></span><span class="sl-name">${g.name}</span><span class="t-var">PC</span></div>`).join('')
+    : `<p class="pk-add-empty t-var">${CATALOG.length ? `No games match “${addIn.value.trim().replace(/[<&]/g, '')}”.` : 'Every game in this demo is already on your stage.'}</p>`;
+}
+function openAdd() {
+  if (!addMd.hidden) return;
+  addReturn = document.activeElement; addIn.value = ''; renderAdd();
+  mdOv.hidden = addMd.hidden = false; void addMd.offsetWidth;
+  mdOv.classList.add('show'); addMd.classList.add('show');
+  document.querySelector('.content').inert = document.querySelector('.sidebar').inert = true;
+  addIn.focus({ preventScroll: true });
+}
+function closeAdd() {
+  if (addMd.hidden) return;
+  mdOv.classList.remove('show'); addMd.classList.remove('show');
+  document.querySelector('.content').inert = document.querySelector('.sidebar').inert = false;
+  setTimeout(() => { if (!addMd.classList.contains('show')) { addMd.hidden = true; mdOv.hidden = true; } }, 220);
+  addReturn && addReturn.focus({ preventScroll: true });
+}
+function addGame(name) {
+  const at = CATALOG.findIndex(g => g.name === name);
+  if (at < 0) return;
+  const g = CATALOG.splice(at, 1)[0];
+  g.state = 'off'; pickRegion(g);
+  GAMES.push(g); cards.push(makeCard(g, GAMES.length - 1)); N = GAMES.length;
+  $('pkTotal').textContent = N;
+  closeAdd();
+  select(N - 1);
+  logMsg(`<b>${g.name}</b> added. Press Optimize to route it through ExitLag.`);
+}
+addIn.addEventListener('input', renderAdd);
+addIn.addEventListener('keydown', e => { if (e.key === 'Enter') { const f = addList.querySelector('.sl-item'); if (f) addGame(f.dataset.name); } });
+addList.addEventListener('click', e => { const it = e.target.closest('.sl-item'); if (it) addGame(it.dataset.name); });
+$('pkAddCancel').addEventListener('click', closeAdd);
+addEventListener('keydown', e => { if (e.key === 'Escape' && !addMd.hidden) closeAdd(); });
 
 /* ---------- Otimizar: o comportamento da ExitLag ---------- */
 const cta = $('pkCta');

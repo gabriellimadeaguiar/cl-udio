@@ -14,7 +14,8 @@ def img_in(block_start, block_end, nth=0):
 PREV = img_in('data-bn="prev"', '</button>')
 NEXT = img_in('data-bn="next"', '</button>')
 MON = img_in('<template id="w-monitor">', '</h4>')
-stage = stage.replace('{{PREV}}', PREV).replace('{{NEXT}}', NEXT).replace('{{MON}}', MON)
+ADD = img_in('<div class="card-add"', '</div>')
+stage = stage.replace('{{PREV}}', PREV).replace('{{NEXT}}', NEXT).replace('{{MON}}', MON).replace('{{ADD}}', ADD)
 
 out = src.replace('<title>ExitLag Home Customize</title>', '<title>ExitLag Home Desktop</title>', 1)
 i = out.index('<div class="apps">'); j = out.index('<div class="row2">', i)
