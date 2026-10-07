@@ -1,7 +1,16 @@
-# ExitLag: proposta de valor (rascunho v0)
+# ExitLag: proposta de valor (v1)
 
-> Rascunho para o site "globo". Números e afirmações vêm de fontes públicas (lista no fim);
-> onde as fontes se contradizem, está marcado com ⚠ e virou pergunta para o Gabriel.
+> Base para a landing page "globo". v1 incorpora as respostas do Gabriel (2026-10-07).
+
+## 0. Decisões do Gabriel
+
+| Tema | Decisão |
+|---|---|
+| Público | **PC competitivo** é o principal; mobile vem em segundo; router aparece como produto **beta** |
+| Números oficiais | **+1.500 servidores**, **quase 1.800 jogos** (usar "+1.700 jogos" ou "quase 1.800") |
+| Mensagem central | **Estabilidade** |
+| Papel do site | Landing page de **teste grátis**, topo de funil, conversão direta |
+| Idiomas | **PT-BR e EN** |
 
 ## 1. O que o produto é, em uma frase
 
@@ -45,51 +54,77 @@ dependa só da habilidade.
 - Teste grátis de 3 dias sem cartão; planos Duo e Squad baixam o preço por jogador.
 
 **Prova (números públicos)**
-- 30M+ cadastros. ⚠ "milhões de jogadores ativos": sem número oficial encontrado.
-- ⚠ Servidores: fontes dizem **200+** e **1.500+**.
-- ⚠ Jogos: fontes dizem **130+**, **1.800+** e **3.000+ jogos e apps**.
+- **+1.500 servidores** e **quase 1.800 jogos** (confirmado pelo Gabriel).
+- 30M+ cadastros (fonte pública; confirmar antes de usar no site).
 - 500+ provedores parceiros (ISPs); parcerias com Vivo e Gamers Club.
 - Avaliações citam redução de 30% a 70% no ping em servidores internacionais (relato de usuários, não oficial).
 
 ## 4. A proposta, condensada
 
-**Para** quem joga online e perde partidas por causa da rede,
+**Para** quem joga competitivo no PC e perde partidas por causa da rede,
 **a ExitLag** é a camada de rota feita só para jogos
-**que** manda cada pacote pelos melhores caminhos do planeta ao mesmo tempo,
-**para que** o ping fique baixo e estável e nenhuma partida seja decidida pelo lag.
+**que** manda cada pacote por várias rotas do planeta ao mesmo tempo,
+**para que** a conexão fique **estável** do primeiro ao último round.
 **Diferente de** VPNs e "boosters" genéricos, ela não troca seu IP nem passa sua navegação:
-só otimiza o tráfego do jogo, por várias rotas simultâneas.
+só otimiza o tráfego do jogo.
 
-### Opções de headline (para o hero do globo)
+Mensagem central: **ping estável ganha partida.** Ping baixo é consequência, não a promessa principal.
 
-1. **"Sua partida pelo caminho mais curto do planeta."** (recomendada: casa direto com o globo e as rotas)
-2. "Cada pacote, pela melhor rota. Ao mesmo tempo."
-3. "O lag não decide mais suas partidas."
+### Headline do hero
 
-### Pilares de mensagem (viram capítulos do scroll)
-
-1. **Rota**: a internet não vai em linha reta; a ExitLag encontra o caminho mais curto.
-2. **Multipath**: um pacote, várias rotas; se uma cai, a outra entrega.
-3. **Estabilidade**: menos ping é bom; ping **estável** é o que ganha partida.
-4. **Rede global**: servidores e provedores parceiros pelo mundo (o globo inteiro aceso).
-5. **Prova**: números, jogos suportados, depoimentos, teste grátis.
-
-## 5. Ponte para o site "globo" (primeira ideia)
-
-O scroll gira o planeta e cada capítulo acima vira um estado do globo:
-
-| Scroll | Globo | Mensagem |
+| | PT-BR | EN |
 |---|---|---|
-| 0% | Planeta escuro, um ponto aceso na cidade do jogador | Headline |
-| 20% | Rota da operadora: linha tortuosa, longa, com pulsos vermelhos de perda | O problema |
-| 40% | Rotas da ExitLag se traçando ao vivo, várias ao mesmo tempo, convergindo no servidor | Multipath |
-| 60% | Uma rota "cai", outra assume sem quebrar o fluxo | Estabilidade |
-| 80% | Planeta inteiro com a malha de servidores acesa, câmera abre | Rede global |
-| 100% | Globo assenta, CTA de teste grátis | Prova + CTA |
+| **Recomendada** | **Sua partida pelo caminho mais estável do planeta.** | **Your match, on the most stable route on Earth.** |
+| Alternativa | Cada pacote, por várias rotas. Ao mesmo tempo. | Every packet. Many routes. At once. |
+| Alternativa | O lag não decide mais suas partidas. | Lag doesn't decide your matches anymore. |
+
+Subtítulo: "A ExitLag manda seu jogo por várias rotas ao mesmo tempo. Se uma oscila, outra entrega. Teste grátis por 3 dias, sem cartão."
+/ "ExitLag sends your game through multiple routes at once. If one wobbles, another delivers. Free 3-day trial, no card."
+
+CTA único em toda a página: **Testar grátis por 3 dias** / **Start 3-day free trial**.
+
+### Pilares (viram capítulos do scroll)
+
+1. **O problema**: a rota da sua operadora não foi feita para jogo; ela oscila.
+2. **Multipath**: um pacote, várias rotas; se uma cai, a outra entrega.
+3. **Estabilidade**: gráfico de ping da operadora (serrilhado) vs ExitLag (linha reta).
+4. **Rede global**: +1.500 servidores, quase 1.800 jogos, o globo inteiro aceso.
+5. **Também no mobile e no router (beta)**: faixa secundária, curta.
+6. **CTA**: teste grátis.
+
+## 5. Roteiro da landing "globo"
+
+O scroll gira o planeta; cada capítulo é um estado do globo. CTA fixo no topo o tempo todo.
+
+| Scroll | Globo | Texto |
+|---|---|---|
+| 0% | Planeta escuro, um ponto aceso na cidade do jogador (São Paulo), servidor do jogo pulsando ao longe | Headline + CTA |
+| 15% | Rota da operadora: linha longa e tortuosa, pulsos falhando, gráfico de ping serrilhado ao lado | O problema |
+| 35% | Rotas da ExitLag se traçam ao vivo, 3 a 4 ao mesmo tempo, convergindo no servidor | Multipath |
+| 55% | Uma rota "cai" (apaga), as outras seguem; o gráfico continua reto | Estabilidade |
+| 75% | Câmera abre, o globo gira rápido e acende a malha de +1.500 servidores | Rede global + números |
+| 88% | Globo menor, ícones de PC (principal), mobile e router (selo beta) | Plataformas |
+| 100% | Globo assenta, rota final brilha | CTA de teste grátis |
 
 Regra de design: verde só em linhas de rota, pulsos e rótulos pequenos; nada de verde em tipografia grande.
 
-## 6. Fontes
+## 6. Referência de motion e código: igloo.inc
+
+O que se sabe publicamente (o site em si ainda está bloqueado na rede deste ambiente):
+- Feito pela Abeto (Vicente Lucendo) com a Bureaux. Stack: **Three.js, Svelte, GSAP, Houdini, Blender**, com ferramentas próprias.
+- **Tudo é WebGL, inclusive a UI**: o texto é renderizado com fontes SDF; o efeito de "scramble/glitch" das letras troca o offset da textura SDF no shader em vez de mexer no DOM.
+- Blocos de gelo gerados por **crescimento procedural de cristais** dentro de um volume.
+- **Volume data** exportado do Houdini (VDB) por um exportador próprio, comprimido para pesar menos que uma imagem.
+- Rodapé com **partículas GPGPU** que se reorganizam em formas diferentes conforme o link em foco; a cor muda com a velocidade, brilham na transição, e há som sincronizado.
+- Scroll guiando uma câmera por "capítulos" 3D, com transições amarradas ao scroll (GSAP).
+
+O que vamos trazer para o globo:
+1. **Scroll como timeline**: um único progresso 0 → 1 dirige rotação do globo, câmera e traçado das rotas (GSAP/Lenis ou scroll próprio com amortecimento).
+2. **Rotas como partículas GPGPU**: os pacotes são partículas correndo pelas curvas; cor por velocidade, como no rodapé do igloo.
+3. **Texto em shader** para números e rótulos (scramble em SDF), mantendo a headline em HTML para SEO e acessibilidade.
+4. **Atmosfera e brilho** do globo em shader, com bloom contido.
+5. Performance: tudo instanciado, uma textura de dados para as rotas, qualidade adaptativa por FPS.
+## 7. Fontes
 
 - [Como a ExitLag funciona (blog ExitLag)](https://www.exitlag.com/blog/how-exitlag-works/)
 - [O que é ExitLag (blog PT)](https://www.exitlag.com/blog/pt/o-que-e-exitlag/)
@@ -100,3 +135,6 @@ Regra de design: verde só em linhas de rota, pulsos e rótulos pequenos; nada d
 - [1 milhão de downloads no 1º ano mobile (Mobile Time)](https://www.mobiletime.com.br/noticias/08/04/2024/exitlag-registra-1-milhao-de-downloads-em-seu-primeiro-ano-mobile/)
 - [Análise de avaliações no Google Play (Kimola)](https://kimola.com/reports/unlock-key-insights-with-the-exitlag-user-feedback-report-google-play-156690)
 - [Alternativas à ExitLag (AlternativeTo)](https://alternativeto.net/software/exitlag/)
+- [Igloo Inc: case study (Awwwards)](https://www.awwwards.com/igloo-inc-case-study.html)
+- [Igloo Inc: crystal growth, shader-driven UI e volume data (webgpu.com)](https://www.webgpu.com/showcase/igloo-inc-procedural-crystals/)
+- [Landing Site: Igloo Inc (fórum three.js)](https://discourse.threejs.org/t/landing-site-igloo-inc/67249)
