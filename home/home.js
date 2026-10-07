@@ -430,13 +430,26 @@ const CABLES = [
   let len = 0; for (let i = 1; i < pts.length; i++) len += pts[i].angleTo(pts[i - 1]);
   return { ...c, pts, len, A: stops[0], B: stops[stops.length - 1] };
 });
+// cada cabo só aparece quando uma rota passa por ele (pedido do Gabriel): o traçado inteiro e os dois pousos acendem juntos
 const cableGroup = new THREE.Group(); globe.add(cableGroup);
-const cableMat = new THREE.LineBasicMaterial({ color: '#4d6a8f', transparent: true, opacity: 0.32, depthWrite: false, blending: THREE.AdditiveBlending });
-CABLES.forEach(c => cableGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(c.pts.map(v => v.clone().multiplyScalar(1.003))), cableMat)));
-{ // pontos de pouso
-  const land = []; CABLES.forEach(c => [c.A, c.B].forEach(v => { if (!land.some(x => x.angleTo(v) < 0.005)) land.push(v); }));
-  const g = new THREE.BufferGeometry().setFromPoints(land.map(v => v.clone().multiplyScalar(1.004)));
-  cableGroup.add(new THREE.Points(g, new THREE.PointsMaterial({ color: '#6f8fb8', size: 0.012, transparent: true, opacity: 0.55, depthWrite: false })));
+CABLES.forEach(c => {
+  c.mat = new THREE.LineBasicMaterial({ color: '#6f8fb8', transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending });
+  c.pmat = new THREE.PointsMaterial({ color: '#9fb6d4', size: 0.014, transparent: true, opacity: 0, depthWrite: false });
+  c.line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(c.pts.map(v => v.clone().multiplyScalar(1.003))), c.mat);
+  c.dots = new THREE.Points(new THREE.BufferGeometry().setFromPoints([c.A, c.B].map(v => v.clone().multiplyScalar(1.004))), c.pmat);
+  c.line.visible = c.dots.visible = false; cableGroup.add(c.line, c.dots); c.k = 0;
+});
+function frameCables(dt) {
+  const want = new Map();
+  if (routes && routeGroup.visible) [...routes.cand, ...routes.xl].forEach(r => {
+    if (!r.cable) return; const on = r.u.uDraw.value >= r.nodes[0].t ? r.u.uOp.value : 0;
+    want.set(r.cable, Math.max(want.get(r.cable) || 0, on));
+  });
+  CABLES.forEach(c => {
+    c.k += ((want.get(c.n) || 0) - c.k) * (reduce ? 1 : Math.min(1, dt * 4));
+    const v = c.k > 0.01; c.line.visible = c.dots.visible = v; if (!v) return;
+    c.mat.opacity = 0.45 * c.k; c.pmat.opacity = 0.8 * c.k;
+  });
 }
 // cabos que servem a uma rota: pouso perto de você, pouso perto do servidor, e desvio pequeno em relação ao caminho direto
 function cableOptions(a, b) {
@@ -567,14 +580,14 @@ function rebuild() {
   routeR = Math.max((frame0.dist - 1) / 2, 0.12); // largura constante na tela (~2,5 px), perto ou longe: fina demais vira pontilhado
   routes = {
     isp: makeRoute(smoothPath(vO, vS, w, u => 0.62 * Math.sin(Math.PI * u) + 0.16 * Math.sin(3 * Math.PI * u), 0.35), C.isp, 0.0032, 0.35),
-    cand: CANDS.map(([lat, lift], k) => { const t = tunnelPath(vO, vS, w, lat, lift, seeded(g.name + k), cabFor(k)); return makeRoute(t.pts, C.dim, 0.0024, 0.6 + k * 0.03, 0.5, routeGroup, [t.t0, t.t1]); }),
+    cand: CANDS.map(([lat, lift], k) => { const t = tunnelPath(vO, vS, w, lat, lift, seeded(g.name + k), cabFor(k)); return { ...makeRoute(t.pts, C.dim, 0.0024, 0.6 + k * 0.03, 0.5, routeGroup, [t.t0, t.t1]), nodes: t.nodes, cable: t.cable }; }),
     xl: []
   };
   // ping simulado de cada candidata (desvio maior custa mais, mais um sorteio fixo por jogo e servidor); as melhores em ordem: Route 1 é a mais rápida
   const rnd = seeded(g.name + g.region);
   routes.pick = CANDS.map(([lat], k) => [k, Math.abs(lat) * 0.6 + rnd()]).sort((a, b) => a[1] - b[1]).slice(0, g.lanes).map(([k]) => k);
   // ExitLag atravessa o mar sempre por cabo: cada rota pega um cabo, revezando entre os melhores; no mesmo cabo, as rotas correm lado a lado
-  routes.xl = routes.pick.map((k, i) => { const [lat, lift] = CANDS[k], nc = Math.min(cabs.length, 3), cb = nc ? { ...cabs[i % nc], lane: Math.floor(i / nc) } : null, t = tunnelPath(vO, vS, w, lat, lift, seeded(g.name + k), cb); return { ...makeRoute(t.pts, C.route, 0.0032, 0.8 + i * 0.05, 0.42, routeGroup, [t.t0, t.t1]), nodes: t.nodes }; });
+  routes.xl = routes.pick.map((k, i) => { const [lat, lift] = CANDS[k], nc = Math.min(cabs.length, 3), cb = nc ? { ...cabs[i % nc], lane: Math.floor(i / nc) } : null, t = tunnelPath(vO, vS, w, lat, lift, seeded(g.name + k), cb); return { ...makeRoute(t.pts, C.route, 0.0032, 0.8 + i * 0.05, 0.42, routeGroup, [t.t0, t.t1]), nodes: t.nodes, cable: t.cable }; });
   vO.clone().multiplyScalar(1.006).toArray(mkPos, 0); vS.clone().multiplyScalar(1.006).toArray(mkPos, 3);
   mkGeo.attributes.position.needsUpdate = true;
   const [mLat, mLon] = toLL(vO.clone().add(vS));
@@ -1038,7 +1051,7 @@ $('bootLogin').addEventListener('submit', e => {
   const ok = /.+@.+\..+/.test($('bootEmail').value) && $('bootPass').value.length > 0;
   $('bootErr').hidden = ok; if (ok) scanBoot();
 });
-$('bsSkip').addEventListener('click', () => { if (boot && boot.phase === 'scan') boot.t = Math.max(boot.t, 6.2); });
+$('bsSkip').addEventListener('click', () => { if (boot && boot.phase === 'scan') boot.t = Math.max(boot.t, NM_END); });
 
 function startBoot(passive = false) {
   if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap();
@@ -1087,7 +1100,8 @@ function endBoot(keepHash) {
   vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.v === $('app').dataset.v ? 'true' : 'false'));
   rebuild(); frame0.dist = fitDist();
 }
-const BOOT_STEPS = [[0, 'Locating you'], [1.1, 'Mapping server regions'], [2.8, 'Testing every route'], [5.0, 'Choosing the best routes'], [6.2, 'Ready']];
+// o network map dura 42 s (Gabriel, 07/10): cada região é medida por ~3 s; Skip pula para o fim
+const NM_END = 42, BOOT_STEPS = [[0, 'Locating you'], [3, 'Mapping server regions'], [7, 'Testing every route'], [38, 'Choosing the best routes'], [NM_END, 'Ready']];
 function frameBoot(dt) {
   routeGroup.visible = packets.visible = markers.visible = !boot && !scan && !pmap;
   if (!boot) return;
@@ -1114,15 +1128,15 @@ function frameBoot(dt) {
     const sub = st === 0 ? `${origin[2]} · finding your ISP route` : st === 1 ? '1,500+ servers in 10 regions' : st === 2 ? 'Sending test packets on each route' : st === 3 ? 'Comparing ping, jitter and packet loss' : `${boot.best.length} best routes are ready`;
     if ($('bsSub').textContent !== sub) $('bsSub').textContent = sub;
     [...$('bsSteps').children].forEach((li, i) => li.className = i < st ? 'done' : i === st ? 'now' : '');
-    const pr = clamp(t / 6.2); $('bsBar').style.width = (pr * 100).toFixed(1) + '%'; $('bsBar').parentElement.setAttribute('aria-valuenow', Math.round(pr * 100));
+    const pr = clamp(t / NM_END); $('bsBar').style.width = (pr * 100).toFixed(1) + '%'; $('bsBar').parentElement.setAttribute('aria-valuenow', Math.round(pr * 100));
   }
   const rows = $('bsList').children;
   boot.arcs.forEach((a, i) => {
-    const t0 = 1.1 + i * 0.13, tt = 2.8 + i * 0.2, isBest = boot.best.includes(a.k), row = rows[i];
+    const t0 = 3 + i * 0.35, tt = 7 + i * 3, isBest = boot.best.includes(a.k), row = rows[i];
     a.u.uTime.value = time;
     a.u.uDraw.value = reduce ? (t > t0 ? 1 : 0) : ease(clamp((t - t0) / 0.7));
     // traçada em cinza; medida, a melhor acende em verde e as outras recuam
-    const tested = t >= tt, chosen = t >= 5.0;
+    const tested = t >= tt, chosen = t >= 38;
     a.u.uCol.value.lerp(tested && isBest ? C.route : C.dim, Math.min(1, dt * 6));
     const fade = boot.phase === 'out' ? clamp(1 - boot.out / 0.6) : 1;
     a.u.uOp.value = (t < t0 ? 0 : chosen ? (isBest ? 1 : 0.18) : tested ? 0.8 : 0.6) * fade;
@@ -1133,8 +1147,8 @@ function frameBoot(dt) {
     else if (tested) { const c = 'bs-row ' + (chosen ? (isBest ? 'best' : 'dim') : 'ok'); if (row.className !== c) { row.className = c; ms.textContent = a.ms + ' ms'; } }
   });
   // escolhidas: a lista reordena pelo ping, as melhores em cima
-  if (boot.phase === 'scan' && t >= 5.0 && !boot.sorted) { boot.sorted = true; [...boot.arcs].sort((a, b) => a.ms - b.ms).forEach((a, o) => rows[boot.arcs.indexOf(a)].style.order = o); }
-  if (boot.phase === 'scan' && t >= 7.0) { boot.phase = 'out'; boot.out = 0; $('app').dataset.boot = 'out'; }
+  if (boot.phase === 'scan' && t >= 38 && !boot.sorted) { boot.sorted = true; [...boot.arcs].sort((a, b) => a.ms - b.ms).forEach((a, o) => rows[boot.arcs.indexOf(a)].style.order = o); }
+  if (boot.phase === 'scan' && t >= NM_END + 0.8) { boot.phase = 'out'; boot.out = 0; $('app').dataset.boot = 'out'; }
   if (boot.phase === 'out') {
     boot.out += dt;
     if (boot.out > 1.1) { const pv = boot.passive; $('app').classList.add('boot-out'); endBoot(); startScan(pv); setTimeout(() => $('app').classList.remove('boot-out'), 1200); } // fluxo completo: login, rotas, varredura de jogos, home
@@ -1250,7 +1264,7 @@ function frameScan(dt) {
    Quando termina, as 3 melhores acendem, a pílula vira "Network map ready" e o resto destrava. */
 const pmGroup = new THREE.Group(); globe.add(pmGroup);
 const PM_OPEN = ['Home', 'Network Analyzer', 'PC Boost', 'Traffic Shaper', 'General Settings'];
-const PM_DONE = 13.2, PM_END = 17.5; // mede até 13,2 s; a pílula de pronto fica até 17,5 s
+const PM_DONE = 42, PM_END = 46.3, PM_STEP = 3.6; // o network map dura 42 s (Gabriel); a pílula de pronto fica até 46,3 s
 const pmPill = document.createElement('div'); pmPill.className = 'pm-pill'; pmPill.setAttribute('role', 'status'); pmPill.setAttribute('aria-live', 'polite');
 pmPill.innerHTML = `<span class="pm-ic" aria-hidden="true"><i class="pm-spin"></i><svg viewBox="0 0 16 16" fill="none"><path d="M4 8.3l2.6 2.6L12 5.4"/></svg></span>
   <span class="pm-tx"><b id="pmT">Mapping your network</b><span class="t-var" id="pmS"></span></span><span class="pm-pc tnum" id="pmP">0%</span><i class="pm-bar"><i id="pmBar"></i></i>`;
@@ -1283,7 +1297,7 @@ function startPmap() {
   routeR = saveR;
   // ordem de teste: das mais perto para as mais longe, como um analisador faria
   const order = [...arcs].sort((a, b) => a.ms - b.ms);
-  order.forEach((a, o) => { a.t0 = 0.8 + o * 0.32; a.tt = 3 + o * 1.0; });
+  order.forEach((a, o) => { a.t0 = 0.8 + o * 0.32; a.tt = 3 + (o + 1) * PM_STEP; });
   pmap = { t: 0, arcs, best: order.slice(0, 3).map(a => a.k), done: false };
   $('app').dataset.pmap = 'on'; lockNav(true); paintCta();
   history.replaceState(null, '', '#passive');
@@ -1311,7 +1325,7 @@ function framePmap(dt) {
     a.u.uDraw.value = reduce ? (t > a.t0 ? 1 : 0) : ease(clamp((t - a.t0) / 0.8));
     a.u.uCol.value.lerp(tested && isBest && chosen ? C.route : C.dim, Math.min(1, dt * 6));
     // medindo, a rota pisca; medida, assenta; escolhidas, as outras recuam; no fim tudo some e volta a rota do jogo
-    const testing = t >= a.tt - 1 && !tested, out = clamp(1 - (t - (PM_END - 1.6)) / 1.2);
+    const testing = t >= a.tt - PM_STEP && !tested, out = clamp(1 - (t - (PM_END - 1.6)) / 1.2);
     a.u.uOp.value = (t < a.t0 ? 0 : chosen ? (isBest ? 0.9 : 0.12) : testing ? 0.55 + 0.35 * Math.sin(time * 9) : tested ? 0.6 : 0.3) * out;
     a.u.uGain.value = chosen && isBest ? (a.k === pmap.best[0] ? 1 : 0.5) : testing ? 0.6 : 0.35;
   });
@@ -1321,7 +1335,7 @@ function framePmap(dt) {
   }
   if (time - pmPaintT > 0.1 || pmap.done) {
     pmPaintT = time;
-    const now = pmap.arcs.find(a => t >= a.tt - 1 && t < a.tt), b = pmap.arcs.find(a => a.k === pmap.best[0]);
+    const now = pmap.arcs.find(a => t >= a.tt - PM_STEP && t < a.tt), b = pmap.arcs.find(a => a.k === pmap.best[0]);
     const T = pmap.done ? 'Network map ready' : t < 0.8 ? 'Locating you' : t < 3 ? 'Mapping server regions' : now ? `Testing ${REGIONS[now.k].n}` : 'Choosing the best routes';
     const S = pmap.done ? `Best route: ${REGIONS[b.k].n} · ${b.ms} ms` : t < 0.8 ? `${origin[2]} · in the background` : t < 3 ? '10 regions · Optimize unlocks when ready' : now ? `${now.ms} ms` : 'Comparing ping, jitter and packet loss';
     if ($('pmT').textContent !== T) $('pmT').textContent = T;
@@ -1530,7 +1544,7 @@ function frame() {
   if (time - lastS > 0.1) { lastS = time; sample(on); drawChart(); }
   if (time - lastP > 0.25) { lastP = time; paintTele(); }
 
-  frameNodes(); frameV7(dt); frameV8(dt); frameBoot(dt); frameScan(dt); framePmap(dt); frameOff(dt);
+  frameNodes(); frameCables(dt); frameV7(dt); frameV8(dt); frameBoot(dt); frameScan(dt); framePmap(dt); frameOff(dt);
   scene.updateMatrixWorld();
   placeTags(pmap ? 0 : clamp((age - 0.6) / 0.4));
   composer.render();
