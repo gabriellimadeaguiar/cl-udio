@@ -833,8 +833,8 @@ p { margin: 0; }
 .pk-card.wide img { object-fit: contain; }
 .pk-card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px #ebeced14; pointer-events: none; }
 .pk-card[aria-selected="true"] { cursor: default; box-shadow: 0 0 0 2px #ebecedbf, 0 40px 80px -30px #000000e6; }
-.pk-card.on { box-shadow: 0 0 0 1px #ffffff14, 0 0 56px -12px color-mix(in srgb, var(--success) 45%, transparent), 0 30px 60px -30px #000000e6; }
-.pk-card.on[aria-selected="true"] { box-shadow: 0 0 70px -8px color-mix(in srgb, var(--success) 55%, transparent), 0 40px 80px -30px #000000e6; }
+/* otimizado: só o contorno verde fino (::after); sem brilho verde em volta, pedido do Gabriel */
+.pk-card.on[aria-selected="true"] { box-shadow: 0 40px 80px -30px #000000e6; }
 /* stroke / optimized do card-app: gradiente success → #242627; 1px (Gabriel achou 2px largo demais) */
 .pk-card.on::after { padding: 1px; box-shadow: none; background: linear-gradient(to bottom right, var(--success) 0%, #242627 100%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
