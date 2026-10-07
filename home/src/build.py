@@ -43,6 +43,10 @@ VCHIPS = '''<nav class="vchips" aria-label="Flows: login, library scan, home; pa
   '''
 out = out.replace('<div class="stage">\n  <div class="app" id="app">', '<div class="stage">\n  ' + VCHIPS + '<div class="app" id="app" data-v="9">', 1)
 assert 'class="vchips"' in out
+# Sidebar sem Connections e Library (pedido do Gabriel)
+import re as _re
+out, _n = _re.subn(r'\s*<div class="nav-item"[^>]*data-goto="(?:Connections|Library)"[^\n]*</div>', '', out)
+assert _n == 2, _n
 # V7: vaga do globo na sidebar, abaixo das opções e acima da versão; clicar nela volta para a Home (pedido do Gabriel)
 out = out.replace('<div class="version">home | 1.0</div>', '<div class="sb-globe" id="sbGlobe" role="link" tabindex="0" data-goto="Home" aria-label="Live routes. Back to Home" data-tip="Back to Home"></div>\n      <div class="version">home | 1.0</div>', 1)
 assert 'id="sbGlobe"' in out
