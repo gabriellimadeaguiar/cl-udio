@@ -812,7 +812,7 @@ p { margin: 0; }
 .pk-amb { position: absolute; inset: -80px; z-index: -2; background: center / cover no-repeat; filter: blur(70px) saturate(1.2); opacity: 0; transition: opacity var(--motion-duration-900) var(--motion-easing-standard); }
 .pk-amb.on { opacity: .22; }
 .pk::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: radial-gradient(70% 62% at 26% 40%, transparent, #050608b3 80%), linear-gradient(90deg, transparent 44%, #050608a6 56%, #050608e6); }
+  background: radial-gradient(70% 62% at 26% 40%, transparent, #050608b3 80%), linear-gradient(90deg, transparent 30%, #05060880 55%, #050608e6 85%); }
 
 .pk-l { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr); min-width: 0; }
 .pk-deck { position: relative; perspective: 1200px; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none;
@@ -863,6 +863,8 @@ p { margin: 0; }
 
 /* globo */
 .pk-r { position: relative; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; }
+/* o canvas pinta fundo opaco (bloom); a borda esquerda some num degradê para o fundo do palco continuar por baixo */
+.pk-r canvas { -webkit-mask: linear-gradient(90deg, transparent, #000 28%); mask: linear-gradient(90deg, transparent, #000 28%); }
 .pk-r canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; cursor: grab; touch-action: none; }
 .pk-r canvas.drag { cursor: grabbing; }
 .pk-head { position: relative; z-index: 1; display: flex; align-items: center; gap: 16px; pointer-events: none; }
