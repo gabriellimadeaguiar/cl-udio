@@ -39,7 +39,6 @@ VCHIPS = '''<nav class="vchips" aria-label="Layout version">
     <button class="vchip" type="button" data-v="4" aria-pressed="false">V4 &middot; Swapped</button>
     <button class="vchip" type="button" data-v="5" aria-pressed="false">V5 &middot; Game art</button>
     <button class="vchip" type="button" data-v="7" aria-pressed="false">V7 &middot; Sidebar globe</button>
-    <button class="vchip" type="button" data-v="8" aria-pressed="false">V8 &middot; Globe orbit</button>
     <button class="vchip" type="button" data-v="9" aria-pressed="false">V9 &middot; Full-screen globe</button>
     <button class="vchip" type="button" data-v="10" aria-pressed="false">V10 &middot; Globe top</button>
   </nav>
