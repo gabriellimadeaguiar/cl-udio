@@ -1210,13 +1210,65 @@ p { margin: 0; }
 .pk-onring { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 1; pointer-events: none; border-radius: 50%; transform: translate(-50%, -50%); opacity: 0; border: 2px solid var(--success); box-shadow: 0 0 32px 4px #22eba366, inset 0 0 32px 4px #22eba333; }
 .pk-onring.go { animation: onRing 1.4s cubic-bezier(.22, 1, .36, 1) forwards; }
 @keyframes onRing { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.96); } 18% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.45); } }
+
+/* ---------- Mapa passivo (versão "Passive network map") ---------- */
+.vdiv { flex: none; align-self: center; width: 1px; height: 16px; margin: 0 var(--spacing-xs); background: var(--divider); }
+.pm-pill { position: absolute; left: 50%; top: var(--spacing-xl); z-index: 8; display: none; align-items: center; gap: var(--spacing-md); width: 320px; height: 48px; padding: 0 var(--spacing-lg) 0 var(--spacing-md); border-radius: 8px; background: var(--container); box-shadow: var(--shadow-widget); overflow: hidden; transform: translateX(-50%); transition: opacity .4s ease, transform .4s cubic-bezier(.2, 0, 0, 1); }
+.app[data-v="9"][data-pmap] .pm-pill { display: flex; animation: pmIn .5s cubic-bezier(.2, 0, 0, 1); }
+.app[data-pmap="out"] .pm-pill { opacity: 0; transform: translate(-50%, -12px); }
+@keyframes pmIn { from { opacity: 0; transform: translate(-50%, -12px); } }
+.pm-ic { position: relative; flex: none; width: 24px; height: 24px; display: grid; place-items: center; }
+.pm-spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--input); border-top-color: var(--on-surface); animation: pmSpin .9s linear infinite; }
+.pm-ic svg { position: absolute; width: 16px; height: 16px; stroke: var(--success); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 14; stroke-dashoffset: 14; }
+.app[data-pmap="done"] .pm-spin, .app[data-pmap="out"] .pm-spin { display: none; }
+.app[data-pmap="done"] .pm-ic svg, .app[data-pmap="out"] .pm-ic svg { stroke-dashoffset: 0; transition: stroke-dashoffset .5s ease .1s; }
+@keyframes pmSpin { to { transform: rotate(1turn); } }
+.pm-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pm-tx b { font-weight: 500; font-size: 14px; line-height: 20px; letter-spacing: .25px; white-space: nowrap; }
+.pm-tx .t-var { font-size: 12px; line-height: 16px; letter-spacing: .4px; white-space: nowrap; }
+.pm-pc { font-size: 12px; line-height: 16px; color: var(--on-surface-variant); }
+.app[data-pmap="done"] .pm-pc, .app[data-pmap="out"] .pm-pc { display: none; }
+.pm-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--input); }
+.pm-bar i { display: block; height: 100%; width: 0; background: var(--on-surface-variant); transition: width .1s linear; }
+.app[data-pmap="done"] .pm-bar i, .app[data-pmap="out"] .pm-bar i { background: var(--success); }
+@media (prefers-reduced-motion: reduce) { .pm-spin { animation: none; } .app[data-v="9"][data-pmap] .pm-pill { animation: none; } }
+/* travas enquanto mede: itens da barra lateral que configuram rotas, servidor e Optimize */
+.sidebar .nav-item.pm-lock { opacity: .38; cursor: not-allowed; }
+.sidebar .nav-item.pm-nope { animation: pmNope .3s ease; }
+@keyframes pmNope { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+.pk-srv .pill:disabled { opacity: .5; cursor: not-allowed; }
+.pk-pminfo { background: var(--container-high); }
+.pk-pminfo .dt { background: var(--on-surface-variant); box-shadow: none; animation: pkBlink 1.6s infinite; }
+.pk-pminfo > span:not(.pm-p) { flex: 1; }
+.pk-pminfo .pm-p { font-size: 12px; color: var(--on-surface-variant); }
+/* oferta embaixo dos detalhes: o banner do protótipo, na largura do painel, compacto para caber embaixo da telemetria */
+.pk-promo { position: absolute; right: auto; z-index: 4; opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity .35s ease, transform .45s cubic-bezier(.2, 0, 0, 1); }
+.pk-promo.in { opacity: 1; transform: none; pointer-events: auto; }
+.app:not([data-v="9"]) .pk-promo, .app[data-v="9"]:not(.pk-p8) .pk-promo { opacity: 0; pointer-events: none; }
+.pk-promo .creative { height: auto; }
+.pk-promo .slide { height: auto; }
+.pk-promo .body { padding: var(--spacing-lg) 0 var(--spacing-lg) var(--spacing-xl); }
+.pk-promo .body > div { width: 236px; gap: var(--spacing-sm); }
+.pk-promo h3 { font-size: 20px; line-height: 24px; }
+.pk-promo .desc { font-size: 12px; line-height: 16px; letter-spacing: .4px; color: var(--on-surface-variant); margin: 0; }
+.pk-promo .desc b { color: var(--on-surface); font-weight: 500; }
+.pk-promo .pic { width: 136px; height: 136px; opacity: .9; }
+.pk-promo .pr-x { position: absolute; top: var(--spacing-sm); right: var(--spacing-sm); width: 32px; height: 32px; display: grid; place-items: center; background: #0b0c0f99; }
+.pk-promo .pr-x svg { width: 16px; height: 16px; }
+.pr-acts { display: flex; align-items: center; gap: var(--spacing-lg); padding-top: var(--spacing-xs); }
+.pr-acts .btn { height: 32px; padding: 0 var(--spacing-lg); }
+.pr-no { font-size: 12px; color: var(--on-surface-variant); }
+@media (prefers-reduced-motion: reduce) { .pk-promo { transition: none; } }
+.app[data-pmap] .pk-head { opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+.app[data-v="9"].pk-p8:has(.pk-promo.in) .pk-tele .pk-log { display: none; } /* a oferta usa o lugar do log de rotas */
 </style>
 
 <div class="stage">
-  <nav class="vchips" aria-label="Flow: login, library scan, home">
+  <nav class="vchips" aria-label="Flows: login, library scan, home; passive network map">
     <button class="vchip" type="button" data-boot="1" aria-pressed="false">Login</button><span class="vsep" aria-hidden="true"></span>
     <button class="vchip" type="button" data-scan="1" aria-pressed="false">Library scan</button><span class="vsep" aria-hidden="true"></span>
-    <button class="vchip" type="button" data-v="9" aria-pressed="true">Home</button>
+    <button class="vchip" type="button" data-v="9" aria-pressed="true">Home</button><span class="vdiv" aria-hidden="true"></span>
+    <button class="vchip" type="button" data-passive="1" aria-pressed="false">Passive network map</button>
   </nav>
   <div class="app" id="app" data-v="9">
     <div class="cz-overlay" aria-hidden="true"></div>

@@ -268,23 +268,30 @@ const offInfo = document.createElement('div'); offInfo.className = 'pk-offinfo';
 offInfo.innerHTML = '<i class="dt"></i><span><b>ExitLag is off</b><span class="t-var">Turn it on in the top bar to optimize</span></span>';
 cta.after(offInfo);
 const elOff = () => $('app').classList.contains('el-off');
+// mapa de rede rodando (fluxo passivo): no lugar do Optimize, o progresso do mapa; rotas não se configuram até ele terminar
+const pmInfo = document.createElement('div'); pmInfo.className = 'pk-offinfo pk-pminfo'; pmInfo.setAttribute('role', 'status'); pmInfo.hidden = true;
+pmInfo.innerHTML = '<i class="dt"></i><span><b>Mapping your network</b><span class="t-var">Optimize unlocks when the map is ready</span></span><span class="pm-p tnum" id="pmInfoP">0%</span>';
+offInfo.after(pmInfo);
+const pmBusy = () => !!pmap && !pmap.done;
 function paintCta() {
-  const g = GAMES[sel], off = elOff();
-  cta.hidden = off; offInfo.hidden = !off;
+  const g = GAMES[sel], off = elOff(), busy = pmBusy();
+  cta.hidden = off || busy; offInfo.hidden = !off; pmInfo.hidden = off || !busy;
+  srvBtn.disabled = busy; srv.dataset.tip = busy ? 'Server choice unlocks when the network map is ready' : ''; if (!busy) delete srv.dataset.tip;
   cta.className = 'btn pk-cta ' + (g.state === 'on' ? 'outlined' : g.state === 'testing' ? 'filled pk-busy' : 'filled');
   if (g.state === 'on') cta.innerHTML = `Stop<span class="tnum" id="pkCtaT">${fmtDur(time - g.since)}</span>`;
   else if (g.state === 'testing') cta.innerHTML = '<span class="loader-sm"></span>Testing routes';
   else cta.textContent = 'Optimize';
   const st = $('pkState');
   st.className = 'badge ' + (g.state === 'on' ? 'success' : off ? 'warning' : 'neutral');
-  st.textContent = g.state === 'on' ? 'Optimized' : g.state === 'testing' ? 'Testing routes' : off ? 'ExitLag off' : 'Not optimized';
+  st.textContent = g.state === 'on' ? 'Optimized' : g.state === 'testing' ? 'Testing routes' : off ? 'ExitLag off' : busy ? 'Waiting for map' : 'Not optimized';
   $('pkLgXl').classList.toggle('off', g.state !== 'on');
   layout();
 }
 function toggleOpt() {
   const g = GAMES[sel];
-  if (elOff()) return;
+  if (elOff() || pmBusy()) return;
   if (g.state === 'testing') return;
+  if (pmap) endPmap(); // mapa pronto: otimizar já fecha a pílula e devolve as rotas do jogo
   if (g.state === 'on') { g.state = 'off'; xlShow = 0; fail = null; logMsg(IDLE); paintCta(); return; }
   g.state = 'testing'; xlShow = 1; xlStart = time; logMsg(`Mapping ${CANDS.length} possible routes to the game server…`);
   paintCta();
@@ -457,6 +464,7 @@ let xlShow = 0, xlStart = -10;
 // distância do planeta inteiro no Immersive: 6,45 deixa o globo 20% menor que os 5,2 de antes (pedido do Gabriel)
 const FULL9 = 6.45, SCAN9 = 5.45;
 let scan = null, offY9 = 0; // offY9: a varredura sobe o globo para a barra de status caber embaixo // varredura da biblioteca: ver "Biblioteca" mais abaixo
+let pmap = null; // mapa de rede passivo dentro do app: ver "Mapa passivo" mais abaixo
 let boot = null; // login e carregamento (network map): ver "Login e carregamento" mais abaixo
 
 function rebuild() {
@@ -601,7 +609,7 @@ const rtip = document.createElement('div'); rtip.className = 'pk-tag pk-rtip'; h
 let rHover = null; // { kind: 'xl' | 'isp', i, x, y }
 const hitPts = (r, n = 48) => { const out = [], d = r.u.uDraw.value; for (let k = 0; k <= n; k++) { const u = k / n; if (u > d) break; r.curve.getPointAt(u, v3); const p = project(v3.clone().multiplyScalar(1 / 1.02)); if (p[2] > -0.05) out.push(p); } return out; };
 function routeAt(px, py) {
-  if (!routes || boot || gDrag || (isV7() && (away7 || e7 > 0))) return null;
+  if (!routes || boot || pmap || gDrag || (isV7() && (away7 || e7 > 0))) return null;
   const cands = [];
   if (routes.isp.u.uOp.value > 0) cands.push(['isp', 0, routes.isp]);
   if (xlShow) routes.xl.forEach((r, i) => cands.push(['xl', i, r]));
@@ -788,7 +796,7 @@ const close8 = document.createElement('button'); close8.type = 'button'; close8.
 close8.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
 close8.addEventListener('click', () => setPanel8(false));
 document.querySelector('.pk-r1').append(close8);
-function setPanel8(o) { panel8 = o; $('app').classList.toggle('pk-p8', o); syncThumbs8(); if (!o) openSrv(false); }
+function setPanel8(o) { panel8 = o; $('app').classList.toggle('pk-p8', o); syncThumbs8(); if (!o) openSrv(false); if (typeof promoCheck === 'function') promoCheck(); }
 addEventListener('keydown', e => { if (e.key === 'Escape' && isV8() && panel8) setPanel8(false); });
 syncThumbs8();
 // V9: as capas ficam escondidas; só a do jogo em destaque aparece, parada na frente do globo.
@@ -945,14 +953,15 @@ $('bootLogin').addEventListener('submit', e => {
 });
 $('bsSkip').addEventListener('click', () => { if (boot && boot.phase === 'scan') boot.t = Math.max(boot.t, 6.2); });
 
-function startBoot() {
-  if (boot) endBoot(); if (scan) endScan();
-  setV('9'); history.replaceState(null, '', '#login');
-  vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.boot ? 'true' : 'false'));
+function startBoot(passive = false) {
+  if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap();
+  setV('9'); history.replaceState(null, '', passive ? '#passive' : '#login');
+  vchips.forEach(c => c.setAttribute('aria-pressed', (passive ? c.dataset.passive : c.dataset.boot) ? 'true' : 'false'));
   setPanel8(false); setShow9(false); $('app').classList.remove('sb-open');
   // globo à direita, girando devagar, centrado em você
   const [lat, lon] = [origin[0], origin[1]];
-  boot = { phase: 'login', t: 0, dist: FULL9, off: 0, yaw0: (-lon - 90) * D + 0.6, pitch: clamp(lat, -40, 40) * D * 0.6, arcs: [], best: [] };
+  boot = { phase: 'login', t: 0, dist: FULL9, off: 0, yaw0: (-lon - 90) * D, pitch: clamp(lat, -55, 55) * D, // centrado onde a pessoa está (pedido do Gabriel)
+     arcs: [], best: [], passive };
   $('app').dataset.boot = 'login'; $('app').classList.remove('boot-out');
   $('bootErr').hidden = true; $('bsBar').style.width = '0%';
   [...$('bsSteps').children].forEach(li => li.className = '');
@@ -963,6 +972,8 @@ function startBoot() {
 }
 function scanBoot() {
   if (!boot || boot.phase !== 'login') return;
+  // fluxo passivo: sem tela de mapa; o login sai direto e o mapa roda depois, dentro do app
+  if (boot.passive) { boot.phase = 'out'; boot.out = 0; $('app').dataset.boot = 'out'; return; }
   boot.phase = 'scan'; boot.t = 0; $('app').dataset.boot = 'scan';
   $('bsSub').textContent = '';
   // uma rota (arco) até cada região de servidores; o ping simulado é o mesmo da home (distância), com um pequeno sorteio
@@ -991,7 +1002,7 @@ function endBoot(keepHash) {
 }
 const BOOT_STEPS = [[0, 'Locating you'], [1.1, 'Mapping server regions'], [2.8, 'Testing every route'], [5.0, 'Choosing the best routes'], [6.2, 'Ready']];
 function frameBoot(dt) {
-  routeGroup.visible = packets.visible = markers.visible = !boot && !scan;
+  routeGroup.visible = packets.visible = markers.visible = !boot && !scan && !pmap;
   if (!boot) return;
   boot.t += dt; const t = boot.t;
   tagA.style.opacity = tagB.style.opacity = 0;
@@ -1003,9 +1014,9 @@ function frameBoot(dt) {
   const tg = $('bootTag'), p = project(vO);
   tg.innerHTML = `${origin[2]}<span class="t-var">You</span>`;
   tg.style.transform = `translate(${Math.round(p[0] + 12)}px, ${Math.round(p[1] - 40)}px)`;
-  tg.style.opacity = boot.phase === 'scan' ? clamp(p[2] * 4) * clamp((t - 0.4) / 0.4) : 0;
+  tg.style.opacity = boot.phase !== 'out' ? clamp(p[2] * 4) * clamp((t - 0.4) / 0.4) : 0;
   if (boot.phase === 'login') {
-    frame0.yaw = boot.yaw0 + (reduce ? 0 : Math.sin(time * 0.05) * 0.5); frame0.pitch = boot.pitch;
+    frame0.yaw = boot.yaw0 + (reduce ? 0 : Math.sin(time * 0.12) * 0.06); frame0.pitch = boot.pitch; // só respira, sem sair de você
     return;
   }
   // mapa: o globo para em você e afasta um pouco enquanto as rotas são medidas
@@ -1039,7 +1050,7 @@ function frameBoot(dt) {
   if (boot.phase === 'scan' && t >= 7.0) { boot.phase = 'out'; boot.out = 0; $('app').dataset.boot = 'out'; }
   if (boot.phase === 'out') {
     boot.out += dt;
-    if (boot.out > 1.1) { $('app').classList.add('boot-out'); endBoot(); startScan(); setTimeout(() => $('app').classList.remove('boot-out'), 1200); } // fluxo completo: login, rotas, varredura de jogos, home
+    if (boot.out > 1.1) { const pv = boot.passive; $('app').classList.add('boot-out'); endBoot(); startScan(pv); setTimeout(() => $('app').classList.remove('boot-out'), 1200); } // fluxo completo: login, rotas, varredura de jogos, home
   }
 }
 
@@ -1072,23 +1083,25 @@ $('scSkip').addEventListener('click', () => { if (scan) scan.t = Math.max(scan.t
 // ordem de descoberta: launcher por launcher; jogos fora da lista ficam de fora da biblioteca nova
 const SCAN_ORDER = LAUNCHERS.flatMap(([, , gs], li) => gs.map(n => [GAMES.findIndex(g => g.name === n), li])).filter(([i]) => i >= 0);
 const L_DUR = 1.25, L_T0 = 0.9; // cada launcher: 1,25 s; antes, 0,9 s procurando launchers
-function startScan() {
-  if (boot) endBoot(true); if (scan) endScan(true);
-  setV('9'); history.replaceState(null, '', '#scan');
-  vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.scan ? 'true' : 'false'));
+function startScan(passive = false) {
+  if (boot) endBoot(true); if (scan) endScan(true); if (pmap) endPmap();
+  setV('9'); history.replaceState(null, '', passive ? '#passive' : '#scan');
+  vchips.forEach(c => c.setAttribute('aria-pressed', (passive ? c.dataset.passive : c.dataset.scan) ? 'true' : 'false'));
   setPanel8(false); setShow9(false); $('app').classList.remove('sb-open');
   thumbs.forEach((_, i) => { p9[i] = 0; pv9[i] = 0; tg9[i] = 0; });
-  scan = { t: 0, shown: thumbs.map(() => false), n: 0, end: L_T0 + LAUNCHERS.length * L_DUR + 0.3, done: false, yaw: frame0.yaw };
+  scan = { t: 0, shown: thumbs.map(() => false), n: 0, end: L_T0 + LAUNCHERS.length * L_DUR + 0.3, done: false, yaw: frame0.yaw, passive };
   $('app').dataset.scan = 'on';
   [...$('scLs').children].forEach(el => { el.className = 'sb-l'; el.querySelector('b').textContent = ''; });
   frame0.dist = fitDist();
 }
-function endScan(keepHash) {
+function endScan(keepHash, next) {
   if (!scan) return;
+  const pv = scan.passive;
   scan = null; delete $('app').dataset.scan;
   if (!keepHash && location.hash === '#scan') history.replaceState(null, '', '#v' + $('app').dataset.v);
   vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.v === $('app').dataset.v ? 'true' : 'false'));
   rebuild(); frame0.dist = fitDist();
+  if (next && pv) startPmap(); // fluxo passivo: depois da varredura, o mapa de rede roda dentro da home
 }
 let scanPathT = 0;
 // onda de conclusão: cada capa cresce e volta, em ordem de distância do jogo em destaque
@@ -1140,8 +1153,142 @@ function frameScan(dt) {
   // depois o resumo recolhe e a home entra
   if (done && !scan.done) { scan.done = true; $('app').dataset.scan = 'done'; }
   if (t >= scan.end + 2.4 && $('app').dataset.scan === 'done') $('app').dataset.scan = 'out';
-  if (t >= scan.end + 3.0) endScan();
+  if (t >= scan.end + 3.0) endScan(false, true);
 }
+
+/* ---------- Mapa passivo (pedido do Gabriel) ----------
+   Versão do fluxo em que o network map não tem tela própria: depois do login e da varredura, ele roda dentro da home.
+   Enquanto mede, o app funciona, mas rotas não se configuram: Optimize e servidor ficam travados, e na barra lateral só
+   Home, Network Analyzer, PC Boost, Traffic Shaper e General Settings abrem. Uma pílula no topo mostra o progresso.
+   Quando termina, as 3 melhores acendem, a pílula vira "Network map ready" e o resto destrava. */
+const pmGroup = new THREE.Group(); globe.add(pmGroup);
+const PM_OPEN = ['Home', 'Network Analyzer', 'PC Boost', 'Traffic Shaper', 'General Settings'];
+const PM_DONE = 13.2, PM_END = 17.5; // mede até 13,2 s; a pílula de pronto fica até 17,5 s
+const pmPill = document.createElement('div'); pmPill.className = 'pm-pill'; pmPill.setAttribute('role', 'status'); pmPill.setAttribute('aria-live', 'polite');
+pmPill.innerHTML = `<span class="pm-ic" aria-hidden="true"><i class="pm-spin"></i><svg viewBox="0 0 16 16" fill="none"><path d="M4 8.3l2.6 2.6L12 5.4"/></svg></span>
+  <span class="pm-tx"><b id="pmT">Mapping your network</b><span class="t-var" id="pmS"></span></span><span class="pm-pc tnum" id="pmP">0%</span><i class="pm-bar"><i id="pmBar"></i></i>`;
+$('pk').append(pmPill);
+// trava os itens da barra lateral que mexem em rotas; o clique é barrado antes do protótipo abrir a página
+const navLock = () => [...document.querySelectorAll('.sidebar .nav-item')].filter(n => !PM_OPEN.includes(n.dataset.goto));
+document.addEventListener('click', e => {
+  const n = pmBusy() && e.target.closest('.sidebar .nav-item.pm-lock'); if (!n) return;
+  e.stopPropagation(); e.preventDefault();
+  n.classList.remove('pm-nope'); void n.offsetWidth; n.classList.add('pm-nope');
+}, true);
+function lockNav(on) {
+  navLock().forEach(n => {
+    n.classList.toggle('pm-lock', on); n.setAttribute('aria-disabled', on ? 'true' : 'false');
+    if (on) n.dataset.tip = 'Available after the network map is ready'; else delete n.dataset.tip;
+  });
+}
+function startPmap() {
+  if (pmap) endPmap();
+  // o mapa só começa com as rotas paradas: nada otimizado enquanto mede
+  GAMES.forEach(g => { if (g.state !== 'off') g.state = 'off'; }); xlShow = 0; fail = null; logMsg(IDLE);
+  const saveR = routeR; routeR = (FULL9 - 1) / 2;
+  const arcs = bootRows.map(([k, r], i) => {
+    let v = toV(r.c[0], r.c[1]), w = vO.angleTo(v);
+    if (w < 0.03) { v = toV(r.c[0] + 1.2, r.c[1] + 1.4); w = vO.angleTo(v); }
+    const side = (i % 2 ? 1 : -1) * 0.12;
+    const a = makeRoute(smoothPath(vO, v, w, u => side * Math.sin(Math.PI * u), 0.3), C.dim.clone(), 0.0026, 0.5 + i * 0.03, 0.5, pmGroup);
+    return { ...a, k, ms: estPing(k) + Math.round(Math.random() * 6) };
+  });
+  routeR = saveR;
+  // ordem de teste: das mais perto para as mais longe, como um analisador faria
+  const order = [...arcs].sort((a, b) => a.ms - b.ms);
+  order.forEach((a, o) => { a.t0 = 0.8 + o * 0.32; a.tt = 3 + o * 1.0; });
+  pmap = { t: 0, arcs, best: order.slice(0, 3).map(a => a.k), done: false };
+  $('app').dataset.pmap = 'on'; lockNav(true); paintCta();
+  history.replaceState(null, '', '#passive');
+  vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.passive ? 'true' : 'false'));
+}
+function endPmap() {
+  if (!pmap) return;
+  const wasBusy = !pmap.done;
+  pmGroup.children.forEach(m => { m.geometry.dispose(); m.material.dispose(); }); pmGroup.clear();
+  pmap = null; delete $('app').dataset.pmap; lockNav(false); paintCta();
+  if (wasBusy) promo.armed = true; // saiu antes do fim (Skip ou outra versão): o mapa conta como pronto
+  rebuild(); frame0.dist = fitDist();
+}
+let pmPaintT = 0;
+function framePmap(dt) {
+  pmGroup.visible = !!pmap;
+  if (!pmap) return;
+  pmap.t += dt * (window.PK_SCANX || 1); const t = pmap.t;
+  // o globo para em você e mostra o planeta inteiro enquanto mede; o painel de detalhes ainda empurra para a esquerda
+  frame0.yaw = (-origin[1] - 90) * D; frame0.pitch = clamp(origin[0], -40, 40) * D * 0.8; frame0.dist = FULL9;
+  const chosen = t >= PM_DONE - 0.6;
+  pmap.arcs.forEach(a => {
+    const isBest = pmap.best.includes(a.k), tested = t >= a.tt;
+    a.u.uTime.value = time;
+    a.u.uDraw.value = reduce ? (t > a.t0 ? 1 : 0) : ease(clamp((t - a.t0) / 0.8));
+    a.u.uCol.value.lerp(tested && isBest && chosen ? C.route : C.dim, Math.min(1, dt * 6));
+    // medindo, a rota pisca; medida, assenta; escolhidas, as outras recuam; no fim tudo some e volta a rota do jogo
+    const testing = t >= a.tt - 1 && !tested, out = clamp(1 - (t - (PM_END - 1.6)) / 1.2);
+    a.u.uOp.value = (t < a.t0 ? 0 : chosen ? (isBest ? 0.9 : 0.12) : testing ? 0.55 + 0.35 * Math.sin(time * 9) : tested ? 0.6 : 0.3) * out;
+    a.u.uGain.value = chosen && isBest ? (a.k === pmap.best[0] ? 1 : 0.5) : testing ? 0.6 : 0.35;
+  });
+  if (!pmap.done && t >= PM_DONE) {
+    pmap.done = true; $('app').dataset.pmap = 'done'; lockNav(false); paintCta();
+    promo.armed = true; promoCheck(); // mapa pronto: se os detalhes de um jogo já estão abertos, a oferta entra agora
+  }
+  if (time - pmPaintT > 0.1 || pmap.done) {
+    pmPaintT = time;
+    const now = pmap.arcs.find(a => t >= a.tt - 1 && t < a.tt), b = pmap.arcs.find(a => a.k === pmap.best[0]);
+    const T = pmap.done ? 'Network map ready' : t < 0.8 ? 'Locating you' : t < 3 ? 'Mapping server regions' : now ? `Testing ${REGIONS[now.k].n}` : 'Choosing the best routes';
+    const S = pmap.done ? `Best route: ${REGIONS[b.k].n} · ${b.ms} ms` : t < 0.8 ? `${origin[2]} · in the background` : t < 3 ? '10 regions · Optimize unlocks when ready' : now ? `${now.ms} ms` : 'Comparing ping, jitter and packet loss';
+    if ($('pmT').textContent !== T) $('pmT').textContent = T;
+    if ($('pmS').textContent !== S) $('pmS').textContent = S;
+    const pc = Math.round(clamp(t / PM_DONE) * 100) + '%';
+    $('pmP').textContent = pc; $('pmInfoP').textContent = pc; $('pmBar').style.width = pc;
+  }
+  if (t >= PM_END - 1.4 && $('app').dataset.pmap === 'done') $('app').dataset.pmap = 'out';
+  if (t >= PM_END) endPmap();
+}
+
+/* ---------- Oferta embaixo dos detalhes (pedido do Gabriel) ----------
+   Gatilho: o mapa de rede terminou (o app já sabe como é a rota do jogador) e o jogador abre os detalhes de um jogo
+   que não está otimizado. É o momento em que ele está olhando a própria rota ruim: a oferta usa os números dela.
+   Aparece uma vez por sessão, 0,7 s depois do painel abrir; "Not now" ou otimizar o jogo fecha de vez. */
+const promo = { armed: false, shown: false, closed: false, end: 0, timer: 0 };
+const promoEl = document.createElement('section'); promoEl.className = 'banner pk-promo'; promoEl.setAttribute('aria-label', 'Offer'); promoEl.hidden = true;
+{
+  const bg = document.querySelector('#banner .slide:nth-child(2) .bg')?.style.backgroundImage || '', pic = document.querySelector('#banner .slide:nth-child(2) .pic')?.style.backgroundImage || '';
+  promoEl.innerHTML = `<div class="creative"><div class="slide active"><div class="bg" style='background-image:${bg}'></div><div class="pic" style='background-image:${pic}'></div>
+    <div class="body"><div><span class="badge success">25% OFF · <span class="tnum" id="prT">23:59:59</span></span><h3>Lock in the best route</h3><p class="desc" id="prD"></p>
+    <span class="pr-acts"><button class="btn filled pr-go" type="button">Get 25% off</button><button class="link pr-no" type="button">Not now</button></span></div></div></div>
+    <button class="icon-btn pr-x" type="button" aria-label="Close offer"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>`;
+}
+$('pk').append(promoEl);
+const closePromo = () => { promo.closed = true; promoEl.classList.remove('in'); setTimeout(() => { promoEl.hidden = true; }, 300); };
+promoEl.querySelector('.pr-x').addEventListener('click', closePromo);
+promoEl.querySelector('.pr-no').addEventListener('click', closePromo);
+promoEl.querySelector('.pr-go').addEventListener('click', e => { e.currentTarget.textContent = 'Opening checkout…'; setTimeout(closePromo, 900); });
+function paintPromo() {
+  const g = GAMES[sel], r = REGIONS[g.region].n, il = lossPct(0), ij = jit(hist.isp);
+  $('prD').innerHTML = `Your ISP route to ${r}: <b class="tnum">${f1(Math.max(il, 0.8))}%</b> loss, <b class="tnum">${Math.round(Math.max(ij, 4))} ms</b> jitter. Annual plan.`;
+}
+// chamado ao abrir/fechar os detalhes e quando o mapa termina
+function promoCheck() {
+  clearTimeout(promo.timer);
+  const want = panel8 && isV9() && !promo.closed && promo.armed && !pmBusy();
+  if (!want) { promoEl.classList.remove('in'); return; }
+  if (promo.shown) { if (GAMES[sel].state === 'on') return closePromo(); paintPromo(); promoEl.hidden = false; requestAnimationFrame(() => promoEl.classList.add('in')); return; }
+  if (GAMES[sel].state === 'on') return; // jogo já otimizado: não é a hora
+  promo.timer = setTimeout(() => {
+    if (!panel8 || promo.closed) return;
+    promo.shown = true; promo.end = Date.now() + 24 * 3600e3 - 1000; paintPromo();
+    promoEl.hidden = false; requestAnimationFrame(() => promoEl.classList.add('in'));
+  }, reduce ? 0 : 700);
+}
+// fica logo abaixo da telemetria, com a mesma largura do painel; o relógio da oferta corre
+setInterval(() => {
+  if (promoEl.hidden) return;
+  const tb = $('pkTele').getBoundingClientRect(), pb = promoEl.offsetParent.getBoundingClientRect(), k = pb.width / promoEl.offsetParent.offsetWidth || 1;
+  Object.assign(promoEl.style, { top: ((tb.bottom - pb.top) / k + 12) + 'px', left: ((tb.left - pb.left) / k) + 'px', width: (tb.width / k) + 'px' });
+  const s = Math.max(0, Math.floor((promo.end - Date.now()) / 1000)); $('prT').textContent = [s / 3600, s / 60 % 60, s % 60].map(x => String(Math.floor(x)).padStart(2, '0')).join(':');
+  if (GAMES[sel].state === 'on' && promo.shown && !promo.closed) closePromo(); // otimizou: a oferta sai
+}, 250);
 
 /* ---------- ExitLag desligada (pedido do Gabriel) ----------
    Com o toggle da topbar desligado, o globo puxa para o laranja da operadora, bem de leve: borda e atmosfera,
@@ -1242,9 +1389,9 @@ function frame() {
   if (time - lastS > 0.1) { lastS = time; sample(on); drawChart(); }
   if (time - lastP > 0.25) { lastP = time; paintTele(); }
 
-  frameV7(dt); frameV8(dt); frameBoot(dt); frameScan(dt); frameOff(dt);
+  frameV7(dt); frameV8(dt); frameBoot(dt); frameScan(dt); framePmap(dt); frameOff(dt);
   scene.updateMatrixWorld();
-  placeTags(clamp((age - 0.6) / 0.4));
+  placeTags(pmap ? 0 : clamp((age - 0.6) / 0.4));
   composer.render();
   requestAnimationFrame(frame);
 }
@@ -1259,7 +1406,8 @@ function setV(v) {
   if (location.hash !== '#v' + v) history.replaceState(null, '', '#v' + v);
   dispatchEvent(new Event('pk:layout'));
 }
-vchips.forEach(c => c.addEventListener('click', () => { if (c.dataset.boot) return startBoot(); if (c.dataset.scan) return startScan(); if (boot) endBoot(); if (scan) endScan(); setV(c.dataset.v); }));
+vchips.forEach(c => c.addEventListener('click', () => { if (c.dataset.boot) return startBoot(); if (c.dataset.passive) return startBoot(true); if (c.dataset.scan) return startScan(); if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap(); setV(c.dataset.v); }));
 if (/^#v\d+$/.test(location.hash)) setV(location.hash.slice(2));
 if (location.hash === '#login') startBoot();
 if (location.hash === '#scan') startScan();
+if (location.hash === '#passive') startBoot(true);
