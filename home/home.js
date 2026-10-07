@@ -674,3 +674,14 @@ function frame() {
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
+
+// Chips de versão acima do app: troca data-v no .app e guarda a escolha no #hash (#v1, #v2)
+const vchips = [...document.querySelectorAll('.vchip')];
+function setV(v) {
+  const b = vchips.find(c => c.dataset.v === v && !c.disabled); if (!b) return;
+  vchips.forEach(c => c.setAttribute('aria-pressed', c === b ? 'true' : 'false'));
+  $('app').dataset.v = v;
+  if (location.hash !== '#v' + v) history.replaceState(null, '', '#v' + v);
+}
+vchips.forEach(c => c.addEventListener('click', () => setV(c.dataset.v)));
+if (/^#v\d$/.test(location.hash)) setV(location.hash.slice(2));

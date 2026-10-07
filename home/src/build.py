@@ -33,6 +33,14 @@ i = out.index('<div class="apps">'); j = out.index('<div class="row2">', i)
 k = out.rfind('<!--', 0, i)
 out = out[:k] + stage.strip() + '\n\n          ' + out[j:]
 out = out.replace('</style>', '</style>\n<style>\n' + css + '</style>', 1)
+# chips de versão acima do app, fora da interface (pedido do Gabriel); a versão fica em data-v no .app
+VCHIPS = '''<nav class="vchips" aria-label="Layout version">
+    <button class="vchip" type="button" data-v="1" aria-pressed="true">V1 &middot; Stage + globe</button>
+    <button class="vchip" type="button" data-v="2" aria-pressed="false" disabled title="Layout being chosen">V2 &middot; Coming next</button>
+  </nav>
+  '''
+out = out.replace('<div class="stage">\n  <div class="app" id="app">', '<div class="stage">\n  ' + VCHIPS + '<div class="app" id="app" data-v="1">', 1)
+assert 'class="vchips"' in out
 # Sem a ferramenta de feedback do protótipo de origem: não pede o nome ao abrir
 out = out.replace('function askName() {', 'function askName() { return;', 1)
 # Anek Latin com pesos 600/700 para o título do jogo
