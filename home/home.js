@@ -88,6 +88,9 @@ function pickRegion(g) {
   g.region = (by.find(([, a]) => a > 0.27) || by[0])[0];
 }
 GAMES.forEach(pickRegion);
+// ping estimado com ExitLag até cada servidor (mesma conta da telemetria: ~1,1 ms a cada 100 km + 8 ms)
+const estPing = r => Math.round(8 + vO.angleTo(toV(REGIONS[r].c[0], REGIONS[r].c[1])) * 6371 / 100 * 1.1);
+const bestRegion = g => g.regions.reduce((b, r) => vO.angleTo(toV(REGIONS[r].c[0], REGIONS[r].c[1])) < vO.angleTo(toV(REGIONS[b].c[0], REGIONS[b].c[1])) ? r : b);
 
 /* ---------- Palco: carrossel ---------- */
 const deck = $('pkDeck');
@@ -187,9 +190,15 @@ function paintInfo() {
   const g = GAMES[sel];
   $('pkTitle').textContent = g.name;
   $('pkPage').textContent = sel + 1;
-  $('pkSrvName').textContent = REGIONS[g.region].n;
-  $('pkSrvItems').innerHTML = g.regions.map(r => `<div class="sl-item" role="option" data-r="${r}" aria-selected="${r === g.region}"><span class="sl-name">${REGIONS[r].n}</span><span class="t-var">${REGIONS[r].c[2]}</span></div>`).join('');
-  $('pkSrvItems').querySelectorAll('.sl-item').forEach(el => el.addEventListener('click', () => { g.region = el.dataset.r; openSrv(false); paintInfo(); rebuild(); }));
+  $('pkSrvName').textContent = g.auto ? 'Auto · ' + REGIONS[g.region].n : REGIONS[g.region].n;
+  // Automatic: a ExitLag escolhe o servidor de menor ping (no protótipo, o mais perto de quem joga) e mostra qual escolheu
+  const best = bestRegion(g);
+  $('pkSrvItems').innerHTML = `<div class="sl-item pk-auto" role="option" data-r="auto" aria-selected="${!!g.auto}"><span class="sl-name">Automatic</span><span class="t-var">Best route · ${REGIONS[best].n}</span><span class="pk-ms tnum">${estPing(best)} ms</span></div>`
+    + g.regions.map(r => `<div class="sl-item" role="option" data-r="${r}" aria-selected="${!g.auto && r === g.region}"><span class="sl-name">${REGIONS[r].n}</span><span class="t-var">${REGIONS[r].c[2]}</span><span class="pk-ms tnum">${estPing(r)} ms</span></div>`).join('');
+  $('pkSrvItems').querySelectorAll('.sl-item').forEach(el => el.addEventListener('click', () => {
+    const r = el.dataset.r; g.auto = r === 'auto'; g.region = g.auto ? best : r;
+    openSrv(false); paintInfo(); rebuild();
+  }));
   paintCta();
 }
 function select(i) {
