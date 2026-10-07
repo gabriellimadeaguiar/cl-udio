@@ -582,7 +582,7 @@ composer.addPass(bloom);
 let vw = 1, vh = 1, bandCut = 0, bandSide = 0, bandLeft = 0, bandRight = 0, headBottom = 0, bandBottom = 0;
 // Distância da câmera para a rota inteira caber na faixa livre do globo (entre o cabeçalho e o widget).
 function fitDist() {
-  if (isV6() && !gBig) return 4.8; // V6, globo pequeno: o planeta inteiro na janelinha
+  if ((isV6() && !gBig) || (isV7() && away7)) return 4.8; // V6, globo pequeno: o planeta inteiro na janelinha
   const band = Math.max(140, Math.min(vw - bandSide, vh - bandCut) * 0.8), worldPerPx = 2 * Math.tan(15 * D) / vh;
   // a escala vale na superfície do globo (distância − 1): rotas curtas pedem a câmera bem perto
   return clamp(1 + frame0.chord / (band * worldPerPx), 1.22, 7.5);
@@ -590,6 +590,7 @@ function fitDist() {
 // 1 com a câmera longe; menor perto, para pontos e rotas manterem o tamanho na tela
 const zoomK = d => clamp((d - 1) / 3, 0.08, 1);
 function resize() {
+  if (!canvas.clientWidth || !canvas.clientHeight) return; // canvas escondido (home fora de vista)
   vw = canvas.clientWidth; vh = canvas.clientHeight; // o próprio canvas: na V6 ele sai do palco e cobre a home
   renderer.setSize(vw, vh, false); composer.setSize(vw, vh); composer.setPixelRatio(PR); bloom.resolution.set(vw / 2, vh / 2);
   const headH = host.querySelector('.pk-head').offsetHeight + 24;
@@ -598,7 +599,7 @@ function resize() {
   const v = $('app').dataset.v, teleW = $('pkTele').offsetWidth + 48, teleH = $('pkTele').offsetHeight + 48, lW = $('pkL').offsetWidth;
   const [sideW, leftW, botH] = v === '4' ? [lW, 0, teleH]
     : v === '5' ? [0, lW, teleH] : v === '6' ? [0, 0, headH] : [0, 0, teleH - 24];
-  const offX = Math.round((sideW - leftW) / 2), offY = Math.round((botH - headH) / 2);
+  const offX = Math.round((sideW - leftW) / 2), offY = Math.round((botH - headH) / 2); camOff = [offX, offY];
   bandCut = botH + headH; bandSide = sideW + leftW; bandLeft = leftW; bandRight = sideW; headBottom = headH + 14; bandBottom = botH;
   camera.aspect = vw / vh; camera.setViewOffset(vw, vh, offX, offY, vw, vh); camera.updateProjectionMatrix();
   frame0.dist = fitDist();
@@ -653,6 +654,47 @@ function frameV6(dt) {
   const rad = gp + (Math.hypot(r.width, r.height) / 2 - gp) * e, fade = 1 + 120 * e;
   canvas.style.webkitMask = canvas.style.mask = `radial-gradient(circle at 50% 50%, #000 ${rad.toFixed(1)}px, transparent ${(rad + fade).toFixed(1)}px)`;
   veil.style.opacity = (0.88 * e).toFixed(3);
+}
+
+/* ---------- V7: globo da V1 na home; fora dela, vai para a sidebar ----------
+   Saindo da home o canvas sai do palco (que some junto com a home) e voa até a vaga redonda da sidebar, acima da versão.
+   A vaga é um link para a Home (o próprio protótipo trata data-goto="Home"). Na volta, o globo voa de volta e o canvas retorna ao palco. */
+const isV7 = () => $('app').dataset.v === '7';
+let away7 = false, e7 = 0, fly7 = null, camOff = [0, 0];
+function frameV7(dt) {
+  const inHost = canvas.parentElement === host;
+  if (!isV7()) { if (!inHost) dock7(); if (away7) { away7 = false; $('app').classList.remove('pk-away'); resize(); } e7 = 0; return; }
+  const away = $('view-home').hidden;
+  if (away !== away7) {
+    away7 = away; frame0.dist = fitDist();
+    // na sidebar o globo fica centrado no canvas (sem o deslocamento do widget), senão o topo sai do quadro
+    camera.setViewOffset(vw, vh, away ? 0 : camOff[0], away ? 0 : camOff[1], vw, vh); camera.updateProjectionMatrix();
+    $('app').classList.toggle('pk-away', away); $('sbGlobe').tabIndex = away ? 0 : -1;
+  }
+  if (!away && inHost) { // na home: tudo como na V1; guarda onde o palco está para o voo
+    const a = $('app').getBoundingClientRect(), h = host.getBoundingClientRect();
+    fly7 = { x: h.left - a.left, y: h.top - a.top, w: h.width, h: h.height }; e7 = 0; return;
+  }
+  if (!fly7) return;
+  if (inHost) { // começa o voo: o canvas vai para o .app com o mesmo tamanho
+    $('app').append(canvas);
+    Object.assign(canvas.style, { position: 'absolute', inset: 'auto', left: fly7.x + 'px', top: fly7.y + 'px', width: fly7.w + 'px', height: fly7.h + 'px', zIndex: 6 });
+  }
+  e7 += ((away ? 1 : 0) - e7) * (reduce ? 1 : 1 - Math.exp(-dt * 6));
+  if (!away && e7 < 0.004) return dock7();
+  const a = $('app').getBoundingClientRect(), sl = $('sbGlobe').getBoundingClientRect();
+  const px = fly7.w / 2 - (away ? 0 : camOff[0]), py = fly7.h / 2 - (away ? 0 : camOff[1]), gp = globePx() * 1.06, e = ease(e7);
+  const s = 1 + ((sl.width / 2) / gp - 1) * e;
+  const tx = (sl.left - a.left + sl.width / 2 - (fly7.x + px)) * e, ty = (sl.top - a.top + sl.height / 2 - (fly7.y + py)) * e;
+  canvas.style.transformOrigin = `${px.toFixed(1)}px ${py.toFixed(1)}px`;
+  canvas.style.transform = `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) scale(${s.toFixed(4)})`;
+  const rad = gp + (Math.min(fly7.w, fly7.h) * 0.42 - gp) * (1 - e); // sai do palco já recortado em círculo, sem a borda do canvas
+  canvas.style.webkitMask = canvas.style.mask = `radial-gradient(circle at ${px.toFixed(1)}px ${py.toFixed(1)}px, #000 ${Math.max(rad, 1).toFixed(1)}px, transparent ${(Math.max(rad, 1) + 1 + 70 * (1 - e)).toFixed(1)}px)`;
+  canvas.style.pointerEvents = 'none';
+}
+function dock7() {
+  host.prepend(canvas); e7 = 0;
+  ['position', 'inset', 'left', 'top', 'width', 'height', 'zIndex', 'transform', 'transformOrigin', 'webkitMask', 'mask', 'pointerEvents'].forEach(k => canvas.style[k] = '');
 }
 
 /* ---------- Loop ---------- */
@@ -726,7 +768,7 @@ function frame() {
   if (time - lastS > 0.1) { lastS = time; sample(on); drawChart(); }
   if (time - lastP > 0.25) { lastP = time; paintTele(); }
 
-  frameV6(dt);
+  frameV6(dt); frameV7(dt);
   scene.updateMatrixWorld();
   placeTags(clamp((age - 0.6) / 0.4));
   composer.render();

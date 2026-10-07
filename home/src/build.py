@@ -39,10 +39,14 @@ VCHIPS = '''<nav class="vchips" aria-label="Layout version">
     <button class="vchip" type="button" data-v="4" aria-pressed="false">V4 &middot; Swapped</button>
     <button class="vchip" type="button" data-v="5" aria-pressed="false">V5 &middot; Game art</button>
     <button class="vchip" type="button" data-v="6" aria-pressed="false">V6 &middot; Wide carousel</button>
+    <button class="vchip" type="button" data-v="7" aria-pressed="false">V7 &middot; Sidebar globe</button>
   </nav>
   '''
 out = out.replace('<div class="stage">\n  <div class="app" id="app">', '<div class="stage">\n  ' + VCHIPS + '<div class="app" id="app" data-v="1">', 1)
 assert 'class="vchips"' in out
+# V7: vaga do globo na sidebar, abaixo das opções e acima da versão; clicar nela volta para a Home (pedido do Gabriel)
+out = out.replace('<div class="version">home | 1.0</div>', '<div class="sb-globe" id="sbGlobe" role="link" tabindex="0" data-goto="Home" aria-label="Live routes. Back to Home" data-tip="Back to Home"></div>\n      <div class="version">home | 1.0</div>', 1)
+assert 'id="sbGlobe"' in out
 # Sem a ferramenta de feedback do protótipo de origem: não pede o nome ao abrir
 out = out.replace('function askName() {', 'function askName() { return;', 1)
 # Anek Latin com pesos 600/700 para o título do jogo

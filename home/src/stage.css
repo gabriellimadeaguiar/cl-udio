@@ -205,3 +205,9 @@
 .app[data-v="6"] .pk-head { position: fixed; z-index: 4; left: 0; top: 0; width: 0; opacity: 0; pointer-events: none; transition: opacity var(--motion-duration-200); }
 .app[data-v="6"].pk-big .pk-head { opacity: 1; }
 .app[data-v="6"] .pk-tele { overflow: visible; }
+
+/* ---------- V7: globo na sidebar fora da home ---------- */
+.sb-globe { display: none; }
+.app[data-v="7"] .sb-globe { display: block; flex: none; width: 160px; height: 160px; margin: auto auto 16px; border-radius: 50%; cursor: pointer; }
+.app[data-v="7"] .sb-globe:focus-visible { outline: 2px solid var(--series1); outline-offset: 4px; }
+.app[data-v="7"]:not(.pk-away) .sb-globe { pointer-events: none; }

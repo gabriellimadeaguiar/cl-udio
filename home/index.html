@@ -1010,6 +1010,12 @@ p { margin: 0; }
 .app[data-v="6"] .pk-head { position: fixed; z-index: 4; left: 0; top: 0; width: 0; opacity: 0; pointer-events: none; transition: opacity var(--motion-duration-200); }
 .app[data-v="6"].pk-big .pk-head { opacity: 1; }
 .app[data-v="6"] .pk-tele { overflow: visible; }
+
+/* ---------- V7: globo na sidebar fora da home ---------- */
+.sb-globe { display: none; }
+.app[data-v="7"] .sb-globe { display: block; flex: none; width: 160px; height: 160px; margin: auto auto 16px; border-radius: 50%; cursor: pointer; }
+.app[data-v="7"] .sb-globe:focus-visible { outline: 2px solid var(--series1); outline-offset: 4px; }
+.app[data-v="7"]:not(.pk-away) .sb-globe { pointer-events: none; }
 </style>
 
 <div class="stage">
@@ -1018,6 +1024,7 @@ p { margin: 0; }
     <button class="vchip" type="button" data-v="4" aria-pressed="false">V4 &middot; Swapped</button>
     <button class="vchip" type="button" data-v="5" aria-pressed="false">V5 &middot; Game art</button>
     <button class="vchip" type="button" data-v="6" aria-pressed="false">V6 &middot; Wide carousel</button>
+    <button class="vchip" type="button" data-v="7" aria-pressed="false">V7 &middot; Sidebar globe</button>
   </nav>
   <div class="app" id="app" data-v="1">
     <div class="cz-overlay" aria-hidden="true"></div>
@@ -1036,6 +1043,7 @@ p { margin: 0; }
           <div class="nav-item" tabindex="0" role="link" data-goto="General Settings"><span class="lv"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uLWdlYXItZjAxMyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xMC4wOTY5IDQuMjk2ODhDMTAuMTkwNiAzLjgzNDM3IDEwLjYgMy41IDExLjA3NSAzLjVIMTIuOTQzOEMxMy40MTg4IDMuNSAxMy44MjgxIDMuODM0MzcgMTMuOTIxOSA0LjI5Njg4TDE0LjM3NSA2LjQ4NDM4QzE0LjgxNTYgNi42NzE4OCAxNS4yMjgxIDYuOTEyNSAxNS42MDMxIDcuMTk2ODhMMTcuNzIxOSA2LjQ5Mzc1QzE4LjE3MTkgNi4zNDM3NSAxOC42NjU2IDYuNTMxMjUgMTguOTAzMSA2Ljk0Mzc1TDE5LjgzNzUgOC41NjI1QzIwLjA3NSA4Ljk3NSAxOS45OTA2IDkuNDkzNzUgMTkuNjM0NCA5LjgwOTM3TDE3Ljk2ODggMTEuMjkwNkMxNy45OTY5IDExLjUyMTkgMTguMDA5NCAxMS43NTk0IDE4LjAwOTQgMTJDMTguMDA5NCAxMi4yNDA2IDE3Ljk5MzggMTIuNDc4MSAxNy45Njg4IDEyLjcwOTRMMTkuNjM3NSAxNC4xOTM4QzE5Ljk5MzcgMTQuNTA5NCAyMC4wNzUgMTUuMDMxMyAxOS44NDA2IDE1LjQ0MDZMMTguOTA2MiAxNy4wNTk0QzE4LjY2ODggMTcuNDY4NyAxOC4xNzUgMTcuNjU5NCAxNy43MjUgMTcuNTA5NEwxNS42MDYyIDE2LjgwNjJDMTUuMjI4MSAxNy4wOTA2IDE0LjgxNTYgMTcuMzI4MSAxNC4zNzgxIDE3LjUxODhMMTMuOTI4MSAxOS43MDMxQzEzLjgzMTMgMjAuMTY4NyAxMy40MjE5IDIwLjUgMTIuOTUgMjAuNUgxMS4wODEzQzEwLjYwNjMgMjAuNSAxMC4xOTY5IDIwLjE2NTYgMTAuMTAzMSAxOS43MDMxTDkuNjUzMTIgMTcuNTE4OEM5LjIxMjUgMTcuMzMxMyA4LjgwMzEzIDE3LjA5MDYgOC40MjUgMTYuODA2Mkw2LjI5Njg4IDE3LjUwOTRDNS44NDY4OCAxNy42NTk0IDUuMzUzMTIgMTcuNDcxOSA1LjExNTYyIDE3LjA1OTRMNC4xODEyNSAxNS40NDA2QzMuOTQzNzUgMTUuMDI4MSA0LjAyODEyIDE0LjUwOTQgNC4zODQzNyAxNC4xOTM4TDYuMDUzMTIgMTIuNzA5NEM2LjAyNSAxMi40NzgxIDYuMDEyNSAxMi4yNDA2IDYuMDEyNSAxMkM2LjAxMjUgMTEuNzU5NCA2LjAyODEyIDExLjUyMTkgNi4wNTMxMiAxMS4yOTA2TDQuMzg0MzcgOS44MDYyNUM0LjAyODEyIDkuNDkwNjMgMy45NDY4NyA4Ljk2ODc1IDQuMTgxMjUgOC41NTkzN0w1LjExNTYyIDYuOTQwNjJDNS4zNTMxMiA2LjUyODEyIDUuODQ2ODggNi4zNDA2MiA2LjI5Njg4IDYuNDkwNjJMOC40MTU2MyA3LjE5Mzc1QzguNzkzNzUgNi45MDkzNyA5LjIwNjI1IDYuNjcxODggOS42NDM3NSA2LjQ4MTI1TDEwLjA5NjkgNC4yOTY4OFpNMTIuMDA5NCAxNC41QzEyLjMzNzcgMTQuNDk4OCAxMi42NjI1IDE0LjQzMjkgMTIuOTY1NCAxNC4zMDYxQzEzLjI2ODIgMTQuMTc5MyAxMy41NDMxIDEzLjk5NDIgMTMuNzc0NCAxMy43NjExQzE0LjAwNTcgMTMuNTI4MSAxNC4xODg4IDEzLjI1MTggMTQuMzEzMyAxMi45NDhDMTQuNDM3OCAxMi42NDQzIDE0LjUwMTIgMTIuMzE4OSAxNC41IDExLjk5MDZDMTQuNDk4OCAxMS42NjIzIDE0LjQzMjkgMTEuMzM3NSAxNC4zMDYxIDExLjAzNDZDMTQuMTc5MyAxMC43MzE4IDEzLjk5NDIgMTAuNDU2OSAxMy43NjExIDEwLjIyNTZDMTMuNTI4MSA5Ljk5NDMzIDEzLjI1MTggOS44MTEyMSAxMi45NDggOS42ODY3MUMxMi42NDQzIDkuNTYyMjEgMTIuMzE4OSA5LjQ5ODc3IDExLjk5MDYgOS41QzExLjY2MjMgOS41MDEyMyAxMS4zMzc1IDkuNTY3MTEgMTEuMDM0NiA5LjY5Mzg5QzEwLjczMTggOS44MjA2NiAxMC40NTY5IDEwLjAwNTggMTAuMjI1NiAxMC4yMzg5QzkuOTk0MzMgMTAuNDcxOSA5LjgxMTIxIDEwLjc0ODIgOS42ODY3MSAxMS4wNTJDOS41NjIyMSAxMS4zNTU3IDkuNDk4NzcgMTEuNjgxMSA5LjUgMTIuMDA5NEM5LjUwMTIzIDEyLjMzNzcgOS41NjcxMSAxMi42NjI1IDkuNjkzODkgMTIuOTY1NEM5LjgyMDY2IDEzLjI2ODIgMTAuMDA1OCAxMy41NDMxIDEwLjIzODkgMTMuNzc0NEMxMC40NzE5IDE0LjAwNTcgMTAuNzQ4MiAxNC4xODg4IDExLjA1MiAxNC4zMTMzQzExLjM1NTcgMTQuNDM3OCAxMS42ODExIDE0LjUwMTIgMTIuMDA5NCAxNC41WiIgZmlsbD0iI0VCRUNFRCIvPgo8L2c+Cjwvc3ZnPgo=" alt=""></span><span>General Settings</span></div>
         </nav>
       </div>
+      <div class="sb-globe" id="sbGlobe" role="link" tabindex="0" data-goto="Home" aria-label="Live routes. Back to Home" data-tip="Back to Home"></div>
       <div class="version">home | 1.0</div>
     </aside>
 
