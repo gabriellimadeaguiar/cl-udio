@@ -85,19 +85,34 @@ svg.os { width: 12px; height: 12px; flex: none; display: block; }
 .plats svg.os { width: 14px; height: 14px; color: var(--color-on-surface-variant); }
 .plats b > svg.os + svg.os { margin-left: -2px; }
 /* jogos suportados: duas faixas em loop, sentidos opostos */
-.games > div { max-width: 40rem; }
-.mq { display: grid; gap: var(--spacing-sm); -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
-.mq-row { overflow: hidden; }
-.mq-track { display: flex; width: max-content; animation: mq var(--mq-dur, 48s) linear infinite; }
-.mq-row.rev .mq-track { animation-direction: reverse; }
-.mq:hover .mq-track { animation-play-state: paused; }
-.mq ul { list-style: none; margin: 0; padding: 0 var(--spacing-sm) 0 0; display: flex; gap: var(--spacing-sm); }
-.game { display: flex; align-items: center; gap: var(--spacing-sm); height: 44px; box-sizing: border-box; padding: 0 var(--spacing-lg); white-space: nowrap;
-  background: var(--color-surface-container); border: 1px solid var(--color-outline-variant); border-radius: var(--corner-radius-small);
-  font: 600 1.0625rem/1 var(--font-display); color: var(--color-on-surface); transition: border-color var(--motion-duration-quick) var(--motion-easing-standard), background-color var(--motion-duration-quick); }
-.game:hover { border-color: var(--color-outline); background: var(--color-surface-container-high); }
-.game svg.os { color: var(--color-on-surface-variant); }
-@keyframes mq { to { transform: translateX(-50%); } }
+/* jogos suportados: carrossel de ponta a ponta, passa sozinho, arrasta com mouse ou dedo */
+.games { flex-direction: column; align-items: stretch; justify-content: center; gap: var(--spacing-2xl); padding-inline: 0; }
+.games > .gh { padding-inline: var(--gutter); max-width: 36rem; }
+.ch.games > .car, .ch.games > .car-nav { max-width: none; }
+.ch.games > .car { display: block; }
+.ch.games > .car-nav { display: flex; }
+.car { position: relative; pointer-events: auto; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; padding-block: var(--spacing-sm); }
+.car.drag { cursor: grabbing; }
+.car-track { display: flex; gap: var(--spacing-lg); width: max-content; will-change: transform; }
+.gcard { --w: clamp(150px, 15vw, 232px); position: relative; flex: none; width: var(--w); aspect-ratio: 3 / 4; margin: 0; border-radius: var(--corner-radius-small); overflow: hidden;
+  background: radial-gradient(120% 90% at 30% 10%, hsl(var(--h) 70% 34%), transparent 62%), linear-gradient(160deg, hsl(var(--h) 45% 16%), var(--color-surface-container) 70%);
+  border: 1px solid var(--color-outline-variant); transition: transform var(--motion-duration-standard) var(--motion-easing-standard), border-color var(--motion-duration-standard); }
+.gcard::before { content: attr(data-ab); position: absolute; inset: 0; display: grid; place-items: center; font: 700 calc(var(--w) * .42)/1 var(--font-display); color: hsl(var(--h) 60% 70% / .16); letter-spacing: -.02em; }
+.gcard img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; -webkit-user-drag: none; }
+.gcard::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 45%, rgb(11 12 15 / .92)); pointer-events: none; }
+.gcard figcaption { position: absolute; z-index: 1; left: var(--spacing-md); right: var(--spacing-md); bottom: var(--spacing-md); display: grid; gap: var(--spacing-sm); }
+.gcard strong { font: 600 clamp(1rem, 1.3vw, 1.25rem)/1.1 var(--font-display); color: var(--color-on-surface); }
+.gcard .oss { display: flex; flex-wrap: wrap; gap: var(--spacing-xs); }
+.gcard .oss span { display: inline-flex; align-items: center; gap: var(--spacing-xs); font: 500 .6875rem/1rem var(--font-plain); letter-spacing: .4px; color: var(--color-on-surface);
+  background: rgb(25 29 36 / .82); border-radius: var(--corner-radius-extra-small); padding: 2px 6px; backdrop-filter: blur(6px); }
+.gcard .oss svg.os { width: 11px; height: 11px; }
+.car:not(.drag) .gcard:hover { transform: translateY(-6px); border-color: var(--color-outline); }
+.car-nav { display: flex; align-items: center; gap: var(--spacing-sm); padding-inline: var(--gutter); pointer-events: auto; }
+.car-nav button { width: 40px; height: 40px; display: grid; place-items: center; border-radius: var(--corner-radius-full); border: 1px solid var(--color-chip-outline); background: transparent; color: var(--color-on-surface); cursor: pointer;
+  transition: background-color var(--motion-duration-quick) var(--motion-easing-standard); }
+.car-nav button:hover { background: var(--color-chip-hovered); }
+.car-nav svg { width: 16px; height: 16px; }
+.car-nav .note { margin-left: var(--spacing-sm); }
 .lead { font-size: 1.125rem; line-height: 1.75rem; color: var(--color-on-surface-variant); max-width: 30rem; margin: 0; }
 .note { font: 400 .75rem/1rem var(--font-plain); letter-spacing: .04em; color: var(--color-on-surface-variant); margin: 0; }
 .row { display: flex; gap: var(--spacing-lg); align-items: center; flex-wrap: wrap; }
@@ -145,6 +160,7 @@ svg.os { width: 12px; height: 12px; flex: none; display: block; }
 @media (max-width: 820px) {
   .ch { align-items: flex-start; padding-block: 6rem 0; }
   .ch > div { background: linear-gradient(var(--color-background) 72%, transparent); padding-bottom: var(--spacing-2xl); gap: var(--spacing-lg); }
+  .games { gap: var(--spacing-xl); } .games > .car, .games > .car-nav { background: none; padding-bottom: var(--spacing-sm); }
   .ping { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 64px); right: var(--gutter); transform: translateY(10px); width: 196px; padding: var(--spacing-md); }
   .ping header { font-size: .875rem; line-height: 1.25rem; margin-bottom: var(--spacing-sm); }
   .lang button { padding: 5px var(--spacing-md); }
@@ -155,7 +171,7 @@ svg.os { width: 12px; height: 12px; flex: none; display: block; }
   .stats { gap: var(--spacing-md); }
   .plats li { grid-template-columns: 1fr; gap: var(--spacing-xs); }
 }
-@media (prefers-reduced-motion: reduce) { .cta, .ping, .lang button, .game { transition: none; } .mq-track { animation: none; } .mq { -webkit-mask-image: none; mask-image: none; } .mq-row { overflow: visible; } .mq-track { width: auto; } .mq ul { flex-wrap: wrap; padding: 0; } .mq ul[aria-hidden] { display: none; } }
+@media (prefers-reduced-motion: reduce) { .cta, .ping, .lang button, .gcard { transition: none; } }
 </style>
 
 <canvas id="gl" aria-hidden="true"></canvas>
@@ -249,11 +265,15 @@ svg.os { width: 12px; height: 12px; flex: none; display: block; }
 
 
   <section class="ch games">
-    <div>
+    <div class="gh">
       <h2 data-i="h7">Quase 1.800 jogos. O seu está na lista.</h2>
       <p class="lead" data-i="p7">Escolha o jogo no app e a ExitLag ajusta as rotas para o servidor dele.</p>
-      <div class="mq" id="games"></div>
-      <p class="note" data-i="n7">Alguns dos jogos suportados no PC e no celular.</p>
+    </div>
+    <div class="car" id="car" role="region" aria-roledescription="carrossel" aria-label="Jogos suportados"><div class="car-track" id="carTrack"></div></div>
+    <div class="car-nav">
+      <button type="button" id="carPrev" aria-label="Anterior" style="transform:scaleX(-1)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" id="carNext" aria-label="Próximo"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <p class="note" data-i="n7">Alguns dos jogos suportados. Arraste para ver mais.</p>
     </div>
   </section>
 
@@ -310,7 +330,7 @@ const T = {
     e5: 'Onde jogar', h5: 'No PC, no iOS e no Android.',
     pc: 'Valorant, CS2, League of Legends, Fortnite e quase 1.800 jogos.', mob: 'iOS e Android',
     mobd: 'Free Fire, Roblox, CoD Mobile e outros no celular, no mesmo plano.', rtd: 'A ExitLag direto no roteador. Em teste com os primeiros jogadores.',
-    h7: 'Quase 1.800 jogos. O seu está na lista.', p7: 'Escolha o jogo no app e a ExitLag ajusta as rotas para o servidor dele.', n7: 'Alguns dos jogos suportados no PC e no celular.',
+    h7: 'Quase 1.800 jogos. O seu está na lista.', p7: 'Escolha o jogo no app e a ExitLag ajusta as rotas para o servidor dele.', n7: 'Alguns dos jogos suportados. Arraste para ver mais.',
     e6: '3 dias grátis', h6: 'Jogue a próxima partida sem lag.',
     p6: 'Instale, escolha o jogo e veja o ping estabilizar. Se não fizer diferença, é só não assinar.',
     href: 'https://www.exitlag.com/pt/lp/trial', html: 'pt-BR'
@@ -332,24 +352,63 @@ const T = {
     e5: 'Where to play', h5: 'On PC, iOS and Android.',
     pc: 'Valorant, CS2, League of Legends, Fortnite and almost 1,800 games.', mob: 'iOS and Android',
     mobd: 'Free Fire, Roblox, CoD Mobile and more on your phone, on the same plan.', rtd: 'ExitLag right on your router. Testing with the first players.',
-    h7: 'Almost 1,800 games. Yours is on the list.', p7: 'Pick your game in the app and ExitLag tunes the routes to its server.', n7: 'A few of the games supported on PC and mobile.',
+    h7: 'Almost 1,800 games. Yours is on the list.', p7: 'Pick your game in the app and ExitLag tunes the routes to its server.', n7: 'A few of the supported games. Drag to see more.',
     e6: '3 days free', h6: 'Play your next match without lag.',
     p6: 'Install it, pick your game and watch your ping settle. If it makes no difference, just don’t subscribe.',
     href: 'https://www.exitlag.com/', html: 'en'
   }
 };
 
-/* ---------- Jogos suportados ---------- */
+/* ---------- Jogos suportados: carrossel ---------- */
+// Capas em assets/games/<slug>.jpg (3:4). Sem a imagem, o card mostra uma arte gerada com a cor do jogo.
 {
-  const ICO = { ios: 'M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701', pc: 'M0 0h11.4v11.4H0zM12.6 0H24v11.4H12.6zM0 12.6h11.4V24H0zM12.6 12.6H24V24H12.6z', mob: 'M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z' };
-  const rows = [
-    [['Valorant','pc'],['Counter-Strike 2','pc'],['League of Legends','pc'],['Fortnite','pc'],['Apex Legends','pc'],['Call of Duty: Warzone','pc'],['Dota 2','pc'],['Rainbow Six Siege','pc'],['PUBG: Battlegrounds','pc'],['Overwatch 2','pc'],['Marvel Rivals','pc'],['Rocket League','pc']],
-    [['Free Fire','mob'],['Roblox','mob'],['Call of Duty: Mobile','mob'],['Mobile Legends','mob'],['Genshin Impact','pc'],['Lost Ark','pc'],['World of Warcraft','pc'],['Path of Exile 2','pc'],['EA Sports FC','pc'],['Tibia','pc'],['Deadlock','pc'],['The Finals','pc']]
+  const ICO = { pc: 'M0 0h11.4v11.4H0zM12.6 0H24v11.4H12.6zM0 12.6h11.4V24H0zM12.6 12.6H24V24H12.6z', ios: 'M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701', android: 'M18.4395 5.5586c-.675 1.1664-1.352 2.3318-2.0274 3.498-.0366-.0155-.0742-.0286-.1113-.043-1.8249-.6957-3.484-.8-4.42-.787-1.8551.0185-3.3544.4643-4.2597.8203-.084-.1494-1.7526-3.021-2.0215-3.4864a1.1451 1.1451 0 0 0-.1406-.1914c-.3312-.364-.9054-.4859-1.379-.203-.475.282-.7136.9361-.3886 1.5019 1.9466 3.3696-.0966-.2158 1.9473 3.3593.0172.031-.4946.2642-1.3926 1.0177C2.8987 12.176.452 14.772 0 18.9902h24c-.119-1.1108-.3686-2.099-.7461-3.0683-.7438-1.9118-1.8435-3.2928-2.7402-4.1836a12.1048 12.1048 0 0 0-2.1309-1.6875c.6594-1.122 1.312-2.2559 1.9649-3.3848.2077-.3615.1886-.7956-.0079-1.1191a1.1001 1.1001 0 0 0-.8515-.5332c-.5225-.0536-.9392.3128-1.0488.5449zm-.0391 8.461c.3944.5926.324 1.3306-.1563 1.6503-.4799.3197-1.188.0985-1.582-.4941-.3944-.5927-.324-1.3307.1563-1.6504.4727-.315 1.1812-.1086 1.582.4941zM7.207 13.5273c.4803.3197.5506 1.0577.1563 1.6504-.394.5926-1.1038.8138-1.584.4941-.48-.3197-.5503-1.0577-.1563-1.6504.4008-.6021 1.1087-.8106 1.584-.4941z' };
+  const OSN = { pc: 'PC', ios: 'iOS', android: 'Android' };
+  const GAMES = [
+    ['Valorant', 'valorant', 355, ['pc']], ['Counter-Strike 2', 'cs2', 32, ['pc']], ['Free Fire', 'free-fire', 20, ['ios', 'android']],
+    ['League of Legends', 'league-of-legends', 200, ['pc']], ['Fortnite', 'fortnite', 265, ['pc']], ['Roblox', 'roblox', 0, ['pc', 'ios', 'android']],
+    ['Apex Legends', 'apex-legends', 5, ['pc']], ['Call of Duty: Warzone', 'warzone', 90, ['pc']], ['Call of Duty: Mobile', 'cod-mobile', 40, ['ios', 'android']],
+    ['Dota 2', 'dota-2', 8, ['pc']], ['Rainbow Six Siege', 'rainbow-six-siege', 215, ['pc']], ['PUBG: Battlegrounds', 'pubg', 38, ['pc']],
+    ['Mobile Legends', 'mobile-legends', 230, ['ios', 'android']], ['Overwatch 2', 'overwatch-2', 28, ['pc']], ['Marvel Rivals', 'marvel-rivals', 350, ['pc']],
+    ['Genshin Impact', 'genshin-impact', 190, ['pc', 'ios', 'android']], ['Rocket League', 'rocket-league', 205, ['pc']], ['Lost Ark', 'lost-ark', 270, ['pc']],
+    ['World of Warcraft', 'world-of-warcraft', 45, ['pc']], ['Path of Exile 2', 'path-of-exile-2', 15, ['pc']], ['EA Sports FC', 'ea-sports-fc', 150, ['pc']],
+    ['Tibia', 'tibia', 120, ['pc']], ['Deadlock', 'deadlock', 30, ['pc']], ['The Finals', 'the-finals', 330, ['pc']]
   ];
-  const box = document.getElementById('games');
+  const car = document.getElementById('car'), track = document.getElementById('carTrack');
   const svg = d => '<svg class="os" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="' + d + '"/></svg>';
-  const list = (r, hidden) => '<ul' + (hidden ? ' aria-hidden="true"' : '') + '>' + r.map(([n, k]) => '<li class="game">' + (k === 'mob' ? svg(ICO.ios) : '') + svg(ICO[k]) + n + '</li>').join('') + '</ul>';
-  box.innerHTML = rows.map((r, i) => '<div class="mq-row' + (i ? ' rev' : '') + '"><div class="mq-track" style="--mq-dur:' + (52 + i * 8) + 's">' + list(r) + list(r, true) + '</div></div>').join('');
+  const ab = n => n.replace(/[^A-Za-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean).map(w => /^\d+$/.test(w) ? w : w[0]).join('').slice(0, 3).toUpperCase();
+  const card = ([n, slug, h, os], dup) => '<figure class="gcard" style="--h:' + h + '" data-ab="' + ab(n) + '"' + (dup ? ' aria-hidden="true"' : '') + '>'
+    + '<img src="assets/games/' + slug + '.jpg" alt="" loading="lazy" draggable="false" onerror="this.remove()">'
+    + '<figcaption><strong>' + n + '</strong><span class="oss">' + os.map(o => '<span>' + svg(ICO[o]) + OSN[o] + '</span>').join('') + '</span></figcaption></figure>';
+  // Três cópias da lista: a do meio é a "real", as outras cobrem as bordas no loop.
+  track.innerHTML = [1, 0, 1].map(d => GAMES.map(g => card(g, d)).join('')).join('');
+  let x = 0, v = 0, period = 0, step = 0, dragging = false, hover = false, lastX = 0, lastT = 0, moved = 0, target = null;
+  const auto = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : -38; // px/s
+  const measure = () => { const c = track.children; step = c[1].offsetLeft - c[0].offsetLeft; period = step * GAMES.length; };
+  measure(); addEventListener('resize', measure);
+  const wrap = () => { if (x <= -period * 1.5) x += period; else if (x > -period * 0.5) x -= period; };
+  x = -period;
+  car.addEventListener('pointerdown', e => { dragging = true; moved = 0; target = null; lastX = e.clientX; lastT = performance.now(); v = 0; car.setPointerCapture(e.pointerId); car.classList.add('drag'); });
+  car.addEventListener('pointermove', e => { if (!dragging) return; const t = performance.now(), dx = e.clientX - lastX; x += dx; moved += Math.abs(dx); v = dx / Math.max(1, t - lastT) * 1000; lastX = e.clientX; lastT = t; wrap(); });
+  const end = () => { if (!dragging) return; dragging = false; car.classList.remove('drag'); };
+  car.addEventListener('pointerup', end); car.addEventListener('pointercancel', end);
+  car.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hover = true; });
+  car.addEventListener('pointerleave', () => { hover = false; });
+  car.addEventListener('wheel', e => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { e.preventDefault(); x -= e.deltaX; wrap(); } }, { passive: false });
+  const go = dir => { target = Math.round((x - dir * step) / step) * step; v = 0; };
+  document.getElementById('carPrev').onclick = () => go(-1);
+  document.getElementById('carNext').onclick = () => go(1);
+  let prev = performance.now();
+  (function tick(now) {
+    const dt = Math.min(0.05, (now - prev) / 1000); prev = now;
+    if (!dragging) {
+      if (target !== null) { const d = target - x; x += d * (1 - Math.pow(0.0005, dt)); if (Math.abs(d) < 0.5) { x = target; target = null; } }
+      else { v *= Math.pow(0.04, dt); const base = hover ? 0 : auto; x += (base + v) * dt; }
+      if (target === null) wrap(); else if (x <= -period * 1.5 || x > -period * 0.5) { const o = x <= -period * 1.5 ? period : -period; x += o; target += o; }
+    }
+    track.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,0)';
+    requestAnimationFrame(tick);
+  })(prev);
 }
 let lang = 'pt';
 try { const s = localStorage.getItem('xl-lang'); if (s && T[s]) lang = s; else if (!navigator.language.toLowerCase().startsWith('pt')) lang = 'en'; } catch { }
