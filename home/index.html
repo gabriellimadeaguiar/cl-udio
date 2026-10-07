@@ -832,7 +832,9 @@ p { margin: 0; }
 .pk-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; }
 .pk-card.wide img { object-fit: contain; }
 .pk-card[aria-selected="true"] { cursor: default; box-shadow: 0 40px 80px -30px #000000e6; }
-/* otimizado: sem marcação na capa (sem brilho e sem contorno verde, pedido do Gabriel); o estado aparece no botão e no Route Monitoring */
+/* otimizado: sem brilho e sem contorno; só uma bolinha verde piscando no canto superior direito da capa (pedidos do Gabriel) */
+.pk-card.on::after { content: ""; position: absolute; top: 10px; right: 10px; z-index: 1; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--success); box-shadow: 0 0 0 2px #050608b3, 0 0 8px var(--success); animation: pkBlink 1.6s infinite; pointer-events: none; }
 
 .pk-info { min-width: 0; display: flex; flex-direction: column; gap: 16px; padding: 0 24px 24px; }
 .pk-r1, .pk-r2 { display: flex; align-items: center; gap: 16px; }
@@ -920,7 +922,7 @@ p { margin: 0; }
 
 /* Feedback do protótipo de origem: fora desta página */
 .fb-card, .fb-layer, .fb-bar { display: none !important; }
-@media (prefers-reduced-motion: reduce) { .pk-card, .pk-amb { transition: none !important; } .live-dot { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .pk-card, .pk-amb { transition: none !important; } .live-dot, .pk-card.on::after { animation: none; } }
 
 /* ---------- Chips de versão, fora do app ---------- */
 .stage { flex-direction: column; }
