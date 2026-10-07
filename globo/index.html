@@ -58,6 +58,8 @@ body { background: var(--color-background); color: var(--color-on-surface); font
 .bar .sp { flex: 1; }
 /* toggle-chip: 36px, radius full, padding 8 16, label Ubuntu Sans Medium 14/20 · selected com borda indicator · hovered #3B4252 */
 .lang { display: flex; gap: var(--spacing-sm); }
+.foot { position: relative; z-index: 4; display: flex; align-items: center; justify-content: flex-end; gap: var(--spacing-lg); padding: var(--spacing-2xl) var(--gutter) calc(env(safe-area-inset-bottom, 0px) + var(--spacing-2xl));
+  background: var(--color-background); border-top: 1px solid var(--color-outline-variant); font: 400 .875rem/1.25rem var(--font-plain); color: var(--color-on-surface-variant); }
 .lang button { font: 500 .875rem/1.25rem var(--font-plain); letter-spacing: .25px; color: var(--color-on-surface-variant); background: transparent; border: 1px solid var(--color-chip-outline);
   border-radius: var(--corner-radius-full); padding: 7px var(--spacing-lg); cursor: pointer; transition: background-color var(--motion-duration-quick) var(--motion-easing-standard), color var(--motion-duration-quick); }
 .lang button:hover { background: var(--color-chip-hovered); color: var(--color-on-surface); }
@@ -169,7 +171,7 @@ svg.os { width: 12px; height: 12px; flex: none; display: block; }
   .ping.show { transform: none; }
   .ping canvas { height: 40px; }
   .bar .cta { display: none; }
-  .hud.br { display: flex; } .hud.br > span { display: none; }
+  .hud.br { display: none; }
   .stats { gap: var(--spacing-md); }
   .plats li { grid-template-columns: 1fr; gap: var(--spacing-xs); }
 }
@@ -209,12 +211,7 @@ svg.os { width: 12px; height: 12px; flex: none; display: block; }
   <span id="chap">01 / 07</span>
   <div class="prog" id="prog"></div>
 </div>
-<div class="hud br"><span aria-hidden="true" data-i="hudR">+1.500 servidores · ~1.800 jogos</span>
-  <div class="lang" role="group" aria-label="Idioma / Language">
-    <button type="button" id="lang-pt" data-lang="pt" aria-pressed="true">PT</button>
-    <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
-  </div>
-</div>
+<div class="hud br"><span aria-hidden="true" data-i="hudR">+1.500 servidores · ~1.800 jogos</span></div>
 
 <div class="tag" id="tagA"><span id="tagACity">São Paulo</span> <small data-i="you">· você</small></div>
 <div class="tag" id="tagB"><span id="tagBCity">Miami</span> <small data-i="server">· servidor do jogo</small></div>
@@ -301,6 +298,14 @@ svg.os { width: 12px; height: 12px; flex: none; display: block; }
   </section>
 </main>
 
+<footer class="foot">
+  <span data-i="langL">Idioma</span>
+  <div class="lang" role="group" aria-label="Idioma / Language">
+    <button type="button" id="lang-pt" data-lang="pt" aria-pressed="true">PT</button>
+    <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+</footer>
+
 <script src="land.js"></script>
 <script type="importmap">{ "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
@@ -315,7 +320,7 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 /* ---------- Textos PT / EN ---------- */
 const T = {
   pt: {
-    cta: 'Testar grátis por 3 dias', pingTitle: 'Ping ao vivo', isp: 'Operadora', you: '· você', server: '· servidor do jogo',
+    langL: 'Idioma', cta: 'Testar grátis por 3 dias', pingTitle: 'Ping ao vivo', isp: 'Operadora', you: '· você', server: '· servidor do jogo',
     hudR: '+1.500 servidores · ~1.800 jogos',
     e0: 'Diminua o lag nos jogos', avail: 'Disponível para', h0: 'Diminua o lag nos jogos.',
     p0: 'A ExitLag manda seu jogo por várias rotas ao mesmo tempo. Se uma oscila, outra entrega.', n0: 'Sem cartão de crédito.',
@@ -337,7 +342,7 @@ const T = {
     href: 'https://www.exitlag.com/pt/lp/trial', html: 'pt-BR'
   },
   en: {
-    cta: 'Start 3-day free trial', pingTitle: 'Live ping', isp: 'Your ISP', you: '· you', server: '· game server',
+    langL: 'Language', cta: 'Start 3-day free trial', pingTitle: 'Live ping', isp: 'Your ISP', you: '· you', server: '· game server',
     hudR: '1,500+ servers · ~1,800 games',
     e0: 'Reduce lag in your games', avail: 'Available for', h0: 'Reduce lag in your games.',
     p0: 'ExitLag sends your game through several routes at once. If one wobbles, another delivers.', n0: 'No credit card required.',
