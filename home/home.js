@@ -239,11 +239,12 @@ const u16 = new Uint16Array(raw.buffer);
 const nLand = u16.length / 2, landPos = new Float32Array(nLand * 3), landLL = [];
 for (let i = 0; i < nLand; i++) { const lat = u16[i * 2] / 100 - 90, lon = u16[i * 2 + 1] / 100 - 180; landLL.push([lat, lon]); toV(lat, lon, 1.003).toArray(landPos, i * 3); }
 const landGeo = new THREE.BufferGeometry(); landGeo.setAttribute('position', new THREE.BufferAttribute(landPos, 3));
-globe.add(new THREE.Points(landGeo, new THREE.ShaderMaterial({
+const landMat = new THREE.ShaderMaterial({
   uniforms: { uSize: { value: 9 }, uPR: { value: PR }, uCol: { value: C.dim } }, transparent: true, depthWrite: false,
   vertexShader: `uniform float uSize; uniform float uPR; varying float vFace; void main(){ vec4 mv = modelViewMatrix*vec4(position,1.); vFace = dot(normalize(normalMatrix*position), normalize(-mv.xyz)); gl_PointSize = uSize*uPR/(-mv.z); gl_Position = projectionMatrix*mv; }`,
   fragmentShader: `uniform vec3 uCol; varying float vFace; void main(){ float d = length(gl_PointCoord-.5); if(d>.5) discard; float a = smoothstep(.5,.2,d)*smoothstep(-.05,.45,vFace); gl_FragColor = vec4(uCol*(.55+.45*vFace), a*.9); }`
-})));
+});
+globe.add(new THREE.Points(landGeo, landMat));
 
 // Rede ExitLag ao fundo: pontos de servidor piscando, discretos.
 let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
@@ -290,7 +291,9 @@ function smoothPath(a, b, w, lateral, lift, n = 200) {
   }
   return pts;
 }
+let routeR = 1; // espessura relativa das rotas: afina quando a câmera chega perto
 function makeRoute(pts, color, radius, speed, gain = 1) {
+  radius *= routeR;
   const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal');
   const uniforms = { uCol: { value: color }, uBad: { value: C.bad }, uDraw: { value: 0 }, uOp: { value: 0 }, uFail: { value: 0 }, uTime: { value: 0 }, uSpeed: { value: speed }, uGain: { value: gain } };
   for (const halo of [0, 1]) {
@@ -338,6 +341,8 @@ function rebuild() {
   routeKm = vO.angleTo(toV(sv[0], sv[1])) * 6371;
   clearRoutes();
   const w = routeAngle;
+  frame0.chord = 2 * Math.sin(w / 2) * 1.45; frame0.dist = fitDist();
+  routeR = zoomK(frame0.dist);
   routes = {
     isp: makeRoute(smoothPath(vO, vS, w, u => 0.62 * Math.sin(Math.PI * u) + 0.16 * Math.sin(3 * Math.PI * u), 0.35), C.isp, 0.0032, 0.35),
     xl: SHAPES[g.lanes].map(([lat, lift], i) => makeRoute(smoothPath(vO, vS, w, u => lat * Math.sin(Math.PI * u), lift), C.route, 0.0032, 0.8 + i * 0.05, 0.42))
@@ -346,7 +351,6 @@ function rebuild() {
   mkGeo.attributes.position.needsUpdate = true;
   const [mLat, mLon] = toLL(vO.clone().add(vS));
   frame0.yaw = (-mLon - 90) * D; frame0.pitch = clamp(mLat, -55, 55) * D;
-  frame0.chord = 2 * Math.sin(w / 2) * 1.45; frame0.dist = fitDist();
   buildT = time;
   xlShow = g.state === 'on' || g.state === 'testing' ? 1 : 0; xlStart = time + 0.5;
   fail = null; nextFail = time + 5 + Math.random() * 4;
@@ -455,8 +459,11 @@ let vw = 1, vh = 1, bandCut = 0, headBottom = 0, bandBottom = 0;
 // Distância da câmera para a rota inteira caber na faixa livre do globo (entre o cabeçalho e o widget).
 function fitDist() {
   const band = Math.max(140, Math.min(vw, vh - bandCut) * 0.8), worldPerPx = 2 * Math.tan(15 * D) / vh;
-  return clamp(frame0.chord / (band * worldPerPx), 3.0, 7.5);
+  // a escala vale na superfície do globo (distância − 1): rotas curtas pedem a câmera bem perto
+  return clamp(1 + frame0.chord / (band * worldPerPx), 1.22, 7.5);
 }
+// 1 com a câmera longe; menor perto, para pontos e rotas manterem o tamanho na tela
+const zoomK = d => clamp((d - 1) / 3, 0.08, 1);
 function resize() {
   vw = host.clientWidth; vh = host.clientHeight;
   renderer.setSize(vw, vh, false); composer.setSize(vw, vh); composer.setPixelRatio(PR); bloom.resolution.set(vw / 2, vh / 2);
@@ -484,6 +491,9 @@ function frame() {
   globe.rotation.y = cur.yaw + dYaw + (reduce ? 0 : Math.sin(time * 0.15) * 0.03);
   tilt.rotation.x = cur.pitch + dPitch;
   camera.position.set(0, 0, cur.dist); camera.lookAt(0, 0, 0);
+  const zk = zoomK(cur.dist);
+  landMat.uniforms.uSize.value = 9 * Math.max(zk, 0.5); svMat.uniforms.uSize.value = 20 * Math.max(zk, 0.25);
+  packets.material.uniforms.uSize.value = 34 * Math.max(zk, 0.12); mkMat.uniforms.uSize.value = 100 * Math.max(zk, 0.12);
   atmo.material.uniforms.uCenter.value.copy(tilt.position);
 
   const age = time - buildT, xa = time - xlStart;
