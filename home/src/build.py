@@ -22,6 +22,10 @@ src = src.replace('<h2>Recent games and apps</h2>', '<h2>Games and monitoring</h
 src = src.replace('<h2>Games and monitoring</h2><span class="rule"></span>', '<h2>Games and monitoring</h2><span style="flex:1"></span>', 1)
 # "View all" do cabeçalho vira "Add game" e abre o dialog do palco (pedido do Gabriel)
 src = src.replace('<button class="btn outlined" type="button" data-goto="Library">View all ', '<button class="btn outlined" type="button" id="pkAddBtn">Add game ', 1)
+# sem o cabeçalho da seção (título e botão Add game), pedido do Gabriel; o palco fica direto abaixo da topbar
+import re as _re
+src, _n = _re.subn(r'\s*<div class="page-header">\s*<h2>Games and monitoring</h2>.*?</div>\s*</div>', '', src, count=1, flags=_re.S)
+assert _n == 1
 stage = stage.replace('{{PREV}}', PREV).replace('{{NEXT}}', NEXT).replace('{{MON}}', MON).replace('{{ADD}}', ADD)
 
 out = src.replace('<title>ExitLag Home Customize</title>', '<title>ExitLag Home Desktop</title>', 1)

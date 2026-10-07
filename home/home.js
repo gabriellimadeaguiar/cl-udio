@@ -220,7 +220,7 @@ addIn.addEventListener('input', renderAdd);
 addIn.addEventListener('keydown', e => { if (e.key === 'Enter') { const f = addList.querySelector('.sl-item'); if (f) addGame(f.dataset.name); } });
 addList.addEventListener('click', e => { const it = e.target.closest('.sl-item'); if (it) addGame(it.dataset.name); });
 $('pkAddCancel').addEventListener('click', closeAdd);
-$('pkAddBtn').addEventListener('click', openAdd);
+$('pkAddBtn')?.addEventListener('click', openAdd);
 addEventListener('keydown', e => { if (e.key === 'Escape' && !addMd.hidden) closeAdd(); });
 
 /* ---------- Otimizar: o comportamento da ExitLag ---------- */
