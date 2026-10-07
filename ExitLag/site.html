@@ -127,7 +127,7 @@ main, header, footer { position: relative; z-index: 2; }
 .switch[aria-checked="true"] .lb::after { content: "Ligada"; color: var(--green); }
 .ping { display: flex; align-items: baseline; gap: 8px; }
 .ping b { font: 800 76px/.8 var(--font-display); font-stretch: 78%; font-variant-numeric: tabular-nums; color: #ff8a80; transition: color .4s ease; }
-.ping.on b { color: var(--green); }
+.ping.on b { color: var(--light); }
 .ping small { font: 500 13px/1 var(--mono); color: var(--muted); }
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; }
 .stats div { padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,.035); box-shadow: inset 0 0 0 1px rgba(255,255,255,.05); }
@@ -164,7 +164,7 @@ main, header, footer { position: relative; z-index: 2; }
 .bars i.c::after { background: var(--green); width: calc(var(--w) * 1%); box-shadow: 0 0 10px var(--green); transition-delay: .25s; }
 .gr:not(.in) .bars i::after { width: 0; }
 .bars em { font-style: normal; text-align: right; color: var(--on); }
-.gr .gain { font: 800 36px/1 var(--font-display); font-stretch: 78%; color: var(--green); text-align: right; font-variant-numeric: tabular-nums; }
+.gr .gain { font: 800 36px/1 var(--font-display); font-stretch: 78%; color: var(--light); text-align: right; font-variant-numeric: tabular-nums; }
 .marq { margin-top: 56px; overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
 .marq .track { display: flex; width: max-content; animation: marq 60s linear infinite; }
 .marq span { font: 500 clamp(18px, 1.6vw, 24px)/1 var(--mono); color: var(--muted); white-space: nowrap; padding-right: 32px; }
@@ -279,7 +279,7 @@ footer a:hover { color: var(--on); }
   <section class="hero" data-scene="hero" aria-labelledby="h1">
     <div class="titles" data-split>
       <p class="eyebrow" style="margin-bottom:22px"><i></i>Otimizador de conexão para jogos online</p>
-      <h1 class="display" id="h1"><span class="line"><span>Menos lag.</span></span><span class="line"><span>Mais <span class="grn">jogo.</span></span></span></h1>
+      <h1 class="display" id="h1"><span class="line"><span>Menos lag.</span></span><span class="line"><span>Mais jogo.</span></span></h1>
     </div>
     <div class="row">
       <div style="display:flex;flex-direction:column;gap:24px">
@@ -333,7 +333,7 @@ footer a:hover { color: var(--on); }
         <p class="eyebrow g"><i></i>Na chegada</p>
         <h2 class="h2"><span class="line"><span>Vale o pacote</span></span><span class="line"><span>que chega primeiro.</span></span></h2>
         <p class="lead" data-r>No servidor do jogo, o primeiro pacote a chegar é o que conta. O resultado é <b>menos ping, menos oscilação e perda perto de zero</b>.</p>
-        <div class="kpi" data-r><span><b class="grn">22 ms</b>ping</span><span><b class="grn">0,1%</b>perda de pacotes</span></div>
+        <div class="kpi" data-r><span><b>22 ms</b>ping</span><span><b>0,1%</b>perda de pacotes</span></div>
       </div>
     </div>
   </section>
@@ -403,7 +403,7 @@ footer a:hover { color: var(--on); }
 
   <section class="sec end" data-scene="end" aria-labelledby="endH">
     <p class="eyebrow g"><i></i>Pronto quando você estiver</p>
-    <h2 class="h2" id="endH" data-split><span class="line"><span>Bora pra</span></span><span class="line"><span>próxima <span class="grn">partida?</span></span></span></h2>
+    <h2 class="h2" id="endH" data-split><span class="line"><span>Bora pra</span></span><span class="line"><span>próxima partida?</span></span></h2>
     <div class="cta" data-r style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
       <a class="btn primary" href="#planos">Baixar ExitLag <span class="arr">→</span></a>
       <a class="btn ghost" href="#planos">Ver planos</a>
