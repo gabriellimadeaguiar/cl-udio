@@ -15,6 +15,8 @@ PREV = img_in('data-bn="prev"', '</button>')
 NEXT = img_in('data-bn="next"', '</button>')
 MON = img_in('<template id="w-monitor">', '</h4>')
 ADD = img_in('<div class="card-add"', '</div>')
+# "View all" do cabeçalho vira "Add game" e abre o dialog do palco (pedido do Gabriel)
+src = src.replace('<button class="btn outlined" type="button" data-goto="Library">View all ', '<button class="btn outlined" type="button" id="pkAddBtn">Add game ', 1)
 stage = stage.replace('{{PREV}}', PREV).replace('{{NEXT}}', NEXT).replace('{{MON}}', MON).replace('{{ADD}}', ADD)
 
 out = src.replace('<title>ExitLag Home Customize</title>', '<title>ExitLag Home Desktop</title>', 1)

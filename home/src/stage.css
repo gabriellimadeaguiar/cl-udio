@@ -96,8 +96,6 @@
 .pk-log b { color: var(--on-surface); font-weight: 500; }
 .pk-log span { transition: opacity var(--motion-duration-200); }
 
-/* adicionar jogo: icon-btn no canto do palco, na linha do Live do globo */
-.pk-add-btn { position: absolute; top: 16px; right: 24px; z-index: 30; }
 /* dialog Add game or app */
 .pk-add .search { width: 100%; }
 .pk-add .md-body { gap: 16px; }
