@@ -370,7 +370,7 @@ for (let i = 0; i < nLand; i++) { const lat = u16[i * 2] / 100 - 90, lon = u16[i
 const landGeo = new THREE.BufferGeometry(); landGeo.setAttribute('position', new THREE.BufferAttribute(landPos, 3));
 const landMat = new THREE.ShaderMaterial({
   uniforms: { uSize: { value: 9 }, uPR: { value: PR }, uCol: { value: C.dim } }, transparent: true, depthWrite: false,
-  vertexShader: `uniform float uSize; uniform float uPR; varying float vFace; void main(){ vec4 mv = modelViewMatrix*vec4(position,1.); vFace = dot(normalize(normalMatrix*position), normalize(-mv.xyz)); gl_PointSize = uSize*uPR/(-mv.z); gl_Position = projectionMatrix*mv; }`,
+  vertexShader: `uniform float uSize; uniform float uPR; varying float vFace; void main(){ vec4 mv = modelViewMatrix*vec4(position,1.); vFace = dot(normalize(normalMatrix*position), normalize(-mv.xyz)); gl_PointSize = min(uSize*uPR/(-mv.z), 5.*uPR); gl_Position = projectionMatrix*mv; }`,
   fragmentShader: `uniform vec3 uCol; varying float vFace; void main(){ float d = length(gl_PointCoord-.5); if(d>.5) discard; float a = smoothstep(.5,.2,d)*smoothstep(-.05,.45,vFace); gl_FragColor = vec4(uCol*(.55+.45*vFace), a*.9); }`
 });
 globe.add(new THREE.Points(landGeo, landMat));
@@ -385,7 +385,7 @@ const svGeo = new THREE.BufferGeometry();
 svGeo.setAttribute('position', new THREE.BufferAttribute(svPos, 3)); svGeo.setAttribute('aSeed', new THREE.BufferAttribute(svSeed, 1));
 const svMat = new THREE.ShaderMaterial({
   uniforms: { uSize: { value: 20 }, uPR: { value: PR }, uTime: { value: 0 }, uCol: { value: C.route }, uOp: { value: 0.5 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-  vertexShader: `uniform float uSize; uniform float uPR; attribute float aSeed; varying float vS; varying float vFace; void main(){ vS=aSeed; vec4 mv = modelViewMatrix*vec4(position,1.); vFace = dot(normalize(normalMatrix*position), normalize(-mv.xyz)); gl_PointSize = uSize*uPR/(-mv.z); gl_Position = projectionMatrix*mv; }`,
+  vertexShader: `uniform float uSize; uniform float uPR; attribute float aSeed; varying float vS; varying float vFace; void main(){ vS=aSeed; vec4 mv = modelViewMatrix*vec4(position,1.); vFace = dot(normalize(normalMatrix*position), normalize(-mv.xyz)); gl_PointSize = min(uSize*uPR/(-mv.z), 9.*uPR); gl_Position = projectionMatrix*mv; }`,
   fragmentShader: `uniform float uTime; uniform vec3 uCol; uniform float uOp; varying float vS; varying float vFace; void main(){ float d = length(gl_PointCoord-.5); if(d>.5) discard; float tw = .5+.5*sin(uTime*1.6+vS*40.); float a = (smoothstep(.5,.0,d)*.35+smoothstep(.14,.0,d))*tw*uOp*smoothstep(0.,.3,vFace); gl_FragColor = vec4(uCol, a); }`
 });
 globe.add(new THREE.Points(svGeo, svMat));
@@ -543,7 +543,7 @@ pkGeo.setAttribute('aCol', new THREE.BufferAttribute(pkCol, 3).setUsage(THREE.Dy
 pkGeo.setAttribute('aA', new THREE.BufferAttribute(pkA, 1).setUsage(THREE.DynamicDrawUsage));
 const packets = new THREE.Points(pkGeo, new THREE.ShaderMaterial({
   uniforms: { uSize: { value: 34 }, uPR: { value: PR } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-  vertexShader: `uniform float uSize; uniform float uPR; attribute vec3 aCol; attribute float aA; varying vec3 vC; varying float vA; void main(){ vC=aCol; vA=aA; vec4 mv = modelViewMatrix*vec4(position,1.); gl_PointSize = uSize*uPR/(-mv.z); gl_Position = projectionMatrix*mv; }`,
+  vertexShader: `uniform float uSize; uniform float uPR; attribute vec3 aCol; attribute float aA; varying vec3 vC; varying float vA; void main(){ vC=aCol; vA=aA; vec4 mv = modelViewMatrix*vec4(position,1.); gl_PointSize = min(uSize*uPR/(-mv.z), 14.*uPR); gl_Position = projectionMatrix*mv; }`,
   fragmentShader: `varying vec3 vC; varying float vA; void main(){ float d = length(gl_PointCoord-.5); if(d>.5||vA<=0.) discard; float a = (smoothstep(.5,.0,d)*.5 + smoothstep(.14,.0,d))*vA; gl_FragColor = vec4(vC*1.4, a); }`
 }));
 packets.frustumCulled = false; globe.add(packets);
@@ -554,7 +554,7 @@ mkGeo.setAttribute('position', new THREE.BufferAttribute(mkPos, 3));
 mkGeo.setAttribute('aCol', new THREE.BufferAttribute(new Float32Array([...C.fog.toArray(), ...C.route.toArray()]), 3));
 const mkMat = new THREE.ShaderMaterial({
   uniforms: { uSize: { value: 100 }, uPR: { value: PR }, uTime: { value: 0 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-  vertexShader: `uniform float uSize; uniform float uPR; attribute vec3 aCol; varying vec3 vC; void main(){ vC=aCol; vec4 mv = modelViewMatrix*vec4(position,1.); gl_PointSize = uSize*uPR/(-mv.z); gl_Position = projectionMatrix*mv; }`,
+  vertexShader: `uniform float uSize; uniform float uPR; attribute vec3 aCol; varying vec3 vC; void main(){ vC=aCol; vec4 mv = modelViewMatrix*vec4(position,1.); gl_PointSize = min(uSize*uPR/(-mv.z), 40.*uPR); gl_Position = projectionMatrix*mv; }`,
   fragmentShader: `uniform float uTime; varying vec3 vC; void main(){ float d = length(gl_PointCoord-.5); float r = fract(uTime*.6); float ring = smoothstep(.03,.0,abs(d-r*.5))*(1.-r); float core = smoothstep(.09,.05,d); gl_FragColor = vec4(vC, ring*.8+core); }`
 });
 const markers = new THREE.Points(mkGeo, mkMat); markers.frustumCulled = false; globe.add(markers);
@@ -1323,12 +1323,98 @@ function endPmap() {
   if (!pmap) return;
   const wasBusy = !pmap.done;
   pmGroup.children.forEach(m => { m.geometry.dispose(); m.material.dispose(); }); pmGroup.clear();
-  tilt.scale.set(1, 1, 1); tilt.rotation.y = 0; ball.visible = false;
+  tilt.scale.set(1, 1, 1); tilt.rotation.y = 0; ball.visible = false; endFly();
   pmap = null; delete $('app').dataset.pmap; lockNav(false); paintCta();
   if (wasBusy) promo.armed = true; // saiu antes do fim (Skip ou outra versão): o mapa conta como pronto
   rebuild(); frame0.dist = fitDist();
 }
 let pmPaintT = 0;
+/* ---------- Voo pela rota durante o mapa passivo (Gabriel, 07/10: 1a 2a 3a 4a 5a) ----------
+   Loop de ~10 s: a câmera olha o globo de cima, gira até você, desce e entra na rota do continente que está sendo medido;
+   dentro, voa em primeira pessoa num tubo de luz verde, com anéis e pacotes correndo junto; atravessa as bridges com um clarão;
+   sai do outro lado em cima do servidor e sobe de volta para a vista de cima, onde a próxima volta começa. */
+const LAP = 10, L_TOP = 2.2, L_DIVE = 1.6, L_TUN = 4.4; // vista de cima, mergulho, túnel; o resto é a saída
+const flyGroup = new THREE.Group(); globe.add(flyGroup);
+const tubeMat = new THREE.ShaderMaterial({
+  uniforms: { uTime: { value: 0 }, uLen: { value: 1 }, uCol: { value: C.route }, uFlash: { value: 0 }, uOp: { value: 0 } },
+  vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+  fragmentShader: `uniform float uTime; uniform float uLen; uniform vec3 uCol; uniform float uFlash; uniform float uOp; varying vec2 vUv;
+    void main(){ float ring = pow(.5+.5*sin(vUv.x*uLen*260. - uTime*10.), 30.); float seam = pow(abs(sin(vUv.y*3.14159*6.)), 40.)*.35;
+      float a = (.04 + .32*ring + .6*seam + .5*uFlash)*uOp; gl_FragColor = vec4(mix(uCol, vec3(1.), .15*ring+.4*uFlash), a); }`,
+  transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending
+});
+const FLY_PK = 40, flyPkPos = new Float32Array(FLY_PK * 3), flyPkSeed = Array.from({ length: FLY_PK }, () => [Math.random(), Math.random() * Math.PI * 2, 0.3 + Math.random() * 0.6, 0.6 + Math.random() * 0.5]);
+const flyPkGeo = new THREE.BufferGeometry(); flyPkGeo.setAttribute('position', new THREE.BufferAttribute(flyPkPos, 3).setUsage(THREE.DynamicDrawUsage));
+const flyPk = new THREE.Points(flyPkGeo, new THREE.ShaderMaterial({
+  uniforms: { uPR: { value: PR } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+  vertexShader: `uniform float uPR; void main(){ vec4 mv = modelViewMatrix*vec4(position,1.); gl_PointSize = clamp(0.06*uPR/(-mv.z), 1.5*uPR, 10.*uPR); gl_Position = projectionMatrix*mv; }`,
+  fragmentShader: `void main(){ float d = length(gl_PointCoord-.5); if(d>.5) discard; gl_FragColor = vec4(vec3(.8,1.,.92), smoothstep(.5,.1,d)*.85); }`
+}));
+flyPk.frustumCulled = false; flyGroup.add(flyPk);
+let fly = null, flyW = 0, tube = null;
+const fv = new THREE.Vector3(), fu = new THREE.Vector3(), fw = new THREE.Vector3(), fq = new THREE.Quaternion(), fm = new THREE.Matrix4(), q0 = new THREE.Quaternion(), p0 = new THREE.Vector3();
+function lapArc(t) {
+  // a rota do continente medido agora; continente colado em você (rota curta demais para voar) passa a vez para o próximo mais longe
+  const order = [...pmap.arcs].sort((a, b) => a.tt - b.tt), i = order.findIndex(a => t < a.tt);
+  for (let k = Math.max(0, i); k < order.length; k++) if (order[k].len > 0.25) return order[k];
+  return order.filter(a => a.len > 0.25).pop() || order[order.length - 1];
+}
+function startLap(t) {
+  const a = lapArc(t); if (!a) return;
+  if (tube) { tube.geometry.dispose(); flyGroup.remove(tube); }
+  tube = new THREE.Mesh(new THREE.TubeGeometry(a.curve, 260, 0.011, 18, false), tubeMat); flyGroup.add(tube);
+  tubeMat.uniforms.uLen.value = a.len;
+  const prevC = fly ? fly.end : vO.clone();
+  fly = { t0: t, a, from: prevC, end: a.curve.getPointAt(1).clone().normalize(), bridges: [0.34 + Math.random() * 0.06, 0.62 + Math.random() * 0.06] };
+}
+function endFly() { fly = null; flyW = 0; if (tube) { tube.geometry.dispose(); flyGroup.remove(tube); tube = null; } flyGroup.visible = false; camera.near = 0.1; camera.fov = 30; camera.updateProjectionMatrix(); }
+// câmera "de cima": olhando para o centro do globo a partir de cima do ponto v, na distância do planeta inteiro
+const topView = (v, d, pos, look) => { pos.copy(v).normalize().multiplyScalar(d); look.set(0, 0, 0); };
+function applyFly(dt) {
+  const want = pmap && !pmap.done && !reduce && pmap.t < PM_DONE - 0.8 ? 1 : 0;
+  flyW = want ? Math.min(1, flyW + dt * 0.8) : Math.max(0, flyW - dt * 0.8); // linear: chega a 1 exato (dentro do túnel qualquer resto da câmera normal tira ela do tubo)
+  if (!pmap || reduce) { if (fly || flyW) endFly(); return; }
+  const t = pmap.t;
+  if (want && (!fly || t - fly.t0 >= LAP)) startLap(t);
+  if (!fly || flyW < 0.002) { flyGroup.visible = false; return; }
+  const e = t - fly.t0, c = fly.a.curve, pos = new THREE.Vector3(), look = new THREE.Vector3(), up = new THREE.Vector3();
+  let fov = 30, near = 0.1, tubeOp = 0, flash = 0;
+  if (e < L_TOP) { // de cima: gira da última saída até você
+    const k = ease(clamp(e / L_TOP)); topView(fv.copy(fly.from).lerp(vO, k).normalize(), FULL9 * 0.8, pos, look); up.set(0, 1, 0);
+  } else if (e < L_TOP + L_DIVE) { // mergulho até a boca da rota
+    const k = ease(clamp((e - L_TOP) / L_DIVE)), s0 = c.getPointAt(0), s1 = c.getPointAt(0.02);
+    const far = fv.copy(vO).normalize().multiplyScalar(FULL9 * 0.8), mouth = fu.copy(s0).addScaledVector(fw.copy(s1).sub(s0).normalize(), -0.02);
+    pos.copy(far).lerp(mouth, k); look.copy(s0).lerp(fw.copy(s1).sub(s0).normalize().multiplyScalar(0.1).add(s0), k * k); // mira na boca e, perto dela, vira para dentro up.set(0, 1, 0).lerp(fw.copy(s0).normalize(), k);
+    fov = 30 + 40 * k; near = 0.1 - 0.0995 * k; tubeOp = k * k * k;
+  } else if (e < L_TOP + L_DIVE + L_TUN) { // dentro do túnel
+    const k = (e - L_TOP - L_DIVE) / L_TUN, u = k * k * (3 - 2 * k) * 0.97 + 0.015;
+    c.getPointAt(u, pos); c.getPointAt(Math.min(1, u + 0.03), look); up.copy(pos).normalize();
+    fov = 70; near = 0.0005; tubeOp = 1;
+    fly.bridges.forEach(b => { flash = Math.max(flash, Math.exp(-(((u - b) / 0.02) ** 2))); });
+    flash = Math.max(flash, 0.8 * ease(clamp((u - 0.9) / 0.085))); // chegando no servidor: a luz do fim do túnel
+  } else { // saída: sai pela boca do servidor e sobe para a vista de cima dele
+    const k = ease(clamp((e - L_TOP - L_DIVE - L_TUN) / (LAP - L_TOP - L_DIVE - L_TUN))), s1 = c.getPointAt(1), s0 = c.getPointAt(0.98);
+    const exit = fu.copy(s1).addScaledVector(fw.copy(s1).sub(s0).normalize(), 0.02), far = fv.copy(fly.end).multiplyScalar(FULL9 * 0.8);
+    pos.copy(exit).lerp(far, k); look.copy(fw.copy(s1).multiplyScalar(1.02)).lerp(new THREE.Vector3(), k); up.copy(s1).normalize().lerp(new THREE.Vector3(0, 1, 0), k);
+    fov = 70 - 40 * k; near = 0.0005 + 0.0995 * k; tubeOp = (1 - clamp(k * 3)) ** 2; // o tubo some logo na saída, para não virar um buraco escuro na frente
+  }
+  // do espaço do globo para o mundo, e mistura com a câmera normal pelo peso (entra e sai suave)
+  tilt.updateMatrixWorld(true);
+  globe.localToWorld(pos); globe.localToWorld(look); up.transformDirection(globe.matrixWorld);
+  fm.lookAt(pos, look, up); fq.setFromRotationMatrix(fm);
+  p0.copy(camera.position); q0.copy(camera.quaternion);
+  const w = ease(flyW); camera.position.copy(p0).lerp(pos, w); camera.quaternion.copy(q0).slerp(fq, w);
+  camera.fov = 30 + (fov - 30) * w; camera.near = 0.1 + (near - 0.1) * w; camera.updateProjectionMatrix();
+  flyGroup.visible = true; tubeMat.uniforms.uTime.value = time; tubeMat.uniforms.uOp.value = tubeOp * w; tubeMat.uniforms.uFlash.value = flash;
+  // pacotes correndo dentro do tubo, mais rápidos que a câmera
+  flyPk.visible = tubeOp > 0.05;
+  flyPkSeed.forEach(([u0, ang, r, sp], i) => {
+    const u = (u0 + time * 0.12 * sp) % 1; c.getPointAt(u, fv); c.getTangentAt(u, fw); fu.copy(fv).normalize().cross(fw).normalize();
+    const side = fu, nrmv = fw.clone().cross(side).normalize(); fv.addScaledVector(side, Math.cos(ang) * 0.011 * r).addScaledVector(nrmv, Math.sin(ang) * 0.011 * r);
+    fv.toArray(flyPkPos, i * 3);
+  });
+  flyPkGeo.attributes.position.needsUpdate = true;
+}
 /* ---------- Globo brincalhão durante o mapa passivo (pedido do Gabriel: entreter enquanto mede) ----------
    - Procurando você: o globo balança de um lado para o outro, como quem olha em volta.
    - A cada continente ele gira até ficar de frente para a rota e chega com um "boing" de gelatina.
@@ -1491,7 +1577,7 @@ ndGeo.setAttribute('aF', new THREE.BufferAttribute(ndF, 1).setUsage(THREE.Dynami
 ndGeo.setAttribute('aK', new THREE.BufferAttribute(ndK, 1).setUsage(THREE.DynamicDrawUsage));
 const ndMat = new THREE.ShaderMaterial({
   uniforms: { uSize: { value: 120 }, uPR: { value: PR }, uCol: { value: C.route }, uTime: { value: 0 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-  vertexShader: `uniform float uSize; uniform float uPR; attribute float aA; attribute float aF; attribute float aK; varying float vA; varying float vF; varying float vK; void main(){ vA=aA; vF=aF; vK=aK; vec4 mv = modelViewMatrix*vec4(position,1.); gl_PointSize = uSize*(1.+.5*aF)*uPR/(-mv.z); gl_Position = projectionMatrix*mv; }`,
+  vertexShader: `uniform float uSize; uniform float uPR; attribute float aA; attribute float aF; attribute float aK; varying float vA; varying float vF; varying float vK; void main(){ vA=aA; vF=aF; vK=aK; vec4 mv = modelViewMatrix*vec4(position,1.); gl_PointSize = min(uSize*(1.+.5*aF)*uPR/(-mv.z), 48.*uPR); gl_Position = projectionMatrix*mv; }`,
   // ponto no mapa: núcleo cheio, anel fino em volta e halo; a final tem o anel duplo. O clarão (vF) é a rota chegando no nó.
   fragmentShader: `uniform vec3 uCol; uniform float uTime; varying float vA; varying float vF; varying float vK; void main(){ if(vA<=0.) discard; float d = length(gl_PointCoord-.5);
     float core = smoothstep(.1,.07,d);
@@ -1551,6 +1637,7 @@ function frame() {
   globe.rotation.y = cur.yaw + dYaw + (reduce ? 0 : Math.sin(time * 0.15) * 0.03);
   tilt.rotation.x = cur.pitch + dPitch;
   camera.position.set(0, 0, cur.dist); camera.lookAt(0, 0, 0);
+  applyFly(dt);
   const zk = zoomK(cur.dist);
   landMat.uniforms.uSize.value = 9 * Math.max(zk, 0.5); svMat.uniforms.uSize.value = 20 * Math.max(zk, 0.25);
   packets.material.uniforms.uSize.value = 34 * Math.max(zk, 0.12); mkMat.uniforms.uSize.value = 100 * Math.max(zk, 0.12);
