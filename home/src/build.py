@@ -16,6 +16,8 @@ NEXT = img_in('data-bn="next"', '</button>')
 # ícone do widget de rotas: o de Connections (servidores e rotas no app); o roteador do Network Analyzer foi recusado pelo Gabriel
 MON = img_in('data-goto="Connections"', '</div>')
 ADD = img_in('<div class="card-add"', '</div>')
+# título da seção (pedido do Gabriel)
+src = src.replace('<h2>Recent games and apps</h2>', '<h2>Games and monitoring</h2>', 1)
 # "View all" do cabeçalho vira "Add game" e abre o dialog do palco (pedido do Gabriel)
 src = src.replace('<button class="btn outlined" type="button" data-goto="Library">View all ', '<button class="btn outlined" type="button" id="pkAddBtn">Add game ', 1)
 stage = stage.replace('{{PREV}}', PREV).replace('{{NEXT}}', NEXT).replace('{{MON}}', MON).replace('{{ADD}}', ADD)
