@@ -391,3 +391,12 @@
 .app[data-scan="out"] .scan-bar { opacity: 0; transform: translate(-50%, 16px); }
 .app[data-scan="out"] .scan-radar { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .sc-ok :is(circle, path) { stroke-dashoffset: 0; animation: none !important; } .sc-n, .scan-burst i { animation: none !important; } }
+
+/* ExitLag desligada: aviso no lugar do botão Optimize */
+.pk-r2:has(.pk-offinfo:not([hidden])) { flex-wrap: wrap; row-gap: var(--spacing-md); }
+.pk-offinfo { flex: 1 1 100%; display: flex; align-items: center; gap: var(--spacing-md); min-height: 40px; padding: var(--spacing-sm) var(--spacing-md); border-radius: 4px; background: #eb83221a; font-size: 12px; line-height: 16px; letter-spacing: .4px; }
+.pk-offinfo[hidden] { display: none; }
+.pk-offinfo .dt { width: 8px; height: 8px; border-radius: 100px; background: #eb8322; flex: none; box-shadow: 0 0 6px #eb832299; }
+.pk-offinfo > span { display: flex; flex-direction: column; }
+.pk-offinfo b { font-weight: 500; font-size: 14px; line-height: 20px; letter-spacing: .25px; color: var(--on-surface); }
+.pk-cta[hidden] { display: none !important; }

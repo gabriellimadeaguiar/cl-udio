@@ -263,20 +263,27 @@ const cta = $('pkCta');
 const fmtDur = s => { s = Math.max(0, Math.floor(s)); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = s % 60; return (h ? String(h).padStart(2, '0') + ':' : '') + String(m).padStart(2, '0') + ':' + String(x).padStart(2, '0'); };
 const onMsg = g => `Picked the <b>${g.lanes} fastest</b> of ${CANDS.length} possible routes. Your game goes out through all ${g.lanes} at once; the first packet to arrive wins.`;
 const IDLE = 'Your game is going through your ISP route only.';
+// ExitLag desligada na topbar: no lugar do Optimize, um aviso (pedido do Gabriel)
+const offInfo = document.createElement('div'); offInfo.className = 'pk-offinfo'; offInfo.setAttribute('role', 'status');
+offInfo.innerHTML = '<i class="dt"></i><span><b>ExitLag is off</b><span class="t-var">Turn it on in the top bar to optimize</span></span>';
+cta.after(offInfo);
+const elOff = () => $('app').classList.contains('el-off');
 function paintCta() {
-  const g = GAMES[sel];
+  const g = GAMES[sel], off = elOff();
+  cta.hidden = off; offInfo.hidden = !off;
   cta.className = 'btn pk-cta ' + (g.state === 'on' ? 'outlined' : g.state === 'testing' ? 'filled pk-busy' : 'filled');
   if (g.state === 'on') cta.innerHTML = `Stop<span class="tnum" id="pkCtaT">${fmtDur(time - g.since)}</span>`;
   else if (g.state === 'testing') cta.innerHTML = '<span class="loader-sm"></span>Testing routes';
   else cta.textContent = 'Optimize';
   const st = $('pkState');
-  st.className = 'badge ' + (g.state === 'on' ? 'success' : 'neutral');
-  st.textContent = g.state === 'on' ? 'Optimized' : g.state === 'testing' ? 'Testing routes' : 'Not optimized';
+  st.className = 'badge ' + (g.state === 'on' ? 'success' : off ? 'warning' : 'neutral');
+  st.textContent = g.state === 'on' ? 'Optimized' : g.state === 'testing' ? 'Testing routes' : off ? 'ExitLag off' : 'Not optimized';
   $('pkLgXl').classList.toggle('off', g.state !== 'on');
   layout();
 }
 function toggleOpt() {
   const g = GAMES[sel];
+  if (elOff()) return;
   if (g.state === 'testing') return;
   if (g.state === 'on') { g.state = 'off'; xlShow = 0; fail = null; logMsg(IDLE); paintCta(); return; }
   g.state = 'testing'; xlShow = 1; xlStart = time; logMsg(`Mapping ${CANDS.length} possible routes to the game server…`);
@@ -1147,6 +1154,7 @@ function frameOff(dt) {
   const off = $('app').classList.contains('el-off') ? 1 : 0;
   // desligar a ExitLag para as conexões ativas (como diz o diálogo do protótipo)
   if (off && !offPrev) { GAMES.forEach(g => { if (g.state === 'on' || g.state === 'testing') g.state = 'off'; }); xlShow = 0; fail = null; logMsg(IDLE); paintCta(); layout(); }
+  if (off !== offPrev) paintCta();
   offPrev = off;
   if (offK === off) return;
   offK += (off - offK) * (reduce ? 1 : 1 - Math.exp(-dt * 3)); if (Math.abs(off - offK) < 0.002) offK = off;
