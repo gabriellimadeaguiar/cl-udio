@@ -805,7 +805,12 @@ function setShow9(o) {
 // estado por capa: p = 0 escondida atrás do globo, 1 na órbita (mola); h = expansão no hover da própria capa
 const p9 = thumbs.map(() => 0), pv9 = thumbs.map(() => 0), tg9 = thumbs.map(() => 0), at9 = thumbs.map(() => 0), h9 = thumbs.map(() => 0), hv9 = thumbs.map(() => 0);
 let hov9 = -1;
-thumbs.forEach((t, i) => { t.addEventListener('pointerenter', () => { hov9 = i; $('app').classList.add('pk-hov9'); }); t.addEventListener('pointerleave', () => { if (hov9 === i) { hov9 = -1; $('app').classList.remove('pk-hov9'); } }); });
+// capas do fundo da órbita ficam atrás do globo e sobem no hover; enquanto sobem, o lugar de onde saíram continua valendo como hover
+const base9 = thumbs.map(() => [0, 0, 0]);
+const inBase9 = (i, e) => { const b = orbit.getBoundingClientRect(), k = b.width / vw, [x, y, hh] = base9[i]; return Math.abs((e.clientX - b.left) / k - x) < hh && Math.abs((e.clientY - b.top) / k - y) < hh; };
+const unhov9 = () => { hov9 = -1; $('app').classList.remove('pk-hov9'); };
+thumbs.forEach((t, i) => { t.addEventListener('pointerenter', () => { hov9 = i; $('app').classList.add('pk-hov9'); }); t.addEventListener('pointerleave', e => { if (hov9 === i && !inBase9(i, e)) unhov9(); }); });
+$('pk').addEventListener('pointermove', e => { if (hov9 >= 0 && !thumbs[hov9].matches(':hover') && !inBase9(hov9, e)) unhov9(); });
 // V9: menu do canto superior esquerdo abre e fecha a sidebar
 const bar9 = document.createElement('div'); bar9.className = 'v9-bar';
 bar9.innerHTML = '<button class="icon-btn v9-menu" type="button" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>';
@@ -850,14 +855,19 @@ function frameV8(dt) {
       // sai do centro (escondida pelo disco do globo) girando um pouco até o lugar na órbita
       const e = p9[i]; a -= (1 - Math.min(e, 1)) * 0.55;
       const sn = Math.sin(a), d = (sn + 1) / 2;
-      x = cx + Math.cos(a) * rx * e; y = cy + sn * ry * e;
+      // metade de trás mais baixa: as capas do fundo ficam atrás do globo, só o topo aparecendo acima dele (pedido do Gabriel)
+      x = cx + Math.cos(a) * rx * e; y = cy + sn * (sn < 0 ? Math.min(ry, gp - 14) : ry) * e;
       sc = (0.82 + 0.18 * d) * (i === sel && !scan ? 1.18 + 0.5 * Math.max(r9, 0) : 1) * (1 + (i === sel ? 0.15 : 0.42) * h9[i]); // aberta: o jogo do globo cresce para se destacar dos outros
       t.style.zIndex = i === hov9 ? 40 : i === sel ? 30 : 10 + Math.round(d * 10);
       t.style.visibility = e < 0.02 ? 'hidden' : '';
       if (t.dataset.tip) delete t.dataset.tip; // o nome vem no rótulo embaixo da capa
       // o disco do globo recorta a capa enquanto ela está atrás dele
       const w = t.offsetWidth, h = t.offsetHeight, r = gpR - 2;
-      if ((i !== sel || scan) && p9[i] < 0.995 && Math.hypot(Math.max(Math.abs(x - cx) - w * sc / 2, 0), Math.max(Math.abs(y - cy) - h * sc / 2, 0)) < r) {
+      // metade de trás da órbita: a capa fica atrás do disco do globo; no hover sobe o bastante para sair inteira de trás dele
+      const back = sn < 0 && i !== sel;
+      base9[i] = [x, y, h * sc / 2];
+      if (back) { const xn = Math.max(Math.abs(x - cx) - w * sc / 2, 0), top = xn < r ? cy - Math.sqrt(r * r - xn * xn) : Infinity; y -= Math.max(0, y + h * sc / 2 - top + 12) * Math.max(0, h9[i]); }
+      if ((i !== sel || scan) && (p9[i] < 0.995 || back) && Math.hypot(Math.max(Math.abs(x - cx) - w * sc / 2, 0), Math.max(Math.abs(y - cy) - h * sc / 2, 0)) < r) {
         const m = `radial-gradient(circle at ${((cx - x) / sc + w / 2).toFixed(1)}px ${((cy - y) / sc + h / 2).toFixed(1)}px, transparent ${(r / sc - 1).toFixed(1)}px, #000 ${(r / sc + 1).toFixed(1)}px)`;
         t.style.webkitMaskImage = m; t.style.maskImage = m;
       } else if (t.style.maskImage) { t.style.webkitMaskImage = ''; t.style.maskImage = ''; }
