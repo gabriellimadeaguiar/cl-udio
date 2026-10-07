@@ -460,3 +460,5 @@
 .app .pk-head { display: none !important; }
 .pk-tag-node { padding: 2px var(--spacing-xs); font-size: 11px; line-height: 14px; font-weight: 500; background: #20242dd9; box-shadow: none; color: var(--on-surface-variant); }
 .app[data-boot] .pk-tag-node { opacity: 0 !important; }
+/* mapa passivo rodando: sem o jogo em destaque nem a órbita (pedido do Gabriel) */
+.app[data-pmap="on"] :is(.pk-orbit, .pk-name9) { opacity: 0 !important; pointer-events: none !important; transition: opacity .3s ease; }

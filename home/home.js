@@ -904,7 +904,7 @@ syncThumbs8();
 // Com o mouse sobre o globo a órbita abre numa mola (raio cresce com leve overshoot) e as capas entram em cascata a partir do destaque.
 let show9 = false, r9 = 0, v9 = 0, orbR = [1, 1, 0, 0];
 $('pk').addEventListener('pointermove', e => {
-  if (!isV9() || boot || scan) return;
+  if (!isV9() || boot || scan || pmBusy()) return;
   const b = canvas.getBoundingClientRect(), k = b.width / vw, [rx, ry, cx, cy] = orbR;
   const dx = (e.clientX - b.left) / k - cx, dy = (e.clientY - b.top) / k - cy, m = show9 ? 70 : 10;
   const inside = (dx / (rx + m)) ** 2 + (dy / (ry + m)) ** 2 < 1;
@@ -1030,7 +1030,7 @@ bootEl.innerHTML = `
     <span class="badge neutral bs-badge"><span class="live-dot"></span>Network map</span>
     <div class="bs-head"><h2 id="bsT">Locating you</h2><p class="t-var" id="bsSub"></p></div>
     <div class="bs-bar" role="progressbar" aria-label="Route analysis" aria-valuemin="0" aria-valuemax="100"><i id="bsBar"></i></div>
-    <ol class="bs-steps" id="bsSteps"><li>Locate you</li><li>Map server regions</li><li>Test every route</li><li>Choose the best routes</li></ol>
+    <ol class="bs-steps" id="bsSteps"><li>Locate you</li><li>Reach every continent</li><li>Measure each continent</li><li>Choose the best routes</li></ol>
     <div class="bs-list" id="bsList" role="list"></div>
     <button class="link bs-skip" type="button" id="bsSkip">Skip</button>
   </section>
@@ -1040,7 +1040,18 @@ $('app').append(bootEl);
   const lg = document.querySelector('.sidebar .logo'); if (lg) bootEl.querySelector('.bl-brand').append(lg.cloneNode(true));
   const win = document.querySelectorAll('.topbar .btn-group'); if (win.length) bootEl.querySelector('.boot-win').append(win[win.length - 1].cloneNode(true));
 }
-const bootRows = Object.entries(REGIONS);
+// o network map testa só os continentes (Gabriel, 07/10): um ponto de medição por continente
+const CONTS = {
+  sa: { n: 'South America', c: [-23.55, -46.63, 'Sao Paulo', 'SAO'] }, na: { n: 'North America', c: [39.04, -77.49, 'Ashburn', 'IAD'] },
+  eu: { n: 'Europe', c: [50.11, 8.68, 'Frankfurt', 'FRA'] }, af: { n: 'Africa', c: [-26.2, 28.05, 'Johannesburg', 'JNB'] },
+  as: { n: 'Asia', c: [1.35, 103.82, 'Singapore', 'SIN'] }, oc: { n: 'Oceania', c: [-33.87, 151.21, 'Sydney', 'SYD'] }
+};
+const bootRows = Object.entries(CONTS);
+const contPing = k => Math.round(8 + vO.angleTo(toV(CONTS[k].c[0], CONTS[k].c[1])) * 6371 / 100 * 1.1);
+// o que o mapa está medindo em cada continente: cada métrica fica um pedaço do tempo dele, com o valor ao vivo
+const METRICS = [['Measuring ping', a => Math.round(a.ms * (0.85 + Math.random() * 0.3)) + ' ms'], ['Evaluating jitter', a => (0.6 + Math.random() * 3).toFixed(1) + ' ms jitter'],
+  ['Checking packet loss', () => (Math.random() * 0.8).toFixed(1) + '% loss'], ['Tracing the hops', a => (6 + Math.floor(a.ms / 25)) + ' hops'], ['Testing route stability', () => 'holding steady']];
+const metricAt = (a, e, dur) => METRICS[clamp(Math.floor(e / dur * METRICS.length), 0, METRICS.length - 1)];
 $('bsList').innerHTML = bootRows.map(([k, r]) => `<div class="bs-row" role="listitem" data-r="${k}"><i class="dt"></i><span class="bs-n">${r.n}</span><span class="t-var">${r.c[2]}</span><span class="bs-ms tnum">–</span></div>`).join('');
 const bootGroup = new THREE.Group(); globe.add(bootGroup);
 $('bootEye').addEventListener('click', e => { const b = e.currentTarget, show = b.getAttribute('aria-pressed') !== 'true'; $('bootPass').type = show ? 'text' : 'password'; b.setAttribute('aria-pressed', show); b.setAttribute('aria-label', show ? 'Hide password' : 'Show password'); });
@@ -1084,7 +1095,7 @@ function scanBoot() {
     if (w < 0.03) { v = toV(r.c[0] + 1.2, r.c[1] + 1.4); w = vO.angleTo(v); }
     const side = (i % 2 ? 1 : -1) * 0.12; // arcos baixos e levemente curvos, alternando o lado, para não virarem raios saindo do globo
     const a = makeRoute(smoothPath(vO, v, w, u => side * Math.sin(Math.PI * u), 0.3), C.dim.clone(), 0.0026, 0.5 + i * 0.03, 0.6, bootGroup);
-    return { ...a, k, ms: estPing(k) + Math.round(Math.random() * 6), w };
+    return { ...a, k, ms: contPing(k) + Math.round(Math.random() * 6), w };
   });
   routeR = saveR;
   // as melhores: as 3 de menor ping
@@ -1102,7 +1113,7 @@ function endBoot(keepHash) {
   rebuild(); frame0.dist = fitDist();
 }
 // o network map dura 42 s (Gabriel, 07/10): cada região é medida por ~3 s; Skip pula para o fim
-const NM_END = 42, BOOT_STEPS = [[0, 'Locating you'], [3, 'Mapping server regions'], [7, 'Testing every route'], [38, 'Choosing the best routes'], [NM_END, 'Ready']];
+const B_STEP = 5, NM_END = 42, BOOT_STEPS = [[0, 'Locating you'], [3, 'Reaching every continent'], [7, 'Measuring each continent'], [38, 'Choosing the best routes'], [NM_END, 'Ready']];
 function frameBoot(dt) {
   routeGroup.visible = packets.visible = markers.visible = !boot && !scan && !pmap;
   if (!boot) return;
@@ -1126,14 +1137,15 @@ function frameBoot(dt) {
   const st = BOOT_STEPS.filter(([s]) => t >= s).length - 1;
   if (boot.phase === 'scan') {
     if ($('bsT').textContent !== BOOT_STEPS[st][1]) $('bsT').textContent = BOOT_STEPS[st][1];
-    const sub = st === 0 ? `${origin[2]} · finding your ISP route` : st === 1 ? '1,500+ servers in 10 regions' : st === 2 ? 'Sending test packets on each route' : st === 3 ? 'Comparing ping, jitter and packet loss' : `${boot.best.length} best routes are ready`;
+    const cur = st === 2 && boot.arcs.find((a, i) => t >= 7 + i * B_STEP && t < 7 + (i + 1) * B_STEP), now = cur && metricAt(cur, t - 7 - boot.arcs.indexOf(cur) * B_STEP, B_STEP);
+    const sub = st === 0 ? `${origin[2]} · finding your ISP route` : st === 1 ? '6 continents · 1,500+ servers' : cur ? `${now[0]} · ${CONTS[cur.k].n}` : st === 2 ? 'Sending test packets' : st === 3 ? 'Comparing ping, jitter and packet loss' : `${boot.best.length} best routes are ready`;
     if ($('bsSub').textContent !== sub) $('bsSub').textContent = sub;
     [...$('bsSteps').children].forEach((li, i) => li.className = i < st ? 'done' : i === st ? 'now' : '');
     const pr = clamp(t / NM_END); $('bsBar').style.width = (pr * 100).toFixed(1) + '%'; $('bsBar').parentElement.setAttribute('aria-valuenow', Math.round(pr * 100));
   }
   const rows = $('bsList').children;
   boot.arcs.forEach((a, i) => {
-    const t0 = 3 + i * 0.35, tt = 7 + i * 3, isBest = boot.best.includes(a.k), row = rows[i];
+    const t0 = 3 + i * 0.6, tt = 7 + (i + 1) * B_STEP, isBest = boot.best.includes(a.k), row = rows[i];
     a.u.uTime.value = time;
     a.u.uDraw.value = reduce ? (t > t0 ? 1 : 0) : ease(clamp((t - t0) / 0.7));
     // traçada em cinza; medida, a melhor acende em verde e as outras recuam
@@ -1265,7 +1277,7 @@ function frameScan(dt) {
    Quando termina, as 3 melhores acendem, a pílula vira "Network map ready" e o resto destrava. */
 const pmGroup = new THREE.Group(); globe.add(pmGroup);
 const PM_OPEN = ['Home', 'Network Analyzer', 'PC Boost', 'Traffic Shaper', 'General Settings'];
-const PM_DONE = 42, PM_END = 46.3, PM_STEP = 3.6; // o network map dura 42 s (Gabriel); a pílula de pronto fica até 46,3 s
+const PM_DONE = 42, PM_END = 46.3, PM_STEP = 6; // o network map dura 42 s (Gabriel); a pílula de pronto fica até 46,3 s
 const pmPill = document.createElement('div'); pmPill.className = 'pm-pill'; pmPill.setAttribute('role', 'status'); pmPill.setAttribute('aria-live', 'polite');
 pmPill.innerHTML = `<span class="pm-ic" aria-hidden="true"><i class="pm-spin"></i><svg viewBox="0 0 16 16" fill="none"><path d="M4 8.3l2.6 2.6L12 5.4"/></svg></span>
   <span class="pm-tx"><b id="pmT">Mapping your network</b><span class="t-var" id="pmS"></span></span><span class="pm-pc tnum" id="pmP">0%</span><i class="pm-bar"><i id="pmBar"></i></i>`;
@@ -1293,7 +1305,7 @@ function startPmap() {
     if (w < 0.03) { v = toV(r.c[0] + 1.2, r.c[1] + 1.4); w = vO.angleTo(v); }
     const side = (i % 2 ? 1 : -1) * 0.12;
     const a = makeRoute(smoothPath(vO, v, w, u => side * Math.sin(Math.PI * u), 0.3), C.dim.clone(), 0.0026, 0.5 + i * 0.03, 0.5, pmGroup);
-    return { ...a, k, ms: estPing(k) + Math.round(Math.random() * 6) };
+    return { ...a, k, ms: contPing(k) + Math.round(Math.random() * 6) };
   });
   routeR = saveR;
   // ordem de teste: das mais perto para as mais longe, como um analisador faria
@@ -1337,8 +1349,10 @@ function framePmap(dt) {
   if (time - pmPaintT > 0.1 || pmap.done) {
     pmPaintT = time;
     const now = pmap.arcs.find(a => t >= a.tt - PM_STEP && t < a.tt), b = pmap.arcs.find(a => a.k === pmap.best[0]);
-    const T = pmap.done ? 'Network map ready' : t < 0.8 ? 'Locating you' : t < 3 ? 'Mapping server regions' : now ? `Testing ${REGIONS[now.k].n}` : 'Choosing the best routes';
-    const S = pmap.done ? `Best route: ${REGIONS[b.k].n} · ${b.ms} ms` : t < 0.8 ? `${origin[2]} · in the background` : t < 3 ? '10 regions · Optimize unlocks when ready' : now ? `${now.ms} ms` : 'Comparing ping, jitter and packet loss';
+    const m = now && metricAt(now, t - (now.tt - PM_STEP), PM_STEP);
+    if (m && pmap.mk !== m[0] + now.k) { pmap.mk = m[0] + now.k; pmap.mv = m[1](now); } // valor sorteado uma vez por métrica, para dar para ler
+    const T = pmap.done ? 'Network map ready' : t < 0.8 ? 'Locating you' : t < 3 ? 'Reaching every continent' : m ? m[0] : 'Choosing the best routes';
+    const S = pmap.done ? `Best: ${CONTS[b.k].n} · ${b.ms} ms` : t < 0.8 ? `${origin[2]} · in the background` : t < 3 ? '6 continents · Optimize unlocks when ready' : m ? `${CONTS[now.k].n} · ${pmap.mv}` : 'Comparing ping, jitter and packet loss';
     if ($('pmT').textContent !== T) $('pmT').textContent = T;
     if ($('pmS').textContent !== S) $('pmS').textContent = S;
     const pc = Math.round(clamp(t / PM_DONE) * 100) + '%';
