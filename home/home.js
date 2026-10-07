@@ -249,7 +249,6 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && !addMd.hidden) clos
 /* ---------- Otimizar: o comportamento da ExitLag ---------- */
 const cta = $('pkCta');
 const fmtDur = s => { s = Math.max(0, Math.floor(s)); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = s % 60; return (h ? String(h).padStart(2, '0') + ':' : '') + String(m).padStart(2, '0') + ':' + String(x).padStart(2, '0'); };
-const BOLT = '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M9.2 1 3 9h4.4L6.6 15 13 7H8.6z"/></svg>';
 const onMsg = g => `Optimized. Your game goes out through <b>${g.lanes} routes</b> at once; the first packet to arrive wins.`;
 const IDLE = 'Your game is going through your ISP route only.';
 function paintCta() {
@@ -257,7 +256,7 @@ function paintCta() {
   cta.className = 'btn pk-cta ' + (g.state === 'on' ? 'outlined' : g.state === 'testing' ? 'filled pk-busy' : 'filled');
   if (g.state === 'on') cta.innerHTML = `Stop<span class="tnum" id="pkCtaT">${fmtDur(time - g.since)}</span>`;
   else if (g.state === 'testing') cta.innerHTML = '<span class="loader-sm"></span>Testing routes';
-  else cta.innerHTML = BOLT + 'Optimize';
+  else cta.textContent = 'Optimize';
   const st = $('pkState');
   st.className = 'badge ' + (g.state === 'on' ? 'success' : 'neutral');
   st.textContent = g.state === 'on' ? 'Optimized' : g.state === 'testing' ? 'Testing routes' : 'Not optimized';
