@@ -538,8 +538,13 @@ function placeTags(vis) {
 /* ---------- Arrastar o globo ---------- */
 let gDrag = null, dYaw = 0, dPitch = 0, lastDrag = -10;
 canvas.addEventListener('pointerdown', e => { gDrag = [e.clientX, e.clientY, dYaw, dPitch]; canvas.setPointerCapture(e.pointerId); canvas.classList.add('drag'); });
-canvas.addEventListener('pointermove', e => { if (!gDrag) return; dYaw = gDrag[2] + (e.clientX - gDrag[0]) * 0.006; dPitch = clamp(gDrag[3] + (e.clientY - gDrag[1]) * 0.004, -0.9, 0.9); lastDrag = time; });
-canvas.addEventListener('pointerup', () => { gDrag = null; canvas.classList.remove('drag'); lastDrag = time; });
+// Sensibilidade pelo zoom: o ponto do globo sob o cursor acompanha o cursor (com a câmera perto, cada pixel gira bem menos).
+const dragRad = () => (cur.dist - 1) * 2 * Math.tan(15 * D) / Math.max(1, vh);
+canvas.addEventListener('pointermove', e => { if (!gDrag) return; const k = dragRad(); dYaw = gDrag[2] + (e.clientX - gDrag[0]) * k; dPitch = clamp(gDrag[3] + (e.clientY - gDrag[1]) * k, -0.9, 0.9); lastDrag = time; });
+const endDrag = () => { if (!gDrag) return; gDrag = null; canvas.classList.remove('drag'); lastDrag = time; dYaw = Math.atan2(Math.sin(dYaw), Math.cos(dYaw)); };
+canvas.addEventListener('pointerup', endDrag); canvas.addEventListener('pointercancel', endDrag); canvas.addEventListener('lostpointercapture', endDrag);
+// duplo clique: volta à rota na hora
+canvas.addEventListener('dblclick', () => { lastDrag = -10; });
 
 /* ---------- Pós e tamanho ---------- */
 const composer = new EffectComposer(renderer);
@@ -576,7 +581,7 @@ function frame() {
   const g = GAMES[sel], on = g.state === 'on';
 
   // enquadramento suave; o arraste volta sozinho depois de 2,5 s
-  if (!gDrag && time - lastDrag > 2.5) { const k = 1 - Math.exp(-dt * 2.2); dYaw += (0 - dYaw) * k; dPitch += (0 - dPitch) * k; }
+  if (!gDrag && time - lastDrag > 1.2) { const k = 1 - Math.exp(-dt * 3); dYaw += (0 - dYaw) * k; dPitch += (0 - dPitch) * k; }
   const kf = reduce ? 1 : 1 - Math.exp(-dt * 2.6);
   cur.yaw += wrapA(frame0.yaw - cur.yaw) * kf; cur.pitch += (frame0.pitch - cur.pitch) * kf; cur.dist += (frame0.dist - cur.dist) * kf;
   globe.rotation.y = cur.yaw + dYaw + (reduce ? 0 : Math.sin(time * 0.15) * 0.03);
