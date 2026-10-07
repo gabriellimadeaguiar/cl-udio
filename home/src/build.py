@@ -18,6 +18,8 @@ MON = img_in('data-goto="Connections"', '</div>')
 ADD = img_in('<div class="card-add"', '</div>')
 # título da seção (pedido do Gabriel)
 src = src.replace('<h2>Recent games and apps</h2>', '<h2>Games and monitoring</h2>', 1)
+# sem a linha divisória ao lado do título (pedido do Gabriel); o espaçador mantém o botão à direita
+src = src.replace('<h2>Games and monitoring</h2><span class="rule"></span>', '<h2>Games and monitoring</h2><span style="flex:1"></span>', 1)
 # "View all" do cabeçalho vira "Add game" e abre o dialog do palco (pedido do Gabriel)
 src = src.replace('<button class="btn outlined" type="button" data-goto="Library">View all ', '<button class="btn outlined" type="button" id="pkAddBtn">Add game ', 1)
 stage = stage.replace('{{PREV}}', PREV).replace('{{NEXT}}', NEXT).replace('{{MON}}', MON).replace('{{ADD}}', ADD)
