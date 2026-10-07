@@ -556,8 +556,8 @@ function placeTags(vis) {
   const put = (el, p, left, up) => {
     const y = clamp(p[1] + (up ? -40 : 4), headBottom, vh - bandBottom - 36); // fica na faixa livre, sem cobrir cabeçalho nem widget
     const x = clamp(p[0] + (left ? -12 : 12), bandLeft + (left ? 140 : 0), vw - bandRight - (left ? 0 : 140)); // fora dos painéis da versão
-    el.style.transform = `translate(${Math.round(x + tagOff[0])}px, ${Math.round(y + tagOff[1])}px)` + (left ? ' translateX(-100%)' : '');
-    el.style.opacity = vis * clamp(p[2] * 4) * (isV6() ? clamp(ex6 * 2 - 1) : 1) * (isV7() && e7 > 0 ? 0 : 1);
+    el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)` + (left ? ' translateX(-100%)' : '');
+    el.style.opacity = vis * clamp(p[2] * 4) * (isV7() && e7 > 0 ? 0 : 1);
   };
   const near = Math.abs(a[1] - b[1]) < 60;
   put(tagA, a, aLeft, near ? a[1] <= b[1] : true); put(tagB, b, !aLeft, near ? b[1] < a[1] : true);
@@ -582,7 +582,7 @@ composer.addPass(bloom);
 let vw = 1, vh = 1, bandCut = 0, bandSide = 0, bandLeft = 0, bandRight = 0, headBottom = 0, bandBottom = 0;
 // Distância da câmera para a rota inteira caber na faixa livre do globo (entre o cabeçalho e o widget).
 function fitDist() {
-  if ((isV6() && !gBig) || (isV7() && (away7 || e7 > 0.35))) return 4.8; // V6, globo pequeno: o planeta inteiro na janelinha
+  if (isV7() && (away7 || e7 > 0.35)) return 4.8; // V7 na sidebar: o planeta inteiro na vaga
   const band = Math.max(140, Math.min(vw - bandSide, vh - bandCut) * 0.8), worldPerPx = 2 * Math.tan(15 * D) / vh;
   // a escala vale na superfície do globo (distância − 1): rotas curtas pedem a câmera bem perto
   return clamp(1 + frame0.chord / (band * worldPerPx), 1.22, 7.5);
@@ -591,14 +591,14 @@ function fitDist() {
 const zoomK = d => clamp((d - 1) / 3, 0.08, 1);
 function resize() {
   if (!canvas.clientWidth || !canvas.clientHeight) return; // canvas escondido (home fora de vista)
-  vw = canvas.clientWidth; vh = canvas.clientHeight; // o próprio canvas: na V6 ele sai do palco e cobre a home
+  vw = canvas.clientWidth; vh = canvas.clientHeight; // o próprio canvas: na V7 ele sai do palco e voa para a sidebar
   renderer.setSize(vw, vh, false); composer.setSize(vw, vh); composer.setPixelRatio(PR); bloom.resolution.set(vw / 2, vh / 2);
   const headH = host.querySelector('.pk-head').offsetHeight + 24;
   // Área livre do globo em cada versão: o que cobre o canvas à esquerda, à direita e embaixo.
-  // V1 widget embaixo · V4 jogo à direita e barra embaixo · V5 jogo à esquerda e barra embaixo
+  // V1 e V7 widget embaixo · V4 jogo à direita e barra embaixo · V5 jogo à esquerda e barra embaixo
   const v = $('app').dataset.v, teleW = $('pkTele').offsetWidth + 48, teleH = $('pkTele').offsetHeight + 48, lW = $('pkL').offsetWidth;
   const [sideW, leftW, botH] = v === '4' ? [lW, 0, teleH]
-    : v === '5' ? [0, lW, teleH] : v === '6' ? [0, 0, headH] : [0, 0, teleH - 24];
+    : v === '5' ? [0, lW, teleH] : [0, 0, teleH - 24];
   const offX = Math.round((sideW - leftW) / 2), offY = Math.round((botH - headH) / 2); camOff = [offX, offY];
   bandCut = botH + headH; bandSide = sideW + leftW; bandLeft = leftW; bandRight = sideW; headBottom = headH + 14; bandBottom = botH;
   camera.aspect = vw / vh; camera.setViewOffset(vw, vh, offX, offY, vw, vh); camera.updateProjectionMatrix();
@@ -607,59 +607,12 @@ function resize() {
 new ResizeObserver(resize).observe(canvas);
 addEventListener('pk:layout', () => { resize(); sizeDeck(); });
 
-/* ---------- V6: globo pequeno que expande sobre a home ----------
-   Pequeno: janelinha redonda no topo direito do Route Monitoring. Hover: cresce até cobrir a home (abaixo da topbar),
-   com a home escurecida atrás. Fecha quando o cursor sai da home, com clique fora do globo ou com Esc.
-   O canvas fica fixo do tamanho da home e encolhe por transform (sem realocar o WebGL a cada quadro). */
-const isV6 = () => $('app').dataset.v === '6';
-let gBig = false, ex6 = 0, tagOff = [0, 0], big6 = null;
-const mini = document.createElement('div'); mini.className = 'pk-mini'; mini.setAttribute('aria-hidden', 'true');
-$('pkTele').append(mini);
-const veil = document.createElement('div'); veil.className = 'pk-veil'; host.append(veil);
-function setBig(b) {
-  if (b === gBig) return; gBig = b; frame0.dist = fitDist();
-  $('app').classList.toggle('pk-big', b);
-}
-mini.addEventListener('pointerenter', () => setBig(true));
-addEventListener('keydown', e => { if (e.key === 'Escape') setBig(false); });
-addEventListener('pointermove', e => {
-  if (!gBig || gDrag || !big6) return;
-  if (e.clientX < big6.left || e.clientX > big6.right || e.clientY < big6.top || e.clientY > big6.bottom) setBig(false);
-});
-// clique fora do globo (no fundo escurecido) também fecha; arrastar o globo não
-canvas.addEventListener('click', e => {
-  if (!gBig || !big6 || time - lastDrag < 0.2) return;
-  const cx = big6.left + big6.width / 2, cy = big6.top + big6.height / 2;
-  if (Math.hypot(e.clientX - cx, e.clientY - cy) > Math.min(globePx(), Math.min(big6.width, big6.height) / 2)) setBig(false);
-});
-// raio do globo na tela, em px do canvas (câmera a cur.dist, fov 30°)
-const globePx = () => Math.tan(Math.asin(1 / Math.max(cur.dist, 1.0001))) / Math.tan(15 * D) * vh / 2;
-function frameV6(dt) {
-  if (!isV6()) { if (big6) { big6 = null; ex6 = 0; gBig = false; tagOff = [0, 0]; $('app').classList.remove('pk-big');
-    ['left', 'top', 'width', 'height', 'transform', 'webkitMask', 'mask'].forEach(k => canvas.style[k] = ''); veil.removeAttribute('style'); host.querySelector('.pk-head').removeAttribute('style'); } return; }
-  const m = $('main').getBoundingClientRect(), T = m.top + 76;
-  const r = { left: m.left, top: T, width: m.width, height: m.bottom - T, right: m.right, bottom: m.bottom };
-  if (!big6 || r.left !== big6.left || r.top !== big6.top || r.width !== big6.width || r.height !== big6.height)
-    Object.assign(canvas.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' });
-  if (!big6 || r.left !== big6.left || r.top !== big6.top || r.width !== big6.width || r.height !== big6.height) {
-    Object.assign(veil.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', right: 'auto', bottom: 'auto' });
-    Object.assign(host.querySelector('.pk-head').style, { left: r.left + 24 + 'px', top: r.top + 24 + 'px', width: r.width - 48 + 'px' });
-  }
-  big6 = r; tagOff = [r.left, r.top];
-  ex6 += ((gBig ? 1 : 0) - ex6) * (reduce ? 1 : 1 - Math.exp(-dt * 7));
-  const e = ease(ex6), mr = mini.getBoundingClientRect(), gp = globePx() * 1.06;
-  const sSmall = (mr.width / 2) / gp, s = sSmall + (1 - sSmall) * e;
-  const tx = (mr.left + mr.width / 2 - (r.left + r.width / 2)) * (1 - e), ty = (mr.top + mr.height / 2 - (r.top + r.height / 2)) * (1 - e);
-  canvas.style.transform = `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) scale(${s.toFixed(4)})`;
-  const rad = gp + (Math.hypot(r.width, r.height) / 2 - gp) * e, fade = 1 + 120 * e;
-  canvas.style.webkitMask = canvas.style.mask = `radial-gradient(circle at 50% 50%, #000 ${rad.toFixed(1)}px, transparent ${(rad + fade).toFixed(1)}px)`;
-  veil.style.opacity = (0.88 * e).toFixed(3);
-}
-
 /* ---------- V7: globo da V1 na home; fora dela, vai para a sidebar ----------
    Saindo da home o canvas sai do palco (que some junto com a home) e voa até a vaga redonda da sidebar, acima da versão.
    A vaga é um link para a Home (o próprio protótipo trata data-goto="Home"). Na volta, o globo voa de volta e o canvas retorna ao palco. */
 const isV7 = () => $('app').dataset.v === '7';
+// raio do globo na tela, em px do canvas (câmera a cur.dist, fov 30°)
+const globePx = () => Math.tan(Math.asin(1 / Math.max(cur.dist, 1.0001))) / Math.tan(15 * D) * vh / 2;
 let away7 = false, e7 = 0, fly7 = null, camOff = [0, 0], gpStart7 = 0;
 function frameV7(dt) {
   const inHost = canvas.parentElement === host;
@@ -805,7 +758,7 @@ function frame() {
   if (time - lastS > 0.1) { lastS = time; sample(on); drawChart(); }
   if (time - lastP > 0.25) { lastP = time; paintTele(); }
 
-  frameV6(dt); frameV7(dt);
+  frameV7(dt);
   scene.updateMatrixWorld();
   placeTags(clamp((age - 0.6) / 0.4));
   composer.render();
