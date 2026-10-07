@@ -47,6 +47,8 @@ const CATALOG = [
   { name: 'Ark: Survival Evolved', img: A + 'box-ark.jpg', lanes: 2, regions: ['br', 'nae', 'euw', 'oce'] }
 ];
 GAMES.forEach(g => { g.state = g.state || 'off'; });
+// Gabriel (07/10): ao otimizar, o globo mapeia várias rotas possíveis, escolhe as melhores e destaca 1.
+// Quantas ficam continua por jogo, até 4 (g.lanes), decisão dele no mesmo dia.
 
 const D = Math.PI / 180;
 const toV = (lat, lon, r = 1) => { const p = (90 - lat) * D, th = (lon + 180) * D; return new THREE.Vector3(-r * Math.sin(p) * Math.cos(th), r * Math.cos(p), r * Math.sin(p) * Math.sin(th)); };
@@ -258,7 +260,7 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && !addMd.hidden) clos
 /* ---------- Otimizar: o comportamento da ExitLag ---------- */
 const cta = $('pkCta');
 const fmtDur = s => { s = Math.max(0, Math.floor(s)); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = s % 60; return (h ? String(h).padStart(2, '0') + ':' : '') + String(m).padStart(2, '0') + ':' + String(x).padStart(2, '0'); };
-const onMsg = g => `Optimized. Your game goes out through <b>${g.lanes} routes</b> at once; the first packet to arrive wins.`;
+const onMsg = g => `Picked the <b>${g.lanes} fastest</b> of ${CANDS.length} possible routes. Your game goes out through all ${g.lanes} at once; the first packet to arrive wins.`;
 const IDLE = 'Your game is going through your ISP route only.';
 function paintCta() {
   const g = GAMES[sel];
@@ -276,14 +278,14 @@ function toggleOpt() {
   const g = GAMES[sel];
   if (g.state === 'testing') return;
   if (g.state === 'on') { g.state = 'off'; xlShow = 0; fail = null; logMsg(IDLE); paintCta(); return; }
-  g.state = 'testing'; xlShow = 1; xlStart = time; logMsg(`Testing ${g.lanes} ExitLag routes to the game server…`);
+  g.state = 'testing'; xlShow = 1; xlStart = time; logMsg(`Mapping ${CANDS.length} possible routes to the game server…`);
   paintCta();
   setTimeout(() => {
     if (g.state !== 'testing') return;
     g.state = 'on'; g.since = time; nextFail = time + 6 + Math.random() * 4;
     if (GAMES[sel] === g) logMsg(onMsg(g));
     paintCta();
-  }, reduce ? 300 : 1900);
+  }, reduce ? 300 : 2600);
 }
 cta.addEventListener('click', toggleOpt);
 
@@ -369,6 +371,9 @@ void main(){ float x = vUv.x; if(x>uDraw || uOp<=0.) discard;
 const routeGroup = new THREE.Group(); globe.add(routeGroup);
 const MAXL = 4;
 // Faixas laterais das rotas ExitLag, de 2 a 4 rotas por jogo.
+// Rotas candidatas que o teste mapeia (desvio lateral, altura); as 4 com melhor ping viram as rotas ExitLag.
+const CANDS = [[-0.44, 0.9], [-0.32, 1.05], [-0.2, 1.2], [-0.07, 1.3], [0.07, 1.3], [0.2, 1.2], [0.32, 1.05], [0.44, 0.9]];
+const seeded = str => { let h = 2166136261; for (const c of str) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return () => ((h = Math.imul(h ^ (h >>> 13), 1274126177)) >>> 0) / 4294967296; };
 const SHAPES = { 2: [[-0.18, 1.1], [0.18, 1.1]], 3: [[-0.28, 1.0], [0, 1.25], [0.28, 1.0]], 4: [[-0.3, 1.0], [-0.1, 1.2], [0.1, 1.2], [0.3, 1.0]] };
 let routes = null, vS = new THREE.Vector3(), routeAngle = 1, routeKm = 0, buildT = -10;
 
@@ -436,8 +441,13 @@ function rebuild() {
   routeR = Math.max((frame0.dist - 1) / 2, 0.12); // largura constante na tela (~2,5 px), perto ou longe: fina demais vira pontilhado
   routes = {
     isp: makeRoute(smoothPath(vO, vS, w, u => 0.62 * Math.sin(Math.PI * u) + 0.16 * Math.sin(3 * Math.PI * u), 0.35), C.isp, 0.0032, 0.35),
-    xl: SHAPES[g.lanes].map(([lat, lift], i) => makeRoute(smoothPath(vO, vS, w, u => lat * Math.sin(Math.PI * u), lift), C.route, 0.0032, 0.8 + i * 0.05, 0.42))
+    cand: CANDS.map(([lat, lift], k) => makeRoute(smoothPath(vO, vS, w, u => lat * Math.sin(Math.PI * u), lift), C.dim, 0.0024, 0.6 + k * 0.03, 0.5)),
+    xl: []
   };
+  // ping simulado de cada candidata (desvio maior custa mais, mais um sorteio fixo por jogo e servidor); as melhores em ordem: Route 1 é a mais rápida
+  const rnd = seeded(g.name + g.region);
+  routes.pick = CANDS.map(([lat], k) => [k, Math.abs(lat) * 0.6 + rnd()]).sort((a, b) => a[1] - b[1]).slice(0, g.lanes).map(([k]) => k);
+  routes.xl = routes.pick.map((k, i) => { const [lat, lift] = CANDS[k]; return makeRoute(smoothPath(vO, vS, w, u => lat * Math.sin(Math.PI * u), lift), C.route, 0.0032, 0.8 + i * 0.05, 0.42); });
   vO.clone().multiplyScalar(1.006).toArray(mkPos, 0); vS.clone().multiplyScalar(1.006).toArray(mkPos, 3);
   mkGeo.attributes.position.needsUpdate = true;
   const [mLat, mLon] = toLL(vO.clone().add(vS));
@@ -514,7 +524,7 @@ function paintTele() {
   [...$('pkLanes').children].forEach((el, i) => {
     const st = !on ? 'idle' : down(i) ? 'bad' : i === fastLane ? 'fast' : 'ok';
     el.className = 'pk-lane ' + st;
-    el.querySelector('.v').textContent = st === 'bad' ? 'Unstable' : on ? Math.round(laneEma[i]) + ' ms' : (g.state === 'testing' ? 'Testing' : 'Standby');
+    el.querySelector('.v').textContent = st === 'bad' ? 'Unstable' : on ? Math.round(laneEma[i]) + ' ms' : (g.state === 'testing' ? '…' : 'Standby');
     el.dataset.tip = st === 'fast' ? `Route ${i + 1} is the fastest now: its packets arrive first.`
       : st === 'ok' ? `Route ${i + 1} sends the same packets in parallel, as a backup.`
       : st === 'bad' ? `Route ${i + 1} is unstable. The other routes carry your game until it recovers.`
@@ -613,11 +623,20 @@ function frame() {
   if (routes) {
     routes.isp.u.uDraw.value = reduce ? 1 : ease(clamp((age - 0.35) / 0.9));
     routes.isp.u.uOp.value = on ? 0.55 : 1; routes.isp.u.uTime.value = time;
+    const testing = g.state === 'testing';
+    // teste: as candidatas cinza se espalham, depois somem e as 4 escolhidas acendem em verde sobre elas
+    routes.cand.forEach((r, k) => {
+      r.u.uTime.value = time;
+      if (!testing) { r.u.uOp.value = 0; return; }
+      r.u.uDraw.value = reduce ? 1 : ease(clamp((xa - k * 0.1) / 0.7));
+      r.u.uOp.value = 0.6 * (1 - clamp((xa - (routes.pick.includes(k) ? 1.9 : 1.5)) / 0.5));
+    });
     routes.xl.forEach((r, i) => {
-      r.u.uDraw.value = xlShow ? (reduce ? 1 : ease(clamp((xa - i * 0.3) / 0.8))) : 0;
+      r.u.uDraw.value = !xlShow ? 0 : reduce ? 1 : testing ? ease(clamp((xa - 1.5 - i * 0.12) / 0.6)) : ease(clamp((xa - i * 0.3) / 0.8));
       r.u.uOp.value = xlShow; r.u.uTime.value = time;
       r.u.uFail.value = fail && fail.lane === i ? fail.k : 0;
-      r.u.uGain.value = hoverLane < 0 ? 0.42 : hoverLane === i ? 0.95 : 0.12;
+      // a mais rápida fica bem mais forte; passar o mouse num chip manda
+      r.u.uGain.value = hoverLane >= 0 ? (hoverLane === i ? 0.95 : 0.12) : on ? (i === fastLane ? 1 : 0.22) : 0.42;
     });
   }
   // uma rota oscila de tempos em tempos: entra, segura, sai
@@ -639,7 +658,7 @@ function frame() {
     }
     routes.xl.forEach((r, ri) => {
       const sp = 0.42 * (routes.xl[0].len / r.len), draw = r.u.uDraw.value;
-      for (let i = 0; i < PK; i++) { const u = (time * sp + i / PK) % 1; putPk(r, u, C.route, u < draw ? (fail && fail.lane === ri ? 1 - fail.k : 1) * 0.55 : 0); }
+      for (let i = 0; i < PK; i++) { const u = (time * sp + i / PK) % 1; putPk(r, u, C.route, u < draw ? (fail && fail.lane === ri ? 1 - fail.k : 1) * (on && ri === fastLane ? 0.9 : on ? 0.3 : 0.55) : 0); }
     });
   }
   while (j < packetsN) pkA[j++] = 0;
