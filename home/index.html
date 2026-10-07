@@ -1170,13 +1170,39 @@ p { margin: 0; }
 .sb-skip { flex: none; height: auto; font-size: 12px; color: var(--on-surface-variant); }
 .app[data-scan="done"] .sb-skip { display: none; }
 @media (prefers-reduced-motion: reduce) { .sr-sweep, .sr-ring { animation: none; } }
+
+/* Chips na ordem do fluxo: Login › Library scan › Home */
+.vsep { flex: none; align-self: center; width: 6px; height: 6px; margin: 0 var(--spacing-xs); border-top: 1.5px solid var(--stroke); border-right: 1.5px solid var(--stroke); transform: rotate(45deg); }
+
+/* Conclusão da varredura */
+.sc-ok { width: 0; height: 32px; opacity: 0; stroke: var(--success); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: width .4s cubic-bezier(.22, 1, .36, 1), opacity .3s ease; }
+.sc-ok circle { stroke-dasharray: 66; stroke-dashoffset: 66; }
+.sc-ok path { stroke-dasharray: 16; stroke-dashoffset: 16; }
+.app[data-scan="done"] .sc-ok, .app[data-scan="out"] .sc-ok { width: 32px; opacity: 1; margin-bottom: var(--spacing-xs); }
+.app[data-scan="done"] .sc-ok circle { animation: scDraw .6s cubic-bezier(.65, 0, .35, 1) .05s forwards; }
+.app[data-scan="done"] .sc-ok path { animation: scDraw .35s cubic-bezier(.65, 0, .35, 1) .5s forwards; }
+.app[data-scan="out"] .sc-ok :is(circle, path) { stroke-dashoffset: 0; }
+@keyframes scDraw { to { stroke-dashoffset: 0; } }
+.app[data-scan="done"] .sc-n { animation: scPop .6s cubic-bezier(.34, 1.56, .64, 1) .3s both; }
+@keyframes scPop { 0% { transform: scale(1); } 45% { transform: scale(1.14); } 100% { transform: scale(1); } }
+.scan-burst { position: absolute; left: calc(var(--cx) - var(--rr)); top: calc(var(--cy) - var(--rr)); width: calc(var(--rr) * 2); height: calc(var(--rr) * 2); pointer-events: none; }
+.scan-burst i { position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid var(--success); opacity: 0; }
+.app[data-scan="done"] .scan-burst i { animation: scBurst 1.1s cubic-bezier(.22, 1, .36, 1) forwards; }
+.app[data-scan="done"] .scan-burst i + i { animation-delay: .18s; border-width: 1px; }
+@keyframes scBurst { 0% { transform: scale(.78); opacity: 0; box-shadow: 0 0 0 0 #22eba300; } 20% { opacity: .9; box-shadow: 0 0 24px 2px #22eba340; } 100% { transform: scale(1.3); opacity: 0; box-shadow: 0 0 0 0 #22eba300; } }
+.app[data-scan="done"] .scan-bar .bs-bar i { background: var(--success); transition: width .2s linear, background-color .4s ease; }
+.scan-core, .scan-bar { transition: opacity .5s ease, transform .6s cubic-bezier(.22, 1, .36, 1); }
+.app[data-scan="out"] .scan-core { opacity: 0; transform: translate(-50%, -50%) scale(.92); }
+.app[data-scan="out"] .scan-bar { opacity: 0; transform: translate(-50%, 16px); }
+.app[data-scan="out"] .scan-radar { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .sc-ok :is(circle, path) { stroke-dashoffset: 0; animation: none !important; } .sc-n, .scan-burst i { animation: none !important; } }
 </style>
 
 <div class="stage">
-  <nav class="vchips" aria-label="Layout version">
-    <button class="vchip" type="button" data-boot="1" aria-pressed="false">Login &amp; loading</button>
-    <button class="vchip" type="button" data-v="9" aria-pressed="true">Immersive globe</button>
-    <button class="vchip" type="button" data-scan="1" aria-pressed="false">Library scan</button>
+  <nav class="vchips" aria-label="Flow: login, library scan, home">
+    <button class="vchip" type="button" data-boot="1" aria-pressed="false">Login</button><span class="vsep" aria-hidden="true"></span>
+    <button class="vchip" type="button" data-scan="1" aria-pressed="false">Library scan</button><span class="vsep" aria-hidden="true"></span>
+    <button class="vchip" type="button" data-v="9" aria-pressed="true">Home</button>
   </nav>
   <div class="app" id="app" data-v="9">
     <div class="cz-overlay" aria-hidden="true"></div>

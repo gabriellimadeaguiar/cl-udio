@@ -857,7 +857,7 @@ function frameV8(dt) {
       const sn = Math.sin(a), d = (sn + 1) / 2;
       // metade de trás mais baixa: as capas do fundo ficam atrás do globo, só o topo aparecendo acima dele (pedido do Gabriel)
       x = cx + Math.cos(a) * rx * e; y = cy + sn * (sn < 0 ? Math.min(ry, gp - 14) : ry) * e;
-      sc = (0.82 + 0.18 * d) * (i === sel && !scan ? 1.18 + 0.5 * Math.max(r9, 0) : 1) * (1 + (i === sel ? 0.15 : 0.42) * h9[i]); // aberta: o jogo do globo cresce para se destacar dos outros
+      sc = (0.82 + 0.18 * d) * (i === sel && !scan ? 1.18 + 0.5 * Math.max(r9, 0) : 1) * (scan ? scanBump(i) : 1) * (1 + (i === sel ? 0.15 : 0.42) * h9[i]); // aberta: o jogo do globo cresce para se destacar dos outros
       t.style.zIndex = i === hov9 ? 40 : i === sel ? 30 : 10 + Math.round(d * 10);
       t.style.visibility = e < 0.02 ? 'hidden' : '';
       if (t.dataset.tip) delete t.dataset.tip; // o nome vem no rótulo embaixo da capa
@@ -1053,7 +1053,8 @@ const JUNK = ['_CommonRedist', 'shadercache', 'workshop', 'Binaries\\Win64', 'Co
 const scanEl = document.createElement('div'); scanEl.className = 'scan';
 scanEl.innerHTML = `
   <div class="scan-radar" aria-hidden="true"><i class="sr-sweep"></i><i class="sr-ring"></i><i class="sr-ring"></i></div>
-  <div class="scan-core" aria-live="polite"><span class="sc-k t-var" id="scK">Scanning your PC</span><span class="sc-n tnum" id="scN">0</span><span class="sc-l" id="scL">games found</span></div>
+  <div class="scan-burst" aria-hidden="true"><i></i><i></i></div>
+  <div class="scan-core" aria-live="polite"><svg class="sc-ok" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M7.5 12.4l3 3 6-6.4"/></svg><span class="sc-k t-var" id="scK">Scanning your PC</span><span class="sc-n tnum" id="scN">0</span><span class="sc-l" id="scL">games found</span></div>
   <div class="scan-bar">
     <div class="sb-r1"><span class="sb-t" id="scT">Looking for game launchers</span><span class="sb-path tnum" id="scPath"></span><span class="sb-p tnum" id="scP">0%</span><button class="link sb-skip" type="button" id="scSkip">Skip</button></div>
     <div class="bs-bar"><i id="scBar"></i></div>
@@ -1083,6 +1084,12 @@ function endScan(keepHash) {
   rebuild(); frame0.dist = fitDist();
 }
 let scanPathT = 0;
+// onda de conclusão: cada capa cresce e volta, em ordem de distância do jogo em destaque
+function scanBump(i) {
+  if (!scan || !scan.done || reduce) return 1;
+  const n = thumbs.length, d = Math.min((i - sel + n) % n, (sel - i + n) % n), tt = scan.t - scan.end - 0.35 - d * 0.07;
+  return tt > 0 && tt < 0.45 ? 1 + 0.2 * Math.sin(Math.PI * tt / 0.45) : 1;
+}
 function frameScan(dt) {
   if (!scan) { if (offY9 > 0.3) { offY9 += (0 - offY9) * (reduce ? 1 : 1 - Math.exp(-dt * 4)); if (offY9 < 0.3) offY9 = 0; camera.setViewOffset(vw, vh, off8, camOff[1] + offY9, vw, vh); camera.updateProjectionMatrix(); } return; }
   scan.t += dt; const t = scan.t;
@@ -1121,8 +1128,11 @@ function frameScan(dt) {
     $('scT').textContent = `Scanning ${n}`;
     if (t - scanPathT > 0.08) { scanPathT = t; const g = gs[Math.floor(lt * gs.length * 2) % gs.length]; $('scPath').textContent = `${root}\\${g.replace(/[:']/g, '')}\\${JUNK[Math.floor(Math.random() * JUNK.length)]}`; }
   }
+  // conclusão: o círculo se fecha num pulso, o check se desenha, o número dá um pulo e as capas acenam em onda a partir do destaque;
+  // depois o resumo recolhe e a home entra
   if (done && !scan.done) { scan.done = true; $('app').dataset.scan = 'done'; }
-  if (t >= scan.end + 2.6) endScan();
+  if (t >= scan.end + 2.4 && $('app').dataset.scan === 'done') $('app').dataset.scan = 'out';
+  if (t >= scan.end + 3.0) endScan();
 }
 
 /* ---------- Loop ---------- */
