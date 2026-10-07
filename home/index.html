@@ -1019,6 +1019,9 @@ p { margin: 0; }
 .app[data-v="5"] .pk-info { order: 0; grid-row: 1; align-self: end; padding: 0 24px 16px; }
 .app[data-v="5"] .pk-deck { grid-row: 2; }
 .app[data-v="5"] .pk-r1 h3 { font-size: 40px; line-height: 44px; }
+/* V5: o seletor fica no alto do palco; a lista abre para baixo, por cima das capas (para cima ela era cortada pelo palco) */
+.app[data-v="5"] .pk-info { position: relative; z-index: 2; }
+.app[data-v="5"] .pk-srv .search-list { top: calc(100% + 8px); bottom: auto; }
 </style>
 
 <div class="stage">
