@@ -1346,16 +1346,11 @@ function framePlay(dt, t, chosen) {
   // câmera: em você enquanto localiza; depois, de frente para o meio do caminho até o continente medido
   let yaw = (-origin[1] - 90) * D, pitch = clamp(origin[0], -40, 40) * D * 0.8;
   if (now && !reduce) { const c = CONTS[now.k].c, [la, lo] = toLL(vO.clone().add(toV(c[0], c[1]))); yaw = (-lo - 90) * D; pitch = clamp(la, -45, 45) * D * 0.8; }
-  if (t < 3 && !reduce) yaw += Math.sin(t * 5) * 0.18 * clamp(1 - t / 3) * clamp(t * 2); // olhando em volta
   tilt.rotation.y = chosen && !reduce ? ease(clamp((t - (PM_DONE - 0.6)) / 1.6)) * Math.PI * 2 : 0; // giro de comemoração (uma volta inteira)
   frame0.yaw = yaw; frame0.pitch = pitch; frame0.dist = FULL9;
-  if (now && now.k !== lastCont) { lastCont = now.k; boing(0.05); } // chegou num continente
-  const tested = pmap.arcs.filter(a => t >= a.tt).length; if (tested > lastTested) { lastTested = tested; boing(0.035); } // continente medido
-  // gelatina: estica de um lado, achata do outro, e assenta
-  const je = time - jelly.t, j = reduce ? 0 : jelly.a * Math.exp(-je * 4.5) * Math.sin(je * 22);
-  tilt.scale.set(1 + j, 1 - j, 1 + j);
-  // bolinha de pacote
-  if (!now || reduce || pmap.done) { ball.visible = false; return; }
+  // sem quiques (Gabriel não gostou): sem gelatina e sem a bolinha; fica a câmera virando para o continente e o giro final
+  ball.visible = false; return;
+  // bolinha de pacote (desligada)
   const m = metricAt(now, t - (now.tt - PM_STEP), PM_STEP)[0], tri = x => 1 - Math.abs(1 - 2 * (x % 1));
   let u = tri(time * 0.55), lift = 0, sc = 1, a = 1;
   if (m === 'Measuring ping') u = tri(time * 0.9);
