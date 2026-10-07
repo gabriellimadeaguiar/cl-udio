@@ -447,6 +447,8 @@ const markers = new THREE.Points(mkGeo, mkMat); markers.frustumCulled = false; g
 
 const frame0 = { yaw: 0, pitch: 0, dist: 4, chord: 1 }, cur = { yaw: 0, pitch: 0, dist: 6 };
 let xlShow = 0, xlStart = -10;
+// distância do planeta inteiro no Immersive: 6,45 deixa o globo 20% menor que os 5,2 de antes (pedido do Gabriel)
+const FULL9 = 6.45, SCAN9 = 5.45;
 let scan = null, offY9 = 0; // offY9: a varredura sobe o globo para a barra de status caber embaixo // varredura da biblioteca: ver "Biblioteca" mais abaixo
 let boot = null; // login e carregamento (network map): ver "Login e carregamento" mais abaixo
 
@@ -649,12 +651,12 @@ function fitDist() {
   if (boot) return boot.dist;
   if (isV7() && (away7 || e7 > 0.35)) return 4.8;
   if (isV8() && !isV9()) return 6;
-  if (isV9() && (show9 || scan)) return 5.2; // órbita aberta: o planeta inteiro, com os jogos em volta // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
+  if (isV9() && (show9 || scan)) return FULL9; // órbita aberta: o planeta inteiro, com os jogos em volta // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
   const band = Math.max(140, Math.min(vw - bandSide, vh - bandCut) * 0.8), worldPerPx = 2 * Math.tan(15 * D) / vh;
   // a escala vale na superfície do globo (distância − 1): rotas curtas pedem a câmera bem perto
   const fit = 1 + frame0.chord / (band * worldPerPx);
   // V9 fechada: rota curta aproxima o globo (até 2,4, para ainda ler como planeta); rota longa fica no planeta inteiro
-  return isV9() ? clamp(fit, 2.4, 5.2) : clamp(fit, 1.22, 7.5);
+  return isV9() ? clamp(fit, 2.4, FULL9) : clamp(fit, 1.22, 7.5);
 }
 // 1 com a câmera longe; menor perto, para pontos e rotas manterem o tamanho na tela
 const zoomK = d => clamp((d - 1) / 3, 0.08, 1);
@@ -832,7 +834,7 @@ function frameV8(dt) {
     if (reduce) { r9 = tr; v9 = 0; } else { v9 += ((tr - r9) * 170 - v9 * 21) * dt; r9 += v9 * dt; }
   } else if (!hover8 && !panel8 && !reduce) a8 += dt * 0.035;
   // V9: a órbita usa o tamanho do planeta inteiro (5,2), para não mudar quando o globo aproxima numa rota curta; o recorte usa o tamanho real
-  const gpR = globePx(), gp = v9on ? globePxAt(5.2) : gpR, cx = vw / 2 - off8, cy = vh / 2 - camOff[1] - offY9;
+  const gpR = globePx(), gp = v9on ? globePxAt(FULL9) : gpR, cx = vw / 2 - off8, cy = vh / 2 - camOff[1] - offY9;
   let ry = Math.min(gp * 1.32, vh / 2 - (v9on ? 128 + offY9 / 2 : 44)), rx = Math.min(Math.max(gp * 1.7, ry * 1.25), (vw - bandRight) / 2 - 44);
   orbR = [rx, ry, cx, cy];
   if (v9on) { const e0 = Math.min(1, (gp + 64) / ry), e = e0 + (1 - e0) * r9; rx *= e; ry *= e; } // fechada: o destaque fica logo abaixo do globo
@@ -933,7 +935,7 @@ function startBoot() {
   setPanel8(false); setShow9(false); $('app').classList.remove('sb-open');
   // globo à direita, girando devagar, centrado em você
   const [lat, lon] = [origin[0], origin[1]];
-  boot = { phase: 'login', t: 0, dist: 5.2, off: 0, yaw0: (-lon - 90) * D + 0.6, pitch: clamp(lat, -40, 40) * D * 0.6, arcs: [], best: [] };
+  boot = { phase: 'login', t: 0, dist: FULL9, off: 0, yaw0: (-lon - 90) * D + 0.6, pitch: clamp(lat, -40, 40) * D * 0.6, arcs: [], best: [] };
   $('app').dataset.boot = 'login'; $('app').classList.remove('boot-out');
   $('bootErr').hidden = true; $('bsBar').style.width = '0%';
   [...$('bsSteps').children].forEach(li => li.className = '');
@@ -947,7 +949,7 @@ function scanBoot() {
   boot.phase = 'scan'; boot.t = 0; $('app').dataset.boot = 'scan';
   $('bsSub').textContent = '';
   // uma rota (arco) até cada região de servidores; o ping simulado é o mesmo da home (distância), com um pequeno sorteio
-  const saveR = routeR; routeR = (4.4 - 1) / 2;
+  const saveR = routeR; routeR = (SCAN9 - 1) / 2;
   boot.arcs = bootRows.map(([k, r], i) => {
     let v = toV(r.c[0], r.c[1]), w = vO.angleTo(v);
     if (w < 0.03) { v = toV(r.c[0] + 1.2, r.c[1] + 1.4); w = vO.angleTo(v); }
@@ -958,7 +960,7 @@ function scanBoot() {
   routeR = saveR;
   // as melhores: as 3 de menor ping
   boot.best = [...boot.arcs].sort((a, b) => a.ms - b.ms).slice(0, 3).map(a => a.k);
-  boot.dist = 4.4; frame0.dist = boot.dist;
+  boot.dist = SCAN9; frame0.dist = boot.dist;
 }
 // sai do fluxo: limpa as rotas do mapa e devolve o globo à home
 function endBoot(keepHash) {
