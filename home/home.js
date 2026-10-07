@@ -1092,7 +1092,7 @@ function scanBump(i) {
 }
 function frameScan(dt) {
   if (!scan) { if (offY9 > 0.3) { offY9 += (0 - offY9) * (reduce ? 1 : 1 - Math.exp(-dt * 4)); if (offY9 < 0.3) offY9 = 0; camera.setViewOffset(vw, vh, off8, camOff[1] + offY9, vw, vh); camera.updateProjectionMatrix(); } return; }
-  scan.t += dt; const t = scan.t;
+  scan.t += dt * (window.PK_SCANX || 1); const t = scan.t; // PK_SCANX: só para testar acelerado
   // o globo gira devagar enquanto procura
   frame0.yaw = scan.yaw + t * 0.25; frame0.pitch = 0.25;
   // radar centrado no globo, um pouco maior que ele
@@ -1123,6 +1123,7 @@ function frameScan(dt) {
   $('scBar').style.width = (pr * 100).toFixed(1) + '%'; $('scP').textContent = Math.round(pr * 100) + '%';
   if (done) { $('scT').textContent = `${scan.n} games added. Optimize any of them from the globe.`; $('scPath').textContent = ''; }
   else if (li < 0) { $('scT').textContent = 'Looking for game launchers'; if (t - scanPathT > 0.09) { scanPathT = t; $('scPath').textContent = ['C:\\Program Files', 'C:\\Program Files (x86)', 'C:\\Users\\Player\\AppData\\Local', 'D:\\Games'][Math.floor(t * 8) % 4]; } }
+  else if (li >= LAUNCHERS.length) { $('scT').textContent = 'Adding games to your library'; $('scPath').textContent = ''; } // depois do último launcher, antes do fim (antes travava aqui: LAUNCHERS[li] não existia)
   else {
     const [n, root, gs] = LAUNCHERS[li];
     $('scT').textContent = `Scanning ${n}`;
