@@ -988,6 +988,28 @@ p { margin: 0; }
 .app[data-v="5"] .pk-srv .search-list { top: calc(100% + 8px); bottom: auto; }
 /* V5: o brilho da capa selecionada passava do topo do carrossel e era cortado. O carrossel ganha 56 px de folga em cima (sob a linha do servidor), sem mudar o tamanho das capas. */
 .app[data-v="5"] .pk-deck { --padT: 56px; --oy: 28px; margin-top: -56px; }
+
+/* ---------- V6: carrossel em toda a largura ----------
+   Capas ocupam a largura do palco; título, servidor e CTA no mesmo lugar da V1 (embaixo à esquerda); Route Monitoring embaixo à direita.
+   O globo vira uma janelinha redonda no topo direito do Route Monitoring e, no hover, cresce sobre a home (home.js, frameV6). */
+.app[data-v="6"] .pk { z-index: 4; grid-template-rows: minmax(0, 1fr) auto; }
+.app[data-v="6"] .pk::after { background: radial-gradient(60% 70% at 50% 40%, transparent 30%, var(--stage) 100%), linear-gradient(0deg, var(--stage) 0%, transparent 40%); }
+.app[data-v="6"] .pk-l, .app[data-v="6"] .pk-r { display: contents; }
+.app[data-v="6"] .pk-deck { grid-column: 1 / -1; grid-row: 1; }
+.app[data-v="6"] .pk-info { grid-column: 1; grid-row: 2; align-self: end; }
+.app[data-v="6"] .pk-tele { grid-column: 2; grid-row: 2; margin: 0 24px 24px; }
+.app[data-v="6"] .pk-tele .w-head { padding-right: 112px; }
+.pk-mini { display: none; }
+.app[data-v="6"] .pk-mini { display: block; position: absolute; top: -48px; right: 16px; width: 104px; height: 104px; border-radius: 50%; cursor: zoom-in; z-index: 2; }
+.app[data-v="6"] .pk-r canvas { position: fixed; inset: auto; z-index: 3; transform-origin: 50% 50%; pointer-events: none; will-change: transform; }
+.app[data-v="6"].pk-big .pk-r canvas { pointer-events: auto; cursor: grab; }
+.pk-veil { display: none; }
+.app[data-v="6"] .pk-veil { display: block; position: fixed; z-index: 2; inset: 0; background: var(--stage); opacity: 0; pointer-events: none; }
+.app[data-v="6"] .pk-tag { position: fixed; z-index: 4; }
+/* cabeçalho (Live, rota, legenda) só com o globo grande, no topo da home */
+.app[data-v="6"] .pk-head { position: fixed; z-index: 4; left: 0; top: 0; width: 0; opacity: 0; pointer-events: none; transition: opacity var(--motion-duration-200); }
+.app[data-v="6"].pk-big .pk-head { opacity: 1; }
+.app[data-v="6"] .pk-tele { overflow: visible; }
 </style>
 
 <div class="stage">
@@ -995,6 +1017,7 @@ p { margin: 0; }
     <button class="vchip" type="button" data-v="1" aria-pressed="true">V1 &middot; Stage + globe</button>
     <button class="vchip" type="button" data-v="4" aria-pressed="false">V4 &middot; Swapped</button>
     <button class="vchip" type="button" data-v="5" aria-pressed="false">V5 &middot; Game art</button>
+    <button class="vchip" type="button" data-v="6" aria-pressed="false">V6 &middot; Wide carousel</button>
   </nav>
   <div class="app" id="app" data-v="1">
     <div class="cz-overlay" aria-hidden="true"></div>

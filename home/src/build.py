@@ -38,6 +38,7 @@ VCHIPS = '''<nav class="vchips" aria-label="Layout version">
     <button class="vchip" type="button" data-v="1" aria-pressed="true">V1 &middot; Stage + globe</button>
     <button class="vchip" type="button" data-v="4" aria-pressed="false">V4 &middot; Swapped</button>
     <button class="vchip" type="button" data-v="5" aria-pressed="false">V5 &middot; Game art</button>
+    <button class="vchip" type="button" data-v="6" aria-pressed="false">V6 &middot; Wide carousel</button>
   </nav>
   '''
 out = out.replace('<div class="stage">\n  <div class="app" id="app">', '<div class="stage">\n  ' + VCHIPS + '<div class="app" id="app" data-v="1">', 1)
