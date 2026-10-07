@@ -100,21 +100,15 @@ function makeCard(g, i) {
   const fit = () => b.classList.toggle('wide', im.naturalWidth / im.naturalHeight > 1.05);
   if (im.complete) fit(); else im.addEventListener('load', fit);
   b.addEventListener('click', () => { if (!moved) select(i); });
-  deck.insertBefore(b, addCard);
+  deck.appendChild(b);
   return b;
 }
-// card-add do protótipo ("Add game or app") como mais uma posição do carrossel, entre o último e o primeiro jogo
-const addCard = document.createElement('div');
-addCard.className = 'pk-card pk-add-card card-add'; addCard.tabIndex = -1; addCard.setAttribute('role', 'button');
-addCard.innerHTML = `<img src="${document.querySelector('.card-add img')?.src || ''}" alt=""><span>Add game or app</span>`;
-addCard.addEventListener('click', () => { if (!moved) openAdd(); });
-deck.appendChild(addCard);
 const cards = GAMES.map(makeCard);
 $('pkTotal').textContent = N;
 let sel = 0, frac = 0;
-const wrapK = k => { const M = N + 1; return ((k % M) + M + M / 2) % M - M / 2; };
+const wrapK = k => ((k % N) + N + N / 2) % N - N / 2;
 function layout() {
-  [...cards, addCard].forEach((c, i) => {
+  cards.forEach((c, i) => {
     const k = wrapK(i - sel - frac), a = Math.abs(k);
     const x = k * 62 - Math.sign(k) * Math.max(0, a - 1) * 8, z = -a * 170, ry = -Math.sign(k) * Math.min(a, 1.3) * 24, sc = 1 - Math.min(a, 2.5) * 0.07;
     c.style.transform = `translate(-50%, -50%) translateX(${x}%) translateZ(${z}px) rotateY(${ry}deg) scale(${sc})`;
@@ -122,7 +116,6 @@ function layout() {
     c.style.filter = `brightness(${1 - Math.min(a, 2.5) * 0.26}) saturate(${1 - Math.min(a, 2.5) * 0.2})`;
     c.style.zIndex = String(20 - Math.round(a * 2));
     c.style.pointerEvents = a > 3.2 ? 'none' : '';
-    if (c === addCard) return;
     c.setAttribute('aria-selected', i === sel ? 'true' : 'false');
     c.classList.toggle('on', GAMES[i].state === 'on');
   });
@@ -139,7 +132,7 @@ addEventListener('pointermove', e => {
 addEventListener('pointerup', () => {
   if (dragX === null) return;
   dragX = null; deck.classList.remove('drag');
-  if (moved) { let step = Math.round(frac + Math.sign(frac) * 0.2); if (wrapK(sel + step - N) === 0) step += Math.sign(step); frac = 0; select(sel + step); setTimeout(() => { moved = false; }, 0); }
+  if (moved) { const step = Math.round(frac + Math.sign(frac) * 0.2); frac = 0; select(sel + step); setTimeout(() => { moved = false; }, 0); }
 });
 let wheelAcc = 0, wheelT = 0;
 deck.addEventListener('wheel', e => {
@@ -227,6 +220,7 @@ addIn.addEventListener('input', renderAdd);
 addIn.addEventListener('keydown', e => { if (e.key === 'Enter') { const f = addList.querySelector('.sl-item'); if (f) addGame(f.dataset.name); } });
 addList.addEventListener('click', e => { const it = e.target.closest('.sl-item'); if (it) addGame(it.dataset.name); });
 $('pkAddCancel').addEventListener('click', closeAdd);
+$('pkAddBtn').addEventListener('click', openAdd);
 addEventListener('keydown', e => { if (e.key === 'Escape' && !addMd.hidden) closeAdd(); });
 
 /* ---------- Otimizar: o comportamento da ExitLag ---------- */
