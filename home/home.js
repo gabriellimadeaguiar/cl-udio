@@ -262,7 +262,8 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && !addMd.hidden) clos
 const cta = $('pkCta');
 const fmtDur = s => { s = Math.max(0, Math.floor(s)); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = s % 60; return (h ? String(h).padStart(2, '0') + ':' : '') + String(m).padStart(2, '0') + ':' + String(x).padStart(2, '0'); };
 const onMsg = g => `Picked the <b>${g.lanes} fastest</b> of ${CANDS.length} possible routes. Your game goes out through all ${g.lanes} at once; the first packet to arrive wins.`;
-const IDLE = 'Your game is going through your ISP route only.';
+// sem dados da rota da operadora (Gabriel, 07/10): nada de comparativo com a ISP, só o que a ExitLag mede
+const IDLE = 'Not optimized. Optimize to route this game through ExitLag and measure it live.';
 // ExitLag desligada na topbar: no lugar do Optimize, um aviso (pedido do Gabriel)
 const offInfo = document.createElement('div'); offInfo.className = 'pk-offinfo'; offInfo.setAttribute('role', 'status');
 offInfo.innerHTML = '<i class="dt"></i><span><b>ExitLag is off</b><span class="t-var">Turn it on in the top bar to optimize</span></span>';
@@ -622,7 +623,7 @@ let fastLane = 0, hoverLane = -1;
 function sample(on) {
   const L = GAMES[sel].lanes;
   spike = Math.max(0, spike - 1);
-  if (Math.random() < 0.012) { spike = 6 + Math.random() * 10; if (on && time > 2 && !fail) logMsg('Spike on your ISP route. ExitLag was not affected.'); }
+  if (Math.random() < 0.012) { spike = 6 + Math.random() * 10; }
   const isp = baseIsp * (1 + (Math.random() - 0.5) * 0.16) + (spike ? baseIsp * (0.35 + Math.random() * 0.5) : 0);
   const ispLost = Math.random() < (spike ? 0.18 : 0.008);
   let best = Infinity, allLost = true;
@@ -645,17 +646,17 @@ const f1 = v => v.toFixed(1);
 function paintTele() {
   const g = GAMES[sel], on = g.state === 'on', L = g.lanes;
   const ip = avg(hist.isp), xp = avg(hist.xl), ij = jit(hist.isp), xj = jit(hist.xl), il = lossPct(0), xl = lossPct(1);
-  $('kPing').textContent = Math.round(on ? xp : ip);
-  $('kJit').textContent = f1(on ? xj : ij);
-  $('kLoss').textContent = f1(on ? xl : il);
-  const d = $('kDelta'); d.style.display = on ? '' : 'none'; if (on) d.textContent = '−' + Math.max(0, Math.round((1 - xp / ip) * 100)) + '%';
-  $('kPingVs').innerHTML = on ? `vs <em>${Math.round(ip)} ms</em>` : 'Optimize to compare';
-  $('kJitVs').innerHTML = on ? `vs <em>${f1(ij)} ms</em>` : '';
-  $('kLossVs').innerHTML = on ? `vs <em>${f1(il)}%</em>` : '';
+  // só medimos com a ExitLag ligada; antes disso não há número
+  $('kPing').textContent = on ? Math.round(xp) : '–';
+  $('kJit').textContent = on ? f1(xj) : '–';
+  $('kLoss').textContent = on ? f1(xl) : '–';
+  $('kDelta').style.display = 'none';
+  $('kPingVs').innerHTML = on ? `Route ${fastLane + 1}, fastest now` : g.state === 'testing' ? 'Measuring…' : 'Optimize to measure';
+  $('kJitVs').innerHTML = ''; $('kLossVs').innerHTML = '';
   const failing = on && fail && fail.k > 0.5;
-  $('kRoutes').textContent = on ? (failing ? L - 1 : L) : 1;
+  $('kRoutes').textContent = on ? (failing ? L - 1 : L) : 0;
   $('kRoutesOf').textContent = on ? '/' + L : '';
-  $('kRoutesVs').textContent = on ? 'in parallel' : 'ISP only';
+  $('kRoutesVs').textContent = on ? 'in parallel' : 'Not optimized';
   // rota mais rápida com histerese (troca só com 2 ms de vantagem), para o destaque não pular a cada leitura
   for (let i = 0; i < L; i++) laneEma[i] = laneEma[i] ? laneEma[i] * 0.7 + laneNow[i] * 0.3 : laneNow[i];
   const down = i => on && fail && fail.lane === i && fail.k > 0.3;
@@ -674,9 +675,9 @@ function paintTele() {
 }
 const ispPath = $('pkIspPath'), xlPath = $('pkXlPath');
 function drawChart() {
-  const on = GAMES[sel].state === 'on', top = baseIsp * 1.7;
+  const on = GAMES[sel].state === 'on', top = baseXl * 1.9;
   const path = arr => arr.map((v, i) => (i ? 'L' : 'M') + ((i + HN - arr.length) / (HN - 1) * 498).toFixed(1) + ' ' + (32 - Math.min(v, top) / top * 31).toFixed(1)).join('');
-  ispPath.setAttribute('d', path(hist.isp)); xlPath.setAttribute('d', on ? path(hist.xl) : '');
+  ispPath.setAttribute('d', ''); xlPath.setAttribute('d', on ? path(hist.xl) : '');
 }
 
 /* ---------- Rótulos no globo ---------- */
@@ -1138,7 +1139,7 @@ function frameBoot(dt) {
   if (boot.phase === 'scan') {
     if ($('bsT').textContent !== BOOT_STEPS[st][1]) $('bsT').textContent = BOOT_STEPS[st][1];
     const cur = st === 2 && boot.arcs.find((a, i) => t >= 7 + i * B_STEP && t < 7 + (i + 1) * B_STEP), now = cur && metricAt(cur, t - 7 - boot.arcs.indexOf(cur) * B_STEP, B_STEP);
-    const sub = st === 0 ? `${origin[2]} · finding your ISP route` : st === 1 ? '6 continents · 1,500+ servers' : cur ? `${now[0]} · ${CONTS[cur.k].n}` : st === 2 ? 'Sending test packets' : st === 3 ? 'Comparing ping, jitter and packet loss' : `${boot.best.length} best routes are ready`;
+    const sub = st === 0 ? `${origin[2]} · finding your location` : st === 1 ? '6 continents · 1,500+ servers' : cur ? `${now[0]} · ${CONTS[cur.k].n}` : st === 2 ? 'Sending test packets' : st === 3 ? 'Comparing ping, jitter and packet loss' : `${boot.best.length} best routes are ready`;
     if ($('bsSub').textContent !== sub) $('bsSub').textContent = sub;
     [...$('bsSteps').children].forEach((li, i) => li.className = i < st ? 'done' : i === st ? 'now' : '');
     const pr = clamp(t / NM_END); $('bsBar').style.width = (pr * 100).toFixed(1) + '%'; $('bsBar').parentElement.setAttribute('aria-valuenow', Math.round(pr * 100));
@@ -1384,8 +1385,8 @@ promoEl.querySelector('.pr-x').addEventListener('click', closePromo);
 promoEl.querySelector('.pr-no').addEventListener('click', closePromo);
 promoEl.querySelector('.pr-go').addEventListener('click', e => { e.currentTarget.textContent = 'Opening checkout…'; setTimeout(closePromo, 900); });
 function paintPromo() {
-  const g = GAMES[sel], r = REGIONS[g.region].n, il = lossPct(0), ij = jit(hist.isp);
-  $('prD').innerHTML = `Your ISP route to ${r}: <b class="tnum">${f1(Math.max(il, 0.8))}%</b> loss, <b class="tnum">${Math.round(Math.max(ij, 4))} ms</b> jitter. Annual plan.`;
+  const g = GAMES[sel], r = REGIONS[g.region].n;
+  $('prD').innerHTML = `The network map found a <b class="tnum">${estPing(g.region)} ms</b> route to ${r}, with ${g.lanes} paths in parallel. Annual plan.`;
 }
 // chamado ao abrir/fechar os detalhes e quando o mapa termina
 function promoCheck() {
