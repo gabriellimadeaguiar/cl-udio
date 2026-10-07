@@ -1032,7 +1032,7 @@ function frameBoot(dt) {
   if (boot.phase === 'scan' && t >= 7.0) { boot.phase = 'out'; boot.out = 0; $('app').dataset.boot = 'out'; }
   if (boot.phase === 'out') {
     boot.out += dt;
-    if (boot.out > 1.1) { $('app').classList.add('boot-out'); endBoot(); setTimeout(() => $('app').classList.remove('boot-out'), 1200); }
+    if (boot.out > 1.1) { $('app').classList.add('boot-out'); endBoot(); startScan(); setTimeout(() => $('app').classList.remove('boot-out'), 1200); } // fluxo completo: login, rotas, varredura de jogos, home
   }
 }
 
