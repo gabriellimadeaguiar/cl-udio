@@ -209,3 +209,8 @@
 .app[data-v="4"] .pk-pg { display: none; }
 .app[data-v="4"] .pk-tele .pk-lanes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .app[data-v="4"] .pk-tele .pk-lane { min-width: 0; padding: 0 6px; }
+/* V5: o carrossel tem altura fixa; o título (até 2 linhas, maior) cresce para cima sem encolher as capas (pedido do Gabriel) */
+.app[data-v="5"] .pk-l { grid-template-rows: minmax(0, 1fr) 190px; }
+.app[data-v="5"] .pk-info { order: 0; grid-row: 1; align-self: end; padding: 0 24px 16px; }
+.app[data-v="5"] .pk-deck { grid-row: 2; }
+.app[data-v="5"] .pk-r1 h3 { font-size: 40px; line-height: 44px; }
