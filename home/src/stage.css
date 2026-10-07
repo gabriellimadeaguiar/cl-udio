@@ -50,8 +50,6 @@
 .pk-srv.open .pill svg { transform: rotate(180deg); }
 .pk-srv .search-list { right: auto; min-width: 100%; top: auto; bottom: calc(100% + 8px); }
 .pk-srv .sl-item .t-var { margin-left: auto; padding-left: 16px; }
-.pk-plat { display: inline-flex; align-items: center; gap: 4px; }
-.pk-plat svg { width: 14px; height: 14px; }
 .pk-cta { min-width: 152px; }
 .pk-cta .tnum { color: var(--on-surface-variant); }
 .pk-cta svg { width: 16px; height: 16px; }
