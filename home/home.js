@@ -1136,6 +1136,25 @@ function frameScan(dt) {
   if (t >= scan.end + 3.0) endScan();
 }
 
+/* ---------- ExitLag desligada (pedido do Gabriel) ----------
+   Com o toggle da topbar desligado, o globo puxa para o laranja da operadora, bem de leve: borda e atmosfera,
+   continentes e pontos de servidor; as rotas ExitLag somem e fica só a rota da operadora. */
+let offK = 0, offPrev = 0;
+const RIM0 = C.rim.clone(), ORANGE = new THREE.Color('#eb8322');
+const landCol = C.dim.clone(), svCol = C.route.clone();
+landMat.uniforms.uCol.value = landCol; svMat.uniforms.uCol.value = svCol;
+function frameOff(dt) {
+  const off = $('app').classList.contains('el-off') ? 1 : 0;
+  // desligar a ExitLag para as conexões ativas (como diz o diálogo do protótipo)
+  if (off && !offPrev) { GAMES.forEach(g => { if (g.state === 'on' || g.state === 'testing') g.state = 'off'; }); xlShow = 0; fail = null; logMsg(IDLE); paintCta(); layout(); }
+  offPrev = off;
+  if (offK === off) return;
+  offK += (off - offK) * (reduce ? 1 : 1 - Math.exp(-dt * 3)); if (Math.abs(off - offK) < 0.002) offK = off;
+  C.rim.copy(RIM0).lerp(ORANGE, 0.55 * offK);
+  landCol.copy(C.dim).lerp(ORANGE, 0.32 * offK);
+  svCol.copy(C.route).lerp(ORANGE, offK);
+}
+
 /* ---------- Loop ---------- */
 let time = 0, lastT = performance.now(), lastS = 0, lastP = 0;
 resize();
@@ -1172,7 +1191,7 @@ function frame() {
     });
     routes.xl.forEach((r, i) => {
       r.u.uDraw.value = !xlShow ? 0 : reduce ? 1 : testing ? ease(clamp((xa - 1.5 - i * 0.12) / 0.6)) : ease(clamp((xa - i * 0.3) / 0.8));
-      r.u.uOp.value = xlShow; r.u.uTime.value = time;
+      r.u.uOp.value = xlShow * (1 - offK); r.u.uTime.value = time;
       r.u.uFail.value = fail && fail.lane === i ? fail.k : 0;
       // a mais rápida fica bem mais forte; passar o mouse num chip manda
       r.u.uGain.value = hoverLane >= 0 ? (hoverLane === i ? 0.95 : 0.12) : on ? (i === fastLane ? 1 : 0.22) : 0.42;
@@ -1197,7 +1216,7 @@ function frame() {
     }
     routes.xl.forEach((r, ri) => {
       const sp = 0.42 * (routes.xl[0].len / r.len), draw = r.u.uDraw.value;
-      for (let i = 0; i < PK; i++) { const u = (time * sp + i / PK) % 1; putPk(r, u, C.route, u < draw ? (fail && fail.lane === ri ? 1 - fail.k : 1) * (on && ri === fastLane ? 0.9 : on ? 0.3 : 0.55) : 0); }
+      for (let i = 0; i < PK; i++) { const u = (time * sp + i / PK) % 1; putPk(r, u, C.route, u < draw && offK < 0.5 ? (fail && fail.lane === ri ? 1 - fail.k : 1) * (on && ri === fastLane ? 0.9 : on ? 0.3 : 0.55) : 0); }
     });
   }
   while (j < packetsN) pkA[j++] = 0;
@@ -1207,7 +1226,7 @@ function frame() {
   if (time - lastS > 0.1) { lastS = time; sample(on); drawChart(); }
   if (time - lastP > 0.25) { lastP = time; paintTele(); }
 
-  frameV7(dt); frameV8(dt); frameBoot(dt); frameScan(dt);
+  frameV7(dt); frameV8(dt); frameBoot(dt); frameScan(dt); frameOff(dt);
   scene.updateMatrixWorld();
   placeTags(clamp((age - 0.6) / 0.4));
   composer.render();
