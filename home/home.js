@@ -298,7 +298,7 @@ function makeRoute(pts, color, radius, speed, gain = 1) {
   const uniforms = { uCol: { value: color }, uBad: { value: C.bad }, uDraw: { value: 0 }, uOp: { value: 0 }, uFail: { value: 0 }, uTime: { value: 0 }, uSpeed: { value: speed }, uGain: { value: gain } };
   for (const halo of [0, 1]) {
     const mat = new THREE.ShaderMaterial({ uniforms: { ...uniforms, uHalo: { value: halo } }, vertexShader: routeVS, fragmentShader: routeFS, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
-    routeGroup.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 260, halo ? radius * 4.5 : radius, 10, false), mat));
+    routeGroup.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 420, halo ? radius * 4.5 : radius, 10, false), mat));
   }
   return { curve, u: uniforms, len: curve.getLength() };
 }
@@ -342,7 +342,7 @@ function rebuild() {
   clearRoutes();
   const w = routeAngle;
   frame0.chord = 2 * Math.sin(w / 2) * 1.45; frame0.dist = fitDist();
-  routeR = zoomK(frame0.dist);
+  routeR = Math.max((frame0.dist - 1) / 3, 0.08); // largura constante na tela, perto ou longe
   routes = {
     isp: makeRoute(smoothPath(vO, vS, w, u => 0.62 * Math.sin(Math.PI * u) + 0.16 * Math.sin(3 * Math.PI * u), 0.35), C.isp, 0.0032, 0.35),
     xl: SHAPES[g.lanes].map(([lat, lift], i) => makeRoute(smoothPath(vO, vS, w, u => lat * Math.sin(Math.PI * u), lift), C.route, 0.0032, 0.8 + i * 0.05, 0.42))
@@ -451,7 +451,8 @@ canvas.addEventListener('pointermove', e => { if (!gDrag) return; dYaw = gDrag[2
 canvas.addEventListener('pointerup', () => { gDrag = null; canvas.classList.remove('drag'); lastDrag = time; });
 
 /* ---------- Pós e tamanho ---------- */
-const composer = new EffectComposer(renderer);
+// MSAA no alvo do composer: sem ele, a rota fina vira pontilhado quando a câmera está longe
+const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 }));
 composer.addPass(new RenderPass(scene, camera));
 const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.8, 0.5, 0.3);
 composer.addPass(bloom);
