@@ -461,7 +461,7 @@
 .pk-tag-node { padding: 2px var(--spacing-xs); font-size: 11px; line-height: 14px; font-weight: 500; background: #20242dd9; box-shadow: none; color: var(--on-surface-variant); }
 .app[data-boot] .pk-tag-node { opacity: 0 !important; }
 /* mapa passivo rodando: sem o jogo em destaque nem a órbita (pedido do Gabriel) */
-.app[data-pmap="on"] :is(.pk-orbit, .pk-name9) { opacity: 0 !important; pointer-events: none !important; transition: opacity .3s ease; }
+.app[data-pmap] :is(.pk-orbit, .pk-name9) { opacity: 0 !important; pointer-events: none !important; transition: opacity .3s ease; }
 /* jogo não otimizado: Route Monitoring fica só com o título, o estado e a mensagem */
 .pk-tele.pk-idle :is(.pk-kpis, .chart-wrap, .pk-lanes) { display: none !important; }
 
@@ -488,3 +488,11 @@
 .tour-skip { color: var(--on-surface-variant); }
 .tour-tip[data-side="corner"] .tour-arrow { display: none; }
 .tour.free .tour-hole { box-shadow: 0 0 0 2000px transparent, inset 0 0 0 1px transparent; }
+/* Network map › varredura (Gabriel, 08/10): o radar nasce do globo, depois o contador e a barra entram */
+.app[data-scan="on"] .scan-radar { animation: srIn 1s cubic-bezier(.22, 1, .36, 1) both; }
+.app[data-scan="on"] .scan-core { animation: scIn .6s cubic-bezier(.22, 1, .36, 1) .35s both; }
+.app[data-scan="on"] .scan-bar { animation: sbIn .6s cubic-bezier(.22, 1, .36, 1) .5s both; }
+@keyframes srIn { from { opacity: 0; transform: scale(.78); } }
+@keyframes scIn { from { opacity: 0; transform: translate(-50%, -50%) scale(.92); } }
+@keyframes sbIn { from { opacity: 0; transform: translate(-50%, 16px); } }
+@media (prefers-reduced-motion: reduce) { .app[data-scan="on"] :is(.scan-radar, .scan-core, .scan-bar) { animation: none; } }

@@ -1279,7 +1279,7 @@ function frameScan(dt) {
    Quando termina, as 3 melhores acendem, a pílula vira "Network map ready" e o resto destrava. */
 const pmGroup = new THREE.Group(); globe.add(pmGroup);
 const PM_OPEN = ['Home', 'Network Analyzer', 'PC Boost', 'Traffic Shaper', 'General Settings'];
-const PM_DONE = 42, PM_END = 46.3, PM_STEP = 6; // o network map dura 42 s (Gabriel); a pílula de pronto fica até 46,3 s
+const PM_DONE = 42, PM_END = 45, PM_STEP = 6; // o network map dura 42 s (Gabriel); depois, 3 s de "pronto" e passa para a varredura de jogos
 const pmPill = document.createElement('div'); pmPill.className = 'pm-pill'; pmPill.setAttribute('role', 'status'); pmPill.setAttribute('aria-live', 'polite');
 pmPill.innerHTML = `<span class="pm-ic" aria-hidden="true"><i class="pm-spin"></i><svg viewBox="0 0 16 16" fill="none"><path d="M4 8.3l2.6 2.6L12 5.4"/></svg></span>
   <span class="pm-tx"><b id="pmT">Mapping your network</b><span class="t-var" id="pmS"></span></span><span class="pm-pc tnum" id="pmP">0%</span><i class="pm-bar"><i id="pmBar"></i></i>`;
@@ -1326,7 +1326,7 @@ function endPmap() {
   tilt.scale.set(1, 1, 1); tilt.rotation.y = 0; ball.visible = false;
   pmap = null; delete $('app').dataset.pmap; lockNav(false); paintCta();
   if (wasBusy) promo.armed = true; // saiu antes do fim (Skip ou outra versão): o mapa conta como pronto
-  else setTimeout(() => { if (!boot && !scan && !pmap) startScan(); }, 400); // mapa terminou › varredura de jogos
+  else if (!boot && !scan) setTimeout(() => { if (!boot && !scan && !pmap) startScan(); }, 0); // mapa terminou › varredura de jogos, que entra animada
   rebuild(); frame0.dist = fitDist();
 }
 let pmPaintT = 0;
@@ -1385,7 +1385,7 @@ function framePmap(dt) {
     promo.armed = true; promoCheck(); // mapa pronto: se os detalhes de um jogo já estão abertos, a oferta entra agora
     // fim do mapa (pedido do Gabriel): o globo pulsa, os jogos abrem em órbita por um instante e fecham, ficando só o destaque
     pulseGlobe();
-    setTimeout(() => { if (!pmap || panel8) return; setShow9(true); setTimeout(() => { if (!panel8) setShow9(false); }, 1700); }, 450);
+    // sem abrir a órbita aqui: os jogos ainda não foram encontrados; o mapa passa direto para a varredura (Gabriel, 08/10)
   }
   if (time - pmPaintT > 0.1 || pmap.done) {
     pmPaintT = time;
@@ -1393,7 +1393,7 @@ function framePmap(dt) {
     const m = now && metricAt(now, t - (now.tt - PM_STEP), PM_STEP);
     if (m && pmap.mk !== m[0] + now.k) { pmap.mk = m[0] + now.k; pmap.mv = m[1](now); } // valor sorteado uma vez por métrica, para dar para ler
     const T = pmap.done ? 'Network map ready' : t < 0.8 ? 'Locating you' : t < 3 ? 'Reaching every continent' : m ? m[0] : 'Choosing the best routes';
-    const S = pmap.done ? `Best: ${CONTS[b.k].n} · ${b.ms} ms` : t < 0.8 ? `${origin[2]} · in the background` : t < 3 ? '6 continents · Optimize unlocks when ready' : m ? `${CONTS[now.k].n} · ${pmap.mv}` : 'Comparing ping, jitter and packet loss';
+    const S = pmap.done ? (t > PM_DONE + 1.2 ? 'Next: finding your games' : `Best: ${CONTS[b.k].n} · ${b.ms} ms`) : t < 0.8 ? `${origin[2]} · in the background` : t < 3 ? '6 continents · Optimize unlocks when ready' : m ? `${CONTS[now.k].n} · ${pmap.mv}` : 'Comparing ping, jitter and packet loss';
     if ($('pmT').textContent !== T) $('pmT').textContent = T;
     if ($('pmS').textContent !== S) $('pmS').textContent = S;
     const pc = Math.round(clamp(t / PM_DONE) * 100) + '%';
