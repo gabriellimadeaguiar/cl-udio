@@ -906,13 +906,13 @@ syncThumbs8();
 // Com o mouse sobre o globo a órbita abre numa mola (raio cresce com leve overshoot) e as capas entram em cascata a partir do destaque.
 let show9 = false, r9 = 0, v9 = 0, orbR = [1, 1, 0, 0];
 $('pk').addEventListener('pointermove', e => {
-  if (!isV9() || boot || scan || pmBusy()) return;
+  if (!isV9() || boot || scan || pmBusy() || tour) return;
   const b = canvas.getBoundingClientRect(), k = b.width / vw, [rx, ry, cx, cy] = orbR;
   const dx = (e.clientX - b.left) / k - cx, dy = (e.clientY - b.top) / k - cy, m = show9 ? 70 : 10;
   const inside = (dx / (rx + m)) ** 2 + (dy / (ry + m)) ** 2 < 1;
   if (inside !== show9) setShow9(inside);
 });
-$('pk').addEventListener('pointerleave', () => { if (isV9()) setShow9(false); });
+$('pk').addEventListener('pointerleave', () => { if (isV9() && !tour) setShow9(false); });
 const name9 = document.createElement('div'); name9.className = 'pk-name9'; name9.setAttribute('aria-hidden', 'true'); orbit.append(name9);
 function setShow9(o) {
   show9 = o; $('app').classList.toggle('pk-show9', o); frame0.dist = fitDist();
@@ -1218,6 +1218,7 @@ function endScan(keepHash, next) {
   vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.v === $('app').dataset.v ? 'true' : 'false'));
   rebuild(); frame0.dist = fitDist();
   if (next && pv) startPmap(); // fluxo passivo: depois da varredura, o mapa de rede roda dentro da home
+  else if (next) setTimeout(() => startTour(), 900); // primeira vez na home: tour de 4 passos
 }
 let scanPathT = 0;
 // onda de conclusão: cada capa cresce e volta, em ordem de distância do jogo em destaque
@@ -1326,6 +1327,7 @@ function endPmap() {
   tilt.scale.set(1, 1, 1); tilt.rotation.y = 0; ball.visible = false;
   pmap = null; delete $('app').dataset.pmap; lockNav(false); paintCta();
   if (wasBusy) promo.armed = true; // saiu antes do fim (Skip ou outra versão): o mapa conta como pronto
+  else setTimeout(() => startTour(), 600); // mapa terminou: primeira vez na home, abre o tour
   rebuild(); frame0.dist = fitDist();
 }
 let pmPaintT = 0;
@@ -1543,6 +1545,7 @@ const wrapA = a => Math.atan2(Math.sin(a), Math.cos(a));
 function frame() {
   const now = performance.now(), dt = Math.min((now - lastT) / 1000, 0.05); lastT = now; time += dt;
   const g = GAMES[sel], on = g.state === 'on';
+  frameTour();
 
   // enquadramento suave; o arraste volta sozinho depois de 2,5 s
   if (!gDrag && time - lastDrag > 1.2) { const k = 1 - Math.exp(-dt * 3); dYaw += (0 - dYaw) * k; dPitch += (0 - dPitch) * k; }
@@ -1614,6 +1617,85 @@ function frame() {
 }
 requestAnimationFrame(frame);
 
+/* ---------- Onboarding da home: 4 passos com tooltips (pedido do Gabriel) ----------
+   Abre sozinho na primeira chegada à home (depois do login e da varredura; no fluxo passivo, quando o mapa termina)
+   e pelo chip "Onboarding" (#tour). Um recorte escurece o resto do app e destaca o alvo; o balão aponta para ele.
+   1 jogos em órbita · 2 Optimize e servidor · 3 a rota no globo · 4 Route Monitoring. Esc pula, → avança. */
+let tour = null;
+const TOUR = [
+  { t: 'Your games', d: 'Every game we found on your PC orbits the globe. Hover the globe to see them all, then click one to open it.',
+    el: 'orbit', side: 'corner', pre: () => { setPanel8(false); setShow9(true); } },
+  { t: 'Optimize', d: 'Optimize sends the game through the ExitLag network. Pick a server, or leave it on Automatic and we choose the best one.',
+    el: () => document.querySelector('.pk-r2'), side: 'left', pre: () => { setShow9(false); if (GAMES[sel].state !== 'on') { const i = GAMES.findIndex(g => g.state === 'on'); if (i >= 0) select(i); } setPanel8(true); } },
+  { t: 'Your route, live', d: 'The globe draws the path we found: from you, through bridges, to the game server. The brightest line is the fastest. Hover a line to see its ping.',
+    el: 'globe', side: 'right' },
+  { t: 'Route Monitoring', d: 'Ping, jitter and packet loss update every second while you play, for each route ExitLag keeps open.',
+    el: () => $('pkTele'), side: 'left' }
+];
+const tourEl = document.createElement('div'); tourEl.className = 'tour'; tourEl.hidden = true;
+tourEl.innerHTML = `<div class="tour-hole"></div>
+  <div class="tour-tip" role="dialog" aria-modal="true" aria-labelledby="tourT" aria-describedby="tourD"><i class="tour-arrow"></i>
+    <span class="tour-n tnum" id="tourN"></span><h3 class="tour-t" id="tourT"></h3><p class="tour-d" id="tourD"></p>
+    <div class="tour-f"><span class="tour-dots" aria-hidden="true">${TOUR.map(() => '<i></i>').join('')}</span>
+      <button class="link tour-skip" type="button">Skip</button><button class="btn filled tour-next" type="button"></button></div></div>`;
+$('app').append(tourEl);
+const tourHole = tourEl.querySelector('.tour-hole'), tourTip = tourEl.querySelector('.tour-tip'), tourArrow = tourEl.querySelector('.tour-arrow');
+function startTour() {
+  if (boot || scan || pmBusy() || !isV9()) return;
+  $('app').classList.remove('sb-open'); openSrv(false);
+  tour = { i: -1 }; tourEl.hidden = false; requestAnimationFrame(() => tourEl.classList.add('in'));
+  tourStep(0);
+}
+function tourStep(i) {
+  if (i >= TOUR.length) return endTour();
+  tour.i = i; const s = TOUR[i];
+  s.pre?.();
+  $('tourN').textContent = `${i + 1} of ${TOUR.length}`; $('tourT').textContent = s.t; $('tourD').textContent = s.d;
+  tourEl.querySelector('.tour-next').textContent = i === TOUR.length - 1 ? 'Got it' : 'Next';
+  [...tourEl.querySelectorAll('.tour-dots i')].forEach((d, k) => d.classList.toggle('on', k === i));
+  tourTip.classList.remove('show'); setTimeout(() => tourTip.classList.add('show'), 260); // o balão entra depois que o recorte chega no alvo
+  tourEl.querySelector('.tour-next').focus({ preventScroll: true });
+}
+function endTour() {
+  if (!tour) return;
+  tour = null; tourEl.classList.remove('in'); tourTip.classList.remove('show');
+  setTimeout(() => { if (!tour) tourEl.hidden = true; }, 300);
+  setPanel8(false); setShow9(false);
+  if (location.hash === '#tour') history.replaceState(null, '', '#v' + $('app').dataset.v);
+}
+tourEl.querySelector('.tour-next').addEventListener('click', () => tourStep(tour.i + 1));
+tourEl.querySelector('.tour-skip').addEventListener('click', endTour);
+addEventListener('keydown', e => { if (!tour) return; if (e.key === 'Escape') { e.stopImmediatePropagation(); endTour(); } else if (e.key === 'ArrowRight') tourStep(tour.i + 1); else if (e.key === 'ArrowLeft' && tour.i > 0) tourStep(tour.i - 1); }, true);
+// todo quadro: o alvo anda (painel abrindo, globo deslizando), então recorte e balão seguem
+function frameTour() {
+  if (!tour || tour.i < 0) return;
+  const s = TOUR[tour.i], A = $('app').getBoundingClientRect();
+  let x, y, w, h, round = false;
+  if (s.el === 'orbit') { // a órbita inteira (globo + capas), na elipse que ela ocupa
+    const b = canvas.getBoundingClientRect(), k = b.width / vw, [rx, ry, ox, oy] = orbR, px = 36, py = 64; // em x mais justo, para o balão caber ao lado
+    x = b.left - A.left + (ox - rx - px) * k; y = b.top - A.top + (oy - ry - py) * k; w = (rx + px) * 2 * k; h = (ry + py) * 2 * k; round = true;
+  } else if (s.el === 'globe') {
+    const b = canvas.getBoundingClientRect(), k = b.width / vw, r = globePx() * k * 1.02;
+    x = b.left - A.left + (vw / 2 - off8) * k - r; y = b.top - A.top + (vh / 2 - camOff[1] - offY9) * k - r; w = h = 2 * r; round = true;
+  } else {
+    const el = s.el(); if (!el) return; const b = el.getBoundingClientRect(), pad = 8;
+    x = b.left - A.left - pad; y = b.top - A.top - pad; w = b.width + 2 * pad; h = b.height + 2 * pad;
+  }
+  Object.assign(tourHole.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px', borderRadius: round ? '50%' : '12px' });
+  // balão do lado pedido; se não couber, vai para o lado oposto; sempre dentro do app com 16 px de margem
+  const tw = tourTip.offsetWidth, th = tourTip.offsetHeight, gap = 16, m = 16, cx = x + w / 2, cy = y + h / 2;
+  let side = s.side;
+  if (side === 'corner') { tourTip.style.transform = `translate(${m}px, 72px)`; tourTip.dataset.side = side; return; } // a órbita ocupa quase o app todo: balão no canto livre, sem seta
+  const fits = sd => sd === 'top' ? y - gap - th > m : sd === 'bottom' ? y + h + gap + th < A.height - m : sd === 'left' ? x - gap - tw > m : x + w + gap + tw < A.width - m;
+  if (!fits(side)) side = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' }[side];
+  let tx = side === 'left' ? x - gap - tw : side === 'right' ? x + w + gap : cx - tw / 2;
+  let ty = side === 'top' ? y - gap - th : side === 'bottom' ? y + h + gap : cy - th / 2;
+  tx = clamp(tx, m, A.width - m - tw); ty = clamp(ty, m, A.height - m - th);
+  tourTip.style.transform = `translate(${tx}px, ${ty}px)`; tourTip.dataset.side = side;
+  if (side === 'top' || side === 'bottom') { tourArrow.style.left = clamp(cx - tx, 20, tw - 20) + 'px'; tourArrow.style.top = ''; }
+  else { tourArrow.style.top = clamp(cy - ty, 20, th - 20) + 'px'; tourArrow.style.left = ''; }
+}
+
 // Chips de versão acima do app: troca data-v no .app e guarda a escolha no #hash (#v1, #v2)
 const vchips = [...document.querySelectorAll('.vchip')];
 function setV(v) {
@@ -1623,8 +1705,9 @@ function setV(v) {
   if (location.hash !== '#v' + v) history.replaceState(null, '', '#v' + v);
   dispatchEvent(new Event('pk:layout'));
 }
-vchips.forEach(c => c.addEventListener('click', () => { if (c.dataset.boot) return startBoot(); if (c.dataset.passive) return startBoot(true); if (c.dataset.scan) return startScan(); if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap(); setV(c.dataset.v); }));
+vchips.forEach(c => c.addEventListener('click', () => { if (c.dataset.tour) { if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap(); setV('9'); history.replaceState(null, '', '#tour'); return startTour(); } endTour(); if (c.dataset.boot) return startBoot(); if (c.dataset.passive) return startBoot(true); if (c.dataset.scan) return startScan(); if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap(); setV(c.dataset.v); }));
 if (/^#v\d+$/.test(location.hash)) setV(location.hash.slice(2));
 if (location.hash === '#login') startBoot();
 if (location.hash === '#scan') startScan();
 if (location.hash === '#passive') startBoot(true);
+if (location.hash === '#tour') setTimeout(startTour, 600);

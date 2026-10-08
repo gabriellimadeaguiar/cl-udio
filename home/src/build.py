@@ -34,11 +34,12 @@ k = out.rfind('<!--', 0, i)
 out = out[:k] + stage.strip() + '\n\n          ' + out[j:]
 out = out.replace('</style>', '</style>\n<style>\n' + css + '</style>', 1)
 # chips de versão acima do app, fora da interface (pedido do Gabriel); a versão fica em data-v no .app
-VCHIPS = '''<nav class="vchips" aria-label="Flows: login, library scan, home; passive network map">
+VCHIPS = '''<nav class="vchips" aria-label="Flows: login, library scan, home; passive network map; onboarding">
     <button class="vchip" type="button" data-boot="1" aria-pressed="false">Login</button><span class="vsep" aria-hidden="true"></span>
     <button class="vchip" type="button" data-scan="1" aria-pressed="false">Library scan</button><span class="vsep" aria-hidden="true"></span>
     <button class="vchip" type="button" data-v="9" aria-pressed="true">Home</button><span class="vdiv" aria-hidden="true"></span>
-    <button class="vchip" type="button" data-passive="1" aria-pressed="false">Passive network map</button>
+    <button class="vchip" type="button" data-passive="1" aria-pressed="false">Passive network map</button><span class="vdiv" aria-hidden="true"></span>
+    <button class="vchip" type="button" data-tour="1" aria-pressed="false">Onboarding</button>
   </nav>
   '''
 out = out.replace('<div class="stage">\n  <div class="app" id="app">', '<div class="stage">\n  ' + VCHIPS + '<div class="app" id="app" data-v="9">', 1)
