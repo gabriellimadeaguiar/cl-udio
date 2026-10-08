@@ -1624,7 +1624,7 @@ requestAnimationFrame(frame);
 let tour = null;
 const TOUR = [
   { t: 'Your games', d: 'Every game we found on your PC orbits the globe. Hover the globe to see them all, then click one to open it.',
-    el: 'orbit', side: 'corner', pre: () => { setPanel8(false); setShow9(true); } },
+    el: null, side: 'corner', pre: () => { setPanel8(false); setShow9(true); } },
   { t: 'Optimize', d: 'Optimize sends the game through the ExitLag network. Pick a server, or leave it on Automatic and we choose the best one.',
     el: () => document.querySelector('.pk-r2'), side: 'left', pre: () => { setShow9(false); if (GAMES[sel].state !== 'on') { const i = GAMES.findIndex(g => g.state === 'on'); if (i >= 0) select(i); } setPanel8(true); } },
   { t: 'Your route, live', d: 'The globe draws the path we found: from you, through bridges, to the game server. The brightest line is the fastest. Hover a line to see its ping.',
@@ -1671,7 +1671,9 @@ function frameTour() {
   if (!tour || tour.i < 0) return;
   const s = TOUR[tour.i], A = $('app').getBoundingClientRect();
   let x, y, w, h, round = false;
-  if (s.el === 'orbit') { // a órbita inteira (globo + capas), na elipse que ela ocupa
+  tourEl.classList.toggle('free', !s.el); // passo sem destaque (Gabriel): só o balão, sem escurecer
+  if (!s.el) { x = 0; y = 0; w = A.width; h = A.height; }
+  else if (s.el === 'orbit') { // a órbita inteira (globo + capas), na elipse que ela ocupa
     const b = canvas.getBoundingClientRect(), k = b.width / vw, [rx, ry, ox, oy] = orbR, px = 36, py = 64; // em x mais justo, para o balão caber ao lado
     x = b.left - A.left + (ox - rx - px) * k; y = b.top - A.top + (oy - ry - py) * k; w = (rx + px) * 2 * k; h = (ry + py) * 2 * k; round = true;
   } else if (s.el === 'globe') {
