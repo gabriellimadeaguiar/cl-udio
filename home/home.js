@@ -1732,7 +1732,7 @@ howEl.innerHTML = `<div class="how-top"><button class="icon-btn how-x" type="but
     ${i ? `<h2>${c.h}</h2>` : `<h1>${c.h}</h1>`}${c.p ? `<p class="how-p">${c.p}</p>` : ''}${c.note ? `<p class="how-note">${c.note}</p>` : ''}
     ${c.stats ? `<div class="how-stats">${c.stats.map(([n, l]) => `<div><strong class="tnum">${n}</strong><span>${l}</span></div>`).join('')}</div>` : ''}
     ${c.plats ? `<ul class="how-plats">${c.plats.map(([n, l, b]) => `<li><b>${n}${b ? ` <span class="badge">${b}</span>` : ''}</b><span>${l}</span></li>`).join('')}</ul>` : ''}
-    ${c.cta ? `<button class="btn filled how-go" type="button">Back to home</button>` : ''}
+    ${c.cta ? `<div class="how-acts"><button class="btn filled how-go" type="button">Back to home</button><button class="btn outlined how-faq" type="button">FAQ</button></div>` : ''}
     ${i === 0 ? `<p class="how-hint">Scroll to see how</p>` : ''}</div></div>`).join('')}</div>
   <div class="how-hud" aria-hidden="true"><span class="tnum" id="howCo"></span><span class="tnum" id="howN"></span><i class="how-prog"><i id="howBar"></i></i></div>
   <div class="how-hud r" aria-hidden="true">1,500+ servers · ~1,800 games</div>`;

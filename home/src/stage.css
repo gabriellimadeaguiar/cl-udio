@@ -531,7 +531,7 @@
 .how-plats li { display: grid; grid-template-columns: 112px 1fr; gap: var(--spacing-lg); padding: var(--spacing-md) 0; border-top: 1px solid var(--divider); align-items: baseline; }
 .how-plats li:last-child { border-bottom: 1px solid var(--divider); }
 .how-plats b { font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--on-surface); display: flex; gap: var(--spacing-sm); align-items: center; }
-.how-go { justify-self: start; }
+.how-acts { display: flex; gap: var(--spacing-lg); }
 .how-hint { margin: 0; font-size: 12px; line-height: 16px; letter-spacing: .5px; color: var(--on-surface-variant); display: flex; align-items: center; gap: var(--spacing-sm); }
 .how-hint::after { content: ""; width: 1px; height: 24px; background: linear-gradient(var(--on-surface-variant), transparent); animation: howHint 1.6s ease-in-out infinite; }
 @keyframes howHint { 0%, 100% { transform: translateY(-4px); opacity: .4; } 50% { transform: translateY(4px); opacity: 1; } }
