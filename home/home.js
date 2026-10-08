@@ -1721,7 +1721,6 @@ const HOW = [
   { h: 'One packet. Many routes. At once.', p: 'ExitLag duplicates your game traffic across its own network and sends each copy down a different path. The first to arrive wins.',
     note: 'Not a VPN. Your IP and browsing stay as they are; only the game goes through ExitLag.', k: 'lanes' },
   { h: 'If one route wobbles, another has already delivered.', p: 'The switch happens without you noticing. Ping doesn’t jump, and the match is still decided by your aim.', k: 'fail' },
-  { h: 'A whole network working on your connection.', stats: [['1,500+', 'servers worldwide'], ['~1,800', 'supported games']], k: 'net' },
   { h: 'Almost 1,800 games. Yours is on the list.', p: 'Pick your game on the globe and ExitLag tunes the routes to its server.', k: 'games' },
   { h: 'On PC, iOS and Android.', plats: [['PC', 'Valorant, CS2, League of Legends, Fortnite and almost 1,800 games.'], ['iOS and Android', 'Free Fire, Roblox, CoD Mobile and more on your phone, on the same plan.'], ['Router', 'ExitLag right on your router. Testing with the first players.', 'BETA']], k: 'spin' },
   { h: 'Play your next match without lag.', p: 'Pick your game, press Optimize and watch your ping settle.', cta: true, k: 'lanes' }
