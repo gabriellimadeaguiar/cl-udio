@@ -1568,7 +1568,9 @@ function frame() {
   const age = time - buildT, xa = time - xlStart;
   if (routes) {
     routes.isp.u.uDraw.value = reduce ? 1 : ease(clamp((age - 0.35) / 0.9));
-    routes.isp.u.uOp.value = 0; routes.isp.u.uTime.value = time; // linha da operadora fora do globo: confundia (pedido do Gabriel); ela segue só na telemetria
+    // linha da operadora fora da home (confundia, pedido do Gabriel); só a tela explicativa a mostra, para explicar o problema
+    routes.isp.u.uOp.value = how ? how.ispK : 0; routes.isp.u.uTime.value = time;
+    if (how && how.ispK > 0.01) routes.isp.u.uDraw.value = 1;
     const testing = g.state === 'testing';
     // teste: as candidatas cinza se espalham, depois somem e as 4 escolhidas acendem em verde sobre elas
     routes.cand.forEach((r, k) => {
@@ -1579,7 +1581,7 @@ function frame() {
     });
     routes.xl.forEach((r, i) => {
       r.u.uDraw.value = !xlShow ? 0 : reduce ? 1 : testing ? ease(clamp((xa - 1.5 - i * 0.12) / 0.6)) : ease(clamp((xa - i * 0.3) / 0.8));
-      r.u.uOp.value = xlShow * (1 - offK); r.u.uTime.value = time;
+      r.u.uOp.value = xlShow * (1 - offK) * (how ? how.xlK : 1); r.u.uTime.value = time;
       r.u.uFail.value = fail && fail.lane === i ? fail.k : 0;
       // a mais rápida fica bem mais forte; passar o mouse num chip manda
       r.u.uGain.value = hoverLane >= 0 ? (hoverLane === i ? 0.95 : 0.12) : on ? (i === fastLane ? 1 : 0.22) : 0.42;
@@ -1712,15 +1714,17 @@ function frameTour() {
    operadora (a ExitLag não tem esses dados). Capítulos com scroll, como na landing; o globo da home fica à direita e
    cada capítulo mexe nele: gira, liga as rotas do jogo, derruba uma rota para mostrar a troca, afasta para a rede,
    abre a órbita de jogos. Ao fechar, tudo volta como estava. */
+// Texto da landing (versão EN) preservado; só o que era conversão (teste grátis, sem cartão, instale) virou informação do app
 const HOW = [
-  { h: 'How ExitLag works', p: 'ExitLag sends your game through several routes at the same time. If one wobbles, another one delivers.', k: 'spin' },
-  { h: 'One packet. Several routes. At once.', p: 'ExitLag copies your game traffic across its own network and sends each copy down a different path. The first one to arrive wins.',
-    note: 'Not a VPN. Your IP and your browsing stay as they are; only the game goes through ExitLag.', k: 'lanes' },
-  { h: 'If one route wobbles, another has already delivered.', p: 'The switch happens without you noticing. Your ping doesn’t jump, and the match is still decided by your aim.', k: 'fail' },
-  { h: 'A whole network working for your connection.', stats: [['+1,500', 'servers around the world'], ['~1,800', 'supported games']], k: 'net' },
-  { h: 'Nearly 1,800 games. Yours is on the list.', p: 'Pick a game on the globe and ExitLag tunes the routes to its server.', k: 'games' },
-  { h: 'On PC, iOS and Android.', plats: [['PC', 'Valorant, CS2, League of Legends, Fortnite and nearly 1,800 games.'], ['iOS', 'Your mobile games, with the same network.'], ['Android', 'Your mobile games, with the same network.'], ['Router', 'ExitLag right on your router. In testing with the first players.', 'BETA']], k: 'spin' },
-  { h: 'Ready for the next match.', p: 'Pick a game, press Optimize and watch the ping hold steady.', cta: true, k: 'lanes' }
+  { h: 'Reduce lag in your games.', p: 'ExitLag sends your game through several routes at once. If one wobbles, another delivers.', k: 'spin' },
+  { h: 'Your ISP’s route wasn’t built for gaming.', p: 'It takes detours, crosses congested links and spikes mid-round. On screen, that means shots that don’t register and players that teleport.', k: 'isp' },
+  { h: 'One packet. Many routes. At once.', p: 'ExitLag duplicates your game traffic across its own network and sends each copy down a different path. The first to arrive wins.',
+    note: 'Not a VPN. Your IP and browsing stay as they are; only the game goes through ExitLag.', k: 'lanes' },
+  { h: 'If one route wobbles, another has already delivered.', p: 'The switch happens without you noticing. Ping doesn’t jump, and the match is still decided by your aim.', k: 'fail' },
+  { h: 'A whole network working on your connection.', stats: [['1,500+', 'servers worldwide'], ['~1,800', 'supported games']], k: 'net' },
+  { h: 'Almost 1,800 games. Yours is on the list.', p: 'Pick your game on the globe and ExitLag tunes the routes to its server.', k: 'games' },
+  { h: 'On PC, iOS and Android.', plats: [['PC', 'Valorant, CS2, League of Legends, Fortnite and almost 1,800 games.'], ['iOS and Android', 'Free Fire, Roblox, CoD Mobile and more on your phone, on the same plan.'], ['Router', 'ExitLag right on your router. Testing with the first players.', 'BETA']], k: 'spin' },
+  { h: 'Play your next match without lag.', p: 'Pick your game, press Optimize and watch your ping settle.', cta: true, k: 'lanes' }
 ];
 const howEl = document.createElement('section'); howEl.className = 'how'; howEl.hidden = true; howEl.setAttribute('aria-label', 'How ExitLag works');
 howEl.innerHTML = `<div class="how-top"><button class="icon-btn how-x" type="button" aria-label="Back to home" data-tip="Back to home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><span class="how-k">How ExitLag works</span></div>
@@ -1731,13 +1735,13 @@ howEl.innerHTML = `<div class="how-top"><button class="icon-btn how-x" type="but
     ${c.cta ? `<button class="btn filled how-go" type="button">Back to home</button>` : ''}
     ${i === 0 ? `<p class="how-hint">Scroll to see how</p>` : ''}</div></div>`).join('')}</div>
   <div class="how-hud" aria-hidden="true"><span class="tnum" id="howCo"></span><span class="tnum" id="howN"></span><i class="how-prog"><i id="howBar"></i></i></div>
-  <div class="how-hud r" aria-hidden="true">+1,500 servers · ~1,800 games</div>`;
+  <div class="how-hud r" aria-hidden="true">1,500+ servers · ~1,800 games</div>`;
 $('app').append(howEl);
 const howSc = howEl.querySelector('.how-sc'), howChs = [...howEl.querySelectorAll('.how-ch')];
 function openHow() {
   if (how || boot || scan || pmBusy() || tour) return;
   setPanel8(false); setShow9(false); openSrv(false); $('app').classList.remove('sb-open');
-  how = { i: -1, sel, states: GAMES.map(g => g.state), dist: FULL9, yaw: frame0.yaw, spin: 0 };
+  how = { i: -1, sel, states: GAMES.map(g => g.state), dist: FULL9, yaw: frame0.yaw, spin: 0, isp: 0, ispK: 0, xl: 1, xlK: 1 };
   howSc.scrollTop = 0; howEl.hidden = false; $('app').classList.add('how-on');
   requestAnimationFrame(() => howEl.classList.add('in'));
   howChapter(0); howSc.focus({ preventScroll: true });
@@ -1761,7 +1765,11 @@ function howChapter(i) {
   $('howN').textContent = `${String(i + 1).padStart(2, '0')} / ${String(HOW.length).padStart(2, '0')}`;
   setShow9(c.k === 'games');
   how.dist = c.k === 'net' ? FULL9 * 1.18 : FULL9; how.spin = c.k === 'spin' || c.k === 'net' ? 1 : 0;
-  if (c.k === 'lanes' || c.k === 'fail' || c.k === 'games') howOn();
+  if (c.k === 'lanes' || c.k === 'fail' || c.k === 'games' || c.k === 'isp') howOn();
+  // o problema: só a rota da operadora, laranja, dando voltas; nas rotas em paralelo ela fica fraquinha ao fundo, para comparar
+  how.isp = c.k === 'isp' ? 0.95 : c.k === 'lanes' && i === 2 ? 0.22 : 0; how.xl = c.k === 'isp' ? 0 : 1;
+  // no capítulo do problema as rotas da ExitLag (e os pacotes nelas) saem; voltando, elas se desenham de novo
+  if (c.k === 'isp') xlShow = 0; else if (GAMES[sel].state === 'on' && !xlShow) { xlShow = 1; xlStart = time; }
   // uma das rotas oscila e as outras seguem entregando: a mesma troca que a home mostra ao vivo
   if (c.k === 'fail') { const g = GAMES[sel]; fail = null; how.nf = time + 0.8; }
   else if (fail) fail = null;
@@ -1778,6 +1786,7 @@ howEl.querySelector('.how-go').addEventListener('click', closeHow);
 addEventListener('keydown', e => { if (how && e.key === 'Escape') { e.stopImmediatePropagation(); closeHow(); } }, true);
 function frameHow(dt) {
   if (!how) return;
+  const kk = Math.min(1, dt * 3); how.ispK += (how.isp - how.ispK) * kk; how.xlK += (how.xl - how.xlK) * kk;
   if (how.spin) frame0.yaw += dt * 0.12 * how.spin; // capítulos de visão geral: o planeta gira devagar
   else frame0.yaw += wrapA(how.yaw - frame0.yaw) * Math.min(1, dt * 2); // nos outros, de frente para a rota do jogo
   // capítulo da troca: uma rota oscila a cada ~5 s e as outras seguem entregando
