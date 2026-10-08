@@ -767,6 +767,7 @@ let vw = 1, vh = 1, bandCut = 0, bandSide = 0, bandLeft = 0, bandRight = 0, head
 // Distância da câmera para a rota inteira caber na faixa livre do globo (entre o cabeçalho e o widget).
 function fitDist() {
   if (boot) return boot.dist;
+  if (how) return how.dist;
   if (isV7() && (away7 || e7 > 0.35)) return 4.8;
   if (isV8() && !isV9()) return 6;
   if (isV9() && (show9 || scan)) return FULL9; // órbita aberta: o planeta inteiro, com os jogos em volta // V8: o planeta inteiro no centro, com a órbita de jogos em volta // V7 na sidebar: o planeta inteiro na vaga
@@ -882,7 +883,7 @@ function dock7() {
 const ICONS = { 'Fortnite': 'fortnite.png', 'Dota 2': 'dota-2.png', 'Overwatch 2': 'overwatch-2.png' };
 const isV8 = () => ['8', '9'].includes($('app').dataset.v); // a V9 reaproveita a órbita da V8
 const isV9 = () => $('app').dataset.v === '9';
-let panel8 = false, off8 = 0, a8 = -Math.PI / 2, hover8 = false;
+let panel8 = false, off8 = 0, a8 = -Math.PI / 2, hover8 = false, how = null; // how: tela "How ExitLag works" aberta
 const orbit = document.createElement('div'); orbit.className = 'pk-orbit'; orbit.setAttribute('role', 'listbox'); orbit.setAttribute('aria-label', 'Games');
 const thumbs = GAMES.map((g, i) => {
   const b = document.createElement('button'); b.type = 'button'; b.className = 'pk-thumb'; b.setAttribute('role', 'option'); b.setAttribute('aria-label', g.name); b.dataset.tip = g.name;
@@ -906,7 +907,7 @@ syncThumbs8();
 // Com o mouse sobre o globo a órbita abre numa mola (raio cresce com leve overshoot) e as capas entram em cascata a partir do destaque.
 let show9 = false, r9 = 0, v9 = 0, orbR = [1, 1, 0, 0];
 $('pk').addEventListener('pointermove', e => {
-  if (!isV9() || boot || scan || pmBusy() || tour) return;
+  if (!isV9() || boot || scan || pmBusy() || tour || how) return;
   const b = canvas.getBoundingClientRect(), k = b.width / vw, [rx, ry, cx, cy] = orbR;
   const dx = (e.clientX - b.left) / k - cx, dy = (e.clientY - b.top) / k - cy, m = show9 ? 70 : 10;
   const inside = (dx / (rx + m)) ** 2 + (dy / (ry + m)) ** 2 < 1;
@@ -936,10 +937,10 @@ const logo9 = document.querySelector('.sidebar .logo'); if (logo9) bar9.append(l
 $('app').append(bar9);
 const menu9 = bar9.querySelector('.v9-menu');
 // "How ExitLag works": leva para a landing do globo (pedido do Gabriel, 08/10), no canto inferior esquerdo
-const how9 = document.createElement('a'); how9.className = 'icon-btn outlined v9-how'; // icon button só com a interrogação (Gabriel, 08/10)
-how9.href = 'https://claude.ai/artifact/5no8x456fQHKtDfoAXBKvi'; how9.target = '_blank'; how9.rel = 'noopener';
+const how9 = document.createElement('button'); how9.type = 'button'; how9.className = 'icon-btn outlined v9-how'; // icon button só com a interrogação (Gabriel, 08/10)
 how9.setAttribute('aria-label', 'How ExitLag works'); how9.dataset.tip = 'How ExitLag works';
 how9.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.2 9.2a2.9 2.9 0 1 1 4.1 2.6c-.8.4-1.3 1.1-1.3 2v.6"/><circle cx="12" cy="17.6" r=".4" fill="currentColor"/></svg>';
+how9.addEventListener('click', () => openHow());
 $('app').append(how9);
 menu9.addEventListener('click', () => { const o = !$('app').classList.contains('sb-open'); $('app').classList.toggle('sb-open', o); menu9.setAttribute('aria-expanded', o); });
 const wrapPi = a => Math.atan2(Math.sin(a), Math.cos(a));
@@ -949,7 +950,7 @@ function frameV8(dt) {
   if (!isV8()) { if (off8 || $('pkTele').style.top) { off8 = 0; bandRight = 0; $('pkTele').style.top = ''; resize(); } return; }
   const pw = $('pkL').offsetWidth + (v9on ? 48 : 32);
   // o globo e a órbita deslizam para a esquerda quando o painel abre
-  const tgt = panel8 ? pw / 2 : 0, k = reduce ? 1 : 1 - Math.exp(-dt * 6);
+  const tgt = how ? -vw * 0.17 : panel8 ? pw / 2 : 0, k = reduce ? 1 : 1 - Math.exp(-dt * 6); // na tela explicativa o globo vai para a direita
   if (Math.abs(tgt - off8) > 0.3) { off8 += (tgt - off8) * k; camera.setViewOffset(vw, vh, off8, camOff[1], vw, vh); camera.updateProjectionMatrix(); }
   bandRight = panel8 ? pw : 0;
   $('pkTele').style.top = ($('pkL').offsetTop + $('pkL').offsetHeight) + 'px';
@@ -1550,7 +1551,7 @@ const wrapA = a => Math.atan2(Math.sin(a), Math.cos(a));
 function frame() {
   const now = performance.now(), dt = Math.min((now - lastT) / 1000, 0.05); lastT = now; time += dt;
   const g = GAMES[sel], on = g.state === 'on';
-  frameTour();
+  frameTour(); frameHow(dt);
 
   // enquadramento suave; o arraste volta sozinho depois de 2,5 s
   if (!gDrag && time - lastDrag > 1.2) { const k = 1 - Math.exp(-dt * 3); dYaw += (0 - dYaw) * k; dPitch += (0 - dPitch) * k; }
@@ -1704,6 +1705,83 @@ function frameTour() {
   tourTip.style.transform = `translate(${tx}px, ${ty}px)`; tourTip.dataset.side = side;
   if (side === 'top' || side === 'bottom') { tourArrow.style.left = clamp(cx - tx, 20, tw - 20) + 'px'; tourArrow.style.top = ''; }
   else { tourArrow.style.top = clamp(cy - ty, 20, th - 20) + 'px'; tourArrow.style.left = ''; }
+}
+
+/* ---------- "How ExitLag works": tela explicativa (Gabriel, 08/10) ----------
+   O conteúdo da landing do globo, adaptado para quem já está no app: sem teste grátis e sem comparar com a rota da
+   operadora (a ExitLag não tem esses dados). Capítulos com scroll, como na landing; o globo da home fica à direita e
+   cada capítulo mexe nele: gira, liga as rotas do jogo, derruba uma rota para mostrar a troca, afasta para a rede,
+   abre a órbita de jogos. Ao fechar, tudo volta como estava. */
+const HOW = [
+  { h: 'How ExitLag works', p: 'ExitLag sends your game through several routes at the same time. If one wobbles, another one delivers.', k: 'spin' },
+  { h: 'One packet. Several routes. At once.', p: 'ExitLag copies your game traffic across its own network and sends each copy down a different path. The first one to arrive wins.',
+    note: 'Not a VPN. Your IP and your browsing stay as they are; only the game goes through ExitLag.', k: 'lanes' },
+  { h: 'If one route wobbles, another has already delivered.', p: 'The switch happens without you noticing. Your ping doesn’t jump, and the match is still decided by your aim.', k: 'fail' },
+  { h: 'A whole network working for your connection.', stats: [['+1,500', 'servers around the world'], ['~1,800', 'supported games']], k: 'net' },
+  { h: 'Nearly 1,800 games. Yours is on the list.', p: 'Pick a game on the globe and ExitLag tunes the routes to its server.', k: 'games' },
+  { h: 'On PC, iOS and Android.', plats: [['PC', 'Valorant, CS2, League of Legends, Fortnite and nearly 1,800 games.'], ['iOS', 'Your mobile games, with the same network.'], ['Android', 'Your mobile games, with the same network.'], ['Router', 'ExitLag right on your router. In testing with the first players.', 'BETA']], k: 'spin' },
+  { h: 'Ready for the next match.', p: 'Pick a game, press Optimize and watch the ping hold steady.', cta: true, k: 'lanes' }
+];
+const howEl = document.createElement('section'); howEl.className = 'how'; howEl.hidden = true; howEl.setAttribute('aria-label', 'How ExitLag works');
+howEl.innerHTML = `<div class="how-top"><button class="icon-btn how-x" type="button" aria-label="Back to home" data-tip="Back to home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><span class="how-k">How ExitLag works</span></div>
+  <div class="how-sc" tabindex="-1">${HOW.map((c, i) => `<div class="how-ch" data-i="${i}"><div class="how-c">
+    ${i ? `<h2>${c.h}</h2>` : `<h1>${c.h}</h1>`}${c.p ? `<p class="how-p">${c.p}</p>` : ''}${c.note ? `<p class="how-note">${c.note}</p>` : ''}
+    ${c.stats ? `<div class="how-stats">${c.stats.map(([n, l]) => `<div><strong class="tnum">${n}</strong><span>${l}</span></div>`).join('')}</div>` : ''}
+    ${c.plats ? `<ul class="how-plats">${c.plats.map(([n, l, b]) => `<li><b>${n}${b ? ` <span class="badge">${b}</span>` : ''}</b><span>${l}</span></li>`).join('')}</ul>` : ''}
+    ${c.cta ? `<button class="btn filled how-go" type="button">Back to home</button>` : ''}
+    ${i === 0 ? `<p class="how-hint">Scroll to see how</p>` : ''}</div></div>`).join('')}</div>
+  <div class="how-hud" aria-hidden="true"><span class="tnum" id="howCo"></span><span class="tnum" id="howN"></span><i class="how-prog"><i id="howBar"></i></i></div>
+  <div class="how-hud r" aria-hidden="true">+1,500 servers · ~1,800 games</div>`;
+$('app').append(howEl);
+const howSc = howEl.querySelector('.how-sc'), howChs = [...howEl.querySelectorAll('.how-ch')];
+function openHow() {
+  if (how || boot || scan || pmBusy() || tour) return;
+  setPanel8(false); setShow9(false); openSrv(false); $('app').classList.remove('sb-open');
+  how = { i: -1, sel, states: GAMES.map(g => g.state), dist: FULL9, yaw: frame0.yaw, spin: 0 };
+  howSc.scrollTop = 0; howEl.hidden = false; $('app').classList.add('how-on');
+  requestAnimationFrame(() => howEl.classList.add('in'));
+  howChapter(0); howSc.focus({ preventScroll: true });
+  $('howCo').textContent = `LAT ${origin[0].toFixed(2).replace('-', '−')} · LON ${origin[1].toFixed(2).replace('-', '−')}`;
+}
+function closeHow() {
+  if (!how) return;
+  const h = how; how = null; howEl.classList.remove('in'); $('app').classList.remove('how-on');
+  setTimeout(() => { if (!how) howEl.hidden = true; }, 400);
+  setShow9(false); fail = null;
+  // devolve o jogo e o estado de cada um como estavam antes da explicação
+  GAMES.forEach((g, i) => { g.state = h.states[i]; }); if (sel !== h.sel) select(h.sel); else rebuild();
+  paintCta(); frame0.dist = fitDist();
+}
+// liga o jogo em destaque só para a explicação (as rotas em paralelo precisam estar no globo)
+function howOn() { const g = GAMES[sel]; if (g.state !== 'on') { g.state = 'on'; g.since = time; xlShow = 1; xlStart = time; nextFail = time + 60; paintCta(); } }
+function howChapter(i) {
+  if (!how || i === how.i) return;
+  how.i = i; const c = HOW[i];
+  howChs.forEach((el, k) => el.classList.toggle('on', k === i));
+  $('howN').textContent = `${String(i + 1).padStart(2, '0')} / ${String(HOW.length).padStart(2, '0')}`;
+  setShow9(c.k === 'games');
+  how.dist = c.k === 'net' ? FULL9 * 1.18 : FULL9; how.spin = c.k === 'spin' || c.k === 'net' ? 1 : 0;
+  if (c.k === 'lanes' || c.k === 'fail' || c.k === 'games') howOn();
+  // uma das rotas oscila e as outras seguem entregando: a mesma troca que a home mostra ao vivo
+  if (c.k === 'fail') { const g = GAMES[sel]; fail = null; how.nf = time + 0.8; }
+  else if (fail) fail = null;
+  frame0.dist = fitDist();
+}
+howSc.addEventListener('scroll', () => {
+  if (!how) return;
+  const h = howSc.clientHeight, i = Math.round(howSc.scrollTop / h);
+  $('howBar').style.width = (howSc.scrollTop / Math.max(1, howSc.scrollHeight - h) * 100) + '%';
+  howChapter(clamp(i, 0, HOW.length - 1));
+}, { passive: true });
+howEl.querySelector('.how-x').addEventListener('click', closeHow);
+howEl.querySelector('.how-go').addEventListener('click', closeHow);
+addEventListener('keydown', e => { if (how && e.key === 'Escape') { e.stopImmediatePropagation(); closeHow(); } }, true);
+function frameHow(dt) {
+  if (!how) return;
+  if (how.spin) frame0.yaw += dt * 0.12 * how.spin; // capítulos de visão geral: o planeta gira devagar
+  else frame0.yaw += wrapA(how.yaw - frame0.yaw) * Math.min(1, dt * 2); // nos outros, de frente para a rota do jogo
+  // capítulo da troca: uma rota oscila a cada ~5 s e as outras seguem entregando
+  if (HOW[how.i]?.k === 'fail' && !fail && time > (how.nf || 0)) { const g = GAMES[sel]; fail = { lane: Math.min(1, g.lanes - 1), t0: time, k: 0 }; how.nf = time + 5; }
 }
 
 // Chips de versão acima do app: troca data-v no .app e guarda a escolha no #hash (#v1, #v2)
