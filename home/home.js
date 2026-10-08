@@ -583,6 +583,7 @@ let xlShow = 0, xlStart = -10;
 // distância do planeta inteiro no Immersive: 6,45 deixa o globo 20% menor que os 5,2 de antes (pedido do Gabriel)
 const FULL9 = 6.45, SCAN9 = 5.45;
 let scan = null, offY9 = 0; // offY9: a varredura sobe o globo para a barra de status caber embaixo // varredura da biblioteca: ver "Biblioteca" mais abaixo
+let flowSeq = 0; // sobe a cada troca de chip: passos agendados do fluxo antigo não disparam mais
 let pmap = null; // mapa de rede passivo dentro do app: ver "Mapa passivo" mais abaixo
 let boot = null; // login e carregamento (network map): ver "Login e carregamento" mais abaixo
 
@@ -1243,7 +1244,7 @@ function endScan(keepHash, next) {
   if (!keepHash && location.hash === '#scan') history.replaceState(null, '', '#v' + $('app').dataset.v);
   vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.v === $('app').dataset.v ? 'true' : 'false'));
   rebuild(); frame0.dist = fitDist();
-  if (next) setTimeout(() => startTour(), 900); // varredura › onboarding
+  if (next) { const f = flowSeq; setTimeout(() => { if (f === flowSeq) startTour(); }, 900); } // varredura › onboarding; trocar de chip no meio cancela
 }
 let scanPathT = 0;
 // onda de conclusão: cada capa cresce e volta, em ordem de distância do jogo em destaque
@@ -1322,6 +1323,9 @@ function lockNav(on) {
     n.classList.toggle('pm-lock', on); n.setAttribute('aria-disabled', on ? 'true' : 'false');
     if (on) n.dataset.tip = 'Available after the network map is ready'; else delete n.dataset.tip;
   });
+  // o toggle do ExitLag no topo também fica desabilitado enquanto o mapa mede (pedido do Gabriel)
+  const tg = document.querySelector('.topbar .toggle');
+  if (tg) { tg.setAttribute('aria-disabled', on ? 'true' : 'false'); if (on) tg.dataset.tip = 'Available after the network map is ready'; else delete tg.dataset.tip; }
 }
 function startPmap() {
   if (boot) endBoot(true); if (scan) endScan(true); if (pmap) endPmap(); endTour();
@@ -1835,7 +1839,7 @@ function setV(v) {
   dispatchEvent(new Event('pk:layout'));
 }
 vchips.forEach(c => c.addEventListener('click', () => {
-  const st = c.dataset.step;
+  flowSeq++; const st = c.dataset.step;
   if (st === 'login') return startBoot();
   if (st === 'map') return startPmap();
   if (st === 'scan') return startScan();
@@ -1847,4 +1851,4 @@ if (/^#v\d+$/.test(location.hash)) setV(location.hash.slice(2));
 if (location.hash === '#login') startBoot();
 if (location.hash === '#scan') startScan();
 if (/^#(map|passive)$/.test(location.hash)) startPmap();
-if (location.hash === '#tour') setTimeout(startTour, 600);
+if (location.hash === '#tour') { const f = flowSeq; setTimeout(() => { if (f === flowSeq) startTour(); }, 600); }

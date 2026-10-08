@@ -2463,8 +2463,8 @@ p { margin: 0; }
     if (!t) return;
     e.stopPropagation();
     const on = !t.classList.contains("on"), card = t.closest(".card-app");
-    if (!card) return setExitLag(t, on);
     if (t.getAttribute("aria-disabled") === "true") return;
+    if (!card) return setExitLag(t, on);
     if (!on && card.dataset.type === "optimized") {
       const name = card.querySelector(".name").textContent.trim();
       return openDialog({
