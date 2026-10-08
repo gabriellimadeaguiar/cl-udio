@@ -496,3 +496,9 @@
 @keyframes scIn { from { opacity: 0; transform: translate(-50%, -50%) scale(.92); } }
 @keyframes sbIn { from { opacity: 0; transform: translate(-50%, 16px); } }
 @media (prefers-reduced-motion: reduce) { .app[data-scan="on"] :is(.scan-radar, .scan-core, .scan-bar) { animation: none; } }
+/* "How ExitLag works" (Gabriel, 08/10): botão contornado com ícone, canto inferior esquerdo, abre a landing */
+.v9-how { display: none; }
+.app[data-v="9"] .v9-how { display: inline-flex; position: absolute; left: var(--spacing-xl); bottom: var(--spacing-xl); z-index: 9; color: var(--on-surface); text-decoration: none;
+  background: color-mix(in srgb, var(--container) 84%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); transition: opacity .3s ease, background-color .15s ease; }
+.v9-how svg { width: 20px; height: 20px; flex: none; }
+.app:is([data-boot], [data-scan]) .v9-how { opacity: 0; pointer-events: none; }

@@ -935,6 +935,11 @@ bar9.innerHTML = '<button class="icon-btn v9-menu" type="button" aria-label="Men
 const logo9 = document.querySelector('.sidebar .logo'); if (logo9) bar9.append(logo9.cloneNode(true));
 $('app').append(bar9);
 const menu9 = bar9.querySelector('.v9-menu');
+// "How ExitLag works": leva para a landing do globo (pedido do Gabriel, 08/10), no canto inferior esquerdo
+const how9 = document.createElement('a'); how9.className = 'btn outlined v9-how';
+how9.href = 'https://claude.ai/artifact/5no8x456fQHKtDfoAXBKvi'; how9.target = '_blank'; how9.rel = 'noopener';
+how9.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9s1.3-6.4 3.9-9z"/></svg>How ExitLag works';
+$('app').append(how9);
 menu9.addEventListener('click', () => { const o = !$('app').classList.contains('sb-open'); $('app').classList.toggle('sb-open', o); menu9.setAttribute('aria-expanded', o); });
 const wrapPi = a => Math.atan2(Math.sin(a), Math.cos(a));
 function frameV8(dt) {
