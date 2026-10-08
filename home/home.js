@@ -1067,15 +1067,17 @@ $('bootLogin').addEventListener('submit', e => {
 });
 $('bsSkip').addEventListener('click', () => { if (boot && boot.phase === 'scan') boot.t = Math.max(boot.t, NM_END); });
 
-function startBoot(passive = false) {
-  if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap();
-  setV('9'); history.replaceState(null, '', passive ? '#passive' : '#login');
-  vchips.forEach(c => c.setAttribute('aria-pressed', (passive ? c.dataset.passive : c.dataset.boot) ? 'true' : 'false'));
+// Fluxo principal (Gabriel, 08/10): Login › network map passivo › varredura de jogos › onboarding › home.
+// Cada chip começa o fluxo naquela etapa e ele segue sozinho até a home.
+const pressStep = st => vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.step === st ? 'true' : 'false'));
+function startBoot() {
+  if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap(); endTour();
+  setV('9'); history.replaceState(null, '', '#login'); pressStep('login');
   setPanel8(false); setShow9(false); $('app').classList.remove('sb-open');
   // globo à direita, girando devagar, centrado em você
   const [lat, lon] = [origin[0], origin[1]];
   boot = { phase: 'login', t: 0, dist: FULL9, off: 0, yaw0: (-lon - 90) * D, pitch: clamp(lat, -55, 55) * D, // centrado onde a pessoa está (pedido do Gabriel)
-     arcs: [], best: [], passive };
+     arcs: [], best: [] };
   $('app').dataset.boot = 'login'; $('app').classList.remove('boot-out');
   $('bootErr').hidden = true; $('bsBar').style.width = '0%';
   [...$('bsSteps').children].forEach(li => li.className = '');
@@ -1086,8 +1088,8 @@ function startBoot(passive = false) {
 }
 function scanBoot() {
   if (!boot || boot.phase !== 'login') return;
-  // fluxo passivo: sem tela de mapa; o login sai direto e o mapa roda depois, dentro do app
-  if (boot.passive) { boot.phase = 'out'; boot.out = 0; $('app').dataset.boot = 'out'; return; }
+  // o login não tem mais network map (Gabriel, 08/10): sai direto e o mapa roda depois, dentro do app
+  boot.phase = 'out'; boot.out = 0; $('app').dataset.boot = 'out'; return;
   boot.phase = 'scan'; boot.t = 0; $('app').dataset.boot = 'scan';
   $('bsSub').textContent = '';
   // uma rota (arco) até cada região de servidores; o ping simulado é o mesmo da home (distância), com um pequeno sorteio
@@ -1166,7 +1168,7 @@ function frameBoot(dt) {
   if (boot.phase === 'scan' && t >= NM_END + 0.8) { boot.phase = 'out'; boot.out = 0; $('app').dataset.boot = 'out'; }
   if (boot.phase === 'out') {
     boot.out += dt;
-    if (boot.out > 1.1) { const pv = boot.passive; $('app').classList.add('boot-out'); endBoot(); startScan(pv); setTimeout(() => $('app').classList.remove('boot-out'), 1200); } // fluxo completo: login, rotas, varredura de jogos, home
+    if (boot.out > 1.1) { $('app').classList.add('boot-out'); endBoot(); startPmap(); setTimeout(() => $('app').classList.remove('boot-out'), 1200); } // login › network map passivo
   }
 }
 
@@ -1199,26 +1201,23 @@ $('scSkip').addEventListener('click', () => { if (scan) scan.t = Math.max(scan.t
 // ordem de descoberta: launcher por launcher; jogos fora da lista ficam de fora da biblioteca nova
 const SCAN_ORDER = LAUNCHERS.flatMap(([, , gs], li) => gs.map(n => [GAMES.findIndex(g => g.name === n), li])).filter(([i]) => i >= 0);
 const L_DUR = 1.25, L_T0 = 0.9; // cada launcher: 1,25 s; antes, 0,9 s procurando launchers
-function startScan(passive = false) {
-  if (boot) endBoot(true); if (scan) endScan(true); if (pmap) endPmap();
-  setV('9'); history.replaceState(null, '', passive ? '#passive' : '#scan');
-  vchips.forEach(c => c.setAttribute('aria-pressed', (passive ? c.dataset.passive : c.dataset.scan) ? 'true' : 'false'));
+function startScan() {
+  if (boot) endBoot(true); if (scan) endScan(true); if (pmap) endPmap(); endTour();
+  setV('9'); history.replaceState(null, '', '#scan'); pressStep('scan');
   setPanel8(false); setShow9(false); $('app').classList.remove('sb-open');
   thumbs.forEach((_, i) => { p9[i] = 0; pv9[i] = 0; tg9[i] = 0; });
-  scan = { t: 0, shown: thumbs.map(() => false), n: 0, end: L_T0 + LAUNCHERS.length * L_DUR + 0.3, done: false, yaw: frame0.yaw, passive };
+  scan = { t: 0, shown: thumbs.map(() => false), n: 0, end: L_T0 + LAUNCHERS.length * L_DUR + 0.3, done: false, yaw: frame0.yaw };
   $('app').dataset.scan = 'on';
   [...$('scLs').children].forEach(el => { el.className = 'sb-l'; el.querySelector('b').textContent = ''; });
   frame0.dist = fitDist();
 }
 function endScan(keepHash, next) {
   if (!scan) return;
-  const pv = scan.passive;
   scan = null; delete $('app').dataset.scan;
   if (!keepHash && location.hash === '#scan') history.replaceState(null, '', '#v' + $('app').dataset.v);
   vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.v === $('app').dataset.v ? 'true' : 'false'));
   rebuild(); frame0.dist = fitDist();
-  if (next && pv) startPmap(); // fluxo passivo: depois da varredura, o mapa de rede roda dentro da home
-  else if (next) setTimeout(() => startTour(), 900); // primeira vez na home: tour de 4 passos
+  if (next) setTimeout(() => startTour(), 900); // varredura › onboarding
 }
 let scanPathT = 0;
 // onda de conclusão: cada capa cresce e volta, em ordem de distância do jogo em destaque
@@ -1299,7 +1298,8 @@ function lockNav(on) {
   });
 }
 function startPmap() {
-  if (pmap) endPmap();
+  if (boot) endBoot(true); if (scan) endScan(true); if (pmap) endPmap(); endTour();
+  setV('9'); setPanel8(false); setShow9(false); $('app').classList.remove('sb-open');
   // o mapa só começa com as rotas paradas: nada otimizado enquanto mede
   GAMES.forEach(g => { if (g.state !== 'off') g.state = 'off'; }); xlShow = 0; fail = null; logMsg(IDLE);
   const saveR = routeR; routeR = (FULL9 - 1) / 2;
@@ -1317,8 +1317,7 @@ function startPmap() {
   lastCont = null; lastTested = 0;
   pmap = { t: 0, arcs, best: order.slice(0, 3).map(a => a.k), done: false };
   $('app').dataset.pmap = 'on'; lockNav(true); paintCta();
-  history.replaceState(null, '', '#passive');
-  vchips.forEach(c => c.setAttribute('aria-pressed', c.dataset.passive ? 'true' : 'false'));
+  history.replaceState(null, '', '#map'); pressStep('map');
 }
 function endPmap() {
   if (!pmap) return;
@@ -1327,7 +1326,7 @@ function endPmap() {
   tilt.scale.set(1, 1, 1); tilt.rotation.y = 0; ball.visible = false;
   pmap = null; delete $('app').dataset.pmap; lockNav(false); paintCta();
   if (wasBusy) promo.armed = true; // saiu antes do fim (Skip ou outra versão): o mapa conta como pronto
-  else setTimeout(() => startTour(), 600); // mapa terminou: primeira vez na home, abre o tour
+  else setTimeout(() => { if (!boot && !scan && !pmap) startScan(); }, 400); // mapa terminou › varredura de jogos
   rebuild(); frame0.dist = fitDist();
 }
 let pmPaintT = 0;
@@ -1625,8 +1624,10 @@ let tour = null;
 const TOUR = [
   { t: 'Your games', d: 'Every game we found on your PC orbits the globe. Hover the globe to see them all, then click one to open it.',
     el: null, side: 'corner', pre: () => { setPanel8(false); setShow9(true); } },
-  { t: 'Optimize', d: 'Optimize sends the game through the ExitLag network. Pick a server, or leave it on Automatic and we choose the best one.',
-    el: () => document.querySelector('.pk-r2'), side: 'left', pre: () => { setShow9(false); if (GAMES[sel].state !== 'on') { const i = GAMES.findIndex(g => g.state === 'on'); if (i >= 0) select(i); } setPanel8(true); } },
+  { t: 'Optimize', d: 'Optimize sends the game through the ExitLag network. We are turning it on for you now. Pick a server, or leave it on Automatic and we choose the best one.',
+    el: () => document.querySelector('.pk-r2'), side: 'left', pre: () => { setShow9(false); if (GAMES[sel].state !== 'on') { const i = GAMES.findIndex(g => g.state === 'on'); if (i >= 0) select(i); } setPanel8(true);
+      // primeira vez nada está otimizado: o tour liga o jogo em destaque, para os passos da rota e do Route Monitoring terem o que mostrar
+      setTimeout(() => { if (tour && tour.i === 1 && GAMES[sel].state === 'off') toggleOpt(); }, 900); } },
   { t: 'Your route, live', d: 'The globe draws the path we found: from you, through bridges, to the game server. The brightest line is the fastest. Hover a line to see its ping.',
     el: 'globe', side: 'right' },
   { t: 'Route Monitoring', d: 'Ping, jitter and packet loss update every second while you play, for each route ExitLag keeps open.',
@@ -1643,7 +1644,7 @@ const tourHole = tourEl.querySelector('.tour-hole'), tourTip = tourEl.querySelec
 function startTour() {
   if (boot || scan || pmBusy() || !isV9()) return;
   $('app').classList.remove('sb-open'); openSrv(false);
-  tour = { i: -1 }; tourEl.hidden = false; requestAnimationFrame(() => tourEl.classList.add('in'));
+  tour = { i: -1 }; tourEl.hidden = false; history.replaceState(null, '', '#tour'); pressStep('tour'); requestAnimationFrame(() => tourEl.classList.add('in'));
   tourStep(0);
 }
 function tourStep(i) {
@@ -1662,6 +1663,7 @@ function endTour() {
   setTimeout(() => { if (!tour) tourEl.hidden = true; }, 300);
   setPanel8(false); setShow9(false);
   if (location.hash === '#tour') history.replaceState(null, '', '#v' + $('app').dataset.v);
+  pressStep('home'); // onboarding › home
 }
 tourEl.querySelector('.tour-next').addEventListener('click', () => tourStep(tour.i + 1));
 tourEl.querySelector('.tour-skip').addEventListener('click', endTour);
@@ -1707,9 +1709,17 @@ function setV(v) {
   if (location.hash !== '#v' + v) history.replaceState(null, '', '#v' + v);
   dispatchEvent(new Event('pk:layout'));
 }
-vchips.forEach(c => c.addEventListener('click', () => { if (c.dataset.tour) { if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap(); setV('9'); history.replaceState(null, '', '#tour'); return startTour(); } endTour(); if (c.dataset.boot) return startBoot(); if (c.dataset.passive) return startBoot(true); if (c.dataset.scan) return startScan(); if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap(); setV(c.dataset.v); }));
+vchips.forEach(c => c.addEventListener('click', () => {
+  const st = c.dataset.step;
+  if (st === 'login') return startBoot();
+  if (st === 'map') return startPmap();
+  if (st === 'scan') return startScan();
+  endTour(); if (boot) endBoot(); if (scan) endScan(); if (pmap) endPmap(); setV('9');
+  if (st === 'tour') return startTour();
+  pressStep('home');
+}));
 if (/^#v\d+$/.test(location.hash)) setV(location.hash.slice(2));
 if (location.hash === '#login') startBoot();
 if (location.hash === '#scan') startScan();
-if (location.hash === '#passive') startBoot(true);
+if (/^#(map|passive)$/.test(location.hash)) startPmap();
 if (location.hash === '#tour') setTimeout(startTour, 600);
