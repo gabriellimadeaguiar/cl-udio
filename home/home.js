@@ -936,9 +936,10 @@ const logo9 = document.querySelector('.sidebar .logo'); if (logo9) bar9.append(l
 $('app').append(bar9);
 const menu9 = bar9.querySelector('.v9-menu');
 // "How ExitLag works": leva para a landing do globo (pedido do Gabriel, 08/10), no canto inferior esquerdo
-const how9 = document.createElement('a'); how9.className = 'btn outlined v9-how';
+const how9 = document.createElement('a'); how9.className = 'icon-btn outlined v9-how'; // icon button só com a interrogação (Gabriel, 08/10)
 how9.href = 'https://claude.ai/artifact/5no8x456fQHKtDfoAXBKvi'; how9.target = '_blank'; how9.rel = 'noopener';
-how9.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9s1.3-6.4 3.9-9z"/></svg>How ExitLag works';
+how9.setAttribute('aria-label', 'How ExitLag works'); how9.dataset.tip = 'How ExitLag works';
+how9.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.2 9.2a2.9 2.9 0 1 1 4.1 2.6c-.8.4-1.3 1.1-1.3 2v.6"/><circle cx="12" cy="17.6" r=".4" fill="currentColor"/></svg>';
 $('app').append(how9);
 menu9.addEventListener('click', () => { const o = !$('app').classList.contains('sb-open'); $('app').classList.toggle('sb-open', o); menu9.setAttribute('aria-expanded', o); });
 const wrapPi = a => Math.atan2(Math.sin(a), Math.cos(a));
