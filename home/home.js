@@ -429,6 +429,7 @@ const CABLES = [
   const stops = [c.a, ...c.w, c.b].map(([la, lo]) => toV(la, lo)), pts = [];
   stops.forEach((v, k) => { if (!k) return; const p = stops[k - 1], ws = Math.max(p.angleTo(v), 1e-4), ss = Math.sin(ws), n = Math.max(4, Math.ceil(ws / 0.02));
     for (let i = k > 1 ? 1 : 0; i <= n; i++) { const u = i / n; pts.push(p.clone().multiplyScalar(Math.sin((1 - u) * ws) / ss).add(v.clone().multiplyScalar(Math.sin(u * ws) / ss)).normalize()); } });
+  soften(pts, 4, 3); // curvas do cabo arredondadas nos pontos de passagem, sem quinas
   let len = 0; for (let i = 1; i < pts.length; i++) len += pts[i].angleTo(pts[i - 1]);
   return { ...c, pts, len, A: stops[0], B: stops[stops.length - 1] };
 });
@@ -493,6 +494,25 @@ function makeRoute(pts, color, radius, speed, gain = 1, group = routeGroup, tun 
   const len = curve.getLength(); uniforms.uLen.value = len;
   return { curve, u: uniforms, len };
 }
+// Salto entre dois nós: o arco sai e pousa tangente à superfície (perfil sem inclinação nas pontas), então dois saltos
+// seguidos se emendam sem formar um V no nó (pedido do Gabriel: arcos saltando, mas sem quinas).
+function arcHop(p, q, h, n) {
+  const ws = Math.max(p.angleTo(q), 1e-4), ss = Math.sin(ws), out = [];
+  for (let i = 0; i <= n; i++) { const u = i / n, s = Math.sin(Math.PI * u), e = s * s * (3 - 2 * s);
+    out.push(p.clone().multiplyScalar(Math.sin((1 - u) * ws) / ss).add(q.clone().multiplyScalar(Math.sin(u * ws) / ss)).normalize().multiplyScalar(1.006 + (0.02 + ws * 0.25) * h * 1.1 * e)); }
+  return out;
+}
+// arredonda a mudança de rumo nos nós (vista de cima) com uma média móvel curta; as pontas ficam presas
+function soften(pts, r = 5, passes = 3) {
+  const n = pts.length; if (n < 3) return pts;
+  for (let it = 0; it < passes; it++) {
+    const src = pts.map(v => v.clone());
+    for (let i = 1; i < n - 1; i++) { const k = Math.min(r, i, n - 1 - i), acc = new THREE.Vector3(); let len = 0;
+      for (let j = -k; j <= k; j++) { acc.add(src[i + j]); len += src[i + j].length(); }
+      pts[i].copy(acc.normalize().multiplyScalar(len / (2 * k + 1))); }
+  }
+  return pts;
+}
 // Rota ExitLag de verdade (pedido do Gabriel): você entra numa bridge, o tráfego salta de bridge em bridge num túnel até
 // uma final perto do servidor do jogo, e só então sai para o jogo. Cada nó é um ponto no mapa (cidade com servidor), e a rota
 // é uma sequência de saltos entre eles, não uma curva só. Rotas longas passam por 2 bridges; curtas, por 1.
@@ -505,30 +525,29 @@ function tunnelPath(a, b, w, lat, lift, rnd, cab = null) {
   const fr = w > 0.45 ? [0.28 + 0.08 * rnd(), 0.6 + 0.08 * rnd()] : [0.4 + 0.15 * rnd()];
   const nodes = fr.map(f => ({ v: snap(at(f)), kind: 0 }));
   nodes.push({ v: at(0.9 + 0.04 * rnd()), kind: 1 }); // final: perto do servidor, sem encaixar (fica entre a última bridge e o jogo)
-  const seg = (p, q, h, n) => { const ws = Math.max(p.angleTo(q), 1e-4), ss = Math.sin(ws), out = [];
-    for (let i = 0; i <= n; i++) { const u = i / n; out.push(p.clone().multiplyScalar(Math.sin((1 - u) * ws) / ss).add(q.clone().multiplyScalar(Math.sin(u * ws) / ss)).normalize().multiplyScalar(1.006 + (0.02 + ws * 0.25) * h * Math.sin(Math.PI * u))); }
-    return out; };
+  const seg = arcHop;
   const stops = [a, ...nodes.map(n => n.v), b], pts = [], ends = [];
   for (let k = 0; k < stops.length - 1; k++) { const sg = seg(stops[k], stops[k + 1], k === 0 || k === stops.length - 2 ? 0.2 : lift * 0.7, 60); pts.push(...(k ? sg.slice(1) : sg)); ends.push(pts.length - 1); }
+  soften(pts);
   // posição dos nós ao longo da rota (comprimento de arco), para o shader, os pacotes e os marcadores
   let L = 0; const cum = [0]; for (let i = 1; i < pts.length; i++) { L += pts[i].distanceTo(pts[i - 1]); cum.push(L); }
-  nodes.forEach((n, k) => { n.t = cum[ends[k]] / L; n.c = nearCity(n.v); });
+  nodes.forEach((n, k) => { n.t = cum[ends[k]] / L; n.v = pts[ends[k]].clone().normalize(); n.c = nearCity(n.v); }); // ponto segue a linha suavizada
   return { pts, nodes, t0: nodes[0].t, t1: nodes[nodes.length - 1].t };
 }
 // rota pelo mar: você › bridge no pouso do cabo › o cabo, rente à superfície › bridge no outro pouso › final › servidor
 function cablePath(a, b, cab, rnd) {
   const A = cab.pts[0], B = cab.pts[cab.pts.length - 1], w = a.angleTo(b), sw = Math.sin(w);
   const F = b.clone().lerp(B, 0.35 + 0.15 * rnd()).normalize(); // final entre o pouso e o servidor
-  const hop = (p, q, h, n = 40) => { const ws = Math.max(p.angleTo(q), 1e-4), ss = Math.sin(ws), out = [];
-    for (let i = 0; i <= n; i++) { const u = i / n; out.push(p.clone().multiplyScalar(Math.sin((1 - u) * ws) / ss).add(q.clone().multiplyScalar(Math.sin(u * ws) / ss)).normalize().multiplyScalar(1.006 + (0.02 + ws * 0.25) * h * Math.sin(Math.PI * u))); }
-    return out; };
+  const hop = (p, q, h, n = 40) => arcHop(p, q, h, n);
   // rotas no mesmo cabo: afastadas de lado alguns km para aparecerem como fios paralelos
   const off = (cab.lane || 0) * 0.006 * (cab.lane % 2 ? 1 : -1), sea = cab.pts.map((v, i, arr) => { const q = arr[Math.min(i + 1, arr.length - 1)], p0 = arr[Math.max(i - 1, 0)];
     const sd = new THREE.Vector3().crossVectors(v, q.clone().sub(p0)).normalize(); return v.clone().addScaledVector(sd, off * Math.sin(Math.PI * i / (arr.length - 1))).normalize().multiplyScalar(1.006); });
   const parts = [hop(a, A, 0.2), sea, hop(B, F, 0.25), hop(F, b, 0.2)], pts = [], ends = [];
   parts.forEach((sg, k) => { pts.push(...(k ? sg.slice(1) : sg)); ends.push(pts.length - 1); });
+  soften(pts);
   let L = 0; const cum = [0]; for (let i = 1; i < pts.length; i++) { L += pts[i].distanceTo(pts[i - 1]); cum.push(L); }
-  const nodes = [{ v: A, kind: 0, c: cab.sc, t: cum[ends[0]] / L }, { v: B, kind: 0, c: cab.ec, t: cum[ends[1]] / L }, { v: F, kind: 1, c: nearCity(F), t: cum[ends[2]] / L }];
+  const on = k => pts[ends[k]].clone().normalize();
+  const nodes = [{ v: on(0), kind: 0, c: cab.sc, t: cum[ends[0]] / L }, { v: on(1), kind: 0, c: cab.ec, t: cum[ends[1]] / L }, { v: on(2), kind: 1, c: nearCity(F), t: cum[ends[2]] / L }];
   return { pts, nodes, t0: nodes[0].t, t1: nodes[2].t, cable: cab.c.n };
 }
 const nearCity = v => { let best = null, bd = 1e9; for (const c of Object.values(CITIES)) { const d = v.angleTo(toV(c[0], c[1])) * 6371; if (d < bd) { bd = d; best = c; } } return bd < 1400 ? best[3] : ''; };
