@@ -1734,6 +1734,7 @@ howEl.innerHTML = `<div class="how-top"><button class="icon-btn how-x" type="but
     ${c.plats ? `<ul class="how-plats">${c.plats.map(([n, l, b]) => `<li><b>${n}${b ? ` <span class="badge">${b}</span>` : ''}</b><span>${l}</span></li>`).join('')}</ul>` : ''}
     ${c.cta ? `<div class="how-acts"><button class="btn filled how-go" type="button">Back to home</button><button class="btn outlined how-faq" type="button">FAQ</button></div>` : ''}
     ${i === 0 ? `<p class="how-hint">Scroll to see how</p>` : ''}</div></div>`).join('')}</div>
+  <nav class="how-dots" aria-label="Chapters">${HOW.map((c, i) => `<button type="button" aria-label="${c.h}" data-tip="${c.h}" data-i="${i}"></button>`).join('')}</nav>
   <div class="how-hud" aria-hidden="true"><span class="tnum" id="howCo"></span><span class="tnum" id="howN"></span><i class="how-prog"><i id="howBar"></i></i></div>
   <div class="how-hud r" aria-hidden="true">1,500+ servers · ~1,800 games</div>`;
 $('app').append(howEl);
@@ -1742,7 +1743,7 @@ function openHow() {
   if (how || boot || scan || pmBusy() || tour) return;
   setPanel8(false); setShow9(false); openSrv(false); $('app').classList.remove('sb-open');
   how = { i: -1, sel, states: GAMES.map(g => g.state), dist: FULL9, yaw: frame0.yaw, spin: 0, isp: 0, ispK: 0, xl: 1, xlK: 1 };
-  howSc.scrollTop = 0; howEl.hidden = false; $('app').classList.add('how-on');
+  howEl.hidden = false; $('app').classList.add('how-on');
   requestAnimationFrame(() => howEl.classList.add('in'));
   howChapter(0); howSc.focus({ preventScroll: true });
   $('howCo').textContent = `LAT ${origin[0].toFixed(2).replace('-', '−')} · LON ${origin[1].toFixed(2).replace('-', '−')}`;
@@ -1760,8 +1761,12 @@ function closeHow() {
 function howOn() { const g = GAMES[sel]; if (g.state !== 'on') { g.state = 'on'; g.since = time; xlShow = 1; xlStart = time; nextFail = time + 60; paintCta(); } }
 function howChapter(i) {
   if (!how || i === how.i) return;
-  how.i = i; const c = HOW[i];
-  howChs.forEach((el, k) => el.classList.toggle('on', k === i));
+  const prev = how.i; how.i = i; const c = HOW[i];
+  howChs.forEach((el, k) => { el.classList.toggle('on', k === i); el.classList.toggle('past', k < i); });
+  howEl.querySelectorAll('.how-dots button').forEach((b, k) => b.setAttribute('aria-current', k === i ? 'step' : 'false'));
+  $('howBar').style.width = (i / (HOW.length - 1) * 100) + '%';
+  // transição do globo entre capítulos: um giro rápido na direção do avanço e um respiro de zoom (afasta e volta)
+  if (prev >= 0 && !reduce) { frame0.yaw += Math.sign(i - prev) * 0.9; how.bump = time; }
   $('howN').textContent = `${String(i + 1).padStart(2, '0')} / ${String(HOW.length).padStart(2, '0')}`;
   setShow9(c.k === 'games');
   how.dist = c.k === 'net' ? FULL9 * 1.18 : FULL9; how.spin = c.k === 'spin' || c.k === 'net' ? 1 : 0;
@@ -1775,17 +1780,26 @@ function howChapter(i) {
   else if (fail) fail = null;
   frame0.dist = fitDist();
 }
-howSc.addEventListener('scroll', () => {
-  if (!how) return;
-  const h = howSc.clientHeight, i = Math.round(howSc.scrollTop / h);
-  $('howBar').style.width = (howSc.scrollTop / Math.max(1, howSc.scrollHeight - h) * 100) + '%';
-  howChapter(clamp(i, 0, HOW.length - 1));
-}, { passive: true });
+// um gesto = um capítulo (Gabriel: scrollava demais). A roda/trackpad acumula até um limiar e trava enquanto a transição roda.
+const howGo = d => { if (!how) return; const n = clamp(how.i + d, 0, HOW.length - 1); if (n !== how.i) { how.lock = performance.now() + 900; howChapter(n); } };
+let howAcc = 0, howAccT = 0;
+howSc.addEventListener('wheel', e => {
+  if (!how) return; e.preventDefault();
+  const now = performance.now(); if (now - howAccT > 220) howAcc = 0; howAccT = now;
+  if (now < (how.lock || 0)) { how.lock = Math.max(how.lock, now + 350); howAcc = 0; return; } // a inércia do trackpad não pula um segundo capítulo
+  howAcc += e.deltaY; if (Math.abs(howAcc) > 24) { howGo(Math.sign(howAcc)); howAcc = 0; }
+}, { passive: false });
+let howY0 = null;
+howSc.addEventListener('pointerdown', e => { howY0 = e.clientY; });
+addEventListener('pointerup', e => { if (how && howY0 != null && Math.abs(e.clientY - howY0) > 40) howGo(e.clientY < howY0 ? 1 : -1); howY0 = null; });
+howEl.querySelector('.how-dots').addEventListener('click', e => { const b = e.target.closest('button'); if (b && how) { how.lock = performance.now() + 750; howChapter(+b.dataset.i); } });
+addEventListener('keydown', e => { if (!how) return; if (['ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); howGo(1); } else if (['ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); howGo(-1); } });
 howEl.querySelector('.how-x').addEventListener('click', closeHow);
 howEl.querySelector('.how-go').addEventListener('click', closeHow);
 addEventListener('keydown', e => { if (how && e.key === 'Escape') { e.stopImmediatePropagation(); closeHow(); } }, true);
 function frameHow(dt) {
   if (!how) return;
+  if (how.bump != null) { const b = clamp((time - how.bump) / 1.1); frame0.dist = how.dist * (1 + 0.16 * Math.sin(Math.PI * b)); if (b >= 1) how.bump = null; }
   const kk = Math.min(1, dt * 3); how.ispK += (how.isp - how.ispK) * kk; how.xlK += (how.xl - how.xlK) * kk;
   if (how.spin) frame0.yaw += dt * 0.12 * how.spin; // capítulos de visão geral: o planeta gira devagar
   else frame0.yaw += wrapA(how.yaw - frame0.yaw) * Math.min(1, dt * 2); // nos outros, de frente para a rota do jogo
