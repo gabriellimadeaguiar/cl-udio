@@ -1,0 +1,17 @@
+{
+  "esquema": 2,
+  "data": "2026-10-12",
+  "status": "falha",
+  "modelo": "claude-opus-4-8",
+  "erro": "401 {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011Cfxpf3aPae4B3W5HmDxKm\"}",
+  "confianca": "baixa",
+  "sinais_novos": 0,
+  "sinais": [],
+  "custo": {
+    "buscas": 0,
+    "tokens_entrada": 0,
+    "tokens_saida": 0,
+    "usd": 0
+  },
+  "gerado_em": "2026-10-12T18:33:02.859Z"
+}
