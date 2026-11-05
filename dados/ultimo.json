@@ -1,9 +1,9 @@
 {
   "esquema": 2,
-  "data": "2026-11-04",
+  "data": "2026-11-05",
   "status": "falha",
   "modelo": "claude-opus-4-8",
-  "erro": "401 {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CgiEN5ZgbDME1re7BmkBr\"}",
+  "erro": "401 {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011Cgk9HivH28yejtRWFzRWg\"}",
   "confianca": "baixa",
   "sinais_novos": 0,
   "sinais": [],
@@ -13,5 +13,5 @@
     "tokens_saida": 0,
     "usd": 0
   },
-  "gerado_em": "2026-11-04T16:49:29.343Z"
+  "gerado_em": "2026-11-05T17:04:07.430Z"
 }
