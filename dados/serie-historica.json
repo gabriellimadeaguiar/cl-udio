@@ -1,6 +1,6 @@
 {
   "esquema": 2,
-  "atualizado_em": "2026-11-19T17:56:48.657Z",
+  "atualizado_em": "2026-11-20T17:30:52.492Z",
   "taxonomia_versao": 1,
   "dias": [
     {
@@ -1156,6 +1156,13 @@
     },
     {
       "data": "2026-11-19",
+      "status": "falha",
+      "total": 0,
+      "custo_usd": 0,
+      "buscas": 0
+    },
+    {
+      "data": "2026-11-20",
       "status": "falha",
       "total": 0,
       "custo_usd": 0,
